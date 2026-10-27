@@ -12,8 +12,9 @@ Nset = {n: i for i, n in enumerate(Ns)}
 def is_reload(u):
     a, h = spine(u)
     # N_i N_k S  ==  for i>=1: S S N_{i-1} N_k S ; for i = 0: S(SS)(SS) N_k S
-    if len(a) == 4 and a[0] == 0 and a[1] in Nset and a[2] in Nset and a[3] == 0: return True
-    if len(a) == 4 and a[0] == SS and a[1] == SS and a[2] in Nset and a[3] == 0: return True
+    # second slot must be N_k with k >= 1 (= SS N_{k-1}); N_0 = B in that slot does NOT reload
+    if len(a) == 4 and a[0] == 0 and a[1] in Nset and Nset.get(a[2], 0) >= 1 and a[3] == 0: return True
+    if len(a) == 4 and a[0] == SS and a[1] == SS and Nset.get(a[2], 0) >= 1 and a[3] == 0: return True
     return False
 def trees(n):
     if n == 1: yield 0; return

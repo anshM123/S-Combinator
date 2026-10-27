@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:10 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:30 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -45,6 +45,41 @@ E. Class 4, other evaluation orders (parallel, innermost, multiway paths) ......
 F. Decoders reading unbounded parts of terms (not windows) ............................. OPEN (not covered by UB).
 Bottom line: NOT SOLVED.  No step above that is OPEN is close to a complete proof; D1 narrows the possible
 universal mechanisms (they must re-execute frozen values), it does not exclude them.
+
+# FINAL (non-universality agent; 2026-10-27 04:30 EDT — written early; nothing after this is pending)
+Bottom line: NOT SOLVED.  No complete proof that S is non-universal exists; nothing here claims one.
+What was proved today (all Lean files in agent_work/lean/ compile with Lean 4.35 core, no sorry, standard axioms;
+full re-check 04:12 + PA/INNER re-checked after their last change):
+1. CHAIN BOUND in the generic phase model (item D2 of the map): a Church chain of proper transfers has length <= 2,
+   and <= 1 if it starts from an ordered datum.
+   (1)+(2) MACHINE-CHECKED, no extra hypothesis: every datum after the first transfer is an ordered right comb, and
+   every proper transfer from an ordered datum is innermost-dirty (INNER.lean: ordered_innermost,
+   chain_step_innermost).
+   (3) = Conjecture R3 'after an innermost-dirty transfer the next phase cannot transfer': MACHINE-CHECKED under
+   per-case hypotheses on the transferring phase (PA.lean: pa_main, pb_main, pam_main; with FH, FHL, YD) — they hold
+   for 1,078/1,083 right-comb transfers and 2,612/2,621 ordered-data transfers <= 11 leaves and 99.7-99.8% of random
+   larger data.  COMPUTATIONALLY CERTIFIED without exception: no chain of length >= 3 among 227,239 data <= 11
+   leaves and 1,413,396 random data up to 22 leaves.
+2. THE REPLAY RELATION (REPLAY.lean, PA.lean): the next phase re-runs the code that decided the transfer, on other
+   arguments, and reaches the frozen predecessor where the live one was reached.  reexec_replays_transfer: the
+   re-executed frozen value gets the images of exactly the arguments of the live predecessor's activation;
+   replayed_handler_trivial + trivH_next: the replayed handler is y-free, y or (p'-headed).y, so in the Church-chain
+   model extended to re-executions it can never restart Church iteration (model-level evidence for D3).
+3. Supporting MACHINE-CHECKED results: Theorem MSL generous + strict (MSL.lean, MSLS.lean) = SL's invariant for
+   several levels; Lemma AB and Corollary AB-c (AB.lean, ABC.lean); YD (YD.lean); FH1 / FHL (FH1.lean, FHL.lean).
+4. PROVED by hand (audited computationally where possible): creation lemma, Theorem FS (fs_check.py), Lemmas
+   Sigma2 / Gamma / CB.  REFUTED: (B1) 'a buffer blocks every later transfer' (explicit counterexample).
+Meaning for the prize question: within the generic phase model, iterating data through Church-style transfers is
+bounded by two steps; a universal mechanism would have to re-execute frozen values or iterate data-blind calls.
+This narrows the possible mechanisms; it does NOT prove R''_PUP, Proposition UB's hypothesis, or non-universality.
+Precisely missing for item D: (i) Conjecture R3 without per-case hypotheses (uncovered: pattern beta with
+c0 != S.a1; handlers that are released copies of the glued wrapper — a proof needs an induction over nested
+re-openings); (ii) D3: what an actual frozen value does when re-executed, and that only finitely many parametric
+schemes occur per run (=> R''_PUP); (iii) the phase decomposition itself as a theorem about all head runs.
+Items A (definitional reduction), C (completeness halves of C6/C8/path models), E (other orders), F (unbounded
+decoders) were not addressed by this agent.
+Index of theorems: 'THEOREM INDEX' (04:00) and its update (04:25) below; every number above has a dated entry with
+its script.
 
 # INTERIM 04:00 (non-universality agent; written 02:30, last refreshed 2026-10-27 04:25 EDT)
 Bottom line: NOT SOLVED.  No complete proof of non-universality exists; nothing below claims one.

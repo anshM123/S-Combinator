@@ -754,6 +754,31 @@ So a complete disproof = C5′ + configuration-level R″_PUP for every order th
 A universality proof must break one of these: a construction is impossible in (D1), and in (D2)–(D4) it would refute the
 corresponding hypothesis.
 
+## Chain bound in the generic phase model (non-universality agent, final report 2026-10-27; re-verified by the main agent)
+*Setting:* the agent's generic phase model (agent_work/LOG.md, PROOF STATUS item D2): a Church chain is a sequence of
+phases in which each phase hands a transformed datum to the next by a proper transfer. Re-compiled by the main agent:
+all 15 files in agent_work/lean/ compile (Lean 4.35 core, no sorry, standard axioms); copies in lean/Agent*.lean.
+* **Steps (1)–(2) — MACHINE-CHECKED, no extra hypotheses** (lean/AgentINNER.lean): `chain_step_innermost` — every
+  datum after the first transfer is an ordered right comb; `ordered_innermost` — every proper transfer from an ordered
+  datum has an innermost wrapper containing the predecessor ('innermost-dirty').
+* **Step (3), Conjecture R3** ("after an innermost-dirty transfer the next phase cannot transfer") — MACHINE-CHECKED
+  under per-case hypotheses on the transferring phase (lean/AgentPA.lean: `pa_main`, `pb_main`, `pam_main`; with FH,
+  FHL, YD). The hypotheses are COMPUTATIONALLY CERTIFIED for 1,078 of 1,083 right-comb transfers and 2,612 of 2,621
+  transfers from ordered data up to 11 leaves, and for 99.7–99.8% of random larger data. R3 in general is OPEN
+  (uncovered: pattern beta with c0 ≠ S·a1; handlers that are released copies of the glued wrapper).
+* **Chain bound** (a Church chain makes at most 2 proper transfers, at most 1 from an ordered start): follows from
+  (1)–(3), so PROVED for every chain whose transfers fall in the covered cases; COMPUTATIONALLY CERTIFIED with no
+  exceptions: no chain of length >= 3 among all 227,239 data up to 11 leaves nor among 1,413,396 random data up to 22
+  leaves. CONJECTURAL in general (it needs R3).
+* **The replay mechanism — MACHINE-CHECKED** (lean/AgentREPLAY.lean, AgentPA.lean): the next phase re-runs the code that
+  decided the previous transfer, reaching the frozen predecessor where the previous phase reached the live one
+  (`reexec_replays_transfer`); in the Church-chain model extended to re-executions the replayed handler can never
+  restart Church-style iteration (`replayed_handler_trivial`, `trivH_next`). This is evidence for D3 ('re-execution is
+  call-like') inside the model, not a proof of D3.
+* **Reading.** Within the generic phase model, iterating data through Church-style transfers is bounded by two steps,
+  so a universal mechanism would have to re-execute frozen values or iterate data-blind calls. This narrows the
+  candidates; it does not prove R″_PUP, Proposition UB's hypothesis, or non-universality.
+
 ## Construction-agent obstruction theorems (2026-10-26/27; machine-checked parts re-verified by the main agent)
 A background construction agent (started at the user's request) tried to engineer data-dependent control. It found no
 construction. Its obstruction results:
