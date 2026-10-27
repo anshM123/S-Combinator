@@ -11,27 +11,30 @@ the clock; '~' marks times reconstructed from `date` outputs.  From now on every
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## FINAL SUMMARY (refreshed 09:46 EDT by `date`; first written 06:54; earlier refreshes 07:31, 08:53, 09:05, 09:24)
+## FINAL SUMMARY (refreshed 10:12 EDT by `date`; first written 06:54; earlier refreshes 07:31, 08:53, 09:05, 09:24, 09:46)
 **Brief (universality): no universal construction was found; no partial win.**  All results are obstructions or
 structure theory, labelled below.  Nothing was submitted, posted or published.
 **Coordinator task 04:03 (leftmost-path finite half for the joint classes (14,28), (14,26)): NOT fully proved; no
-counterexample.  Since 07:31 the gap has been narrowed by machine-checked theorems: the finite half (for every L36
-flag-0 class) follows from ONE conjecture, EM: every infinite leftmost walk is eventually monotone (only finitely
-many pops, jumps and returns; a return is a computed step whose child is the node's last argument) — Lean:
-EM.finite_half_of_EM.  EM's failure modes are cut down further, also in Lean: a jump-free walk that keeps returning
-to one stack level must return to depth 1, i.e. to nodes q.S (Conjecture F, SA3.fuel_is_S / scenarioA_depth_one).
-What is left for flag-0 terms: (a') jump-free walks returning infinitely often to nodes q.S with infinitely many
-excursions (return steps T1-T4, infinitely many of type T3/T4), (b) depth -> infinity with infinitely many
+counterexample.  Since 07:31 the gap has been narrowed by machine-checked theorems.  (1) The finite half for every
+L36 flag-0 class follows from ONE conjecture, EM: every infinite leftmost walk is eventually monotone (only finitely
+many pops, jumps and returns; a return is a computed step whose child is the node's last argument) —
+EM.finite_half_of_EM.  (2) EM's failure modes are cut down, also in Lean: a jump-free walk that keeps returning to
+one stack level returns to depth 1, i.e. to nodes q.S (Conjecture F: SA3.fuel_is_S, SA3.scenarioA_depth_one), and
+for a flag-0 term it must then make infinitely many return steps of the new types T3/T4 (SA4.return_types_S,
+SA4.caseA_needs_T34).  What is left: (a') that T3/T4 situation, (b) depth -> infinity with infinitely many
 pops/returns, (c) infinitely many jumps.**
 MACHINE-CHECKED (Lean 4 core, no Mathlib, no sorry, axioms among propext / Classical.choice / Quot.sound; compile with
 ~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean <file>):
-* agent_work_U/lean/FiniteHalfGen.lean (5,701 lines, ~1.7 min; = FiniteHalf.lean + namespaces FG, RG, FM, RM, SA, EM,
-  SA2, SA3; contains the main agent's lean/PathModels.lean verbatim as namespace PM; theorem map in the 09:09 entry):
+* agent_work_U/lean/FiniteHalfGen.lean (6,146 lines, ~1.7 min; = lean/FiniteHalf.lean + namespaces FG, RG, FM, RM, SA,
+  EM, SA2, SA3, SA4, RSA; contains the main agent's lean/PathModels.lean verbatim as namespace PM; theorem map in the
+  09:09 entry, later additions in the 09:17-10:10 entries):
   - EM.finite_half_of_EM / FM.finite_half_monotone_all (strongest): an infinite leftmost walk from an L36-flag-0 term
     is never eventually monotone.  EM.finite_half_right_of_EMR / RM.finite_half_right_monotone_all: the rightmost
     analogue for R19 (EM_R: eventually only nodes with >= 3 arguments).
-  - SA3.fuel_is_S, SA3.scenarioA_depth_one (no flag): Conjecture F for jump-free walks; with SA.no_scenarioA,
-    SA3.no_scenarioA_tower, SA2.scenarioA_tower.
+  - SA3.fuel_is_S, SA3.scenarioA_depth_one, SA3.no_scenarioA_tower, SA.no_scenarioA, SA2.scenarioA_tower (no flag):
+    Conjecture F for jump-free walks.  RSA.no_scenarioA_right: the rightmost analogue for non-tower fuels.
+  - SA4.return_types_S (no flag): the return steps over fuel S are T1 (x0 = S S), T2 (H(x0) = S S y), T3
+    (x0 = S(SS)), T4 (H(x0.S) = S (S S) c1); SA4.caseA_needs_T34: for flag 0, infinitely many T3/T4.
   - FM.fib_step (Lemma Fib): over a bottom z that is not a tower S(S(...(SS))), every computed step is a Fibonacci
     step: H(Q) = S (tw K) c0, leftmost child Fw K (Fw 0 = z, Fw 1 = c0.z, Fw (i+2) = Fw i . Fw (i+1)); RM.fib_step2.
   - SA.no_TT_chain: no infinite chain with H(W_j) = S (tw K_j) W_(j+1) (generalises no_R_chain, no_R2_chain).
@@ -40,19 +43,22 @@ MACHINE-CHECKED (Lean 4 core, no Mathlib, no sorry, axioms among propext / Class
   - unchanged from FiniteHalf.lean: FH.flag_step, FH.finite_half_TC, FH.finite_half_Omega, FH.finite_half_families,
     RR.flagR_step, RR.finite_half_right.
 * agent_work_U/lean/FiniteHalf.lean (3,153), Reload.lean (1,587: reload classification), TheoremV.lean (1,416),
-  LargePush.lean (613), Strip.lean (402), StripV.lean (772), and the earlier W1, W1F, W2, W2F, W2R, WR files.
-PROVED (paper): the four return-step types T1-T4 of Scenario A over fuel S (09:23 entry; same method as SA3).
+  LargePush.lean (613), Strip.lean (402), StripV.lean (772), W1, W1F, W2, W2F, W2R, WR — all recompiled at 10:05
+  (final_compile_check.txt: exit 0, 0 errors, no sorry).
 COMPUTATIONALLY CERTIFIED: flag invariance on 16,580 concrete steps; counters N_k / w_k from R- / R2-chains into B / M
 (<= 12 leaves); reload / Omega node classes; censuses of large pushes and jumps.
-EXPERIMENTALLY SUPPORTED: EM — 13,151 further flag-1 walks of 3,000-5,000 nodes (em_hunt*.py): after burn-in, all
-37,657,000 steps are pushes; SF on 2,051 walks / 619,000 steps; Lemma Fib on 12,957 random instances; no
-counterexample to the finite half in about 1.5 million leftmost walks of targeted terms.
+EXPERIMENTALLY SUPPORTED: EM — 13,151 further flag-1 walks of 3,000-5,000 nodes (em_hunt*.py): after burn-in all
+37,657,000 steps are pushes; case (a') — 796 long walks with 780,000 depth-1 returns, all T2 (t34_hunt.py), no
+T3-counter mechanism among 8,224 terms (t3_counter.py); SF on 2,051 walks / 619,000 steps; Lemma Fib on 12,957
+random instances; no counterexample to the finite half in about 1.5 million leftmost walks of targeted terms.
 CONJECTURAL: EM, EM_R; SF / SF_R (stronger); G.
 Strongest concrete result: lean/FiniteHalfGen.lean — FM.finite_half_monotone_all / EM.finite_half_of_EM, end-to-end
 machine-checked: an infinite leftmost walk from a flag-0 term (e.g. any term of (14,28), (14,26)) must pop, jump or
-return infinitely often; SA3.scenarioA_depth_one: if it keeps coming back to one level, that level is depth 1.
-Most promising next step: case (a') — classify infinite chains of the return steps T1-T4 over fuel S in the style of
-lean/Reload.lean (T1/T2-only chains are the reload cycle, flag 1); then (b) and (c).
+return infinitely often; if it does so by returning to one level, that level is depth 1 and it makes infinitely many
+T3/T4 return steps (SA3, SA4).
+Most promising next step: case (a') — classify infinite chains of the return steps T1-T4 in the style of
+lean/Reload.lean (runs of 'unwrapped' steps keep the last argument z of q_r and count Q_r down by R-steps, so their
+type is constant; the work is in the 'wrapped' steps); then (b) and (c).
 
 ## SUMMARY (refreshed 06:53 EDT by `date`; draft of the FINAL summary — supersedes the INTERIM block below)
 **A. Universality (the brief): no universal construction; no partial win.  Machine-checked obstructions only.**
@@ -1094,3 +1100,43 @@ lean/Reload.lean is the natural next step for case (a').
 * em_hunt3_out.txt: 3,000,000 random gadget compositions (<= 8 letters over S, SS, S(SS), B, M, N1, w1, SSS, S(SSS),
   S(S(SS)), SS(SS) and random small terms) -> 11,355 L36-flag-1 terms; every leftmost walk completed 5,000 nodes;
   after a burn-in of 2,000 nodes all 34,065,000 steps are pushes (no pop, no jump, no return).  178 s.
+
+## 10:00 EDT — MACHINE-CHECKED: the four return-step types over fuel S (ns SA4) — the starting point of case (a')
+* lean/FiniteHalfGen.lean (5959 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound) adds SA4.return_types_S (no flag): in a jump-free infinite leftmost walk that returns
+  infinitely often to nodes q.S, every such return step has H(q) = S x0 c0, the next return node is c0.S, and x0 is
+  T1 S S, T2 (H(x0) = S S y), T3 S(SS), or T4 (x0 has >= 2 arguments and H(x0.S) = S (S S) c1).  The 09:23 paper
+  classification is now formal (same proof pattern as SA3 with the fuel S; the fuel copy S above c0.S pops).
+* So case (a') of EM is: an infinite chain q_0, q_1, ... of return multipliers with steps T1-T4 (each q_(r+1) the
+  second component of H(q_r)), infinitely many of type T3/T4 (otherwise the walk is eventually tail calls over S:
+  FH.finite_half_TC).  The reload cycle is the T1/T2-only case.
+
+## 10:03 EDT — MACHINE-CHECKED: rightmost path, no Scenario A over a non-tower fuel (ns RSA)
+* lean/FiniteHalfGen.lean (6069 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound) adds RSA.rstep_keeps (a rightmost step keeps every proper right-spine suffix — no
+  jump-freeness needed, rightmost walks never jump) and RSA.no_scenarioA_right: no infinite rightmost walk keeps a
+  non-tower Z as a proper spine suffix of every node while returning infinitely often to nodes q.Z (no flag).
+  Proof: RM.fib_step2 at the returns; the return multipliers form an infinite tower-headed chain (SA.no_TT_chain).
+* So EM_R (R19's remaining conjecture) can fail only through rightmost walks that return infinitely often to one
+  level over a TOWER fuel, or whose depth tends to infinity with infinitely many 1-/2-argument nodes.
+
+## 10:06 EDT — Final compile check and a targeted case-(a') search
+* MACHINE-CHECKED (recompiled by path just now, final_compile_check.txt): FiniteHalf.lean, Reload.lean, TheoremV.lean,
+  LargePush.lean, Strip.lean, StripV.lean, W1.lean, W1F.lean, W2.lean, W2F.lean, W2R.lean, WR.lean — all exit 0,
+  0 errors, no sorry in the sources; lean/FiniteHalfGen.lean (6,069 lines) recompiled at 10:03 (exit 0, no sorry).
+* EXPERIMENTALLY SUPPORTED (t3_counter.py 9 2000 1000): 'T3-counters' q_k = (SS^k Y0).S(SS) (which count down by T3
+  steps, each followed by a pop) for every base Y0 with <= 9 leaves and k <= 3 (8,224 terms q_k.S): no leftmost walk
+  runs 2,000 nodes.  No reload-type mechanism built on T3 steps in this family.
+
+## 10:06 EDT — EXPERIMENTALLY SUPPORTED: case (a') does not occur in a random pool (t34_hunt.py 5 200000 7 3000 1000)
+* 200,000 random gadget compositions (half of them of the form X.S): 796 leftmost walks completed 3,000 nodes; after a
+  burn-in of 1,000 nodes they made 780,000 returns to depth 1 (nodes q.S), ALL of type T2 (fuel-S tail calls, the
+  reload cycle); no T1, T3, T4 or other return step.  1,170 s.
+
+## 10:10 EDT — MACHINE-CHECKED: case (a') needs infinitely many T3/T4 steps (SA4.caseA_needs_T34)
+* lean/FiniteHalfGen.lean (6146 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound).  SA4.return_types_S now also records that T1/T2 return steps are tail calls (the
+  child is the next return node c0.S).  SA4.caseA_needs_T34: a jump-free infinite leftmost walk from an L36-flag-0
+  term that returns infinitely often to nodes q.S cannot have, from some time on, only return steps of types T1/T2
+  (FH.finite_half_TC).  So case (a') is exactly: infinitely many T3 (x0 = S(SS), an Omega step followed by a pop)
+  or T4 (x0 with >= 2 arguments, H(x0.S) = S (S S) c1, an excursion) return steps.

@@ -157,8 +157,19 @@ ends in tail calls over a fixed bottom (every reload node N_i N_m S has flag 1, 
 classification in agent_work_U/lean/Reload.lean); `FH.finite_half_Omega` — nor in canonical Omega steps
 (t' = s, s' = S(SS)·s); `FH.finite_half_families` — nor in any mixture. So both mechanisms by which leftmost paths are
 known to be infinite are confined to flag-1 classes, including for the resisting classes (14,28), (14,26).
-OPEN: Conjecture SF (every infinite leftmost walk eventually uses only tail calls and canonical Omega steps) and Omega
-steps with a second component other than S(SS) (none among 954 Omega steps in known infinite walks). EXPERIMENTALLY
+Final (universality agent, 10:12; lean/AgentFiniteHalfGen.lean, 6,146 lines, 31 theorems, re-compiled by the main agent):
+`FG.finite_half_Omega_general`, `FG.finite_half_general_families` exclude Omega and reload families with ANY second
+component from flag-0 classes (`RG.finite_half_right_general` for R19); `FM.fib_step` (Lemma Fib: over a non-tower
+bottom every computed step has H(Q) = S (tw K) c0 and its leftmost child is a Fibonacci word); `SA.no_TT_chain` (no
+infinite tower-headed chain); `SA3.fuel_is_S`, `SA3.scenarioA_depth_one`, `SA4.return_types_S`, `SA4.caseA_needs_T34`;
+and the REDUCTION `EM.finite_half_of_EM` / `FM.finite_half_monotone_all`: no infinite leftmost walk from an
+L36-flag-0 term is eventually monotone (from some node on, every node has >= 3 arguments and no child equals the
+node's last argument). So Conjecture EM (every infinite leftmost walk is eventually monotone) implies the
+leftmost-path finite half for every flag-0 class; `EM.finite_half_right_of_EMR` / `RM.finite_half_right_monotone_all`
+do the same for R19 under Conjecture EM_R. OPEN: EM itself; it can fail only through (a') a jump-free walk returning
+infinitely often to nodes q·S with infinitely many T3/T4 steps, (b) unbounded depth with infinitely many pops or
+returns, or (c) infinitely many jumps. EXPERIMENTALLY SUPPORTED: after burn-in all 37,657,000 steps of 13,151 long
+flag-1 walks are pushes; no case (a') among 780,000 depth-1 returns. EXPERIMENTALLY
 SUPPORTED: no flag-0 walk runs 400 nodes among 656,250 6-letter trees over {S, SS, S(SS), B, M} (up to 42 leaves).
 
 ## Proposition Q″ (the "infinite" verdicts of the leftmost- and rightmost-path models are correct) — PROVED (uses Theorem Q10) and MACHINE-CHECKED in Lean 4 (lean/PathModels.lean, 2026-10-27)
@@ -793,9 +804,22 @@ all 15 files in agent_work/lean/ compile (Lean 4.35 core, no sorry, standard axi
   open single-wrapper situation is a glue front that contains p and differs from c0, reduced to the structural claim
   (S1) "c0 ran on (w, y) before the glue" (certified in every case found); multi-wrapper handlers rest on the
   handler-only theorems. (Every "no violation" means no proper transfer within a 2,000-step budget per phase.)
+* **R3 for single-wrapper handlers — MACHINE-CHECKED without conditions** (S1 agent, 2026-10-27; lean/AgentR3G.lean):
+  `r3_single_unc` / `r3_single_all_unc` — for an ordered S-headed datum D free of x, y, r with at most one occurrence of
+  p, if the run of [D, x, y, r] reaches a p-headed front with a single-wrapper handler (b0·c0)·y at position 3 (b0·c0
+  free of x, y, r), the next phase of (b0·c0)·y is safe: every p-headed front has a y-free element or the bare y at
+  position 3. `r3_rc_unc` — the same for every right comb over p with closed wrappers. Route: Theorem S1 (`s1_core`:
+  in pattern beta c0 ran on (w, y) before the glue), Lemma YT, Lemma AB, the barrier order (`beta_class`,
+  `beta_front`) and BF-NK1 (`bform_nk1g`, `paxb_main`); non-vacuity examples `r3_single_unc_example`,
+  `r3_single_example`. Multi-wrapper handlers: machine-checked in classes (FH, MWA2, IL-ATOM/IL-NH/IL-GEN, IGEN,
+  NHALL, and the replay criteria `replay_pf`, `replay_pf2` that ignore the outer wrappers); OPEN in general.
+  COMPUTATIONALLY CERTIFIED: every proper transfer of S-headed ordered one-occurrence data up to 13 leaves (28,316) and
+  of right combs up to 13 leaves (10,161) lies in a machine-checked class; of 53,459 random transfers (4-22 leaves) one
+  is uncovered (three wrappers, bare-S middle wrapper).
 * **Chain bound** (a Church chain makes at most 2 proper transfers): not refuted — after the first transfer every datum
-  is a right comb over p with one occurrence of p (step (1)), so it needs only R3-RC. MACHINE-CHECKED for every chain
-  whose second transfer falls in one of the classes above; COMPUTATIONALLY CERTIFIED: no chain of length >= 3 among all
+  is a right comb over p with one occurrence of p (step (1)), so it needs only R3-RC. MACHINE-CHECKED (each step; the
+  assembly is by hand) for every chain whose second transfer has a single-wrapper handler (unconditionally, by
+  `r3_rc_unc`) or an FH handler, and for every chain whose second transfer falls in one of the classes above; COMPUTATIONALLY CERTIFIED: no chain of length >= 3 among all
   data up to 11 leaves with one or two occurrences of p, nor among 4.5 million random data up to 22 leaves, and every
   observed second transfer is of class FH or ALPHA. CONJECTURAL in general.
 * **The replay mechanism — MACHINE-CHECKED** (lean/AgentREPLAY.lean, AgentPA.lean): the next phase re-runs the code that

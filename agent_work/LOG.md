@@ -4,6 +4,12 @@
 !! of p, D = S(Sp)(S(S(S(SS)(SS)p))) (agent_work/lean/R3F.lean, r3_cx_*).  Hence 'at most 1 proper transfer from an
 !! ordered start' is FALSE for multi-occurrence data.  The bound '<= 2' needs R3 only for right combs over p (one
 !! occurrence) and is not refuted; R3 for single-occurrence ordered data stays OPEN (certified <= 13 leaves).
+!! S1 AGENT UPDATE (2026-10-27 10:00 EDT; details: 'FINAL (S1 agent)' at the end of this log): R3 for every
+!! SINGLE-WRAPPER handler of ordered data with one p (all right combs over p included) is MACHINE-CHECKED with no
+!! handler condition [agent_work/lean/R3G.lean: r3_single_unc, r3_single_all_unc, r3_rc_unc].  So the chain bound
+!! '<= 2' holds for every chain whose second transfer is single-wrapper or FH (machine-checked pieces: INNER.lean
+!! steps 1-2, R3G.lean / OTD FH; assembled by hand); R3 for MULTI-wrapper handlers stays OPEN (classes machine-
+!! checked; handler-only criterion replay_pf2).
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -1726,3 +1732,88 @@ non-universality or R''_PUP.
   random 4-22 leaves (rand 181 22 1500000 tail2): p-front 271 of 330 (all IL-ATOM 12, all IL-NH 10, NHALL 13/15,
   MWA2 232/288, IGEN 4/5), k2-front with a tail atom at position 3: 50 (48 MWA2, 2 NHALL), k2-front with a replay
   element (y-free) at position 3: 8 (MWA2, harmless), a tail atom at the front: 1 (IGEN).
+* 10:11 COMPUTATIONALLY CERTIFIED (s1/pfcheck.py rc 13 tail2, all S-headed right combs over p <= 13 leaves): of the 360
+  non-FH multi-wrapper transfers the innermost replay with two tail atoms reaches p in 301 (MWA2 208, IL-ATOM 37,
+  IGEN 26, IL-NH 18, NHALL 12 - i.e. every IL-ATOM, IL-NH and NHALL case is covered by replay_pf2), calls p' with a
+  tail element at position 3 in 56 (MWA2), with a replay element there in 2 (MWA2), and calls a tail element in 1
+  (IGEN).  R3G.lean header comment updated (parts 17-19); 'LEAN OK: no errors, no sorry' (8,375 lines).  A short
+  pointer note was inserted below the R3 agent's correction at the top of this log.
+
+## FINAL (S1 agent; 2026-10-27, written 10:11 EDT)
+BOTTOM LINE.  Conjecture R3 is now MACHINE-CHECKED, with NO condition on the handler, for every SINGLE-WRAPPER
+handler (b0.c0).y of an ordered datum with at most one occurrence of p - in particular for every right comb over p
+with closed wrappers (R3-RC, single-wrapper), i.e. for every single-wrapper transfer of every datum of a Church chain
+after the first.  Route: (S1), Lemma YT, Lemma AB, BETA0 (all machine-checked), plus two new machine-checked steps
+that close the residual case: the BARRIER ORDER (in pattern beta, c0's hole front is of H1ok form or a B-form front
+h1.(X.h1) followed by h2) and BF-NK1 (a B-form front forces b0 never to call its first hole, so PAXB applies).
+For MULTI-wrapper handlers R3 stays OPEN in general: it is machine-checked in classes, and the new REPLAY theorems
+give a handler-only sufficient condition that ignores the outer wrappers.  Consequently the CHAIN BOUND (<= 2 proper
+transfers) holds for every Church chain whose second transfer has a single-wrapper handler (new, unconditional) or
+an FH handler (earlier agents) - every step machine-checked (INNER.lean steps (1)-(2): the second datum is an
+ordered right comb; R3G.lean `r3_rc_unc`; the FH theorems of OTD/CANON), the assembly of the pieces by hand.  Every
+second transfer ever observed is of one of these two kinds, but the bound is NOT proved unconditionally: a
+multi-wrapper non-FH second transfer is not excluded by a proof.  Nothing here proves
+non-universality, R''_PUP or D3; the challenge is not solved.
+
+1. MACHINE-CHECKED - agent_work/lean/R3G.lean (8,375 lines = new header + R3F.lean verbatim (modulo line endings) +
+   S1 parts 1-19; Lean 4.35 core, no Mathlib; `cd code && python lean_check.py ../agent_work/lean/R3G.lean`:
+   'LEAN OK: no errors, no sorry'; axioms propext, Classical.choice, Quot.sound only).  Notation: rk = class rank
+   (0: free of p, x, y, r - frozen atoms allowed; 1: contains p, no x, y, r; 2: contains x, y or r); ordT = sorted
+   (= INNER's `ordered` for x,y,r-free terms); the next phase of a handler V is the run of [V[y:=p, p:=c], x, y, r]
+   (c the frozen name of the old p); 'safe' = every list f' :: b' :: d' :: R' of that run with head f' = p has
+   occ2 d' = 0 or d' = y (in particular no proper transfer).
+   (a) `r3_single_unc` - R3 FOR SINGLE-WRAPPER HANDLERS.  Hypotheses: D S-headed, ordT D, occN 1/2/3 D = 0,
+       occN 0 D <= 1; the run of [D, x, y, r] reaches at T' a list f :: b :: (b0.c0).y :: R with head f = p; b0, c0
+       S-headed; b0.c0 free of x, y, r; bookkeeping only: c != 0, 2; hole atoms h1 != h2 >= 4 absent from D;
+       fresh3 H (w.y), H >= 4.  Conclusion: the next phase of (b0.c0).y is safe.  No further condition on b0, c0.
+       `r3_single_all_unc`: the same without S-headedness (ANY single wrapper b0.c0, atom-headed parts included).
+       `r3_rc_unc`: the same for every S-headed right comb rcombT ds p with closed wrappers ds.
+       Non-vacuity: `r3_single_unc_example` (S(S(SS))(SS)(S(S(SS))(S(Sp))), 13 leaves, transfer at step 12; its
+       c0 violates H1ok: `exBc0_BF`), `r3_single_example` (S(S(SS))S(S(Sp))).
+       Proof: the node w.y is created by a glue [a1, w, y] (`creation`); a1 = c0: alpha_main; a1 closed:
+       closedglue_main; a1 a P-term != c0: s1_core, s1_inX (c0 contains p), beta_front; H1ok-form front: beta_main;
+       B-form front: bf_step, bform_nk1g, paxb_main.
+   (b) THEOREM S1 `s1_core`: from a Seg start list with at most one p, if the run reaches a rank-2 third element at
+       T' and passes at tg <= T' a glue list a1 :: w :: y :: R0 (w = b0.c0 and a1 of rank 1, a1 != c0), then at some
+       s <= tg it passes args(c0) ++ w :: y :: B.  `s1_coreL` (y replaced by any fixed rank-2 term), `s1_inX` (the
+       glue front lies in c0's X-sequence).  Supporting: `seg_run`, `ab3_bound` (Lemma AB), `ic_step` (Claim C),
+       `iw_step` (FI-W), `ia_step`, `ib_step` (FI-A, FI-B), `s1_inv`.
+   (c) BARRIER ORDER `beta_class` / `beta_front`; BF-NK1 `bform_nk1`, `bform_nk1g`; LEMMA YT `yt_chain`, `yt_main`
+       and its abstract side `yt_abs` (all generic: any run from a Seg list with |P| <= 2 up to a p-front).
+   (d) Multi-wrapper: `replay_pf`, `replay_pf2` - for handlers with ANY number of wrappers, if the innermost replay
+       args(bn) ++ [cn, k2] (resp. args(bn) ++ [cn, k2, t1, t2], fresh atoms standing for p' and the two elements
+       below the opened innermost level) reaches a p-headed front, the next phase has NO p'-front at all (no
+       hypothesis on the earlier phase or on the outer wrappers).  `mw_alpha2` (two wrappers in nested pattern
+       alpha, no v2.y-prefixed front after the inner glue), `il_atom` / `il_nh` / `il_gen` (phase 2 re-opens the
+       innermost level args(bn) ++ [cn, y | B]; cn atom-headed, or cn never calls its holes, or bn never calls its
+       first hole: no p'-front at all), with `il_atom_example`, `mw_alpha2_example`.
+   (e) Superseded conditional forms kept: `r3_single` (H1ok), `r3_single2` (H1ok or NK1), `r3_single3` (+ B-form),
+       `r3_single_all`, `r3_rc_single`; `paxb_main` (NK1(b0) alone suffices).
+2. COMPUTATIONALLY CERTIFIED (scripts in agent_work/s1/, outputs *.txt beside them):
+   - coverage (cover6.py 12 / 13 13 / rc 13 / rand 121 22 3000000): every proper transfer of S-headed ordered
+     single-occurrence data <= 13 leaves (28,316) and of right combs <= 13 leaves (10,161) lies in a machine-checked
+     class; single-wrapper classes need no condition; multi-wrapper classes: FH, MWA2 / IL-ATOM / IGEN (run
+     hypotheses checked per case), IL-NH, NHALL (handler conditions, all DECIDED - condcheck.py, 50,000-step budget -
+     and true; at 13 leaves every IL-NH and NHALL case also satisfies REPLAY-PF2).  Random 4-22 leaves: 53,459
+     transfers, 1 uncovered (three wrappers, bare-S middle wrapper: SS(S(SS))(S(S(S(SS)S)(SS(SSS)(Sp))))).
+   - barrier order (bfcheck.py 12 / 13 13 / rand 151 22 1500000): c0's first hole forms in pattern beta: 'no hole
+     front' 970, B-form 2, nothing else.
+   - multi-wrapper anatomy (mwcheck.py 12 / 13 13 / rand 171 22 1500000; 794 non-FH non-IGEN transfers): the
+     innermost code never calls its holes or is atom-headed; inner alpha glue never followed by a re-opening; inner
+     closed glue always followed by one.
+   - REPLAY (pfcheck.py 12 / 13 13 / rand 181 22 1500000 / rc 13, with 'tail2'): the replay with two tail atoms
+     reaches p in 99/117 (<= 12), 329/392 (13 leaves), 271/330 (random), 301/360 (right combs <= 13) non-FH multi-wrapper transfers - every
+     IL-ATOM and IL-NH case, all NHALL cases but 2 random ones; the others (mostly MWA2) call p' with a tail
+     element at position 3 (the outer level decides) or call a tail element.
+   - chain second transfers (d2single.py / d2multi.py): FH or single-wrapper ALPHA only.
+3. OPEN (precisely): (a) multi-wrapper R3 in general.  By REPLAY-PF2 it remains only for handlers whose innermost
+   replay does not reach its own p first - it calls p' (with a replay element at position 3: y-free, harmless, not
+   formalized; or with a tail element there: data MWA2 and 2 random NHALL, where the outer level decides), calls a
+   tail element (2 IGEN cases, the bare-S family) or runs out; plus proofs of the observed anatomy (no
+   re-opening after an inner alpha glue; the innermost code never calls its holes).  (b) Hence the chain bound for
+   chains whose second transfer is multi-wrapper and not FH (never observed).  (c) (Z)/WY/WP/WG as invariants
+   (certified, unused).  (d) D3 and PROOF STATUS items A/C/E/F: untouched.
+4. Scripts: the dated entries of section '2026-10-27 S1 agent' name the script and arguments behind every number
+   (06:42 - 10:11); Lean drafts in agent_work/wip/ (part_*.lean.txt, R3G_*.lean checkpoints, *.bak backups).
+   Process notes: only my own processes were killed, by PID (09:43 entry); one read-only `git show` of LOG.md at
+   10:12 to inspect line endings (no commit, no push); no network; every search <= 30 minutes, exhaustive <= 13.

@@ -5699,3 +5699,448 @@ end SA3
 #print axioms SA3.no_scenarioA_tower
 #print axioms SA3.fuel_is_S
 #print axioms SA3.scenarioA_depth_one
+
+/-! ## The four return-step types of Scenario A over fuel S (case a') — SA4 -/
+
+namespace SA4
+
+open C
+open C.T
+open FM
+open SA3
+
+/-- **Return-step types over fuel S (MACHINE-CHECKED version of the 09:23 entry).**  In a jump-free infinite
+    leftmost walk that returns infinitely often to nodes q.S, every such return step has H(q) = S x0 c0, the next
+    return node is c0.S, and x0 is one of: T1 x0 = S S; T2 H(x0) = S S y; T3 x0 = S (S S); T4 x0 has >= 2 arguments
+    and H(x0.S) = S (S S) c1.  No flag hypothesis. -/
+theorem return_types_S (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ)
+    (hret : ∀ N, ∃ j, N ≤ j ∧ ∃ q, u j = app q S)
+    (r : Nat) (q : T) (hr : u r = app q S) :
+    ∃ x0 c0 r', Reach (args q) [x0, c0] ∧ r < r' ∧ u r' = app c0 S ∧
+      ((x0 = app S S ∧ u (r + 1) = app c0 S) ∨ ((∃ y, R x0 y) ∧ u (r + 1) = app c0 S) ∨ x0 = app S (app S S) ∨
+       (2 ≤ (args x0).length ∧ ∃ c1, Reach (args (app x0 S)) [app S S, c1])) := by
+  have hns : ∀ j, u j ≠ S := by
+    intro j h
+    have hc := hchild j
+    rw [h] at hc
+    rcases hc with ⟨_, rest, hr'⟩ | ⟨hlen, _, _⟩
+    · simp [args] at hr'
+    · simp [args] at hlen
+  have hreach3 : ∀ t, 3 ≤ (args (u t)).length → ∃ dd, Reach (args (u t)) [u (t + 1), dd] := by
+    intro t h3
+    rcases hchild t with ⟨hlen, _, _⟩ | ⟨_, dd, hr⟩
+    · omega
+    · exact ⟨dd, hr⟩
+  -- (alpha) a spine-wrap c.W of the next return node W is passed exactly
+  have halpha : ∀ t0 r' c W, Suf (app c W) (u t0) → t0 ≤ r' → u r' = W → ∃ t, t0 ≤ t ∧ u t = app c W := by
+    intro t0 r' c W hs ht hW
+    refine Classical.byContradiction (fun hno => ?_)
+    have hall : ∀ n, t0 + n ≤ r' → Suf (app c W) (u (t0 + n)) := by
+      intro n
+      induction n with
+      | zero => intro _; simpa using hs
+      | succ n ih =>
+        intro hn
+        have h1 := ih (by omega)
+        have hne : u (t0 + n) ≠ app c W := fun h => hno ⟨t0 + n, by omega, h⟩
+        rw [show t0 + (n + 1) = t0 + n + 1 by omega]
+        exact SA.step_keeps _ _ _ (hchild (t0 + n)) h1 hne (hnj (t0 + n))
+    have h2 := hall (r' - t0) (by omega)
+    rw [show t0 + (r' - t0) = r' by omega, hW] at h2
+    have h3 := suf_size _ _ h2
+    simp only [size] at h3
+    have := size_pos c
+    omega
+  -- (gamma) a top A.B over a non-tower bottom, B a non-tower, forces A to be a tower
+  have hgamma : ∀ t A B σ, u t = app (app A B) σ → ¬ Tower σ → ¬ Tower B → ∃ K, A = tw (K + 1) := by
+    intro t A B σ hu hσ hB
+    have hA : A ≠ S := by intro h; rw [h] at hu; exact hnj t B σ hu
+    have hA1 := TC.args_ne_nil A hA
+    obtain ⟨dd, hr⟩ := hreach3 t (by rw [hu, args_app, args_app]; simp; omega)
+    rw [hu] at hr
+    obtain ⟨K, c, hK, _⟩ := fib_step (app A B) σ _ dd (by rw [args_app]; simp; omega) hσ hr
+    rw [args_app] at hK
+    by_cases h2 : 2 ≤ (args A).length
+    · exfalso
+      have hs := first_suf B (args A ++ [B]) _ ⟨args A, B, rfl, Suf.refl⟩ (by simp; omega) hK _ _ rfl
+      exact suf_nontower B _ hs hB ⟨K, rfl⟩
+    · have hl : (args A ++ [B]).length ≤ 2 := by simp; omega
+      have e := reach_stuck _ _ hl hK
+      match hax : args A, e with
+      | [y], e =>
+        simp only [List.cons_append, List.nil_append, List.cons.injEq] at e
+        exact ⟨K, by rw [TC.args_one' A y hax, ← e.1]; rfl⟩
+      | [], e => simp at e
+      | _ :: _ :: _, _ => rw [hax] at h2; simp at h2
+  -- (beta) a node W.(X.W) before a return to W is impossible
+  have hbeta : ∀ t r' W X, u t = app W (app X W) → u r' = W → 3 ≤ (args W).length → ¬ Tower (app X W) →
+      False := by
+    intro t r' W X hu hr' hW3 hXW
+    obtain ⟨dd, hr⟩ := hreach3 t (by rw [hu, args_app]; simp; omega)
+    rw [hu] at hr
+    obtain ⟨K, c, hK, _⟩ := fib_step W (app X W) _ dd (by omega) hXW hr
+    obtain ⟨dd', hr2⟩ := hreach3 r' (by rw [hr']; exact hW3)
+    rw [hr'] at hr2
+    have e := RC.reach_det _ _ _ hr2 hK (by simp) (by simp)
+    simp only [List.cons.injEq] at e
+    have hpop : ∀ i, i ≤ K → u (r' + 1 + i) = tw (K - i) := by
+      intro i
+      induction i with
+      | zero => intro _; simpa using e.1
+      | succ i ih =>
+        intro hi
+        have h1 := ih (by omega)
+        have hc := hchild (r' + 1 + i)
+        rw [h1, show K - i = (K - (i + 1)) + 1 by omega] at hc
+        rw [show r' + 1 + (i + 1) = r' + 1 + i + 1 by omega]
+        exact tw_child _ _ hc
+    have h4 := hpop K (Nat.le_refl K)
+    rw [Nat.sub_self] at h4
+    exact hns _ h4
+  -- the return structure: H(q) = S x0 c0 with x0 /= S, and the child is a spine-wrap of c0.Z
+  have hR : ∀ r q, u r = app q (S) → ∃ x0 c0, Reach (args q) [x0, c0] ∧ x0 ≠ S ∧
+      Suf (app c0 (S)) (u (r + 1)) ∧ ∃ dd, Reach (args q ++ [S]) [u (r + 1), dd] := by
+    intro r q hr
+    have hc := hchild r
+    rw [hr] at hc
+    rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, dd, hrr⟩
+    · exfalso
+      rw [args_app] at hlen hrr
+      match hA : args q, hlen, hrr with
+      | [], _, hrr =>
+        simp only [List.nil_append, List.cons.injEq] at hrr
+        exact (hns (r + 1)) hrr.1.symm
+      | [p], _, _ =>
+        exact hnj r p _ (by rw [hr, TC.args_one' q p hA])
+      | _ :: _ :: _, hlen, _ => simp at hlen
+    · rw [args_app] at hrr hlen
+      have hq : 2 ≤ (args q).length := by simp at hlen; omega
+      rcases OM.cinv2_reach q _ hq _ hrr with ⟨L1, _, hlen1, hEq⟩ | ⟨x, c1, w', P, _, _, _, hlen1, hEq⟩ |
+          ⟨x, c, w, b, hx, hH, hP, hEq⟩ | ⟨y, hy, hEq⟩
+      · exfalso; have := congrArg List.length hEq; simp at this <;> omega
+      · exfalso; have := congrArg List.length hEq; simp at this <;> omega
+      · simp only [List.cons.injEq] at hEq
+        obtain ⟨hch, _, _⟩ := hEq
+        obtain ⟨x0, c0, hq0, hcw⟩ := wh_c0 _ _ _ _ _ hH
+        have hx0 : x0 ≠ S := by
+          intro h0
+          rw [h0] at hq0
+          exact (hns (r + 1)) (child_S q _ _ dd c0 hrr hq0)
+        refine ⟨x0, c0, hq0, hx0, ?_, dd, hrr⟩
+        rw [hch]
+        rcases hcw with ⟨hw, hcc⟩ | hs
+        · rw [hw, hcc]; exact Suf.refl
+        · exact Suf.wrap _ _ hs
+      · exfalso
+        simp only [List.cons.injEq] at hEq
+        exact (hns (r + 1)) hEq.1
+  -- the next return node is c0.Z
+  have hnextret : ∀ r c0, Suf (app c0 (S)) (u (r + 1)) →
+      ∃ r', r < r' ∧ u r' = app c0 (S) := by
+    intro r c0 hsuf
+    obtain ⟨j, hj, q', hq'⟩ := hret (r + 1)
+    have hmin : ∀ j, r + 1 ≤ j → (∃ q', u j = app q' (S)) → ∃ j1, r + 1 ≤ j1 ∧
+        (∃ q', u j1 = app q' (S)) ∧ ∀ i, r + 1 ≤ i → i < j1 → ¬ ∃ q', u i = app q' (S) := by
+      intro j
+      induction j using Nat.strongRecOn with
+      | _ j ih =>
+        intro hj hq
+        by_cases hm : ∃ i, r + 1 ≤ i ∧ i < j ∧ ∃ q', u i = app q' (S)
+        · obtain ⟨i, hi1, hi2, hi3⟩ := hm
+          exact ih i hi2 hi1 hi3
+        · exact ⟨j, hj, hq, fun i hi1 hi2 hq' => hm ⟨i, hi1, hi2, hq'⟩⟩
+    obtain ⟨j1, hj1, ⟨q1, hq1⟩, hfirst⟩ := hmin j hj ⟨q', hq'⟩
+    have hkeep : ∀ n, r + 1 + n ≤ j1 → Suf (app c0 (S)) (u (r + 1 + n)) := by
+      intro n
+      induction n with
+      | zero => intro _; simpa using hsuf
+      | succ n ih =>
+        intro hn
+        have h1 := ih (by omega)
+        have hne : u (r + 1 + n) ≠ app c0 (S) :=
+          fun h => hfirst (r + 1 + n) (by omega) (by omega) ⟨c0, h⟩
+        rw [show r + 1 + (n + 1) = r + 1 + n + 1 by omega]
+        exact SA.step_keeps _ _ _ (hchild (r + 1 + n)) h1 hne (hnj (r + 1 + n))
+    have hk := hkeep (j1 - (r + 1)) (by omega)
+    rw [show r + 1 + (j1 - (r + 1)) = j1 by omega, hq1] at hk
+    rcases suf_app_inv _ _ _ hk with h | h
+    · exact ⟨j1, by omega, by rw [hq1, (C.T.app.inj h).1]⟩
+    · exfalso
+      have h2 := suf_size _ _ h
+      simp only [size] at h2
+      have := size_pos c0
+      omega
+  -- a return multiplier has >= 2 arguments
+  have hc0args : ∀ r' c0, u r' = app c0 (S) → 2 ≤ (args c0).length := by
+    intro r' c0 hr'
+    have hc := hchild r'
+    rw [hr'] at hc
+    by_cases h2 : 2 ≤ (args c0).length
+    · exact h2
+    · exfalso
+      rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, _, _⟩
+      · rw [args_app] at hrr
+        match hA : args c0, hrr with
+        | [], hrr =>
+          simp only [List.nil_append, List.cons.injEq] at hrr
+          exact (hns (r' + 1)) hrr.1.symm
+        | [p], _ => exact hnj r' p _ (by rw [hr', TC.args_one' c0 p hA])
+        | _ :: _ :: _, _ => rw [hA] at h2; simp at h2
+      · rw [args_app] at hlen; simp at hlen; omega
+  obtain ⟨x0, c0, hq0, hx0, hsuf, dd, hrr⟩ := hR r q hr
+  obtain ⟨r', hrr', hu'⟩ := hnextret r c0 hsuf
+  have hc0 := hc0args r' c0 hu'
+  refine ⟨x0, c0, r', hq0, hrr', hu', ?_⟩
+  have hWnt : ¬ Tower (app c0 S) := by
+    intro ⟨k, hk⟩
+    cases k with
+    | zero => simp [tw] at hk
+    | succ k =>
+      simp only [tw, app.injEq] at hk
+      rw [hk.1] at hc0
+      simp [args] at hc0
+  have hW3 : 3 ≤ (args (app c0 S)).length := by rw [args_app]; simp; omega
+  have hwrap := after_wrap q _ _ dd x0 c0 hrr hq0 hx0
+  have hrw : Reach (args (app (app x0 S) (app c0 S))) [u (r + 1), dd] := by
+    rw [args_app, args_app]; simpa using hwrap
+  have hx0a := TC.args_ne_nil x0 hx0
+  obtain ⟨m, c1, hm, hch⟩ := fib_step (app x0 S) (app c0 S) _ dd (by rw [args_app]; simp; omega) hWnt hrw
+  have hc1W : ¬ Tower (app c1 (app c0 S)) := suf_nontower _ _ (Suf.wrap c1 _ Suf.refl) hWnt
+  by_cases h2 : 2 ≤ (args x0).length
+  · rcases (show m = 0 ∨ m = 1 ∨ 2 ≤ m by omega) with h1 | h1 | h1
+    · obtain ⟨_, y, hy, _⟩ := R_strip x0 S c1 h2 (by rw [h1] at hm; exact hm)
+      exact Or.inr (Or.inl ⟨⟨y, hy⟩, by rw [hch, h1]; rfl⟩)
+    · exact Or.inr (Or.inr (Or.inr ⟨h2, c1, by rw [h1] at hm; exact hm⟩))
+    · exfalso
+      rcases TT_strip2 x0 S c1 m h2 hm with ⟨hzm, _⟩ | ⟨_, hm1⟩ | ⟨K', hK', hc1, _⟩
+      · have := tw_inj 0 m hzm; omega
+      · omega
+      · rcases (show m = 2 ∨ m = 3 ∨ 4 ≤ m by omega) with h3 | h3 | h3
+        · exact hbeta (r + 1) r' _ c1 (by rw [hch, h3]; rfl) hu' hW3 hc1W
+        · have hu1 : u (r + 1) = app (app c1 (app c0 S)) (Fw (app c0 S) c1 2) := by rw [hch, h3]; rfl
+          obtain ⟨K, hK⟩ := hgamma (r + 1) _ _ _ hu1 (fw_nontower _ _ hWnt 2) hWnt
+          rw [hc1] at hK
+          have h0 : tw K' = S := congrArg C.lchild hK
+          have := tw_inj K' 0 h0
+          omega
+        · obtain ⟨i, hi⟩ : ∃ i, m = i + 2 + 2 := ⟨m - 4, by omega⟩
+          rw [hi, Fw_add2, Fw_add2] at hch
+          obtain ⟨K, hK⟩ := hgamma (r + 1) _ _ _ hch (fw_nontower _ _ hWnt _) (fw_nontower _ _ hWnt _)
+          exact fw_nontower _ _ hWnt i ⟨K + 1, hK⟩
+  · have h1 : (args x0).length = 1 := by omega
+    match hax : args x0, h1 with
+    | [y], _ =>
+      have hx0e : x0 = app S y := TC.args_one' x0 y hax
+      have ha : args (app (app S y) S) = [y, S] := rfl
+      rw [hx0e, ha] at hm
+      have e := reach_stuck _ _ (by simp) hm
+      simp only [List.cons.injEq] at e
+      rcases (show m = 0 ∨ m = 1 ∨ m = 2 ∨ m = 3 ∨ 4 ≤ m by omega) with h3 | h3 | h3 | h3 | h3
+      · left; exact ⟨by rw [hx0e, ← e.1, h3]; rfl, by rw [hch, h3]; rfl⟩
+      · right; right; left; rw [hx0e, ← e.1, h3]; rfl
+      · exfalso
+        rw [e.2.1] at hch
+        exact hbeta (r + 1) r' _ S (by rw [hch, h3]; rfl) hu' hW3
+          (suf_nontower _ _ (Suf.wrap S _ Suf.refl) hWnt)
+      · exfalso
+        rw [e.2.1] at hch
+        exact hnj (r + 1) (app c0 S) _ (by rw [hch, h3]; rfl)
+      · exfalso
+        obtain ⟨i, hi⟩ : ∃ i, m = i + 2 + 2 := ⟨m - 4, by omega⟩
+        rw [hi, Fw_add2, Fw_add2] at hch
+        obtain ⟨K, hK⟩ := hgamma (r + 1) _ _ _ hch (fw_nontower _ _ hWnt _) (fw_nontower _ _ hWnt _)
+        exact fw_nontower _ _ hWnt i ⟨K + 1, hK⟩
+    | [], h1 => simp at h1
+    | _ :: _ :: _, h1 => simp at h1
+
+end SA4
+
+#print axioms SA4.return_types_S
+
+/-! ## Rightmost path: no Scenario A over a non-tower fuel — RSA -/
+
+namespace RSA
+
+open C
+open C.T
+open FM
+
+/-- a rightmost step keeps every proper right-spine suffix of the node -/
+theorem rstep_keeps (u u' σ : T) (hc : RR.RChildC u u') (hs : Suf σ u) (hne : u ≠ σ) : Suf σ u' := by
+  cases u with
+  | S => exact absurd (suf_S σ hs).symm hne
+  | app A B =>
+    have hsB : Suf σ B := by
+      rcases suf_app_inv σ A B hs with h | h
+      · exact absurd h hne
+      · exact h
+    rcases hc with ⟨_, front, hr⟩ | ⟨hlen, c, hr⟩
+    · rw [args_app] at hr
+      have h' := congrArg List.getLast? hr
+      simp at h'
+      have hBu : B = u' := by first | exact h' | exact h'.symm
+      rw [← hBu]; exact hsB
+    · rw [args_app] at hr hlen
+      obtain ⟨b, hb⟩ := final_app _ _ _ hlen hr
+      have hs' := first_suf B (args A ++ [B]) _ ⟨args A, B, rfl, Suf.refl⟩ hlen hr _ _ rfl
+      rw [hb]
+      exact Suf.wrap b c (suf_trans _ _ _ hsB hs')
+
+/-- **Theorem (rightmost path: no Scenario A over a non-tower fuel).**  No infinite rightmost walk keeps a non-tower Z
+    as a proper right-spine suffix of every node while returning infinitely often to nodes q.Z.  (Rightmost walks have
+    no jumps.)  No flag hypothesis.  Proof: at a return q.Z, q has >= 2 arguments (else the child is Z), the step is
+    a Fibonacci step whose rightmost child Fw (K+1) contains c0.Z with H(q) = S (tw K) c0; the walk stays above c0.Z
+    until it is there, so the return multipliers form an infinite tower-headed chain (SA.no_TT_chain). -/
+theorem no_scenarioA_right (u : Nat → C.T) (hchild : ∀ j, RR.RChildC (u j) (u (j + 1)))
+    (Z : T) (hZ : ¬ Tower Z)
+    (habove : ∀ j, Suf Z (u j) ∧ u j ≠ Z)
+    (hret : ∀ N, ∃ j, N ≤ j ∧ ∃ q, u j = app q Z) : False := by
+  have hstep : ∀ r q, u r = app q Z → ∃ c, SA.TT q c ∧ Suf (app c Z) (u (r + 1)) := by
+    intro r q hr
+    have hc := hchild r
+    rw [hr] at hc
+    rcases hc with ⟨hlen, front, hrr⟩ | ⟨hlen, c, hrr⟩
+    · exfalso
+      rw [args_app] at hrr
+      have h' := congrArg List.getLast? hrr
+      simp at h'
+      have hZu : Z = u (r + 1) := by first | exact h' | exact h'.symm
+      exact (habove (r + 1)).2 hZu.symm
+    · have hq : 2 ≤ (args q).length := by rw [args_app] at hlen; simp at hlen; omega
+      obtain ⟨K, c0, hK, _, hu⟩ := RM.fib_step2 q Z c _ hq hZ hrr
+      exact ⟨c0, ⟨K, hK⟩, by rw [hu]; exact SA.fw_suf1 Z c0 K⟩
+  have hkeep : ∀ r c, Suf (app c Z) (u (r + 1)) → ∀ n, (∀ i, i < n → u (r + 1 + i) ≠ app c Z) →
+      Suf (app c Z) (u (r + 1 + n)) := by
+    intro r c h0 n
+    induction n with
+    | zero => intro _; simpa using h0
+    | succ n ih =>
+      intro hne
+      have hn := ih (fun i hi => hne i (by omega))
+      rw [show r + 1 + (n + 1) = r + 1 + n + 1 by omega]
+      exact rstep_keeps _ _ _ (hchild (r + 1 + n)) hn (hne n (by omega))
+  have hnextret : ∀ r q, u r = app q Z → ∃ r' c, r < r' ∧ SA.TT q c ∧ u r' = app c Z := by
+    intro r q hr
+    obtain ⟨c, hT, hsuf⟩ := hstep r q hr
+    obtain ⟨j, hj, q', hq'⟩ := hret (r + 1)
+    have hmin : ∀ j, r + 1 ≤ j → (∃ q', u j = app q' Z) → ∃ j1, r + 1 ≤ j1 ∧ (∃ q', u j1 = app q' Z) ∧
+        ∀ i, r + 1 ≤ i → i < j1 → ¬ ∃ q', u i = app q' Z := by
+      intro j
+      induction j using Nat.strongRecOn with
+      | _ j ih =>
+        intro hj hq
+        by_cases hm : ∃ i, r + 1 ≤ i ∧ i < j ∧ ∃ q', u i = app q' Z
+        · obtain ⟨i, hi1, hi2, hi3⟩ := hm
+          exact ih i hi2 hi1 hi3
+        · exact ⟨j, hj, hq, fun i hi1 hi2 hq' => hm ⟨i, hi1, hi2, hq'⟩⟩
+    obtain ⟨j1, hj1, ⟨q1, hq1⟩, hfirst⟩ := hmin j hj ⟨q', hq'⟩
+    have hk := hkeep r c hsuf (j1 - (r + 1))
+      (fun i hi heq => hfirst (r + 1 + i) (by omega) (by omega) ⟨c, heq⟩)
+    rw [show r + 1 + (j1 - (r + 1)) = j1 by omega, hq1] at hk
+    rcases suf_app_inv _ _ _ hk with h | h
+    · have hqc : q1 = c := (C.T.app.inj h).1
+      exact ⟨j1, c, by omega, hT, by rw [hq1, hqc]⟩
+    · exfalso
+      have := suf_size _ _ h
+      simp only [size] at this
+      have := size_pos c
+      omega
+  have hnext' : ∀ (rq : Nat × T), ∃ rq' : Nat × T,
+      u rq.1 = app rq.2 Z → (u rq'.1 = app rq'.2 Z ∧ SA.TT rq.2 rq'.2) := by
+    intro ⟨r, q⟩
+    by_cases h : u r = app q Z
+    · obtain ⟨r', c, _, hT, hu⟩ := hnextret r q h
+      exact ⟨(r', c), fun _ => ⟨hu, hT⟩⟩
+    · exact ⟨(r, q), fun h' => absurd h' h⟩
+  obtain ⟨nx, hnx⟩ : ∃ nx : Nat × T → Nat × T, ∀ rq, u rq.1 = app rq.2 Z →
+      (u (nx rq).1 = app (nx rq).2 Z ∧ SA.TT rq.2 (nx rq).2) :=
+    ⟨fun rq => Classical.choose (hnext' rq), fun rq => Classical.choose_spec (hnext' rq)⟩
+  obtain ⟨r0, _, q0, hq0⟩ := hret 0
+  have hsq : ∀ n, u (SA.iter nx (r0, q0) n).1 = app (SA.iter nx (r0, q0) n).2 Z := by
+    intro n
+    induction n with
+    | zero => exact hq0
+    | succ n ih => exact (hnx (SA.iter nx (r0, q0) n) ih).1
+  exact SA.no_TT_chain (fun n => (SA.iter nx (r0, q0) n).2) (fun n => (hnx _ (hsq n)).2)
+
+end RSA
+
+#print axioms RSA.no_scenarioA_right
+
+namespace SA4
+
+open C
+open C.T
+open FM
+
+/-- **Case (a') needs T3/T4 steps.**  A jump-free infinite leftmost walk from an L36-flag-0 term that returns
+    infinitely often to nodes q.S cannot have, from some time on, only return steps of types T1/T2 (the tail calls of
+    the reload cycle): the walk would end in tail calls over the bottom S (FH.finite_half_TC). -/
+theorem caseA_needs_T34 (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hflag : FH.flag (u 0) = false) (hnj : ∀ j p τ, u j ≠ app (app S p) τ)
+    (hret : ∀ N, ∃ j, N ≤ j ∧ ∃ q, u j = app q S)
+    (hT12 : ∃ N, ∀ r q, N ≤ r → u r = app q S → ∀ x0 c0, Reach (args q) [x0, c0] →
+      x0 = app S S ∨ ∃ y, R x0 y) : False := by
+  obtain ⟨N, hN⟩ := hT12
+  obtain ⟨r0, hr0, q0, hq0⟩ := hret N
+  have hstep : ∀ r q, N ≤ r → u r = app q S → ∃ c0, u (r + 1) = app c0 S := by
+    intro r q hr hq
+    obtain ⟨x0, c0, r', hq0', hrr', hu', hcase⟩ := return_types_S u hchild hnj hret r q hq
+    have ht := hN r q hr hq x0 c0 hq0'
+    refine ⟨c0, ?_⟩
+    rcases hcase with ⟨_, h⟩ | ⟨_, h⟩ | h | ⟨h2, c1, hc1⟩
+    · exact h
+    · exact h
+    · exfalso
+      rcases ht with ht | ⟨y, hy⟩
+      · rw [h] at ht
+        injection ht with h1 h3
+        cases h3
+      · rw [h] at hy
+        have e := reach_stuck _ _ (by simp [args]) hy
+        simp [args] at e
+    · exfalso
+      rcases ht with ht | ⟨y, hy⟩
+      · rw [ht] at h2; simp [args] at h2
+      · rw [args_app] at hc1
+        have := SA3.child_S x0 S (app S S) c1 y hc1 hy
+        cases this
+  have hall : ∀ j, ∃ q, u (r0 + j) = app q S := by
+    intro j
+    induction j with
+    | zero => exact ⟨q0, hq0⟩
+    | succ j ih =>
+      obtain ⟨q, hq⟩ := ih
+      obtain ⟨c0, hc0⟩ := hstep (r0 + j) q (by omega) hq
+      exact ⟨c0, by rw [show r0 + (j + 1) = r0 + j + 1 by omega]; exact hc0⟩
+  have hargs : ∀ j q, u (r0 + j) = app q S → 2 ≤ (args q).length := by
+    intro j q hq
+    by_cases h2 : 2 ≤ (args q).length
+    · exact h2
+    · exfalso
+      have hc := hchild (r0 + j)
+      rw [hq] at hc
+      rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, _, _⟩
+      · rw [args_app] at hrr
+        match hA : args q, hrr with
+        | [], hrr =>
+          simp only [List.nil_append, List.cons.injEq] at hrr
+          obtain ⟨q', hq'⟩ := hall (j + 1)
+          rw [show r0 + (j + 1) = r0 + j + 1 by omega] at hq'
+          rw [hq'] at hrr
+          exact absurd hrr.1 (by intro h; cases h)
+        | [p], _ => exact hnj (r0 + j) p S (by rw [hq, TC.args_one' q p hA])
+        | _ :: _ :: _, _ => rw [hA] at h2; simp at h2
+      · rw [args_app] at hlen; simp at hlen; omega
+  exact FH.finite_half_TC u hchild hflag r0 S (fun j => lchild (u (r0 + j))) (fun j => by
+    obtain ⟨q, hq⟩ := hall j
+    refine ⟨by rw [hq]; rfl, ?_⟩
+    have := hargs j q hq
+    rw [hq]
+    exact this)
+
+end SA4
+
+#print axioms SA4.return_types_S
+#print axioms SA4.caseA_needs_T34

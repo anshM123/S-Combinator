@@ -68,11 +68,13 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
 | result | file | meaning |
 |---|---|---|
+| Leftmost/rightmost-path finite halves reduced to Conjecture EM | `AgentFiniteHalfGen.lean` | no infinite leftmost walk from a flag-0 term is eventually monotone, so the finite half of the leftmost-path model (and of the rightmost-path model, under EM_R) follows from one conjecture: every infinite leftmost walk is eventually monotone (finitely many pops, jumps and returns) |
 | Leftmost-path finite half: known mechanisms excluded | `AgentFiniteHalf.lean` | the leftmost-path model's flag is invariant along leftmost steps, and both known infinite leftmost mechanisms (the reload cycle and the Omega cycle, and any mixture) only occur in flag-1 classes; the finite half still needs 'every infinite walk eventually uses only these steps' (Conjecture SF) |
 | `shnf_two_vars`, comb rigidity for any two data | `AgentWR.lean` | for closed M, M x y reaches an S-headed head normal form only if M = S or M = S(S(…(S S)…)): with two opaque arguments, S-code either hands control to an argument or is a comb |
 | Lemmas W1+, W2, W2+ and comb rigidity | `AgentW1F/W2/W2R.lean` | leftmost-path (descent-machine) rounds: a single datum only forms Fibonacci words; with two data no code can store them, and the only code that carries both across a round is a comb S(S(…(S S)…)), which just swaps them Fibonacci-style — no second independent store |
 | Chain bound, steps 1–2 | `AgentINNER.lean` | every datum after the first transfer of a Church chain is an ordered right comb, and every later transfer is innermost-dirty (no extra hypotheses) |
 | Theorems PA, PB, PAM (step 3 under per-case hypotheses); replay theorems; Lemmas FH1, FHL | `AgentPA/REPLAY/FH1/FHL.lean` | after an innermost-dirty transfer of a covered kind the next phase never transfers properly; a re-execution replays the earlier transfer and cannot restart Church iteration (in the model) |
+| R3 for single-wrapper handlers (unconditional) | `AgentR3G.lean` | for ordered data with at most one occurrence of the predecessor, a single-wrapper transfer is never followed by a proper transfer; so the chain bound (at most 2 proper transfers) holds whenever the second transfer is single-wrapper or FH, which covers every chain ever observed; multi-wrapper handlers are machine-checked in classes |
 | Conjecture R3 refuted; guard-free R3 theorems | `AgentR3F.lean` | R3 fails for ordered data with two occurrences of the predecessor (a kernel-computed counterexample with two consecutive proper transfers). For one occurrence — the case the chain bound needs — R3 is machine-checked in every covered class (ALPHA, PBT, CLOSEDGLUE, PAH, IGEN with no hypotheses), certified with no violation exhaustively up to 13 leaves, and open in general. So a Church chain makes at most 2 proper transfers in all covered cases; no longer chain exists among all data up to 11 leaves or 4.5 million random data up to 22 leaves |
 | Lemmas AB, AB-c, MSL (strict form), YD, replay lemma; Lemma W1 | `AgentAB/ABC/MSL/MSLS/YD/REPLAY/W1.lean` | steps of the two agents' programmes: no P-onto-Y glue once the P-region is large; every glued P-wrapper of a multi-level datum is good; an early glued-down y kills proper transfers; a single-wrapper phase-2 transfer replays as a phase-3 re-execution; a descent-machine round adds at most one closed wrap to a single-copy datum |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
@@ -108,12 +110,13 @@ A universal emulation needs an encoder, an evaluation order and a halting detect
    (= BEKW Question 5, productivity) and C8, and the finite halves of the path models. These are certified up to 16–19
    leaves. A size-change attack on the leftmost half fails for every finite abstraction (FAILED_APPROACHES 29), and
    neither class-level acyclicity nor node size proves the C6 or leftmost halves (E114, FAILED_APPROACHES 30). For the
-   leftmost half the two known infinite mechanisms are now excluded from flag-0 classes (machine-checked, R97);
-   what is left is Conjecture SF.
+   leftmost half the problem is now reduced in Lean to one conjecture, EM (every infinite leftmost walk is eventually
+   monotone; R98), and the same holds for the rightmost path under EM_R.
 2. Configuration-level regularity (R″_PUP) of every head run and of every other evaluation order. The
-   non-universality agents' phase programme (agent_work/) bounds Church chains by two transfers in the covered cases;
-   still open: R3 for one occurrence of the predecessor in general (R3 for several occurrences is refuted), "re-execution
-   is call-like" (D3), and the phase decomposition as a theorem about all head runs.
+   non-universality agents' phase programme (agent_work/) bounds Church chains by two transfers whenever the second
+   transfer is single-wrapper or FH (all observed chains); still open: multi-wrapper R3 (R3 for several occurrences of
+   the predecessor is refuted), "re-execution is call-like" (D3), and the phase decomposition as a theorem about all
+   head runs.
 3. An argument that Wolfram's "non-universal decoder" falls under the covered classes (the definitional piece).
 
 **For "S is universal":** an explicit emulation. Every design pattern tried so far is blocked by a proved barrier or

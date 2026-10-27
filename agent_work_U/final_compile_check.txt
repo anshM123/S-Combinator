@@ -1,0 +1,12 @@
+FiniteHalf.lean exit=0 errors=0 sorry_in_src=0 secs=87
+Reload.lean exit=0 errors=0 sorry_in_src=0 secs=2
+TheoremV.lean exit=0 errors=0 sorry_in_src=0 secs=1
+LargePush.lean exit=0 errors=0 sorry_in_src=0 secs=2
+Strip.lean exit=0 errors=0 sorry_in_src=0 secs=1
+StripV.lean exit=0 errors=0 sorry_in_src=0 secs=1
+W1.lean exit=0 errors=0 sorry_in_src=0 secs=1
+W1F.lean exit=0 errors=0 sorry_in_src=0 secs=2
+W2.lean exit=0 errors=0 sorry_in_src=0 secs=1
+W2F.lean exit=0 errors=0 sorry_in_src=0 secs=1
+W2R.lean exit=0 errors=0 sorry_in_src=0 secs=1
+WR.lean exit=0 errors=0 sorry_in_src=0 secs=1

@@ -31,6 +31,17 @@
       fixed rank-2 term (S1 at the outer levels of multi-wrapper handlers).
     THEOREM R3-SINGLE-ALL (`r3_single_all`): every single-wrapper handler (b0, c0 arbitrary) of an ordered
       single-occurrence datum; the condition 'H1ok(c0) OR NK1(b0)' is needed only when b0, c0 are both S-headed.
+    (parts 17-19, 09:10-09:54 EDT)
+    BF-NK1 (`yt_abs`, `bform_nk1`, `bform_nk1g`, `bf_step`): a B-form hole front h1.(X.h1) over h2 of c0 forces b0
+      never to call its first hole.  BARRIER ORDER (`beta_class`, `beta_front`): in pattern beta every h1-front of
+      c0's two-hole run is of H1ok form or a B-form front.  `s1_inX`, `inX_occ`: the beta glue front lies in c0's
+      X-sequence, so c0 contains p.
+    **THEOREM R3-SINGLE-UNC (`r3_single_unc`)**: r3_single WITHOUT any handler condition; `r3_single_all_unc` (any
+      single wrapper), `r3_rc_unc` (right combs over p with closed wrappers); `r3_single_unc_example` (non-vacuity,
+      a datum whose c0 violates H1ok).  `r3_single3`: intermediate form (H1ok OR NK1 OR B-form).
+    REPLAY (`replay_pf`, `replay_pf2`): for handlers with ANY number of wrappers, if the innermost replay
+      args(bn) ++ [cn, k2] (++ [t1, t2]) reaches a p-headed front, the next phase has no p'-front at all.
+  (R3F.lean's content follows verbatim, modulo line endings, from the next comment on.)
   Plain Lean 4 core.
 -/
 /-
