@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:05 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:15 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -23,16 +23,16 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        machine-checked [agent_work/lean/MSLS.lean (strict + generous), lean/MSL.lean, lean/AB.lean].
        (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN in general
        (computationally certified: exhaustive <= 11 leaves, 115k + 367k + 298k targeted data, 70k random).
-       DONE (machine-checked): THEOREMS PA and PB [lean/PA.lean]: a single-wrapper handler glued in pattern alpha
-       (or in pattern beta with c0 = S.a1) never leads to a proper transfer in the next phase, given that phase 2's
-       continuation from the glue step reaches its transfer under the replay guards (hypotheses certified for
-       680 + 40 real handlers <= 11 leaves; with FH, 830 of the 836 real single-wrapper handlers <= 11 are settled).  Supporting
-       machine-checked lemmas: YD [lean/YD.lean], FH1/FHL [lean/FH1.lean, lean/FHL.lean] (a wrapper whose
-       leftmost path reaches p blocks the next phase), AB-c [lean/ABC.lean], REPLAY [lean/REPLAY.lean] (general
-       replay maps, replay_glue / replay_beta / replay_cycle), CANON/FH (single-wrapper => at most one more
-       transfer phase).  Hand: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB.  REFUTED: (B1).
-       OPEN: pattern beta with c0 != S.a1 (6 single-wrapper cases <= 11), live multi-wrapper handlers not
-       covered by FHL/YD (18 cases <= 11), and a proof of the phase-2 guards in general (they are certified per case).
+       DONE (machine-checked): THEOREMS PA, PB, PAM [lean/PA.lean] — the REPLAY THEOREMS: for a handler whose
+       innermost wrapper vn = b0.c0 was glued onto y in pattern alpha (PA: single wrapper; PAM: any number of
+       wrappers) or in pattern beta with c0 = S.a1 (PB), the next phase never makes a proper transfer, provided
+       phase 2's continuation from the glue reaches its transfer under the replay guards (PAM: and the element
+       below p' at the first opening of the innermost level is y-free or y).  With FH, FHL [lean/FHL.lean] and YD
+       [lean/YD.lean] this covers 1,078 of the 1,083 real handlers <= 11 leaves and 4,851 of 5,086 in the
+       targeted family (hypotheses certified per case).  Supporting: REPLAY [lean/REPLAY.lean], AB-c
+       [lean/ABC.lean], CANON/FH.  Hand: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB.  REFUTED: (B1).
+       OPEN: a proof of the per-case hypotheses (guards, B0) in general; pattern beta with c0 != S.a1; the
+       released-copy handlers (guard failures); i.e. a general replay theorem without case hypotheses.
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
@@ -40,7 +40,7 @@ F. Decoders reading unbounded parts of terms (not windows) .....................
 Bottom line: NOT SOLVED.  No step above that is OPEN is close to a complete proof; D1 narrows the possible
 universal mechanisms (they must re-execute frozen values), it does not exclude them.
 
-# INTERIM 04:00 (non-universality agent; written 02:30, refreshed 2026-10-27 03:45 EDT)
+# INTERIM 04:00 (non-universality agent; written 02:30, refreshed 2026-10-27 04:00 EDT)
 Bottom line: NOT SOLVED.  No complete proof of non-universality exists; nothing below claims one.
 New since the coordinator's 'go for the money' message (all in agent_work/; every MACHINE-CHECKED file compiles
 with Lean 4.35 core, no sorry, standard axioms only):
@@ -49,12 +49,15 @@ with Lean 4.35 core, no sorry, standard axioms only):
 2. MACHINE-CHECKED  Theorem MSL, generous and STRICT forms [lean/MSL.lean, lean/MSLS.lean]: in every phase-2 run of
    a right comb K.(d2.(...(dk.p))) (frozen atoms allowed) each P-element glued onto a Y-element is prefixed by one
    of the datum's own levels or has only such P-arguments.  = 'extend SL's invariant to several levels'.
-3. MACHINE-CHECKED  THEOREM PA [lean/PA.lean]: a single-wrapper handler glued in pattern alpha never leads to a
-   proper transfer in the next phase, given that phase 2's continuation from the glue reaches its transfer under
-   the replay guards.  Mechanism = the REPLAY RELATION [lean/REPLAY.lean]: the next phase re-runs the code that
-   decided the transfer, on other arguments, and reaches the frozen predecessor where phase 2 reached the live one
-   (transfer -> re-execution).  Hypotheses certified for all 680 such real handlers <= 11 leaves; with FH this
-   settles 790 of the 836 real single-wrapper handlers <= 11 leaves.
+3. MACHINE-CHECKED  REPLAY THEOREMS PA, PB, PAM [lean/PA.lean]: if the innermost wrapper vn = b0.c0 of a phase-2
+   handler was glued onto y in pattern alpha (any number of wrappers; PB: pattern beta with c0 = S.a1), the next
+   phase never makes a proper transfer, provided phase 2's continuation from the glue reaches its transfer under
+   the replay guards (+ for PAM a condition on the first opening of the innermost level).  Mechanism = the REPLAY
+   RELATION [lean/REPLAY.lean]: the next phase re-runs the code that decided the transfer, on other arguments, and
+   reaches the frozen predecessor where phase 2 reached the live one (transfer -> re-execution).
+   COMBINED (with FH, FHL, YD; hypotheses certified per case): 1,078 of the 1,083 real proper transfers of the
+   exhaustive <= 11-leaf range and 4,851 of 5,086 in a targeted family up to 16 leaves are covered by these
+   machine-checked theorems; the rest are certified by simulation only.
 4. MACHINE-CHECKED  blocking lemmas for the next phase: YD [lean/YD.lean] (bare y glued down early; bare-S outer
    wrapper), FH1/FHL [lean/FH1.lean, lean/FHL.lean] (a wrapper whose leftmost first-argument path reaches p);
    replay corollaries replay_glue / replay_beta / replay_cycle [lean/REPLAY.lean].
@@ -63,13 +66,13 @@ with Lean 4.35 core, no sorry, standard axioms only):
    proper transfer' (explicit general-shape counterexample) — real data avoid it because of the replay.
 6. COMPUTATIONALLY CERTIFIED  'phase 3 is never a proper transfer' on the exhaustive <= 11 range and on 780k
    targeted phase-2 data (K <= 9 leaves), 0 counterexamples.
-Still OPEN for item D of the map: D2(b) for pattern-beta single wrappers (46 cases <= 11) and for 18 live
-multi-wrapper handlers <= 11 not covered by FHL/YD, and a general proof of the phase-2 guards; D3 're-execution
-is call-like'; items A, C, E, F (not addressed by this agent).
-Files: lean/{AB,ABC,MSL,MSLS,YD,REPLAY,PA,FH1,FHL}.lean (new today) + OC, OT, OTD, SL, CANON (earlier);
+Still OPEN for item D of the map: D2(b) in general (a replay theorem without per-case hypotheses; 5 open cases
+<= 11 leaves, 235 in the targeted family); D3 're-execution is call-like'; items A, C, E, F (not addressed by this
+agent).
+Files: lean/{AB,ABC,MSL,MSLS,YD,REPLAY,PA,FH1,FHL}.lean (new today; PA.lean holds PA, PB, PAM) + OC, OT, OTD, SL, CANON (earlier);
 scripts msl_inv.py, target3.py, inner_forms.py, outer_forms.py, live_census.py, fh1_cover.py, fhl_cover.py,
 wcreate.py, prefix_replay.py, replay_cover.py, replay_b.py, replay_b2.py, unified_alpha.py, bufq.py, b0_cases.py,
-cycle_real.py (results quoted in the LOG entries of 2026-10-27 01:35-03:45).
+cycle_real.py, pb_check.py, pam_check.py, coverage_all.py (results in the LOG entries of 2026-10-27 01:35-04:00).
 
 # agent_work LOG (construction agent)
 
@@ -784,3 +787,19 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   SINGLE-WRAPPER SCORE (<= 11 leaves, 836 real handlers): FH 110 + PA 680 + PB 40 = 830 settled by machine-checked
   theorems with per-case-certified phase-2 hypotheses; 6 open.  Targeted family (3,686 real single-wrapper
   handlers with K <= 7): FH 398 + PA 2,996 + PB 130 = 3,524 settled; 162 open (4 PA-guard failures, 158 beta-other).
+* MACHINE-CHECKED (agent_work/lean/PA.lean, now 1,334 lines; no sorry; axioms propext, Classical.choice,
+  Quot.sound): **THEOREM PAM (`pam_main`)** — Theorem PA for MULTI-WRAPPER handlers, at the innermost level.  In
+  the next phase p' occurs only inside copies of the innermost level Ln = vn[p:=c].p'; `guarded_phase`: until an
+  Ln-prefixed element is opened no front is p'-headed; at the first opening the list is args(b0') ++ [c0', p'] ++ B,
+  and `pa_core_g` (barrier phase + post_replay with an arbitrary bottom B whose first element is y-free or the bare
+  y) gives: every p'-front has a y-free element or the bare y at position 3.  Hypotheses: vn = b0.c0 glued in
+  pattern alpha, phase 2's continuation from that glue reaches the transfer under the guards, and the element right
+  below p' at the first opening is y-free or the bare y (always the bare y in the data).
+* COMPUTATIONALLY CERTIFIED — COMBINED COVERAGE (coverage_all.py; every real proper position-3 phase-2 handler is
+  assigned the first machine-checked theorem whose hypotheses it satisfies, hypotheses checked per case):
+  exhaustive right combs <= 11 leaves: 1,078 of 1,083 handlers covered — FH 272, FHL 149, YD 2, PA 605, PB 32,
+  PAM 18; OPEN 5 (all single-wrapper, pattern beta with c0 != S.a1, e.g. S(SS)S(SS(S(Sp)))).
+  targeted family (K <= 7, tails with wrappers <= 4 leaves, data up to 16 leaves): 4,851 of 5,086 covered —
+  FH 804, FHL 812, YD 53, PA 2,588, PB 128, PAM 466; OPEN 235 (162 single, 73 multi).
+  For every covered handler, 'the next phase never makes a proper transfer' is a theorem (machine-checked
+  statement + finite check of its phase-2 hypotheses); for the open ones it is certified by direct simulation.
