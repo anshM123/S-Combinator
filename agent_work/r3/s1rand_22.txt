@@ -1,0 +1,9 @@
+('FH',) 25946 ['SSS(SS)p', 'SSS(SS)p']
+('alpha',) 24986 ['S(SS)(SS(S(SS)))(Sp)', 'SS(SSSS(SS))SS(S(pS))']
+('beta', 'ordered', 'c0 on (w,y) before glue', '-', 'F(c0)=h1', 'H1 RESIDUAL', "p'-front nonproper") 1 ['S(SS)(SS(S(S(SS)))(SS)(S(S(SS))(S(S(p(SSS))))))']
+('beta', 'ordered', 'c0 on (w,y) before glue', '-', 'F(c0)=p', 'not h1', "p'-front nonproper") 275 ['SSS(S(SS))(S(Sp))', 'S(S(SS))(SS)(S(Sp))']
+('beta', 'ordered', 'c0 on (w,y) before glue', '-', 'F(c0)=p', 'not h1', 'budget') 18 ['SS(S(SS(SS))SSS)S(S(SS))(S(S(p(SS)S)))', 'SS(S(SSS)(SS)(SS(SS)S))(S(SS))(S(Sp))']
+('beta', 'ordered', 'c0 on (w,y) before glue', '-', 'F(c0)=p', 'not h1', 'reexec') 507 ['S(S(S(SS)))S(S(SS)p)', 'S(S(SS))(S(S(SSS)))(S(S(SS)(pS)))']
+('beta', 'ordered', 'c0 on (w,y) before glue', 'Igen', 'F(c0)=h1', 'H1ok (h1, _, h2)', 'call') 110 ['S(S(SS))S(SS(S(S(pS))))', 'S(SS)S(SS(S(S(pSS))))']
+('beta', 'ordered', 'c0 on (w,y) before glue', 'Igen', 'F(c0)=h1', 'H1ok (h1.h2...)', 'call') 2 ['S(SS)S(S(S(S(SSS)(SS(SS)p))))', 'S(S(SS))S(S(S(S(SS)(SS)(S(p(SS)S)))))']
+EXIT 0

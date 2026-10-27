@@ -21,10 +21,12 @@ request; the prize submission itself still needs the user's approval. The one-pa
 * **Still open, both directions.** Disproof: C5′ (MSO properties of Böhm trees; even the completeness half of C6 and the
   finite halves of the path models are open, and E114 shows they have no class-level or simple size proof), R″_PUP for all
   runs and orders, and the definitional step. Proof: no construction; every design tried meets a machine-checked barrier.
-* **Non-universality agent, final (04:17 EDT):** in the generic phase model a Church chain of proper transfers has at most
-  2 transfers (1 from an ordered start). Steps 1–2 are machine-checked outright; step 3 (Conjecture R3) is machine-checked
-  under per-case hypotheses certified for almost all cases up to 11 leaves; no longer chain exists among 227,239 data up to
-  11 leaves or 1.4 million random data up to 22 leaves. A universal mechanism would therefore have to re-execute frozen
+* **Non-universality agents (04:17 and 06:22 EDT):** in the generic phase model a Church chain of proper transfers has at
+  most 2 transfers in every covered case (no longer chain among all data up to 11 leaves or 4.5 million random data up
+  to 22 leaves). Steps 1–2 are machine-checked outright; step 3 (Conjecture R3) is machine-checked for the covered
+  classes. R3 as first stated (all ordered data) is REFUTED by a kernel-computed counterexample with two occurrences of
+  the predecessor, so 'at most 1 transfer from an ordered start' is false; the chain bound needs R3 only for one
+  occurrence, which is open but certified exhaustively up to 13 leaves. A universal mechanism would therefore have to re-execute frozen
   values or iterate data-blind calls. Open: R3 in general, D3 ('re-execution is call-like'), the phase decomposition of
   all head runs. (PROOF.md, 'Chain bound in the generic phase model'.)
 * **Work in progress (3 workers until 16:30 EDT):** the non-universality agent's phase programme (open step: phase 3 of

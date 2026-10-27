@@ -11,30 +11,29 @@ the clock; '~' marks times reconstructed from `date` outputs.  From now on every
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## SUMMARY (refreshed 05:40 EDT by `date`; supersedes the INTERIM block below for the leftmost-path work)
-**Universality: no construction (unchanged).  Since 04:03 working on the coordinator's suggestion: the leftmost-path
-finite half for the joint classes (14,28), (14,26).  The finite half is NOT proved; no counterexample; new rigorous,
-machine-checked structure theory of infinite leftmost paths (all Lean 4 core, no sorry, axioms propext /
-Classical.choice / Quot.sound):**
-1. lean/Reload.lean — **RELOAD CLASSIFICATION**: an infinite chain of fuel-S tail calls q_j.S -> q_(j+1).S whose terms
-   never have last argument S is eventually exactly the reload cycle N_i N_m S (i < m), N_0 = S(SS)(SS),
-   N_(k+1) = S S N_k.  (Also the reload lemma: every such tail call is a prefix count-down H(Q) = S S y or a restart
-   w.(S S w); restarts recur.)  This is the precise sense in which 'the fuel S of the reload cycle' is the mechanism.
-2. lean/TheoremV.lean — **Theorem V** (leftmost and rightmost): closed code above an untouched datum x cannot drive an
-   infinite leftmost (resp. rightmost) path; the walk halts, drops x, or executes x.  An infinite path consumes its
-   last argument.
-3. lean/LargePush.lean — **large-push lemma**: an infinite leftmost path has infinitely many 'large pushes' (a pushed
-   right-spine multiplier at least as large as the popped one).  Census: <= 3 per component walk (<= 11 leaves), all in
-   the first 5 computed steps; the reload has one per reload.
-4. lean/Strip.lean, lean/StripV.lean — stripping theorem (no infinite H(P_j) = S S P_(j+1), no infinite
-   H(W_j) = S (S S) W_(j+1)), k = 1 round lemma.
-5. PROVED (paper): Scenario A (bounded stack depth infinitely often) => the multiplier above the frozen fuel traces an
-   infinite rightmost path.  Open: tail calls through last argument S, excursions above the fuel, Conjecture F (the
-   frozen fuel is S; supported by fuel_hunt.py), Scenario B (Omega type), Scenario C (jumps; none seen after the first
-   node in any known infinite walk).
-6. Counterexample hunts (EXPERIMENTALLY SUPPORTED, none found beyond the 16-leaf census): reload-assembling trees,
-   gadget trees (<= 5 letters, 458,752 terms), self-applications for all X <= 12 leaves, random component terms up to
-   60 leaves, non-S fuels.
+## SUMMARY (refreshed 06:10 EDT by `date`; draft of the FINAL summary — supersedes the INTERIM block below)
+**A. Universality (the brief): no universal construction; no partial win.  Machine-checked obstructions only.**
+**B. Leftmost-path finite half for (14,28), (14,26) (coordinator, 04:03): NOT fully proved, no counterexample; the
+tail-call scenario is PROVED and MACHINE-CHECKED end to end.**  All Lean files: Lean 4 core, no Mathlib, no sorry,
+axioms among propext / Classical.choice / Quot.sound, compiled with ~/.elan/toolchains/leanprover--lean4---v4.35.0.
+1. lean/FiniteHalfTC.lean (2,487 lines) — `FH.finite_half_TC`: an infinite leftmost walk from a term whose L36 class
+   has flag 0 (e.g. any term of (14,28), (14,26)) never ends in tail calls over a fixed bottom.  `FH.flag_step`: the
+   L36 flag is invariant along every leftmost step.  `FH.flag_reload`: all reload nodes are flag 1.  (Includes the
+   main agent's lean/PathModels.lean verbatim as namespace PM.)
+2. lean/Reload.lean (1,587 lines) — reload classification: every infinite chain of fuel-S tail calls is eventually
+   the reload cycle N_i N_m S (`RC2.reload_classification_full`, `walk_reload_full`); no infinite tail-call walk
+   over a bottom /= S (`FZ.no_tail_calls_fuel`).
+3. lean/TheoremV.lean (1,416 lines) — Theorem V (leftmost and rightmost): closed code above an untouched datum
+   cannot drive an infinite path; an infinite path consumes its last argument.
+4. lean/LargePush.lean (613) — every infinite leftmost path has infinitely many large pushes.
+5. lean/Strip.lean (402), lean/StripV.lean (772) — stripping theorem, k = 1 round lemma.
+6. Earlier (01:14-04:03): lean/W1, W1F, W2, W2F, W2R, WR — descent-machine round classification, comb rigidity.
+7. Open for the finite half: Scenario A with genuine excursions, Scenario B (unbounded stack; the Omega cycle
+   w_i w_k, w_0 = S(S(SS))(S(SS)), w_(j+1) = S(SS) w_j, is the known example), Scenario C (infinitely many jumps;
+   never observed).  By FH.flag_step it suffices to show that such walks visit a flag-1 node.
+8. Evidence (EXPERIMENTALLY SUPPORTED, no counterexample beyond the 16-leaf census): reload-assembling trees, gadget
+   trees, all self-applications with X <= 12 leaves and 40,000 random X <= 24, random component terms up to 60
+   leaves, non-S fuels, R19-guided Scenario-A searches, jump searches.
 
 ## INTERIM 04:00 (refreshed 03:53 EDT by `date`; first version written ~02:38)
 **Status: no universal construction; no partial win (no non-PUP run).  Labels as in the entries below.**
@@ -633,3 +632,131 @@ rand_ord_2.txt; scripts in agent_work_U/*.py (classes.py, chainsrc.py, ordpush.p
   over a fixed bottom** (bottom /= S: FZ.no_tail_calls_fuel; bottom = S: the reload cycle, whose nodes are flag 1,
   unreachable by flag invariance).  Remaining for the finite half: Scenario A with excursions, Scenario B (unbounded
   stack; Omega type), Scenario C (infinitely many jumps).
+* EXPERIMENTALLY SUPPORTED (05:57 EDT, `date`; scenA_gadget.py 5): q over all gadget trees of <= 5 letters with an R19 flag-1
+  class (infinite rightmost path), fuel S: 228 walks run 400 nodes, all in L36 flag-1 classes; 19 of them make one
+  excursion (a return to depth 1 after pushing two multipliers) and then only tail calls (reload).  Walks with
+  excursions that end (at S or in a diverging round): 14.  No flag-0 walk runs 400 nodes.
+* NOTE (05:57 EDT): over the fuel S, a step with H(q) = S (S(SS)) q' pushes q' and the fuel S, which is popped at once — an
+  'Omega step' (the step of the Omega cycle, there over a growing stack).  RC2's TCStep excludes such steps; a
+  classification of depth-1 walks mixing tail calls and Omega steps is the next case of Scenario A with excursions.
+* PROVED + COMPUTATIONALLY CERTIFIED (05:58 EDT, `date`; flag_edges.py, flag_edges_check.py) — **flag invariance, simplified
+  and validated.**  For a computed node u (>= 3 arguments) with head normal form S c (b c), class invariance of the
+  S-models L36 and M35 under head reduction and the S-identity give [u] = s.[c].([b].[c]) = s.s.[b].[c].  So it suffices
+  that for all b, beta in the 69-element sub-magma J generated by s: flag(s.s.b.beta) = 0 and s.s.b.beta in F imply
+  flag(beta) = 0 — checked: no exception (flag_edges.py; no use of the chain graph G is needed).  Validation on
+  concrete walks (flag_edges_check.py 11): all 16,580 computed steps of the leftmost walks of all terms <= 11 leaves
+  are pairs ([u], [child]) of this form, and none goes from flag 0 to flag 1.
+* MACHINE-CHECKED END-TO-END (06:09 EDT, `date`): **finite half of the leftmost-path model, tail-call scenario** —
+  agent_work_U/lean/FiniteHalfTC.lean (2,487 lines, Lean 4 core, no sorry; `#print axioms FH.finite_half_TC`:
+  propext, Classical.choice, Quot.sound; compiles in ~1.5 min).  Contents: namespace PM = the main agent's
+  lean/PathModels.lean copied verbatim (L36/M35 tables, kernel-checked S-identities and closure facts, class
+  invariance under head runs); namespaces C/TC/RC/FZ/RC2 = agent_work_U/lean/Reload.lean; namespace FH = bridge
+  C.T -> PM.Tm, `FH.flag_step` (**the L36 flag is invariant along every leftmost step**, from the closure facts
+  flag(s.x) = flag(x), flag(s.x.y) = flag(x) and class invariance — both directions; axioms propext, Quot.sound),
+  `FH.flag_reload` (every reload node N_i N_m S, i < m, has flag 1: kernel computation of the classes of N_k), and
+  `FH.finite_half_TC`: **an infinite leftmost walk from a closed S-term whose L36 class has flag 0 — e.g. any term
+  of the joint classes (14,28), (14,26) — never ends in tail calls over a fixed bottom** (nodes (f j).Z for all
+  j >= j0, each child the next node, f j with >= 2 arguments).  This makes the 05:55 'PROVED' statement fully
+  machine-checked (the flag-invariance finite check of flag_edges.py is subsumed: flag(s.s.b.c) = flag(s.c.(b c))
+  = flag(c) directly by the closure fact).
+* EXPERIMENTALLY SUPPORTED (06:10 EDT, `date`; jump_gadget.py 5 -> jump_gadget_out.txt): Scenario C search over all 458,752
+  gadget trees of <= 5 letters: every walk with >= 2 jumps ends (at S or in a diverging round) within 400 nodes; the
+  650 walks that run 400 nodes make at most one jump, always at the first or second node (e.g. S S S (Omega-term) S).
+  No walk with infinitely many jumps is known.
+* SKETCH (ARGUED, not formalised; 06:12 EDT, `date`) — **the Omega cycle in the multiplier-stack view, and a roadmap for
+  Scenario B.**  Write w_0 = M = S(S(SS))(S(SS)), w_(j+1) = S(SS) w_j.  The Omega walk visits exactly the nodes
+  w_i . w_k (i < k): from w_i w_k (i >= 1) an R2-step (H(w_i) = S (SS) w_(i-1), a tail call over the bottom w_k),
+  from w_0 w_k = M w_k an 'Omega step' (H(M) = S (S(SS)) (S(SS)): the chain pushes S(SS) and a COPY of the stack,
+  child w_k (S(SS) w_k) = w_k w_(k+1)).  So Omega = the reload pattern with the fuel replaced by the second counter
+  itself.  For a walk made only of R2-steps (q,Z) -> (q',Z), H(q) = S (SS) q', and Omega steps (q,Z) -> (Z, q'.Z),
+  H(q) = S (S(SS)) q': R2-chains are finite (no_R2_chain), so Omega steps recur; with T_r the top after the r-th Omega
+  step, T_(r+1) = q'_r . T_r; R2-chains into a term whose last argument is not S S are syntactic (the R_into argument
+  for R2), so T_r = (S(SS))^n . Q*_r with an Omega base Q*_r = S (S(SS)) q'_(r+1); if q'_r = S(SS) from some r on,
+  the base is constant and equals M, i.e. the walk is the Omega cycle.  The other branches (q'_r = S(S(SS)), computed
+  bases, last arguments S S / S(SS)) are finite case analyses of the same kind as RC2.tc_detail.  Formalising this
+  'Omega classification' (as Reload.lean did for the reload cycle) plus a proof that Scenario-B walks eventually use
+  only R2/Omega steps would settle Scenario B via FH.flag_step (Omega nodes are flag 1).
+* COMPUTATIONALLY CERTIFIED (06:17 EDT, `date`): (i) genomega_test.py 12 — the only closed X <= 12 leaves whose R2-chain
+  (H(X) = S (SS) X1, H(X1) = S (SS) X2, ...) reaches a term with head normal form S (S(SS)) (S(SS)) are w_0 = M and
+  w_1 = S(SS) M (as forced: a computed hnf S c (b c) is never S(S(SS))(S(SS)), and R2-steps into a term whose last
+  argument is not S S are syntactic), and both M.X walks run 300 nodes in class (9,28).  (ii) the joint class of w_k
+  is (8,21) for k = 0 and (22,26) for all k >= 1 (constant), and every Omega node w_i w_k (i < k) is flag 1.
+  (iii) restart_hunt.py 7: all generalized restart shapes (w.(c.w)).Z with w, c <= 7 leaves and Z in {S, SS, S(SS),
+  SSS}: no flag-0 walk runs 400 nodes (2 long walks, both flag 1).
+  So, as for the reload cycle, the R2/Omega-step family pins down the canonical Omega cycle, whose nodes are flag 1;
+  the missing piece for Scenario B is the analogue of RC2.tc_detail for Omega steps with second component /= S(SS).
+
+## 06:18 EDT — Theorem map for the leftmost-path work (for the main agent; all Lean 4 core, no sorry)
+| statement | Lean name | file | depends on |
+|---|---|---|---|
+| no infinite H(P_j) = S S P_(j+1) | C.no_R_chain | lean/Strip.lean | final_shape |
+| no infinite H(W_j) = S (S S) W_(j+1) | C.no_R2_chain | lean/Strip.lean | no_R_chain |
+| k = 1 round over a variable gives H(W) = S (S S) W' | V.k1_round | lean/StripV.lean | K1 invariant |
+| Theorem V, leftmost (closed code over an untouched variable cannot run forever) | V.theorem_V | lean/TheoremV.lean | W1+, Cor 8(ii), no_R2_chain |
+| Theorem V, rightmost | V.theorem_V_right | lean/TheoremV.lean | W1+, Cor 8(ii), no_R_chain |
+| no infinite walk without large pushes | LP.large_push_lemma | lean/LargePush.lean | chain_ms, SStep well-founded |
+| fuel-S tail call = R-step or restart w.(S S w) (last arg /= S) | TC.reload_lemma | lean/Reload.lean | final_shape |
+| restarts recur in infinite fuel-S tail-call chains | TC.restarts | lean/Reload.lean | R_shrinks |
+| eventually the reload cycle (last args /= S) | RC.reload_classification | lean/Reload.lean | restart_detail, Rchain_to_B, closure |
+| tail calls over Z /= S force R2-steps; none infinite | FZ.tail_call_fuel, FZ.no_tail_calls_fuel | lean/Reload.lean | FInvZ |
+| eventually the reload cycle (no hypothesis) | RC2.reload_classification_full, walk_reload_full | lean/Reload.lean | tc_detail, I_step, PS_step |
+| L36 flag invariant along leftmost steps | FH.flag_step | lean/FiniteHalfTC.lean | main agent's PathModels (kCLft, clsLLft_run) |
+| reload nodes are flag 1 | FH.flag_reload | lean/FiniteHalfTC.lean | kernel computation |
+| **finite half, tail-call scenario** | **FH.finite_half_TC** | lean/FiniteHalfTC.lean | all of the above |
+Paper-level (PROVED, elementary): Scenario A => infinite rightmost path of the return multiplier; fuel lemma for
+Scenario A.  Certified: Omega nodes w_i w_k (i < k) are flag 1; only the canonical Omega family arises from R2-chains.
+* CORRECTION / PRECISION (06:20 EDT, `date`): the 04:58 entry 'Scenario-A structure' derived 'no jumps occur' from bounded
+  depth; that step is wrong in general — a jump (S p).Z -> p can land on a node p = f'.Z' whose bottom Z' is a COPY
+  of Z (e.g. after a tail call whose second component is S (X Z)), keeping the depth.  The scenarios are therefore
+  defined as: **A** = eventually jump-free and the stack depth is bounded infinitely often; **B** = eventually
+  jump-free and the depth tends to infinity; **C** = infinitely many jumps (this now includes walks that mix tail
+  calls with bottom-preserving jumps).  With this definition the Scenario-A statements stand (frozen bottom
+  occurrence; return multipliers trace an infinite rightmost path; fuel lemma).  FH.finite_half_TC is stated for
+  nodes (f j).Z with f j having >= 2 arguments, i.e. computed tail calls only — exactly the jump-free tail-call
+  sub-case of A.  Walks that alternate tail calls and bottom-preserving jumps belong to C and are NOT covered.
+* EXPERIMENTALLY SUPPORTED (06:21 EDT, `date`; stepfamily.py): along all 74 known infinite leftmost walks (flag-1 terms among
+  the self-applications X X, S X X with X <= 11 leaves and the gadget trees <= 4 letters, walks of 400 nodes), after a
+  burn-in of 50 nodes EVERY step is either a tail call (child q'.Z, one pushed multiplier, H(q) = S p q') — 24,946
+  steps — or an Omega step (p = S(SS), child Z.(q'.Z)) — 954 steps; no pop, jump or other step occurs.
+  **CONJECTURE SF (step families):** every infinite leftmost walk is eventually made of tail calls and Omega steps.
+  Roadmap to the full finite half (each item checkable): (1) prove SF; (2) classify walks of tail calls + Omega
+  steps (tail calls over S: DONE, RC2.reload_classification_full -> reload cycle; tail calls over Z /= S: R2-steps,
+  finite in a row, FZ.no_tail_calls_fuel; mixtures with Omega steps: the canonical Omega cycle w_i w_k — sketch above,
+  only canonical w_k arise, certified); (3) flags: FH.flag_step (machine-checked), reload nodes flag 1
+  (machine-checked), Omega nodes flag 1 (certified, classes (8,21)/(22,26)).
+* EXPERIMENTALLY SUPPORTED (06:22 EDT, `date`): all 954 Omega steps in the 74 known infinite walks (after burn-in) have
+  second component q' = S(SS).  With q' = S(SS) at every Omega step the classification is short (paper proof):
+  the stack after the r-th Omega step is S(SS).sigma_r, the next top sigma_r R2-counts down to the same base Y in
+  every phase (R2-step S(SS).sigma -> sigma, then determinism), H(Y) = S(S(SS))(S(SS)) forces Y = M (a computed head
+  normal form S c (b c) cannot have b c = S(SS) with c = S(SS)), and R2-steps into a term whose last argument is not
+  S S are syntactic, so the first stack is some w_d and the walk is the canonical Omega cycle w_i w_k.
+
+## 06:22 EDT — Paper proof of the reload classification (readable version of lean/Reload.lean, for audit)
+Notation: closed S-terms; H(t) = head normal form, written as the 2-list [p, q'] for t with >= 2 arguments; a node
+q.Z of the leftmost walk has top multiplier q and bottom Z.  A *fuel-S tail call* is a step q.S -> q'.S; it happens
+iff H(q) = S p q' with p = S S or H(p) = S S y (FZ.tail_call_S; with p = S S the tail chain peels once, with
+H(p) = S S y it refills once: H(p S) = S S (y S)).  R(P, P') means H(P) = S S P'.
+(1) final_shape: if L has >= 2 elements and L ++ [z] reaches [c, d], then either no step ever touched the bottom z —
+    then c = z, L reaches [S, y] and d = y.z — or c is bigger than z (the bottom only grows, by b.bottom).
+(2) R-chains are finite (no_R_chain): for P with >= 3 arguments, R(P, P') forces P = Q.S, R(Q, y), P' = y.S by (1);
+    so an infinite R-chain of P's yields one of the strictly smaller Q's; induction on size.  R-steps shrink.
+(3) tc_detail: from q = Q.z (Q with >= 2 arguments) a tail call is an R-step on the prefix (H(Q) = S S y,
+    q' = y.z), a restart q' = w.(S S w), or — only for z = S — a single wrap S (c S) / (y S)(c S).  Proof: track the
+    last wrap [x, c, w] -> args x ++ [w, c w] of the bottom (invariant CInv with the wrap history); at the end the
+    prefix args x ++ [w] reached [S, b]: for w /= S this forces x = S S and b = w by (1), and the tail-call condition
+    on p = c.w forces c = S S.
+(4) restart_detail: if z is neither S nor S S, a restart only happens with the prefix Q = B = S(SS)(SS) and gives
+    q' = z.(S S z): the last wrap [S S, S S, w] came from a prefix reaching [S S, S S], which is never the result of
+    a step ([c, b.c] = [S S, S S] is impossible), so it is the first wrap and w = z, args Q = [S S, S S].
+(5) Rchain_to_B: an R-step into a term whose last argument is not S is syntactic (R(Y, V) => Y = S S V), so a prefix
+    that counts down to B in t steps is N_t = (S S)^t B.
+(6) Once the last argument has the form S S W it keeps it (I_step: R-steps keep it, restarts produce it,
+    2-argument steps S p (S S W) -> S S W die); before that, the chain either shrinks (R-steps, 2-argument steps) or
+    passes a wrap from last argument S, after which the prefix keeps last argument S and only R-steps remain (PS_step)
+    — finitely many.  So the invariant is reached.  Then restarts recur (the chain cannot shrink forever), and between
+    two consecutive restarts the prefix runs N_d, ..., N_0 = B by (4), (5); the set {N_i N_m : i < m} is closed under
+    tail calls by direct head reduction.  Hence the chain is eventually the reload cycle.
+(7) Finite half, tail-call case: the L36 flag is invariant along leftmost steps (closure facts flag(s x) = flag(x),
+    flag(s x y) = flag(x) and class invariance under head reduction: [u] = [S c (b c)] for a computed node), and
+    every reload node N_i N_m S is flag 1 (classes of N_k are constant for k >= 1).  A flag-0 walk can therefore not
+    end in the reload cycle; over a bottom Z /= S tail calls are R2-steps, and R2-chains are finite by (2).

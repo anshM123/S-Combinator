@@ -1,0 +1,7 @@
+data 4000000
+next phase front-x 1
+next phase front-y 2084
+next phase pfront 52062
+next phase reexec 120778
+proper transfers 174925
+EXIT 0

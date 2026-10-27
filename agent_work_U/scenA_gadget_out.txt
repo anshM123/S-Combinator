@@ -1,0 +1,29 @@
+1 R19-flag-1 multipliers so far: 0 0 s
+2 R19-flag-1 multipliers so far: 0 0 s
+3 R19-flag-1 multipliers so far: 0 0 s
+4 R19-flag-1 multipliers so far: 0 0 s
+5 R19-flag-1 multipliers so far: 0 0 s
+1 {} 0 s
+2 {('long', 1, False): 2} 0 s
+3 {('long', 1, False): 11, ('S', 0, False): 4} 0 s
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SS)(SS)(S(SS)(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(S(SS))(S(SS))(SS))S
+4 {('long', 1, False): 49, ('S', 0, False): 56, ('bot?', 0, False): 15, ('long', 1, True): 2} 0 s
+NOTE long 1 excursions 1 maxdepth 2 S(SS)(S(S(SS))(S(SS)(SS)(S(SS)(SS))))S
+NOTE long 1 excursions 1 maxdepth 2 S(SS)(S(S(SS))(S(S(SS))(S(SS))(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(SSS)(S(S(SS))(S(SS)(SS)(S(SS)(SS))))S
+NOTE long 1 excursions 1 maxdepth 2 S(SSS)(S(S(SS))(S(S(SS))(S(SS))(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SS)(S(SS)(SS)(S(SS)(SS))))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SS)(S(S(SS))(S(SS))(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SS)(SS)(SS(S(SS)(SS))))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SS)(SS)(S(SS)(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(S(SS))(S(SS))(SS))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SSS)(S(SS)(SS)(S(SS)(SS))))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SSS)(S(S(SS))(S(SS))(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(SS(S(S(SS))(S(SS)))(SS))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SS)(SS)(S(SS)(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(SS)(SS)(S(SS)(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SS))(S(S(SS))(S(SS))(SS))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SSS)S)(S(SS)(SS)(S(SS)(SS)))S
+NOTE long 1 excursions 1 maxdepth 2 S(S(SSS)S)(S(S(SS))(S(SS))(SS))S
+5 {('long', 1, False): 209, ('S', 0, False): 593, ('bot?', 0, False): 218, ('long', 1, True): 19, ('S', 0, True): 6, ('bot?', 0, True): 8} 8 s

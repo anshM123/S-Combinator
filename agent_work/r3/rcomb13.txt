@@ -1,0 +1,8 @@
+data 208012
+next phase budget 444
+next phase front-x 3
+next phase front-y 458
+next phase pfront 848
+next phase reexec 5101
+proper transfers 6854
+EXIT 0

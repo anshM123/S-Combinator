@@ -24,12 +24,15 @@ machine-checked Lean 4 proofs and published everything to https://github.com/ans
   W2+ and comb rigidity, `shnf_two_vars` (closed M applied to two variables reaches an S-headed head normal form only for
   M = S or S(S(…(S S)…))).
 
-## The non-universality agent's final result (handed back 04:17 EDT)
-Chain bound in the generic phase model: a Church chain makes at most 2 proper transfers (1 from an ordered start).
-Steps 1–2 machine-checked without hypotheses (lean/AgentINNER.lean); step 3 = Conjecture R3 machine-checked under
-per-case hypotheses (lean/AgentPA.lean), certified for 1,078/1,083 and 2,612/2,621 cases up to 11 leaves; no chain of
-length >= 3 among 227,239 data up to 11 leaves and 1,413,396 random data up to 22 leaves; the replay mechanism
-(a re-execution replays the earlier transfer) machine-checked. R3 in general and D3 remain open.
+## The non-universality agents' results (handed back 04:17 and 06:22 EDT)
+Chain bound in the generic phase model: a Church chain makes at most 2 proper transfers in every covered case.
+Steps 1–2 machine-checked without hypotheses (lean/AgentINNER.lean). Step 3 = Conjecture R3: as first stated (all
+ordered data) it is REFUTED by a kernel-computed counterexample with two occurrences of the predecessor
+(lean/AgentR3F.lean, `r3_cx_*`), so 'at most 1 transfer from an ordered start' is false; for one occurrence (what the
+chain bound needs) it is machine-checked in the covered classes without per-case hypotheses (ALPHA, PBT, CLOSEDGLUE,
+PAH, IGEN) and certified with no violation exhaustively up to 13 leaves, but open in general. No chain of length >= 3
+among all data up to 11 leaves and 4.5 million random data up to 22 leaves. The replay mechanism (a re-execution
+replays the earlier transfer) is machine-checked. D3 remains open.
 
 ## Experiments and negative results this session
 * E114: a generalised Lemma P with opaque bottoms is a correct sufficient criterion for finite leftmost paths but fails

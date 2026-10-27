@@ -754,29 +754,46 @@ So a complete disproof = C5′ + configuration-level R″_PUP for every order th
 A universality proof must break one of these: a construction is impossible in (D1), and in (D2)–(D4) it would refute the
 corresponding hypothesis.
 
-## Chain bound in the generic phase model (non-universality agent, final report 2026-10-27; re-verified by the main agent)
+## Chain bound in the generic phase model (non-universality agent and R3 agent, 2026-10-27; re-verified by the main agent)
 *Setting:* the agent's generic phase model (agent_work/LOG.md, PROOF STATUS item D2): a Church chain is a sequence of
 phases in which each phase hands a transformed datum to the next by a proper transfer. Re-compiled by the main agent:
 all 15 files in agent_work/lean/ compile (Lean 4.35 core, no sorry, standard axioms); copies in lean/Agent*.lean.
 * **Steps (1)–(2) — MACHINE-CHECKED, no extra hypotheses** (lean/AgentINNER.lean): `chain_step_innermost` — every
   datum after the first transfer is an ordered right comb; `ordered_innermost` — every proper transfer from an ordered
   datum has an innermost wrapper containing the predecessor ('innermost-dirty').
-* **Step (3), Conjecture R3** ("after an innermost-dirty transfer the next phase cannot transfer") — MACHINE-CHECKED
-  under per-case hypotheses on the transferring phase (lean/AgentPA.lean: `pa_main`, `pb_main`, `pam_main`; with FH,
-  FHL, YD). The hypotheses are COMPUTATIONALLY CERTIFIED for 1,078 of 1,083 right-comb transfers and 2,612 of 2,621
-  transfers from ordered data up to 11 leaves, and for 99.7–99.8% of random larger data. R3 in general is OPEN
-  (uncovered: pattern beta with c0 ≠ S·a1; handlers that are released copies of the glued wrapper).
-* **Chain bound** (a Church chain makes at most 2 proper transfers, at most 1 from an ordered start): follows from
-  (1)–(3), so PROVED for every chain whose transfers fall in the covered cases; COMPUTATIONALLY CERTIFIED with no
-  exceptions: no chain of length >= 3 among all 227,239 data up to 11 leaves nor among 1,413,396 random data up to 22
-  leaves. CONJECTURAL in general (it needs R3).
+* **Step (3), Conjecture R3** ("after an innermost-dirty transfer the next phase cannot transfer"), as stated for ALL
+  ordered data — **REFUTED** (R3 agent, 2026-10-27; lean/AgentR3F.lean, `r3_cx_ordered`, `r3_cx_phase2`, `r3_cx_next`,
+  `r3_cx_phase3`, computed by the kernel): D = S(Sp)(S(S(S(SS)(SS)p))) is ordered, S-headed and y-free with TWO occurrences
+  of p; [D, x, y, r] reaches the transfer [p, y, w·y, x·y, r] in 2 steps (w = S(S(S(SS)(SS)p)), innermost-dirty), and the
+  next datum w[p:=c]·p' reaches after 7 steps a p'-front with the proper comb (c·(SS·c))·(p'·y) at position 3. Census:
+  8 such violations among 15,600 transfers of ordered two-occurrence data up to 11 leaves, each followed by a phase 4
+  that re-executes or calls y (chains of length exactly 2). So "at most 1 proper transfer from an ordered start" is
+  FALSE for data with several occurrences of p.
+* **R3 for one occurrence of p** (R3-1; in particular right combs over p, R3-RC) — OPEN. MACHINE-CHECKED pieces with no
+  per-case hypothesis, for the earlier phase being ANY run from ANY list (lean/AgentR3F.lean): `alpha_main` (single wrapper
+  glued in pattern alpha), `pbt_main` (pattern beta with c0 = S·a1), `closedglue_main` (glue front free of p),
+  `pah_main` (atom-headed c-code), `igen_main` (the earlier phase lays out the next datum's arguments: no p'-front at
+  all); and with hypotheses on the handler's codes only: `beta_main`, `paf_main`, `pax_main`, `pamf_main`, `ln0_main`,
+  `nhall_main` (any number of wrappers). These replace the per-case replay guards of PA/PB/PAM. COMPUTATIONALLY
+  CERTIFIED: no R3 violation for ordered one-occurrence data up to 13 leaves (all 534,888 data of exactly 13 leaves),
+  for random data up to 22 leaves, for 266,798 right combs of exactly 12 and 13 leaves, and for 8 million adversarial
+  right combs; each case is covered by one of the theorems above (right combs up to 11 leaves: 1,083/1,083). The only
+  open single-wrapper situation is a glue front that contains p and differs from c0, reduced to the structural claim
+  (S1) "c0 ran on (w, y) before the glue" (certified in every case found); multi-wrapper handlers rest on the
+  handler-only theorems. (Every "no violation" means no proper transfer within a 2,000-step budget per phase.)
+* **Chain bound** (a Church chain makes at most 2 proper transfers): not refuted — after the first transfer every datum
+  is a right comb over p with one occurrence of p (step (1)), so it needs only R3-RC. MACHINE-CHECKED for every chain
+  whose second transfer falls in one of the classes above; COMPUTATIONALLY CERTIFIED: no chain of length >= 3 among all
+  data up to 11 leaves with one or two occurrences of p, nor among 4.5 million random data up to 22 leaves, and every
+  observed second transfer is of class FH or ALPHA. CONJECTURAL in general.
 * **The replay mechanism — MACHINE-CHECKED** (lean/AgentREPLAY.lean, AgentPA.lean): the next phase re-runs the code that
   decided the previous transfer, reaching the frozen predecessor where the previous phase reached the live one
   (`reexec_replays_transfer`); in the Church-chain model extended to re-executions the replayed handler can never
   restart Church-style iteration (`replayed_handler_trivial`, `trivH_next`). This is evidence for D3 ('re-execution is
   call-like') inside the model, not a proof of D3.
-* **Reading.** Within the generic phase model, iterating data through Church-style transfers is bounded by two steps,
-  so a universal mechanism would have to re-execute frozen values or iterate data-blind calls. This narrows the
+* **Reading.** Within the generic phase model, iterating data through Church-style transfers appears bounded by two
+  steps (certified, and proved for the covered classes), so a universal mechanism would have to re-execute frozen
+  values or iterate data-blind calls. This narrows the
   candidates; it does not prove R″_PUP, Proposition UB's hypothesis, or non-universality.
 
 ## Construction-agent obstruction theorems (2026-10-26/27; machine-checked parts re-verified by the main agent)

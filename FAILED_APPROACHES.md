@@ -132,3 +132,7 @@
    on 5 of the 171 component terms with 8 leaves: their paths are finite, yet the run continues into S-headed code and
    grows without bound. The leftmost half needs a well-foundedness argument for the pushdown-with-reading dynamics of the
    tail chains (E112–E114), not a reduction to head normalisation with extra arguments.
+31. **Conjecture R3 for all ordered data (non-universality agents, 2026-10-27).** "After an innermost-dirty transfer
+   the next phase cannot transfer" is REFUTED for ordered data with two occurrences of the predecessor
+   (D = S(Sp)(S(S(S(SS)(SS)p))), lean/AgentR3F.lean `r3_cx_*`). The chain bound survives because data after the first
+   transfer have one occurrence; R3 for one occurrence is open (PROOF.md, "Chain bound in the generic phase model").
