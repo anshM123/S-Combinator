@@ -143,3 +143,77 @@ theorem fh1_main (d l u : T) (ds : List T) (hd : args d = u :: ds) (m : Nat) (hm
     rw [hu']; intro h; injection h with h; omega
 
 #print axioms fh1_main
+
+/-! ### Lemma FHL: the leftmost path version.  Lpf t: following first spine arguments through S-headed terms
+    (each with at least one argument) one reaches a frozen-headed term. -/
+
+inductive Lpf : T → Prop
+  | frozen (t : T) (m : Nat) : 4 ≤ m → head t = var m → Lpf t
+  | down (t u : T) (us : List T) : head t = S → args t = u :: us → Lpf u → Lpf t
+
+theorem lpf_head (t : T) (h : Lpf t) : head t ≠ var 0 := by
+  cases h with
+  | frozen _ m hm hh => rw [hh]; intro e; injection e with e; omega
+  | down _ u us hS _ _ => rw [hS]; simp
+
+def LInv (Lv : T) (L : List T) : Prop :=
+  (∀ e ∈ L, guarded Lv e) ∨ (∃ u rest, L = u :: rest ∧ Lpf u)
+
+theorem linv_step (d l u : T) (ds : List T) (hd : args d = u :: ds) (hu : Lpf u)
+    (L L' : List T) (hI : LInv (app d l) L) (hs : step L = some L') : LInv (app d l) L' := by
+  rcases hI with hG | ⟨u', rest, hL, hu'⟩
+  · match L, hs, hG with
+    | a :: b :: c :: R, hs, hG =>
+      simp only [step] at hs
+      split at hs
+      · rename_i ha
+        injection hs with hs; subst hs
+        by_cases hpre : lpre (app d l) a
+        · right
+          obtain ⟨R', hR'⟩ := args_lpre d l a hpre
+          refine ⟨u, ds ++ l :: R' ++ c :: app b c :: R, ?_, hu⟩
+          rw [hR', hd]; simp
+        · left
+          intro e he; simp at he
+          rcases he with he | he | he | he
+          · exact guarded_args (app d l) a (hG a (by simp)) ha hpre e he
+          · rw [he]; exact hG c (by simp)
+          · rw [he]; exact Or.inr ⟨hG b (by simp), hG c (by simp)⟩
+          · exact hG e (by simp [he])
+      · exact absurd hs (by simp)
+  · subst hL
+    match rest, hs with
+    | b :: c :: R, hs =>
+      simp only [step] at hs
+      split at hs
+      · rename_i hS
+        injection hs with hs; subst hs
+        right
+        cases hu' with
+        | frozen _ m _ hh => rw [hh] at hS; simp at hS
+        | down _ v vs _ hv hlv => exact ⟨v, vs ++ c :: app b c :: R, by rw [hv]; simp, hlv⟩
+      · exact absurd hs (by simp)
+
+theorem linv_run (d l u : T) (ds : List T) (hd : args d = u :: ds) (hu : Lpf u) :
+    ∀ (k : Nat) (L L' : List T), LInv (app d l) L → run k L = some L' → LInv (app d l) L'
+  | 0, L, L', hI, h => by simp [run] at h; subst h; exact hI
+  | k + 1, L, L', hI, h => by
+    simp only [run] at h
+    split at h
+    · rename_i L1 hs
+      exact linv_run d l u ds hd hu k L1 L' (linv_step d l u ds hd hu L L1 hI hs) h
+    · exact absurd h (by simp)
+
+/-- **Lemma FHL.**  If every p-occurrence of the initial list lies inside an occurrence of the level Lv = d.l and the
+    leftmost path of d's first spine argument reaches a frozen-headed term, no reachable list has a p-headed front. -/
+theorem fhl_main (d l u : T) (ds : List T) (hd : args d = u :: ds) (hu : Lpf u) (hdS : head d = S)
+    (k : Nat) (L0 : List T) (a : T) (rest : List T)
+    (h0 : ∀ e ∈ L0, guarded (app d l) e) (hrun : run k L0 = some (a :: rest)) : head a ≠ var 0 := by
+  rcases linv_run d l u ds hd hu k L0 _ (Or.inl h0) hrun with hG | ⟨u', r', hL, hu'⟩
+  · have hLv : head (app d l) ≠ var 0 := by simp [head, hdS]
+    exact guarded_head (app d l) hLv a (hG a (by simp))
+  · injection hL with h1 _
+    subst h1
+    exact lpf_head _ hu'
+
+#print axioms fhl_main

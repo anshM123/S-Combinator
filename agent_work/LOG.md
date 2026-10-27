@@ -701,3 +701,12 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   FH (a p-headed wrapper) 272, FH1 (a wrapper with p-headed first spine argument) 93, YD (bare-S outermost
   wrapper) 2; remaining 716 = 688 single-wrapper + 28 multi-wrapper.  Of the single-wrapper ones, the w = S.c0
   class is replayed (replay_glue / replay_beta); so the OPEN multi-wrapper class is down to 28 cases <= 11 leaves.
+* MACHINE-CHECKED (agent_work/lean/FH1.lean, now 245 lines, no sorry): **Lemma FHL** (`fhl_main`), the leftmost-path
+  form of FH/FH1: if every p-occurrence lies inside a level Lv = d.l and the leftmost path of d's first spine
+  argument (first argument, its first argument, ..., through S-headed terms with >= 1 argument) reaches a
+  frozen-headed term, then no reachable list has a p-headed front.  (Opening the level puts the path at the front;
+  each step moves the front one step down the path; the run is stuck at the frozen term before p can surface.)
+  Church-chain reading: if the leftmost path of some wrapper of a phase-j handler reaches p, phase j+1 never
+  transfers.  COMPUTATIONALLY CERTIFIED coverage (fhl_cover.py 11, all 1,083 real handlers <= 11 leaves): FHL 421
+  (227 multi-wrapper, 194 single-wrapper; includes FH and FH1), YD 2, replay class w = S.c0 not already FHL 55;
+  OPEN: 587 single-wrapper (essentially case (b), b0 != S) and 18 multi-wrapper handlers.
