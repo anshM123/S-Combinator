@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 03:25 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 03:55 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -23,18 +23,16 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        machine-checked [agent_work/lean/MSLS.lean (strict + generous), lean/MSL.lean, lean/AB.lean].
        (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN in general
        (computationally certified: exhaustive <= 11 leaves, 115k + 367k + 298k targeted data, 70k random).
-       DONE parts (machine-checked): YD [lean/YD.lean] (bare y glued down early; bare-S outer wrapper); FH, CANON
-       (p-headed wrapper; single-wrapper handler => at most one more transfer phase); REPLAY [lean/REPLAY.lean]:
-       general replay maps rho (runs commute with 'replace w by tw, substitute atoms'), run_append, and the
-       corollaries replay_reexec / replay_glue / replay_beta (a phase-2 transfer reached from the glue-time top
-       part is replayed as a REEXEC of phase 3) covering 95 of the 100 real single-wrapper cases with w = S.c0.
-       DONE parts (hand): creation lemma (the innermost wrapper is glued the step after it appears, with one
-       element above it); Theorem FS (single-level phase 3: W = S.a => sigma_C at once and no buffer ever;
-       |args W| >= 2 => a buffer when two elements remain above p'); Lemmas Sigma2, Gamma, CB; Corollary AB-c.
-       REFUTED: (B1) 'a buffer blocks all later proper transfers' (general shapes; explicit counterexample).
-       OPEN: case (b) of FS for real outputs (b0 != S: 626 cases <= 11, includes completed buffer cycles), 5
-       uncovered w = S.c0 cases, live multi-wrapper handlers (66 cases <= 11); in all of them a GENERAL REPLAY
-       ALIGNMENT between phase 2 after the glue step and phase 3 is the missing ingredient.
+       DONE (machine-checked): THEOREM PA [lean/PA.lean]: a single-wrapper handler glued in pattern alpha never
+       leads to a proper transfer in the next phase, given that phase 2's continuation from the glue step reaches
+       its transfer under the replay guards (hypotheses certified for all 680 such real handlers <= 11 leaves; the
+       creation lemma shows the innermost wrapper is always glued in pattern alpha or beta).  Supporting
+       machine-checked lemmas: YD [lean/YD.lean], FH1/FHL [lean/FH1.lean, lean/FHL.lean] (a wrapper whose
+       leftmost path reaches p blocks the next phase), AB-c [lean/ABC.lean], REPLAY [lean/REPLAY.lean] (general
+       replay maps, replay_glue / replay_beta / replay_cycle), CANON/FH (single-wrapper => at most one more
+       transfer phase).  Hand: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB.  REFUTED: (B1).
+       OPEN: pattern beta (46 single-wrapper cases <= 11, partly replay_beta/FHL), live multi-wrapper handlers not
+       covered by FHL/YD (18 cases <= 11), and a proof of the phase-2 guards in general (they are certified per case).
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
@@ -42,32 +40,36 @@ F. Decoders reading unbounded parts of terms (not windows) .....................
 Bottom line: NOT SOLVED.  No step above that is OPEN is close to a complete proof; D1 narrows the possible
 universal mechanisms (they must re-execute frozen values), it does not exclude them.
 
-# INTERIM 04:00 (non-universality agent; written 2026-10-27 02:30 EDT)
+# INTERIM 04:00 (non-universality agent; written 02:30, refreshed 2026-10-27 03:45 EDT)
 Bottom line: NOT SOLVED.  No complete proof of non-universality exists; nothing below claims one.
-New since the coordinator's 'go for the money' message (all in agent_work/; labels as in the entries below):
-1. MACHINE-CHECKED  Lemma AB (absorbing P-count): once >= 3 elements contain the live atom (and no x, y, r), there
-   are >= 3 for ever and no such element is ever glued onto an input-containing element.  [lean/AB.lean]
-2. MACHINE-CHECKED  Theorem MSL (multi-level SL): for every phase-2 datum K.(d2.(...(dk.p))) (closed wrappers,
-   frozen atoms allowed) every P-element glued onto a Y-element is level-prefixed or has only level-prefixed
-   P-arguments ('good'); hereditary form for all reachable lists.  [lean/MSL.lean: msl_glue, msl_main]
-   Consequence: every P-wrapper of a proper phase-2 handler is good.  This is the 'extend SL's invariant to
-   several levels' option of the Phase-4 request.  (It also holds verbatim in phase 3, so by itself it does not stop
-   a Church chain.)
-3. PROVED (hand)  Lemma YD (bare y glued down before any y-node other than x.y exists => no proper transfer);
-   Corollary AB-c (in phase 3, >= 3 C-elements => no p'-front and no call ever); together with FH these dispose of
-   the outer-wrapper classes 'bare S' and 'p-headed' and of all phase-3 data that release >= 3 C-elements.
-4. MACHINE-CHECKED modulo renaming (CANON + FH)  a single-wrapper phase-2 handler (77% of real cases <= 11 leaves)
-   makes phase 3 single-level, so at most one more transfer phase follows.
-5. COMPUTATIONALLY CERTIFIED  'phase 3 is never a proper transfer' on 115,442 further phase-2 data (K <= 7 leaves,
-   tails with wrappers <= 4 leaves; 5,086 proper phase-2 transfers) and the exhaustive <= 11 range.
-6. EXPERIMENTALLY SUPPORTED  the mechanism: (a) good general phase-3 shapes transfer only when the wrapper is a
-   c-comb; (b) the REPLAY RELATION: phase 3 replays phase 2 under theta = (w -> p', p -> c), turning phase 2's
-   transfer into a REEXEC; exact replay covers 38/836 single-wrapper cases; a general replay is OPEN.
-Still OPEN for item D of the map: D2(b) 'phase 3 never proper' in general (needs a general replay or a C-material
-invariant; case (ii) = sigma_C path); D3 're-execution is call-like'; and items A, C, E, F (untouched by this agent).
-Files: lean/AB.lean, lean/MSL.lean (new, compile with Lean 4.35 core, no sorry); msl_inv.py, target3.py,
-inner_forms.py, outer_forms.py, goodhits.py, goodhits2.py, target_hits.py, p3events.py, p3events2.py, p3trace*.py,
-replay_check.py, replay2.py, replay3.py (scripts; results quoted in the LOG entries of 2026-10-27 01:35-02:30).
+New since the coordinator's 'go for the money' message (all in agent_work/; every MACHINE-CHECKED file compiles
+with Lean 4.35 core, no sorry, standard axioms only):
+1. MACHINE-CHECKED  Lemma AB [lean/AB.lean] (>= 3 live-atom elements is absorbing) and its c-view Corollary AB-c
+   [lean/ABC.lean] (>= 3 frozen-material elements above the inputs => the phase can only end by re-execution).
+2. MACHINE-CHECKED  Theorem MSL, generous and STRICT forms [lean/MSL.lean, lean/MSLS.lean]: in every phase-2 run of
+   a right comb K.(d2.(...(dk.p))) (frozen atoms allowed) each P-element glued onto a Y-element is prefixed by one
+   of the datum's own levels or has only such P-arguments.  = 'extend SL's invariant to several levels'.
+3. MACHINE-CHECKED  THEOREM PA [lean/PA.lean]: a single-wrapper handler glued in pattern alpha never leads to a
+   proper transfer in the next phase, given that phase 2's continuation from the glue reaches its transfer under
+   the replay guards.  Mechanism = the REPLAY RELATION [lean/REPLAY.lean]: the next phase re-runs the code that
+   decided the transfer, on other arguments, and reaches the frozen predecessor where phase 2 reached the live one
+   (transfer -> re-execution).  Hypotheses certified for all 680 such real handlers <= 11 leaves; with FH this
+   settles 790 of the 836 real single-wrapper handlers <= 11 leaves.
+4. MACHINE-CHECKED  blocking lemmas for the next phase: YD [lean/YD.lean] (bare y glued down early; bare-S outer
+   wrapper), FH1/FHL [lean/FH1.lean, lean/FHL.lean] (a wrapper whose leftmost first-argument path reaches p);
+   replay corollaries replay_glue / replay_beta / replay_cycle [lean/REPLAY.lean].
+5. PROVED (hand)  creation lemma (innermost wrapper glued in pattern alpha or beta), Theorem FS (first-step
+   dichotomy for single-level phase 3), Lemmas Sigma2, Gamma, CB.  REFUTED: (B1) 'a buffer blocks every later
+   proper transfer' (explicit general-shape counterexample) — real data avoid it because of the replay.
+6. COMPUTATIONALLY CERTIFIED  'phase 3 is never a proper transfer' on the exhaustive <= 11 range and on 780k
+   targeted phase-2 data (K <= 9 leaves), 0 counterexamples.
+Still OPEN for item D of the map: D2(b) for pattern-beta single wrappers (46 cases <= 11) and for 18 live
+multi-wrapper handlers <= 11 not covered by FHL/YD, and a general proof of the phase-2 guards; D3 're-execution
+is call-like'; items A, C, E, F (not addressed by this agent).
+Files: lean/{AB,ABC,MSL,MSLS,YD,REPLAY,PA,FH1,FHL}.lean (new today) + OC, OT, OTD, SL, CANON (earlier);
+scripts msl_inv.py, target3.py, inner_forms.py, outer_forms.py, live_census.py, fh1_cover.py, fhl_cover.py,
+wcreate.py, prefix_replay.py, replay_cover.py, replay_b.py, replay_b2.py, unified_alpha.py, bufq.py, b0_cases.py,
+cycle_real.py (results quoted in the LOG entries of 2026-10-27 01:35-03:45).
 
 # agent_work LOG (construction agent)
 
@@ -729,3 +731,33 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   c0'.p' reaches the front: 41 cases, the replay holds step by step and ends in REEXEC exactly as stated; b0 closed
   without that front: 465 cases, all end in REEXEC (327) or in non-proper p'-fronts (162: [p', buffer, bare y] or
   three P'-elements on top, replay_b2.py); b0 a P-term: 86 cases, all REEXEC; 34 cases glue w in pattern beta.
+* COMPUTATIONALLY CERTIFIED — THE UNIFIED PATTERN-ALPHA ARGUMENT (unified_alpha.py 11; all 680 real single-wrapper
+  handlers <= 11 leaves that are glued in pattern alpha and not p-headed).  Write w = b0.c0 (glued by [c0, w, y]).
+  Phase 3 = generic run of b0' = b0[p:=c] on the arguments (c0', p', y, x.y, r).  By the barrier argument (two
+  'barriers' — c0'-prefixed and p'-headed elements — always lie above y), y, x.y, r are untouched until the first
+  front that is c0'-prefixed (x1), p'-headed (x2) or frozen-headed.  Observed: frozen front first 86 (REEXEC);
+  x2-front first 154, ALL non-proper (position 3 is y-free or the bare y); x1-front first 440: opening it gives
+  args(c0') ++ [e1, e2, ...], and phase 3 then replays phase 2's post-glue top part args(c0) ++ [y, w.y] step by
+  step under rho = (y -> e1, w.y -> e2, p -> c), the phase-2 guards hold (no (w.y)-prefixed front, w.y never
+  re-created), and phase 2's TRANSFER is replayed as phase 3's REEXEC — 440/440.  So for pattern alpha the
+  replay alignment is GENERAL: the phase-2 transfer was decided by c0's code reaching p before it touched its two
+  arguments y and w.y; phase 3 re-runs c0's code on two other arguments and reaches c at the same point.
+  (Formalisation in progress in agent_work/wip/PA.lean.)
+* MACHINE-CHECKED (agent_work/lean/PA.lean, 895 lines = REPLAY.lean + 360 new lines; Lean 4.35 core, no sorry;
+  axioms propext, Classical.choice, Quot.sound): **THEOREM PA (`pa_main`).**  Let w = b0.c0 with b0, c0 S-headed
+  and y-free (b0 = S allowed), c a frozen atom (c != 0, 2).  Suppose the phase-2 continuation from the glue step of
+  w, i.e. the run of the top part args c0 ++ [y, w.y], reaches a p-headed front after k steps under the replay guards
+  (no (w.y)-prefixed front, no step re-creating w.y).  Then in the generic run of [w[p:=c].p', x, y, r] (the next
+  phase for the handler w.y) EVERY p'-headed front has at position 3 a y-free element or the bare y — the next phase
+  never makes a proper transfer.  Proof (formal): Part 1 barrier phase (`BI`, `bi_step`, `bi_x2`: two barrier
+  elements — c0'-prefixed or p'-headed — always lie above y, x.y, r, so these are untouched; a p'-front there is
+  non-proper); Part 2/3 at the first c0'-prefixed front (`x1_open`) the list is args(c0') ++ [e1, e2, ...] =
+  rho(args c0 ++ [y, w.y]) ++ ... for rho = (w.y -> e2, y -> e1, p -> c) (`pa_image`), so `replay_run_gen` +
+  `run_append` replay phase 2's continuation until its transfer, which becomes a c-headed (re-execution) front after
+  which the run is stuck (`pa_phase`, `pa_main`).
+  COMPUTATIONALLY CERTIFIED: the hypotheses of pa_main hold for ALL 680 real single-wrapper handlers <= 11 leaves that
+  are glued in pattern alpha and are not p-headed (unified_alpha.py: b0 = S 88, b0 closed 506, b0 a P-term 86; top
+  part reaches the transfer and the guards hold in every case).  Together with FH (110 p-headed wrappers) this settles
+  'phase 3 is never a proper transfer' for 790 of the 836 real single-wrapper handlers <= 11 leaves, by a
+  machine-checked theorem plus a finite per-case check of its hypotheses (which are properties of PHASE 2 alone).
+  Remaining single-wrapper class: pattern beta (46), partly covered by replay_beta and FHL.

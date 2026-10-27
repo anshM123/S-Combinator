@@ -197,6 +197,8 @@ CHECKS = [
   ["lean_check.py", "../lean/BTInv.lean"], [r"LEAN OK: no errors, no sorry", r"bt_invariant: propext, Quot.sound"], 900),
  ("Lean 4: Theorem T (Church's theorem F3 for S, finite multiway graphs, all-or-nothing termination) machine-checked",
   ["lean_check.py", "../lean/TheoremT.lean"], [r"LEAN OK: no errors, no sorry", r"wn_sn: propext, Classical.choice, Quot.sound", r"theoremT: propext, Classical.choice, Quot.sound", r"sn_no_infinite: \(none\)"], 900),
+ ("Lean 4: Theorem H (uniformity) and Corollaries H1, H2, H3 machine-checked over M35 with variables",
+  ["lean_check.py", "../lean/TheoremH.lean"], [r"LEAN OK: no errors, no sorry", r"corH1: propext, Quot.sound", r"corH2: propext, Quot.sound", r"corH3: propext, Quot.sound"], 1500),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",

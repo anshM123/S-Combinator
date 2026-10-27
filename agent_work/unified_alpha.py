@@ -45,6 +45,9 @@ for D2 in data:
         if pre(T2run[-1], wy) or hm.app(T2run[-2], T2run[-3]) == wy: guard = False
         hm.step(T2run)
     p2front = len(T2run) >= 1 and hm.head(T2run[-1]) == P
+    st[("ALL alpha: guards ok" if guard else "ALL alpha: GUARD FAIL", "top->p-front" if p2front else "top other",
+        "b0=S" if b0 == 0 else ("b0 closed" if P not in tg.atoms(b0) else "b0 P"),
+        "b0 S-headed" if hm.head(b0) == 0 else "b0 atom-headed")] += 1
     # phase 3
     D3 = tg.subst(tg.subst(V, P, C), Y, P); c0c = tg.subst(c0, P, C)
     s3 = [Rr, Y, X, D3]; hm.step(s3)

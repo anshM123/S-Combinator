@@ -218,3 +218,35 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   be a second datum, and W2 forbids any code-controlled state with two data across a round; the only way to 'write'
   the output while reading is the self-bundle x2 (c x2) (x1 x2), which hands control to the output and buries the
   remaining input as the third argument, beyond the order-3 window (BEKW Theorem 22 + barrier lemma).
+* COMPUTATIONALLY CERTIFIED (faithfulness of the DM model): dmfaith.py — genuine leftmost-outermost reduction (one
+  redex per step on the whole term) visits, in order, exactly the leftmost-path states predicted by dm.py:
+  S(S(SS))(S(SS))(SS)S: all 740 DM survivors reached within 3,000 LO steps matched in order; S(S(SS))(S(SS))(S(SS)
+  (S(S(SS))(S(SS)))): 1,473 matched.
+* Refinement of the 03:25 W_reg note (now: OPEN, leaning 'not trivial for S'): an order-as-CPU construction needs
+  (a) reusable cells — available in principle (e.g. a cell = an hnf-free subterm advanced by firing its head redex;
+  its head-run list length mod p is a regular property), but no term <= 9 leaves has an eventually periodic top
+  window (periodic_cell.py 9 3000, both with depth-2 shapes and with capped spine lengths), and (b) a FACTORY for new
+  cells (an unbounded tape) — S has no small self-reproducing term (selfembed.py: none <= 11 leaves), duplication
+  S x y z -> x z (y z) consumes its duplicator, so tape growth would have to come from an existing infinite run
+  (e.g. the binary counter's growing list).  So whether W_reg is trivially satisfiable for S is itself non-trivial;
+  not pursued further (an order-as-CPU emulation would not count as S computing anyway).
+
+## 04:00 EDT  Fibonacci classification of single-datum DM rounds (W1+)
+* COMPUTATIONALLY CERTIFIED (copycat.py 11 4000): for every closed C <= 11 leaves, every survivor of the first DM
+  round from ch(C) ++ [x] that holds x at least twice is a Fibonacci word F_k(x, W.x) — F_0 = x, F_1 = W.x,
+  F_{k+2} = F_k F_{k+1}, W closed (here W = S c1 .. cj) — with k = 2..9 (2, 3, 5, ..., 34 copies; 29 shapes).
+* Proof idea (to be machine-checked next): with x the only datum the list is (closed) ++ [x] until the first write
+  [a, b, x] -> args a ++ [x, b.x]; from then on it is (closed) ++ [F_k, F_{k+1}] (W = b) — a step [a, F_k, F_{k+1}]
+  gives args a ++ [F_{k+1}, F_k F_{k+1}] = (closed) ++ [F_{k+1}, F_{k+2}] — or a write [a, b, F_k, F_{k+1}] creates a
+  third data element, after which (Lemma 8 + Corollary 8(i), main agent's BarrierJ.lean) no hnf is ever reached.
+  So a round that ends has survivor closed, x, or F_k(x, W.x): the leftmost path's only copy mechanism is the
+  Fibonacci swap of the comb, applied to (datum, one closed wrap of the datum).
+* MACHINE-CHECKED (04:10 EDT): agent_work_U/lean/W1F.lean (248 lines, Lean 4 core, no sorry; axioms propext,
+  Quot.sound [+ Classical.choice for the survivor theorem]).  Framework/Lemma 8 copied from lean/BarrierJ.lean.
+  `w1f_inv_reach`: every list reachable from C ++ [x] (C closed) is C' ++ [x] with C' closed, or
+  C' ++ [fib W k, fib W (k+1)] with C', W closed, or has >= 3 data elements;
+  `w1f_survivor`: the first element of every reachable 2-list (the DM survivor) is closed or fib W k, where
+  fib W 0 = x, fib W 1 = W.x, fib W (k+2) = (fib W k)(fib W (k+1)).
+  This is the complete classification of single-datum descent-machine rounds (it subsumes W1): the leftmost path can
+  erase the datum, keep it, add ONE closed wrap, or copy it by the comb's Fibonacci swap of (x, W.x) — nothing else.
+  (Agrees with copycat.py: all 29 multi-copy shapes <= 11 leaves are such Fibonacci words.)
