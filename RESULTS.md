@@ -72,6 +72,7 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
 | result | file | meaning |
 |---|---|---|
+| No repeated node on leftmost walks (given Waldmann's no-spiral theorem) | `NoRepeat.lean` | a leftmost Böhm-tree walk never visits the same node twice, so no infinite leftmost walk is eventually periodic; the no-spiral theorem (published, BEKW Theorem 14) is an explicit hypothesis |
 | Leftmost-path finite half reduced to Conjecture J | `AgentEMA.lean` | an infinite leftmost walk from a term in a flag-0 class of the 36-class model must make infinitely many 'jumps' (nodes S p τ); so if every infinite leftmost walk makes only finitely many jumps (Conjecture J, unrefuted in all tests), leftmost-path finiteness of S-terms is decidable |
 | Leftmost/rightmost-path finite halves reduced to Conjecture EM | `AgentFiniteHalfGen.lean` | no infinite leftmost walk from a flag-0 term is eventually monotone, so the finite half of the leftmost-path model (and of the rightmost-path model, under EM_R) follows from one conjecture: every infinite leftmost walk is eventually monotone (finitely many pops, jumps and returns) |
 | Leftmost-path finite half: known mechanisms excluded | `AgentFiniteHalf.lean` | the leftmost-path model's flag is invariant along leftmost steps, and both known infinite leftmost mechanisms (the reload cycle and the Omega cycle, and any mixture) only occur in flag-1 classes; the finite half still needs 'every infinite walk eventually uses only these steps' (Conjecture SF) |

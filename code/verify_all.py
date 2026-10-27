@@ -247,6 +247,8 @@ CHECKS = [
   ["lean_check.py", "../lean/AgentEMA.lean"], [r"LEAN OK: no errors, no sorry", r"SC.finite_half_of_J: propext, Classical.choice, Quot.sound", r"SC.EM_deep: propext, Classical.choice, Quot.sound", r"CA.depth_to_infinity: propext, Classical.choice, Quot.sound"], 2400),
  ("Lean 4 (race agent): Theorem B2, the ReplaceAll normalisation time of n-bar m-bar S is exactly nm + 2n - 2",
   ["lean_check.py", "../lean/AgentBilinear.lean"], [r"LEAN OK: no errors, no sorry", r"theoremB2: propext, Classical.choice, Quot.sound"], 900),
+ ("Lean 4: leftmost walks never repeat a node, under Waldmann's no-spiral theorem as an explicit hypothesis",
+  ["lean_check.py", "../lean/NoRepeat.lean"], [r"LEAN OK: no errors, no sorry", r"no_repeat: propext, Classical.choice, Quot.sound", r"no_periodic: propext, Classical.choice, Quot.sound"], 600),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",

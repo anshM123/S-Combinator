@@ -179,8 +179,10 @@ S p τ). So Conjecture J (every infinite leftmost walk makes only finitely many 
 half for every flag-0 class, and with Proposition Q″ L36 would decide leftmost-path finiteness of S-terms. J is OPEN
 (EXPERIMENTALLY SUPPORTED: no late jump among all 58,786 terms with 12 leaves and 240,000 random compositions; no
 periodic leftmost walk found). PROVED (J agent, 12:47, relying on Waldmann's no-spiral theorem, BEKW Theorem 14,
-cited, not machine-checked): no leftmost walk repeats a node, so no infinite leftmost walk is eventually periodic.
-The J agent was stopped by the usage limit before it could go further. EXPERIMENTALLY SUPPORTED: after burn-in all 37,657,000 steps of 13,151 long
+cited): no leftmost walk repeats a node, so no infinite leftmost walk is eventually periodic. The J agent was stopped
+by the usage limit; the main agent then MACHINE-CHECKED the argument with the no-spiral theorem as an explicit
+hypothesis `NoSpiral` (lean/NoRepeat.lean: `lchild_red` — every leftmost step reduces the node to a non-trivial
+context of the child, with at least one step at computed nodes; `no_repeat`; `no_periodic`). EXPERIMENTALLY SUPPORTED: after burn-in all 37,657,000 steps of 13,151 long
 flag-1 walks are pushes; no case (a') among 780,000 depth-1 returns. EXPERIMENTALLY
 SUPPORTED: no flag-0 walk runs 400 nodes among 656,250 6-letter trees over {S, SS, S(SS), B, M} (up to 42 leaves).
 
