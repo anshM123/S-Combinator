@@ -1398,3 +1398,8 @@ tell computed steps from structural ones, so the rightmost half is harder than t
 *Tail chains (code/lw_chain.py 10).* Computed steps that stay in the component write the child as a right comb
 q_{k−1}·(…(q_0·e_m)) over the node's last argument with k = 0…6 and 201 distinct chains at ≤ 10 leaves (e.g. q = [S(SS)],
 [SSS(SS)], [SSSS(SS), SSSS(S(SS(SS)S)S)]). No small family of chain shapes covers the component.
+*C6 completeness half at class level (code/c6_classgraph.py, c6_shrink.py).* Over the 113-element joint magma P39 × M35
+the 17 nodes (⊥_P, F_M) form ONE strongly connected component under "has a ⊥_P child class", so no class-level acyclicity
+argument exists. Sizes do not help either: at ≤ 10 leaves, of 497 computed ⊥_P nodes only 126 have a smaller ⊥_P hnf
+component (e.g. SSS(SS)SS → S(S(SS)S)S(S(SS)(S(S(SS)S)S)), 7 → 13 leaves). Conjecture C7 (a ⊥ at depth ≤ |t| − 3) therefore
+needs a measure other than node size.
