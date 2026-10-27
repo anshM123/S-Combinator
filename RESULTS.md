@@ -49,8 +49,9 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
 | result | file | meaning |
 |---|---|---|
+| `shnf_two_vars`, comb rigidity for any two data | `AgentWR.lean` | for closed M, M x y reaches an S-headed head normal form only if M = S or M = S(S(…(S S)…)): with two opaque arguments, S-code either hands control to an argument or is a comb |
 | Lemmas W1+, W2, W2+ and comb rigidity | `AgentW1F/W2/W2R.lean` | leftmost-path (descent-machine) rounds: a single datum only forms Fibonacci words; with two data no code can store them, and the only code that carries both across a round is a comb S(S(…(S S)…)), which just swaps them Fibonacci-style — no second independent store |
-| Theorems PA, PB; Lemma FH1 | `AgentPA/FH1.lean` | for single-wrapper phase-2 handlers (glued in pattern alpha, or beta with c0 = S·a1), the next phase never makes a proper transfer, given replay guards certified per case: 830 of 836 real cases up to 11 leaves settled |
+| Theorems PA, PB; Lemmas FH1, FHL | `AgentPA/FH1/FHL.lean` | for single-wrapper phase-2 handlers (glued in pattern alpha, or beta with c0 = S·a1), the next phase never makes a proper transfer, given replay guards certified per case: 830 of 836 real cases up to 11 leaves settled |
 | Lemmas AB, AB-c, MSL (strict form), YD, replay lemma; Lemma W1 | `AgentAB/ABC/MSL/MSLS/YD/REPLAY/W1.lean` | steps of the two agents' programmes: no P-onto-Y glue once the P-region is large; every glued P-wrapper of a multi-level datum is good; an early glued-down y kills proper transfers; a single-wrapper phase-2 transfer replays as a phase-3 re-execution; a descent-machine round adds at most one closed wrap to a single-copy datum |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
 
