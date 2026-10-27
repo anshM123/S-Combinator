@@ -867,8 +867,8 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
 * PROVED (structure of the chain bound; assembling machine-checked parts, hypotheses per case):
   (1) every datum after the first transfer, D_{j+1} = V_j[y := p', p := c_j], is a right comb over p' whose
       wrappers are free of p', x, y, r, hence ordered in OTD's sense (immediate);
-  (2) from an ordered datum every proper transfer is innermost-dirty (OTD + the OT corollary; machine-checked for
-      single-level data in CANON.lean, by hand for general ordered data);
+  (2) from an ordered datum every proper transfer is innermost-dirty (machine-checked in general: INNER.lean,
+      `ordered_innermost`, added 04:10);
   (3) after an innermost-dirty transfer satisfying the hypotheses of PA / PB / PAM (or covered by FH / FHL / YD),
       the next phase makes no proper transfer (machine-checked).
   Hence: a Church chain makes at most TWO proper transfers (the first datum may be non-ordered and hand over a
@@ -877,3 +877,11 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
   ordered-data transfers <= 11 leaves, all but 5 of the 1,083 right-comb transfers <= 11 leaves, 99.7-99.8% of
   random larger data; the uncovered ones also stop, by simulation).  This is the strongest form of the D2
   programme reached today: within the generic phase model, Church-style iteration of transfers is bounded by 2.
+* MACHINE-CHECKED (agent_work/lean/INNER.lean = CANON.lean + 40 lines; no sorry; axioms propext, Classical.choice,
+  Quot.sound): **`ordered_innermost`** — for ANY S-headed ordered y-free datum G (frozen atoms allowed), whenever the
+  generic run of [G, x, y, r] reaches f :: w :: V :: rest with f containing p and V = d1.(...(dm.y)) (m >= 1, all
+  d_i free of x, y, r), the innermost wrapper dm contains p.  This makes step (2) of the chain bound (every proper
+  transfer from an ordered datum is innermost-dirty) machine-checked in general, not only for single-level data.
+  With step (1) (every datum after the first transfer is ordered in OTD's sense — immediate) and step (3) (the
+  replay theorems PA / PB / PAM and FH / FHL / YD, per-case hypotheses), the chain bound 'at most two proper
+  transfers per Church chain' is machine-checked up to the per-case hypotheses of step (3).

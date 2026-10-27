@@ -6,6 +6,21 @@ standard axioms only) > PROVED (hand proof) > COMPUTATIONALLY CERTIFIED > EXPERI
 Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: `PROOF.md`, section "Master Reduction";
 the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
+## Headlines
+* **Not solved.** Neither universality nor non-universality of S is proved here.
+* **BEKW Question 10 is answered and machine-checked, as posed:** the tree automaton in Figure 14 of Barendregt–Endrullis–
+  Klop–Waldmann accepts exactly the S-terms with a head normal form (`BEKW_Q10.lean`, on top of `Q10.lean`).
+* **Evaluation order does not matter for control or termination (machine-checked for S):** confluence, Church's theorem
+  (a term with a normal form terminates in every order), the head normalisation theorem and the invariance of Böhm trees
+  hold. Every infinite evolution, in any order, visits terms of unbounded size, so it never settles into finitely many
+  forms.
+* **Why constructions fail (about 20 machine-checked barrier theorems):** code cannot write into two live data, rotate
+  data cleanly, create 'fuel', hold two data except as a comb, or let a counter grow beside an unread counter beyond a
+  fixed potential. It must read what it uses, at a cost. So every known route to a universal emulation is blocked.
+* **What a full disproof still needs:** decidability of Böhm-tree properties (open even for productivity, BEKW Question 5,
+  and leftmost-path finiteness), regularity of all head runs (R″_PUP), and a definitional argument about Wolfram's
+  "non-universal decoder" (see "Open" below).
+
 ## Machine-checked in Lean 4 (`lean/`, re-checked by `code/verify_all.py`)
 
 **Head normalisation, Böhm trees and finite models**
