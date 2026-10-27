@@ -71,3 +71,20 @@ search, timeout <= 30 min per search.
   - `num_S_time`: (k+1)-bar S is normal from pass k on, exactly.
   - `theoremB2`: isNf (passN i ((j+1)-bar (k+1)-bar S)) <-> (j+1)(k+1) + 2j <= i, i.e. n_par(n-bar m-bar S) = nm + 2n - 2.
   - two `decide` instances: 4-bar 4-bar S (numP 3) is normal at pass 22 = 4*4 + 2*4 - 2 and not at pass 21.
+
+## 2026-10-27 12:40 EDT E3-E5: no higher-degree or sum-of-products clocks among small templates -- COMPUTATIONALLY CERTIFIED (finite scans)
+* delay_scan.py 3 5 40 3000: no template X <= 3 leaves over {N, M, S, s} (N, M both present) with X S R holding a slow
+  R (= 40-bar S) back by a non-separable polynomial Delta(n, m) (n, m <= 5). (4-leaf scan delay_scan.py 4 4 30 2000
+  running in the background -> delay4.txt.)
+* tri_check.py / tri_scan.py 4 4 2000 (all 4-leaf templates over {N, M, K, S, s} with all three numerals, grid {1..4}^3):
+  no degree-3 term; the polynomial ones are degree 2 (e.g. N(M K S) = n + mk + 2m - 3, Lemma U applied to B2);
+  the non-polynomial ones are max-plus (e.g. N S (M K) = max(2n - 1, n + m - 1), Lemma U with n_par(m-bar k-bar) = m - 1).
+  N M K S, N (M K) S, N (M K S) S etc. do not normalise within the caps: an iterator applied to a non-numeral spine
+  generator grows exponentially (probe3.py: 2-bar (2-bar 1-bar S) S, size x1.4 per pass for 40 passes).
+* word_scan.py 5 6 3000 (single datum D = (SS.)^a (Z b-bar), Z closed <= 5 leaves; processes D D S, D S): the only
+  non-separable exact clock is Z = SS, where D is the numeral (a+b+1)-bar and D D S = s^2 + 2s - 2 with s = a + b + 1,
+  a function of ONE linear form (useless: one parameter). Other separators: no normal form within caps or max-plus.
+* thmC_probe.py: the data W_r = (SS.)^r K of Theorem C's Boehm-tree counter are not benign clocks: W S normalises at
+  r + 7, but W S S, W W S, 3-bar W S, W 3-bar S do not normalise within caps (the base K restarts the counter).
+* swap_search2.py 8: no closed Z <= 8 leaves with Z u X Y ->* [X, u, ...]; X reaches the front only with u X as its
+  argument (u X, u X (X (u X)), ...), as Lemma 10 requires (an X-headed term containing u contains X twice).
