@@ -64,3 +64,5 @@ PASS  Lean 4: canonical_innermost (single-level transfers end with a p-headed in
 PASS  Lean 4: Theorem A (M35 class not in F => no head normal form); S-identity and hnf shapes kernel-checked with no axioms  (6s)
 PASS  Lean 4: Theorem P2 (Böhm-tree finiteness of S S^j (SSS)(SS) iff j even or j = 1) machine-checked  (5s)
 PASS  Lean 4: Theorem Q10 (BEKW Question 10: head reduction terminates iff the M35 class is in F) machine-checked  (42s)
+PASS  Lean 4: Proposition Q-double-prime (leftmost/rightmost path models: flag 1 => path infinite) machine-checked  (84s)
+PASS  Lean 4: Lemma P (descent lemma) and Theorem LP1 (outside D2 the leftmost path ends at S) machine-checked  (47s)
