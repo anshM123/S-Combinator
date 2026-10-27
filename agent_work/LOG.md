@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 01:15 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 02:00 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -18,8 +18,12 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        SL (single-level data: P-elements glued onto Y are predecessor-headed) [lean/SL.lean]; canonical chain bound
        (single-level transfer => next phase cannot iterate without re-execution) [lean/CANON.lean].
        Scope: generic (opaque) data, Church-style phases; these do NOT by themselves prove R''_PUP for any new class.
-   D2. Multi-level data, phase 3 never a proper transfer ............................ OPEN (computationally certified:
-       exhaustive <= 11 leaves right combs, all ordered contexts <= 10 leaves, 70k random) [chain3.py, phase2_general.py]
+   D2. Multi-level data.  (a) Theorem MSL (multi-level SL: P-elements glued onto Y are level-prefixed or have only
+       level-prefixed P-arguments) and Lemma AB (|P| >= 3 is absorbing) ............ DONE, machine-checked
+       [agent_work/lean/MSL.lean, lean/AB.lean]; hand proofs in this LOG.
+       (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN (computationally
+       certified: exhaustive <= 11 leaves right combs, 70k random) [chain3.py, phase2_general.py]; hand proof of
+       case (i) only (C-region disposed onto P'); case (ii) (sigma_C path) open.  Needs the c-shapes of good wrappers.
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
@@ -433,3 +437,43 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   frozen atoms allowed, so phase 3's C-elements count here —, Pl contains p = var 0 and no x, y, r, Yl contains
   x, y or r) with all elements ordered and |Pl| >= 3, every later list keeps |Pl| >= 3 and no step ever glues a
   P-element onto a Y-element.
+* (bookkeeping) msl_check.py 10 and absorb_check.py 10 hit their 30-minute timeouts without output (killed by
+  `timeout`, exit 124); superseded: AB is machine-checked, and the exact MSL invariant is checked below.
+* PROVED (Theorem MSL, multi-level SL; hand proof 2026-10-27 ~02:00, Lean formalisation in progress).
+  Lv = right combs over p with closed wrappers (Lv p; Lv l, d closed => Lv d.l).  LP(e): some left-spine prefix of
+  e is in Lv ("level-prefixed"; includes p-headed).  good(e): LP(e) or every P spine argument of e is LP.
+  Setting: K closed, l in Lv, generic run from args(K) ++ [l, y, x.y, r] (= one step after [K.l, x, y, r]; every
+  multi-level phase-2 datum d1.(d2.(...(dk.p))) is K.l).  **Claim: every step that glues a P-element b onto a
+  Y-element glues a good b; hereditarily, every subterm w.q (w in P, q in Y) of every reachable list has good w.**
+  Invariant (while |P| <= 2; once |P| >= 3 Lemma AB takes over for ever): regions CL* P* Y*; every S-headed subterm
+  has spine args CL* P* Y* (OTD's I1 plus 'ordY': no non-Y argument after a Y argument); MQ: P = [] or some
+  P-element is LP; MT: |P| = 2 => each non-LP P-element has only LP P-arguments; MA (hereditary): every subterm
+  l.u with l in Lv and u in P has good u; GM (hereditary): every subterm w.q with w in P, q in Y has good w.
+  Key facts: (1) opening an LP front a = (d.l').u1...un releases args(d) (closed) ++ [l', u1..un], and l' is LP;
+  if exactly two P-args result then a = l.u1 and MA gives good(u1); a non-LP good front releases only LP P-args;
+  so after any P-front opening MQ and MT hold.  (2) An S-headed Y-front a has its P-arguments inside its maximal
+  non-Y prefix s, and s.q is a subterm (q in Y), so GM gives good(s) and (1) applies.  (3) Cases with |P| <= 2:
+  (CL,CL,CL), (CL,CL,Y), (CL,Y,Y): P unchanged / empty.  (CL,CL,P), P = [c] (LP by MQ): new P = [c, b.c],
+  P-args(b.c) = [c] all LP.  (CL,P,P), P = [b, c]: new P = [c, b.c]; MQ via b LP => b.c LP, or c LP; MT: non-LP c
+  has LP P-args (old MT), non-LP b.c has P-args P-args(b) ++ [c] (b non-LP so c LP); new node b.c: if b in Lv then
+  c is good (LP or MT): MA kept.  (CL,P,Y), P = [b]: b LP (MQ) => good: GM kept; P empty after.  (P,P,Y),
+  P = [a, b]: b good by MQ+MT (GM kept), new P = P-args(a) by (1) (a good by MQ+MT).  (P,Y,Y): a LP by MQ, (1).
+  (Y,Y,Y): (2).  Transitions to |P| >= 3 hand over to AB (no P-onto-Y glue ever again, so GM persists).
+  COMPUTATIONALLY CERTIFIED (msl_inv.py: the exact invariant, all 1,429 / 4,861 multi-level right combs with
+  <= 9 / <= 10 leaves, S-headed, 300-400 steps): never violated (173 / 875 runs enter the AB regime).
+  Extended: N = 11 (all 16,795 multi-level right combs <= 11 leaves, 300 steps; 3,761 enter the AB regime, 470
+  hit the budget inside the small regime): never violated.
+* MACHINE-CHECKED (agent_work/lean/MSL.lean, 1,205 lines = AB.lean + 610 new lines; Lean 4.35 core, no sorry;
+  axioms propext, Classical.choice, Quot.sound): **Theorem MSL** exactly as stated above, for K closed and l in Lv
+  where `closed` = free of p, x, y, r (FROZEN ATOMS ALLOWED in K and in the wrappers of l).
+  `msl_glue`: every reachable list a :: b :: c :: R with S-headed a, b in P, c in Y has good b.
+  `msl_main`: every element of every reachable list satisfies GM (every subterm w.q, w in P, q in Y, has good w).
+  `msl_first_step`: [K.l, x, y, r] steps to the start list args K ++ [l, y, x.y, r] when K is S-headed.
+  Proof = the invariant MInv := (MS ∨ SegBig) ∧ GM: MS is the small-P invariant of the hand proof (10 cases in
+  `ms_step`), SegBig is Lemma AB's regime (`ab_step`), and `LP_open` / `open_P` / `open_Y` are fact (1)-(2).
+  Consequence (hand glue, same as CANON for SL): every P-wrapper of a proper phase-2 transfer handler (each was
+  glued onto a y-term) is good; by OTD the innermost one is a P-wrapper.  NOTE the theorem allows frozen atoms in
+  the wrappers, so it ALSO applies verbatim to phase 3 (D3 = V[y:=p', p:=c] is again K'.l' with c frozen):
+  MSL alone does not stop a Church chain; what is still OPEN is that phase 3 cannot make a proper transfer, which
+  must use the specific c-shapes w[p:=c] of good phase-2 wrappers w (the negative controls show that general
+  phase-3-shaped data DO transfer).

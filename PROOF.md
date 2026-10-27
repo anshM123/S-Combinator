@@ -67,7 +67,24 @@ hnf by Theorem A. ∎   [Reproduce: `sterm.exe verify n lo hi ../data/model35_hn
 For all S-terms t: t has an hnf ⟺ `[t]_{M35} ∈ F`. (⇐-direction of failure = Theorem A.)
 Consequence: head normalisation of S-terms is decidable in linear time.
 
-## Theorem Q10 (BEKW Question 10 holds) — PROVED (elementary argument + COMPUTATIONALLY CERTIFIED finite facts; independently audited)
+## Theorem Q10 (BEKW Question 10 holds) — PROVED (elementary argument + COMPUTATIONALLY CERTIFIED finite facts; independently audited) and MACHINE-CHECKED in Lean 4 (lean/Q10.lean, 2026-10-27)
+*Lean (main agent, 2026-10-27).* `Q10 (t : Tm) : (∃ n L', run n (args t) = some L' ∧ L'.length ≤ 2) ↔ isF (cls t) = true`:
+head reduction of t terminates iff its M35 class is in F. Axioms: propext, Classical.choice, Quot.sound; no sorry.
+The proof follows the four steps below on the head machine itself, with no separate big-step semantics. A mutual
+well-founded recursion `hnfF` / `chainF` is ordered by the lexicographic measure (8 − rank, call kind,
+tail-chain-graph index, size). `hnfF` splits off the last argument; rank rises, or the size falls at the self-loop
+12·s = 12. `chainF` treats p = S, peel (index falls, or size falls at the one peel self-loop) and refill (the sub-run on
+p·v at strictly higher rank, since the multiplier q·v ≠ s; then the index falls; q′ is an application by `run_form`).
+The finite facts are seven Boolean checkers evaluated by the KERNEL (`decide +kernel`) over a base-35 bignum
+encoding of M35 and of the 8,329-state index table:
+* (F2) no product is s;
+* not-F is left-absorbing;
+* the rank law with the single self-loop 12·s;
+* the PRE class set (terms with ≥ 2 arguments; the over-approximation 'any a ≠ s' is NOT acyclic);
+* completeness of the peel and decomposition tables;
+* the index strictly decreases on all 84,205 edges except the one peel self-loop.
+
+`k1` uses no axioms; the others use propext. Tables: code/q10_lean_facts.py, data/q10_tables_PRE.txt.
 _Audit 4 (2026-10-25, adversarial subagent, own code): correct; no counterexample, no missing edge; four small gaps in the
 write-up repaired below (rank definition, Step 1 direction, existence of H(p_i) in the refill case, (F4) citation)._
 **Statement.** For every S-term t: t has a head normal form ⟺ [t]_{M35} ∈ F.
@@ -663,7 +680,7 @@ them separately. This is the definitional piece.
 
 | hypothesis | status |
 |---|---|
-| C5′ (MSO of Böhm trees decidable) | open; special cases: Q10 PROVED (hnf), C6 soundness half PROVED, C8 one half PROVED, path models one half PROVED (Q″); completeness halves certified ≤ 19 / ≤ 16 leaves; the leftmost-half size-change route fails with finite abstractions (FAILED_APPROACHES 29) |
+| C5′ (MSO of Böhm trees decidable) | open; special cases: Q10 PROVED and MACHINE-CHECKED in Lean (hnf), C6 soundness half PROVED, C8 one half PROVED, path models one half PROVED (Q″); completeness halves certified ≤ 19 / ≤ 16 leaves; the leftmost-half size-change route fails with finite abstractions (FAILED_APPROACHES 29) |
 | window/configuration R″_PUP, leftmost-outermost | open in general. PROVED per term for every certified run: all 152 census counters, 850/850 random endpoints, the loop/nest/call/comb certificates; R″_PUP PROVED for nested loops (Lemma PUP) and the head-unique class (Theorem UR-C, Lean). Attack in progress: the non-universality agent's phase programme (OT, OTD, FH, SL, canonical_innermost in Lean) toward "re-execution is call-like" |
 | configuration R″_PUP, parallel and other orders | open; 86/150 parallel runs certified per term (Theorem LP-par) |
 | (D5) definitional argument | open (not a mathematical statement until a detector class is fixed) |
