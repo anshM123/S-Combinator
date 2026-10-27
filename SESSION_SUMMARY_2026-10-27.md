@@ -34,6 +34,16 @@ PAH, IGEN) and certified with no violation exhaustively up to 13 leaves, but ope
 among all data up to 11 leaves and 4.5 million random data up to 22 leaves. The replay mechanism (a re-execution
 replays the earlier transfer) is machine-checked. D3 remains open.
 
+## The last two agents' results (10:11 and 10:12 EDT)
+* S1 agent (lean/AgentR3G.lean, 8,375 lines): R3 machine-checked without conditions for every single-wrapper handler
+  of ordered data with at most one occurrence of the predecessor (`r3_single_unc`, `r3_rc_unc`), via Theorem S1,
+  Lemma YT and the barrier order. The chain bound (at most 2 proper transfers) now holds whenever the second transfer
+  is single-wrapper or FH, which covers every chain observed. Multi-wrapper handlers: machine-checked in classes only.
+* Universality agent (lean/AgentFiniteHalfGen.lean, 6,146 lines): no universal construction. On the leftmost-path
+  finite half: Omega and reload families with any second component are excluded from flag-0 classes, and the whole
+  finite half is reduced to Conjecture EM (every infinite leftmost walk is eventually monotone); the same for the
+  rightmost path under EM_R.
+
 ## Experiments and negative results this session
 * E114: a generalised Lemma P with opaque bottoms is a correct sufficient criterion for finite leftmost paths but fails
   to be necessary (5 of 171 resisting terms at 8 leaves); class graphs: the C6 completeness half has one 17-class

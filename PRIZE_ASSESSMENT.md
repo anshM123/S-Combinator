@@ -29,6 +29,12 @@ request; the prize submission itself still needs the user's approval. The one-pa
   occurrence, which is open but certified exhaustively up to 13 leaves. A universal mechanism would therefore have to re-execute frozen
   values or iterate data-blind calls. Open: R3 in general, D3 ('re-execution is call-like'), the phase decomposition of
   all head runs. (PROOF.md, 'Chain bound in the generic phase model'.)
+* **Final agent results (10:12 EDT):** (1) R3 is machine-checked without conditions for every single-wrapper handler
+  of ordered data with one occurrence of the predecessor, so the two-transfer chain bound holds for every chain whose
+  second transfer is single-wrapper or FH (all observed chains); multi-wrapper R3 is open. (2) The leftmost-path finite
+  half (and the rightmost one) is reduced in Lean to one conjecture, EM: every infinite leftmost walk is eventually
+  monotone (finitely many pops, jumps and returns). Proving EM would make leftmost-path finiteness decidable via the
+  36-class model (the other half is Proposition Q″), settling detector class (D2′) for that path.
 * **Work in progress (3 workers until 16:30 EDT):** the non-universality agent's phase programme (open step: phase 3 of
   multi-level data cannot transfer properly), the universality agent's descent machine (open: harmless stale bundles),
   and the main agent's verification and formalisation.
