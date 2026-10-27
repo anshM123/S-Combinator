@@ -690,3 +690,14 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   original list no front is ever headed by p', x, y or r.  So with >= 3 elements carrying frozen material above the
   inputs, the phase can only end by RE-EXECUTING a frozen value (or a head normal form, or not at all): a
   machine-checked instance of 'frozen material forces re-execution'.
+* MACHINE-CHECKED (agent_work/lean/FH1.lean, 175 lines, no sorry; axioms propext, Classical.choice, Quot.sound):
+  **Lemma FH1** (strengthens FH).  If every p-occurrence of the initial list lies inside an occurrence of a level
+  Lv = d.l whose wrapper d is S-headed with a FROZEN-HEADED FIRST SPINE ARGUMENT, then no reachable list has a
+  p-headed front (`fh1_main`): opening any Lv-prefixed element releases args(d) first, so the front becomes
+  frozen-headed and the run is stuck (a re-execution) at the very step that would expose p.  Application to
+  Church chains: if some wrapper of a phase-j handler has a p-headed first spine argument, the next datum has a
+  level whose wrapper has a c-headed first spine argument, so phase j+1 never transfers at all.
+  COMPUTATIONALLY CERTIFIED coverage (fh1_cover.py 11; all 1,083 real proper position-3 handlers <= 11 leaves):
+  FH (a p-headed wrapper) 272, FH1 (a wrapper with p-headed first spine argument) 93, YD (bare-S outermost
+  wrapper) 2; remaining 716 = 688 single-wrapper + 28 multi-wrapper.  Of the single-wrapper ones, the w = S.c0
+  class is replayed (replay_glue / replay_beta); so the OPEN multi-wrapper class is down to 28 cases <= 11 leaves.

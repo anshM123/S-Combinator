@@ -20,6 +20,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | Proposition MW(a),(b) | `MW.lean` | in every evolution order the multiway graph of an S-term is acyclic, and every infinite evolution visits terms of unbounded size, so it never settles into finitely many forms |
 | Confluence, Proposition MW(e) | `Confluence.lean` | S-reduction is confluent (normal forms are unique); a decoder that respects reachability cannot read two different halting outcomes of a nondeterministic machine from S's multiway system (true of every confluent system, SK included) |
 | Proposition CF, head normalisation theorem | `CF.lean`, `Standard.lean` | if any evaluation reaches a head normal form, head reduction does too; and whichever evaluation order reaches a head normal form, it finds the same head and the same number of arguments, with joinable arguments: control flow at Böhm-tree level does not depend on the evaluation order |
+| F5: Böhm trees are invariant under reduction | `BTInv.lean` | a term and every reduct (any evaluation order, any redex choices) have the same Böhm tree to every depth, so every Böhm-tree property is order-independent |
 | Barrier lemma | `Barrier.lean` | every S-term P run on two opaque arguments [P, x, y | r] hands control to an argument before it touches anything below them: loop bodies can never touch their accumulator |
 | Lemma P, Theorem LP1 | `LP1.lean` | if S·t·A·B has a head normal form, t's leftmost Böhm-tree path ends at S; hence every term whose M35 class is in F outside the five two-argument-dead classes D2 has a finite leftmost path ending at S |
 | Theorems UR-R, UR-C | `URCore.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); very likely overlaps Waldmann's "Nimm Zwei" (1997) |
@@ -42,7 +43,7 @@ A universal emulation needs an encoder, an evaluation order and a halting detect
 * Halting = "the evolution stops": impossible in every order (Theorem T; uses confluence, which is machine-checked,
   and two cited theorems: Church's theorem for non-erasing systems and Waldmann's regularity of normalisation).
 * Halting = a property of the Böhm tree: control at Böhm-tree level is the same in every evaluation order
-  (Proposition CF, machine-checked for head reduction). Such detectors are excluded once the property is decidable.
+  (Proposition CF and F5, machine-checked). Such detectors are excluded once the property is decidable.
   Head normalisation is (Theorem Q10, machine-checked); productivity and path finiteness are decided by finite models
   in one direction (machine-checked), and the other direction is open.
 * Halting = a finite-automaton test of the current state: excluded under configuration-level regularity of the runs

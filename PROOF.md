@@ -723,7 +723,7 @@ them separately. This is the definitional piece.
 | window/configuration R″_PUP, leftmost-outermost | open in general. PROVED per term for every certified run: all 152 census counters, 850/850 random endpoints, the loop/nest/call/comb certificates; R″_PUP PROVED for nested loops (Lemma PUP) and the head-unique class (Theorem UR-C, Lean). Attack in progress: the non-universality agent's phase programme (OT, OTD, FH, SL, canonical_innermost in Lean) toward "re-execution is call-like" |
 | configuration R″_PUP, parallel and other orders | open; 86/150 parallel runs certified per term (Theorem LP-par) |
 | (D5) definitional argument | open (not a mathematical statement until a detector class is fixed) |
-| facts used by the reduction | F2 (confluence) MACHINE-CHECKED (lean/Confluence.lean, lean/CF.lean); Proposition CF MACHINE-CHECKED for head reduction (lean/CF.lean, lean/Standard.lean); MW(a),(b),(e) MACHINE-CHECKED (lean/MW.lean, lean/Confluence.lean); F3 (Church's theorem for non-erasing systems), F4 (Waldmann's regularity), F5 and Carton–Thomas are cited |
+| facts used by the reduction | F2 (confluence) and F5 (Böhm trees invariant under reduction) MACHINE-CHECKED (lean/Confluence.lean, lean/CF.lean, lean/BTInv.lean); Proposition CF MACHINE-CHECKED for head reduction (lean/CF.lean, lean/Standard.lean); MW(a),(b),(e) MACHINE-CHECKED (lean/MW.lean, lean/Confluence.lean); F3 (Church's theorem for non-erasing systems), F4 (Waldmann's regularity) and Carton–Thomas are cited |
 | barrier lemmas behind 'no construction' | Lemmas 8, 9 (core), 10, 11, 12, Corollary 8(ii), Theorem J, Barrier lemma, Theorem N* and its layer bound MACHINE-CHECKED (lean/BarrierJ.lean, Lemma10.lean, ReadCost.lean, Barrier.lean, NStar.lean); Theorem O's residual walk and Proposition M are hand proofs |
 
 So a complete disproof = C5′ + configuration-level R″_PUP for every order the emulation may choose + the (D5) argument.
@@ -1744,7 +1744,9 @@ non-erasing term rewriting system (every variable of S x y z occurs in x z (y z)
 Terese 2003, §4.8): a term that has a normal form is strongly normalising — via the conservation property: one step
 cannot turn a term with an infinite reduction into one without. (F4) Waldmann ('The combinator S', Information and
 Computation 159, 2000): the set of normalising S-terms is a regular tree language (normalisation is decidable).
-(F5) Böhm trees of an orthogonal system are invariant under reduction: every reduct of t has the Böhm tree of t.
+(F5) Böhm trees of an orthogonal system are invariant under reduction: every reduct of t has the Böhm tree of t. [F2 and F5
+are MACHINE-CHECKED for S (lean/Confluence.lean, lean/BTInv.lean `bt_invariant`: a term and any of its reducts have
+equal Böhm trees to every depth), 2026-10-27; F3 and F4 remain cited.]
 *Theorem T (termination is all-or-nothing and decidable) — PROVED from F1–F4.* For every S-term t exactly one holds:
 (a) every reduction sequence from t is finite, and all end in the same normal form, and the multiway graph of t is finite;
 (b) no reduction sequence from t ends — every maximal evolution, in every order (sequential, parallel, or any choice of

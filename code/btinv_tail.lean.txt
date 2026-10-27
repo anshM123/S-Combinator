@@ -1,0 +1,56 @@
+
+/-! ## F5: Böhm trees are invariant under reduction (every evaluation order sees the same Böhm tree) -/
+
+/-- t has a head normal form: some reduct is head-normal -/
+def HasHN (t : T) : Prop := ∃ h, RedStar t h ∧ HN h
+
+/-- list-wise relation -/
+def LRel (R : T → T → Prop) : List T → List T → Prop
+  | [], [] => True
+  | a :: l, b :: m => R a b ∧ LRel R l m
+  | _, _ => False
+
+/-- equal Böhm trees down to depth d: both or neither have a head normal form, and any two head normal forms have the
+    same head, the same number of arguments and arguments with equal Böhm trees down to depth d - 1 -/
+def BTeq : Nat → T → T → Prop
+  | 0, _, _ => True
+  | d + 1, t, u => (HasHN t ↔ HasHN u) ∧ ∀ h1 h2, RedStar t h1 → HN h1 → RedStar u h2 → HN h2 →
+      head h1 = head h2 ∧ LRel (BTeq d) (args h1) (args h2)
+
+def Joinable (t u : T) : Prop := ∃ v, RedStar t v ∧ RedStar u v
+
+theorem joinable_trans {a b c : T} (h1 : Joinable a b) (h2 : Joinable b c) : Joinable a c := by
+  obtain ⟨v1, a1, b1⟩ := h1
+  obtain ⟨v2, b2, c2⟩ := h2
+  obtain ⟨w, w1, w2⟩ := confluence b1 b2
+  exact ⟨w, a1.trans w1, c2.trans w2⟩
+
+theorem lrel_of_pw (R : T → T → Prop) (hR : ∀ a b v, RedStar a v → RedStar b v → R a b) :
+    ∀ {l1 l2 m : List T}, Pw l1 m → Pw l2 m → LRel R l1 l2
+  | _, _, _, Pw.nil, Pw.nil => trivial
+  | _, _, _, Pw.cons h1 p1, Pw.cons h2 p2 => ⟨hR _ _ _ h1 h2, lrel_of_pw R hR p1 p2⟩
+
+theorem hashn_join {t u : T} (j : Joinable t u) (h : HasHN t) : HasHN u := by
+  obtain ⟨v, tv, uv⟩ := j
+  obtain ⟨h1, th1, n1⟩ := h
+  obtain ⟨w, h1w, vw⟩ := confluence th1 tv
+  exact ⟨w, uv.trans vw, hn_of_pw n1 (hnf_stable n1 h1w).1 (hnf_stable n1 h1w).2⟩
+
+/-- **F5.** Joinable terms (in particular a term and any of its reducts) have equal Böhm trees to every depth. -/
+theorem bt_joinable : ∀ (d : Nat) (t u : T), Joinable t u → BTeq d t u
+  | 0, _, _, _ => trivial
+  | d + 1, t, u, j => by
+    refine ⟨⟨hashn_join j, hashn_join (by obtain ⟨v, a, b⟩ := j; exact ⟨v, b, a⟩)⟩, ?_⟩
+    intro h1 h2 th1 n1 uh2 n2
+    have j1 : Joinable h1 t := ⟨h1, RedStar.refl _, th1⟩
+    have j2 : Joinable u h2 := ⟨h2, uh2, RedStar.refl _⟩
+    obtain ⟨w, h1w, h2w⟩ := joinable_trans (joinable_trans j1 j) j2
+    obtain ⟨e1, p1⟩ := hnf_stable n1 h1w
+    obtain ⟨e2, p2⟩ := hnf_stable n2 h2w
+    exact ⟨e1.symm.trans e2, lrel_of_pw (BTeq d) (fun a b v av bv => bt_joinable d a b ⟨v, av, bv⟩) p1 p2⟩
+
+/-- **F5 (reduction form).** Every reduct of t, reached by any evaluation order, has the Böhm tree of t. -/
+theorem bt_invariant {t u : T} (r : RedStar t u) (d : Nat) : BTeq d t u :=
+  bt_joinable d t u ⟨u, r, RedStar.refl _⟩
+
+#print axioms bt_invariant
