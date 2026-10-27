@@ -9,39 +9,32 @@ All files of this agent live in agent_work_U/.
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## INTERIM 04:00 (written 02:40 EDT; supersedes nothing — first summary)
-**Status: no universal construction; no partial win (no non-PUP run).  All results below are labelled.**
-What I tried (all files in agent_work_U/):
-1. NEW FRAMEWORK, the descent machine DM (dm.py): leftmost-outermost evaluation restricted to the leftmost Boehm path,
-   i.e. the head machine plus the erasure rule [c, d] -> ch(c) at every head normal form (PROVED, elementary).  It is
-   the one place where leftmost-outermost evaluation ERASES (the second hnf component is frozen for ever while the
-   path stays infinite).  By Lemma P it is embedded in the head run of t A B, so it is 'full re-execution with
-   erasure'.
-2. DM capabilities (PROVED by inspection, checked by dm.py): Church booleans in tail position (S X Y => X,
-   SS X Y => Y), clean application (S(SS) X Y => X Y), identity (SSSS X => X), unboxing ((S x) y => x), and the
-   selection gadget S(SS)(SS) E b => b (E b) (E (SS E) b), which keeps the full state in both branches.
-3. DM limits (PROVED elementary + COMPUTATIONALLY CERTIFIED in bounded ranges):
-   - a round that keeps data ends [S, b, c] -> survivor c = the bottom element; the bottom only changes by wraps
-     w.c with a stale copy left above, erased only if the wrap is the very last step: ONE closed wrap per round;
-   - single-datum DM = a stack machine with pop / rewrite-top / branch-on-top, the stack never grows without copying
-     the datum (growth1.py: 20,000 random runs, 0 growth);
-   - two opaque data: every first round either executes a datum or erases all data (survcat.py, C <= 8 leaves); no
-     round modifies one stack and keeps the other (twostack.py, h <= 8); 3-argument rules never erase and always pass
-     the deepest argument through (headcat.py, lincat.py <= 8 leaves).
-   Reading: the DM is pushdown-like (with copies, higher-order-pushdown-like) — it gives data-dependent SELECTION
-   (which the head-run capability map lacked) but no second independent store.
-4. Call-by-value / innermost view (cbv.py): by Prop. CF all orders share Boehm-level control; innermost syntax of a
-   driver-built tower is the CBV iterate nf(G[x]).  Searches: CBV functions on unary values (cbvfun/cbvsize,
-   a <= 9), CBV iterations (cbviter, f <= 7), CBV string transducers (cbvtrans, b <= 8): only affine sizes, exact
-   linear recurrences, constant or fixed-prefix maps — non-erasure duplicates the argument at every distributive
-   step.  (A size-cache bug in dm.truncate produced a false 'irregular' signal at 03:00; fixed and re-run.)
-5. Word/round searches in DM and head runs (wordround.py, selfword.py, combhalve*.py): no fixed-format word rounds,
-   no self-transforming words, no comb halving (q, v <= 6).
-Strongest concrete result: the DM selection mechanism + the 'one closed wrap per round' lemma, which together
-explain why leftmost-path programs are pushdown-like; no construction.
-Next: (a) try to turn the single-datum stack machine plus datum copies (x1 (c x1)) into two counters, or prove the
-2-datum obstruction in general; (b) parallel evaluation's clock channel (the only mechanism that changes a datum
-below another without touching it).
+## INTERIM 04:00 (refreshed 03:45 EDT; first version written 02:40)
+**Status: no universal construction; no partial win (no non-PUP run).  Labels as in the entries below.**
+Main results (files in agent_work_U/):
+1. NEW FRAMEWORK, the descent machine DM (dm.py): leftmost-outermost evaluation along the leftmost Boehm path = the
+   head machine plus the erasure rule [c, d] -> ch(c) at every head normal form (PROVED, elementary).  The only place
+   where leftmost-outermost evaluation erases; by Lemma P it embeds in the head run of t A B.  Its sibling, the
+   right-spine machine RM (rm.py: continue with d after the left child normalises), keeps everything (no erasure).
+2. DM capabilities (PROVED by inspection): Church booleans in tail position (S X Y => X, SS X Y => Y), application
+   (S(SS) X Y => X Y), identity SSSS, the selection gadget S(SS)(SS) E b => b (E b) (E (SS E) b): data-dependent
+   SELECTION with the full state in both branches — the step the head-run capability map lacked.
+3. DM limits — two MACHINE-CHECKED lemmas (Lean 4, no sorry):
+   - W1 (lean/W1.lean, 160 lines): with one opaque datum D and closed code, every round's single-copy survivor is D or
+     w.D (w closed): at most ONE closed wrap per round; hence copy-free single-datum leftmost paths only consume
+     their stack (a finite automaton reading it), growth needs copies of the datum.
+   - W2 (lean/W2.lean, 239 lines; reuses the main agent's Corollary 8(ii)): with two opaque data every round that
+     ends has an atom-headed or closed survivor — no code-controlled state ever keeps two data across a round.
+   Bounded certificates agree (survcat, twostack, twostack2, probe2, growth1; all negative).
+4. Other orders: CBV/innermost (cbv.py) — nf(b x) is constant or fixed-prefix on string encodings (b <= 8), CBV
+   iterations are exact linear recurrences (f <= 7); parallel clock channel — argued contractive (aging only
+   pre-computes work; an hnf-free waiting element captures the head for ever); Prop. CF makes every head-fair order
+   share the head run's control.  Remark (argued): W_reg with ARBITRARY regular redex selection is too generous —
+   the order could act as a finite control using S-terms as memory; the target should be restricted.
+5. Searches with negative outcome: word rounds, self-transforming words, comb halving, self-embedding Q ->* C[Q]
+   (none <= 11 leaves), RM census (only Zachos-type long right spines <= 11 leaves).
+Strongest concrete results: W1 and W2 (machine-checked), the DM selection mechanism.  No construction.
+Next: multi-copy single-datum rounds (the only regime W1/W2 leave open) — classify survivors with >= 2 copies.
 
 ## 01:40 EDT  Direction chosen: the DESCENT MACHINE (leftmost-outermost along the leftmost Böhm path)
 * Observation (PROVED, elementary): leftmost-outermost evaluation restricted to the leftmost Böhm path is the
@@ -193,3 +186,35 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   elements and the spine prefix S q1..qm).  No small 'self-reproducing' term Q ->* C[Q] exists along head reduction,
   so token factories for a regular-strategy 'S as RAM' design are not available off the shelf (increment would have to
   use duplication of a marked token).
+
+## 03:40 EDT  Lemma W2 — MACHINE-CHECKED (coordinator's suggestion)
+* agent_work_U/lean/W2.lean (239 lines, Lean 4 core, no sorry; axioms propext, Classical.choice, Quot.sound).
+  Framework and Corollary 8(ii) copied verbatim from the main agent's lean/BarrierJ.lean (attributed in the file);
+  new: `dcount_two_atoms`, `dhead_start`, and
+  - `w2_round`: a descent-machine round started from C ++ [x, y] (C closed, x, y atoms) that ends (reaches a list of
+    length <= 2) ends with every data element atom-headed;
+  - `w2_survivor`: the survivor c of a round ending at [c, d] is closed (all data erased) or atom-headed;
+  - `w2_no_code_store`: no round ends with a code-headed survivor that still holds data.
+  Reading: in the leftmost-path machine two opaque data can never both be kept under code control across a round;
+  each round erases all data or hands control to a datum.  Together with W1 (one datum: at most one closed wrap per
+  round) this closes the 'two independent stores' route for the DM at all sizes (generic/opaque data).
+* EXPERIMENTALLY SUPPORTED (w2check.py 1 3000 4 7 200; w2check_out.txt): along 233,421 steps of random runs from
+  C ++ [X, Y], the BOTTOM element is atom-headed at every step (0 violations) — stronger than W2, which only needs
+  the hnf moment; the topmost data element and the middle of 3-lists can be code-headed transiently (1,348 / 495
+  occurrences), so those stronger invariants are false.
+* MACHINE-CHECKED (03:50 EDT): `w1_rm_next` added to agent_work_U/lean/W1.lean (still no sorry; axioms propext,
+  Classical.choice, Quot.sound).  For the right-spine machine (continue with the SECOND hnf component b.c after the
+  left child normalises): the next state b.c holds D, and if it holds D exactly once then b is closed and c = D —
+  a round of the right-spine machine either only replaces the closed controller or leaves >= 2 copies of the datum.
+  (W2 needs no RM version: Corollary 8(ii) constrains every data element of the hnf list, so the RM's next state
+  b.c is also closed or atom-headed whenever a round starts with two atom-headed data.)
+* Correction to my own reasoning (02:55 note was not logged as a result): the converse of Lemma P is FALSE —
+  SSS(SS)S(SS(SS)) = t A B with t = SSS(SS), whose leftmost path ends at the leaf S (t -> S(SS)(S(SS)) -> SS -> S),
+  yet t A B has no hnf (Theorem BC).  So general infinite head runs are NOT just descent-machine runs plus inert junk:
+  once t's leftmost path ends, the 'junk' arguments are executed.  W1/W2 constrain the DM/RM and every terminating
+  hnf computation inside a head run, not hnf-free head runs as a whole.
+* Analysis (argued, consistent with all certificates): why a DM/RM transducer (read a word, write a transformed word)
+  is impossible for generic data: reading pops the executing datum (its rest is the first argument), the output must
+  be a second datum, and W2 forbids any code-controlled state with two data across a round; the only way to 'write'
+  the output while reading is the self-bundle x2 (c x2) (x1 x2), which hands control to the output and buries the
+  remaining input as the third argument, beyond the order-3 window (BEKW Theorem 22 + barrier lemma).

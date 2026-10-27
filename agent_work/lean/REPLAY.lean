@@ -435,6 +435,98 @@ theorem replay_beta (a1 : T) (q c : Nat) (ha1 : asub (psiS q c) a1 = sb c a1) (k
   · rw [rho_headvar _ _ _ 0 a' hna hp]
     simp [psiS, head]
 
+
+/-- occurrences of y = var 2 -/
+def occ2 : T → Nat
+  | S => 0
+  | var n => if n = 2 then 1 else 0
+  | app f x => occ2 f + occ2 x
+
+theorem occ2_args : ∀ t : T, occ2 t = 0 → ∀ s ∈ args t, occ2 s = 0
+  | S, _, s, hs => by simp [args] at hs
+  | var _, _, s, hs => by simp [args] at hs
+  | app f x, h, s, hs => by
+    simp only [occ2] at h
+    simp [args] at hs
+    rcases hs with hs | hs
+    · exact occ2_args f (by omega) s hs
+    · subst hs; omega
+
+theorem wpre_headeq (w : T) : ∀ a : T, wpre w a → head a = head w
+  | S, h => by simp [wpre] at h; rw [← h]
+  | var _, h => by simp [wpre] at h; rw [← h]
+  | app f x, h => by
+    rcases h with h | h
+    · rw [h]
+    · simp only [head]; exact wpre_headeq w f h
+
+/-- the map of the buffer-cycle replay: p -> c, y -> q, other atoms fixed -/
+def sgq (q c : Nat) : Nat → T := fun n => if n = 0 then var c else if n = 2 then var q else var n
+
+theorem asub_sgq_of_noy (q c : Nat) : ∀ t : T, occ2 t = 0 → asub (sgq q c) t = sb c t
+  | S, _ => by simp [asub, sb]
+  | var n, h => by
+    by_cases h0 : n = 0
+    · subst h0; simp [asub, sb, sgq]
+    · have h2 : n ≠ 2 := by intro e; subst e; simp [occ2] at h
+      simp [asub, sb, sgq, h0, h2]
+  | app f x, h => by
+    simp only [occ2] at h
+    simp [asub, sb, asub_sgq_of_noy q c f (by omega), asub_sgq_of_noy q c x (by omega)]
+
+/-- **Corollary (buffer-cycle replay, case (b)).**  Let w = b0.c0 be the innermost single wrapper, glued in the
+    phase-2 step [c0, w, y] ++ R0, so that phase 2 continues from the top part args c0 ++ [y, w.y].  Suppose that
+    in phase 3 the opened buffer c0'.q (c0' = c0[p:=c]) reaches the front, with s, t below it.  If the phase-2 top
+    part reaches a p-headed front (the TRANSFER) after k guarded steps, then phase 3 reaches, k + 1 steps later, the
+    image of that list under rho = (w.y -> t, y -> q, p -> c), whose front is c-headed: REEXEC. -/
+theorem replay_cycle (b0 c0 s t : T) (B : List T) (q c : Nat) (hS : head c0 = S) (hy : occ2 c0 = 0)
+    (hb0 : head b0 ≠ var 0)
+    (k : Nat) (a' : T) (rest : List T)
+    (hrun : run k (args c0 ++ [var 2, app (app b0 c0) (var 2)]) = some (a' :: rest))
+    (hok : runOK (app (app b0 c0) (var 2)) k (args c0 ++ [var 2, app (app b0 c0) (var 2)]))
+    (hp : head a' = var 0) :
+    run (k + 1) (app (sb c c0) (var q) :: s :: t :: B) =
+        some ((a' :: rest).map (rho (app (app b0 c0) (var 2)) t (sgq q c)) ++ (app s t :: B)) ∧
+      head (rho (app (app b0 c0) (var 2)) t (sgq q c) a') = var c := by
+  have hw : head (app (app b0 c0) (var 2)) = head b0 := by simp [head]
+  refine ⟨?_, ?_⟩
+  · have hc0S : head (sb c c0) = S := sb_head c c0 hS
+    have hstep : step (app (sb c c0) (var q) :: s :: t :: B) =
+        some (args (sb c c0) ++ [var q, t, app s t] ++ B) := by
+      simp [step, head, hc0S, args]
+    have himg : (args c0 ++ [var 2, app (app b0 c0) (var 2)]).map (rho (app (app b0 c0) (var 2)) t (sgq q c)) =
+        args (sb c c0) ++ [var q, t] := by
+      rw [sb_args c c0 hS]
+      simp only [List.map_append, List.map_cons, List.map_nil]
+      have hargs : (args c0).map (rho (app (app b0 c0) (var 2)) t (sgq q c)) = (args c0).map (sb c) := by
+        apply List.map_congr_left
+        intro e he
+        have hsz : size e < size (app (app b0 c0) (var 2)) := by
+          have := size_args c0 e he
+          simp [size]; omega
+        rw [rho_small _ _ _ e hsz]
+        exact asub_sgq_of_noy q c e (occ2_args c0 hy e he)
+      rw [hargs, rho_self]
+      have h2 : rho (app (app b0 c0) (var 2)) t (sgq q c) (var 2) = var q := by
+        have : var 2 ≠ app (app b0 c0) (var 2) := by intro h; cases h
+        simp [rho, this, sgq]
+      simp [h2]
+    have h1 := replay_run_gen (app (app b0 c0) (var 2)) t (sgq q c) k _ _ hok hrun
+    rw [himg] at h1
+    have h2 := run_append k _ _ (app s t :: B) h1
+    simp only [run]
+    rw [hstep]
+    simpa using h2
+  · have hna : ¬ wpre (app (app b0 c0) (var 2)) a' := by
+      intro hw'
+      -- a p-headed term is never prefixed by the S- or b0-headed w.y unless b0 is p-headed
+      have := wpre_headeq _ a' hw'
+      rw [hp, hw] at this
+      exact hb0 this.symm
+    rw [rho_headvar _ _ _ 0 a' hna hp]
+    simp [sgq, head]
+
 #print axioms replay_glue
 #print axioms replay_run_gen
 #print axioms replay_beta
+#print axioms replay_cycle

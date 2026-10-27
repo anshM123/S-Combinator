@@ -701,7 +701,7 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   FH (a p-headed wrapper) 272, FH1 (a wrapper with p-headed first spine argument) 93, YD (bare-S outermost
   wrapper) 2; remaining 716 = 688 single-wrapper + 28 multi-wrapper.  Of the single-wrapper ones, the w = S.c0
   class is replayed (replay_glue / replay_beta); so the OPEN multi-wrapper class is down to 28 cases <= 11 leaves.
-* MACHINE-CHECKED (agent_work/lean/FH1.lean, now 245 lines, no sorry): **Lemma FHL** (`fhl_main`), the leftmost-path
+* MACHINE-CHECKED (agent_work/lean/FHL.lean, 220 lines = FH1.lean + the FHL section; no sorry): **Lemma FHL** (`fhl_main`), the leftmost-path
   form of FH/FH1: if every p-occurrence lies inside a level Lv = d.l and the leftmost path of d's first spine
   argument (first argument, its first argument, ..., through S-headed terms with >= 1 argument) reaches a
   frozen-headed term, then no reachable list has a p-headed front.  (Opening the level puts the path at the front;
@@ -710,3 +710,22 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   transfers.  COMPUTATIONALLY CERTIFIED coverage (fhl_cover.py 11, all 1,083 real handlers <= 11 leaves): FHL 421
   (227 multi-wrapper, 194 single-wrapper; includes FH and FH1), YD 2, replay class w = S.c0 not already FHL 55;
   OPEN: 587 single-wrapper (essentially case (b), b0 != S) and 18 multi-wrapper handlers.
+* (bookkeeping, 03:35, after the coordinator's note) FH1.lean was briefly broken while FHL was being appended
+  (a non-structural recursive definition); it was fixed within minutes.  To keep every MACHINE-CHECKED file
+  compiling at all times, FHL now lives in its own file lean/FHL.lean (FH1.lean contains only fh1_main), and new
+  Lean work is developed in agent_work/wip/ and copied into lean/ only after it compiles.  Full re-check at 03:35:
+  OC, OT, OTD, SL, CANON, AB, ABC, MSL, MSLS, YD, REPLAY, FH1, FHL — all compile with Lean 4.35, no errors, no sorry.
+* MACHINE-CHECKED (agent_work/lean/REPLAY.lean, now 532 lines, no sorry): **`replay_cycle`** — the replay of
+  case (b) of Theorem FS.  Let w = b0.c0 be the innermost single wrapper (b0 not p-headed), glued in phase 2 by
+  [c0, w, y] ++ R0, so that phase 2 continues from the top part args c0 ++ [y, w.y].  If in phase 3 the opened
+  buffer c0'.q (c0' = c0[p:=c]) ever reaches the front (with any s, t below), and the phase-2 top part reaches a
+  p-headed front (the TRANSFER) after k guarded steps, then phase 3 reaches k + 1 steps later the image of that list
+  under rho = (w.y -> t, y -> q, p -> c), whose front is c-headed: REEXEC.
+  Meaning (from the FS cycle analysis): in case (b) the only way phase 3 survives its first buffer is the 'S.S
+  cycle', whose last step puts the buffer at the front; when that buffer is c0'.p', the rest of phase 3 is a replay
+  of phase 2 from the glue step with y -> p' and w.y -> y, and phase 2's transfer becomes phase 3's re-execution.
+  This is why the general-shape counterexample to (B1) never arises from real phase-2 outputs in this sub-case.
+  COMPUTATIONALLY CERTIFIED (replay_b.py 11; real case-(b) single-wrapper handlers, pattern alpha): b0 closed and
+  c0'.p' reaches the front: 41 cases, the replay holds step by step and ends in REEXEC exactly as stated; b0 closed
+  without that front: 465 cases, all end in REEXEC (327) or in non-proper p'-fronts (162: [p', buffer, bare y] or
+  three P'-elements on top, replay_b2.py); b0 a P-term: 86 cases, all REEXEC; 34 cases glue w in pattern beta.

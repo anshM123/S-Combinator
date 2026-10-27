@@ -1,0 +1,532 @@
+/-
+  agent_work/lean/REPLAY.lean  (non-universality agent, 2026-10-27).  The replay relation between consecutive
+  phases of a Church chain.  Plain Lean 4 core, no Mathlib.
+  th w q c : replace every occurrence of the term w by the atom var q, and the live atom var 0 by var c
+  (structurally: the outermost occurrences of w are replaced).  A front is *w-prefixed* if some left-spine prefix of
+  it equals w.  Replay lemma: one head step commutes with th whenever the front is not w-prefixed and the glued
+  node b.c is not w itself.  Corollary (`replay_reexec`): if the generic run of the list args w ++ [w, y, x.y, r]
+  (the run of the datum w.w, i.e. what a phase-2 run continues with after producing the self-application w.w)
+  reaches a p-headed front (TRANSFER) without a w-prefixed front and without re-creating w, then the generic run of
+  the phase-3 datum w[p:=c].q reaches the corresponding c-headed front (REEXEC) — the phase-2 transfer is replayed
+  as a re-execution of the frozen value.
+-/
+
+inductive T where
+  | S : T
+  | var : Nat → T
+  | app : T → T → T
+deriving DecidableEq, Repr
+
+namespace T
+
+def args : T → List T
+  | S => []
+  | var _ => []
+  | app f x => args f ++ [x]
+
+def head : T → T
+  | S => S
+  | var n => var n
+  | app f _ => head f
+
+def size : T → Nat
+  | S => 1
+  | var _ => 1
+  | app f x => size f + size x + 1
+
+end T
+
+open T
+
+def step : List T → Option (List T)
+  | a :: b :: c :: R => if head a = S then some (args a ++ c :: app b c :: R) else none
+  | _ => none
+
+def run : Nat → List T → Option (List T)
+  | 0, L => some L
+  | k + 1, L => match step L with
+    | some L' => run k L'
+    | none => none
+
+/-- replace w by var q and the live atom var 0 by var c -/
+def th (w : T) (q c : Nat) : T → T
+  | S => if S = w then var q else S
+  | var n => if var n = w then var q else (if n = 0 then var c else var n)
+  | app f x => if app f x = w then var q else app (th w q c f) (th w q c x)
+
+/-- substitution of the live atom only: p := c -/
+def sb (c : Nat) : T → T
+  | S => S
+  | var n => if n = 0 then var c else var n
+  | app f x => app (sb c f) (sb c x)
+
+/-- some left-spine prefix equals w -/
+def wpre (w : T) : T → Prop
+  | S => S = w
+  | var n => var n = w
+  | app f x => app f x = w ∨ wpre w f
+
+theorem th_args (w : T) (q c : Nat) : ∀ a : T, ¬ wpre w a → args (th w q c a) = (args a).map (th w q c)
+  | S, h => by
+    have : S ≠ w := fun e => h e
+    simp [th, this, args]
+  | var n, h => by
+    have : var n ≠ w := fun e => h e
+    simp only [th, this, ite_false]
+    split <;> simp [args]
+  | app f x, h => by
+    have h1 : app f x ≠ w := fun e => h (Or.inl e)
+    have h2 : ¬ wpre w f := fun e => h (Or.inr e)
+    simp only [th, h1, ite_false, args]
+    rw [th_args w q c f h2]
+    simp
+
+theorem th_headS (w : T) (q c : Nat) : ∀ a : T, ¬ wpre w a → head a = S → head (th w q c a) = S
+  | S, h, _ => by
+    have : S ≠ w := fun e => h e
+    simp [th, this, head]
+  | var n, _, hS => by simp [head] at hS
+  | app f x, h, hS => by
+    have h1 : app f x ≠ w := fun e => h (Or.inl e)
+    have h2 : ¬ wpre w f := fun e => h (Or.inr e)
+    simp only [th, h1, ite_false, head]
+    exact th_headS w q c f h2 (by simpa [head] using hS)
+
+theorem th_head0 (w : T) (q c : Nat) : ∀ a : T, ¬ wpre w a → head a = var 0 → head (th w q c a) = var c
+  | S, _, hS => by simp [head] at hS
+  | var n, h, hS => by
+    have : var n ≠ w := fun e => h e
+    simp [head] at hS; subst hS
+    simp [th, this, head]
+  | app f x, h, hS => by
+    have h1 : app f x ≠ w := fun e => h (Or.inl e)
+    have h2 : ¬ wpre w f := fun e => h (Or.inr e)
+    simp only [th, h1, ite_false, head]
+    exact th_head0 w q c f h2 (by simpa [head] using hS)
+
+/-- **Replay lemma (one step).** -/
+theorem replay_step (w : T) (q c : Nat) (a b d : T) (R : List T) (hS : head a = S) (hG : ¬ wpre w a)
+    (hne : app b d ≠ w) :
+    step ((a :: b :: d :: R).map (th w q c)) = some ((args a ++ d :: app b d :: R).map (th w q c)) := by
+  simp only [List.map_cons, step, th_headS w q c a hG hS, ite_true, th_args w q c a hG, List.map_append]
+  simp [th, hne]
+
+/-- the guard: front not w-prefixed and the glued node is not w -/
+def G (w : T) : List T → Prop
+  | a :: b :: d :: _ => ¬ wpre w a ∧ app b d ≠ w
+  | _ => True
+
+def runOK (w : T) : Nat → List T → Prop
+  | 0, _ => True
+  | k + 1, L => G w L ∧ (match step L with
+    | some L' => runOK w k L'
+    | none => True)
+
+/-- **Replay lemma (runs).** -/
+theorem replay_run (w : T) (q c : Nat) : ∀ (k : Nat) (L L' : List T), runOK w k L → run k L = some L' →
+    run k (L.map (th w q c)) = some (L'.map (th w q c))
+  | 0, L, L', _, h => by simp [run] at h; subst h; simp [run]
+  | k + 1, L, L', hok, h => by
+    match L, hok, h with
+    | a :: b :: d :: R, hok, h =>
+      obtain ⟨⟨hG, hne⟩, hrest⟩ := hok
+      simp only [run] at h
+      by_cases hS : head a = S
+      · have hs : step (a :: b :: d :: R) = some (args a ++ d :: app b d :: R) := by simp [step, hS]
+        rw [hs] at h hrest
+        simp only at h hrest
+        have ih := replay_run w q c k _ L' hrest h
+        simp only [run]
+        rw [replay_step w q c a b d R hS hG hne]
+        exact ih
+      · have hs : step (a :: b :: d :: R) = none := by simp [step, hS]
+        rw [hs] at h; simp at h
+    | [], _, h => simp [run, step] at h
+    | [_], _, h => simp [run, step] at h
+    | [_, _], _, h => simp [run, step] at h
+
+theorem size_pos : ∀ t : T, 0 < size t
+  | S => by simp [size]
+  | var _ => by simp [size]
+  | app f x => by simp [size]
+
+theorem size_args : ∀ t : T, ∀ s ∈ args t, size s < size t
+  | S, s, hs => by simp [args] at hs
+  | var _, s, hs => by simp [args] at hs
+  | app f x, s, hs => by
+    simp [args] at hs
+    rcases hs with hs | hs
+    · have := size_args f s hs; simp [size]; omega
+    · subst hs; have := size_pos f; simp [size]; omega
+
+/-- on terms smaller than w, th is just the substitution p := c -/
+theorem th_small (w : T) (q c : Nat) : ∀ t : T, size t < size w → th w q c t = sb c t
+  | S, h => by
+    have : S ≠ w := fun e => by subst e; simp at h
+    simp [th, this, sb]
+  | var n, h => by
+    have : var n ≠ w := fun e => by subst e; simp at h
+    simp [th, this, sb]
+  | app f x, h => by
+    have h1 : app f x ≠ w := fun e => by subst e; simp at h
+    have hf : size f < size w := by simp [size] at h; omega
+    have hx : size x < size w := by simp [size] at h; omega
+    simp [th, h1, sb, th_small w q c f hf, th_small w q c x hx]
+
+theorem sb_head : ∀ (c : Nat) (t : T), head t = S → head (sb c t) = S
+  | _, S, _ => by simp [sb, head]
+  | _, var _, h => by simp [head] at h
+  | c, app f x, h => by simp only [sb, head]; exact sb_head c f (by simpa [head] using h)
+
+theorem sb_args : ∀ (c : Nat) (t : T), head t = S → args (sb c t) = (args t).map (sb c)
+  | _, S, _ => by simp [sb, args]
+  | _, var _, h => by simp [head] at h
+  | c, app f x, h => by
+    simp only [sb, args]
+    rw [sb_args c f (by simpa [head] using h)]
+    simp
+
+theorem wpre_head (w : T) (hw : head w = S) (n : Nat) : ∀ a : T, head a = var n → ¬ wpre w a
+  | S, h, _ => by simp [head] at h
+  | var m, h, hp => by simp [wpre] at hp; subst hp; simp [head] at hw
+  | app f x, h, hp => by
+    rcases hp with hp | hp
+    · subst hp; rw [hw] at h; simp at h
+    · exact wpre_head w hw n f (by simpa [head] using h) hp
+
+theorem th_self (w : T) (q c : Nat) : th w q c w = var q := by
+  cases w <;> simp [th]
+
+/-- **Corollary (replay of a transfer as a re-execution).**  Let w be S-headed.  If the generic run of the list
+    args w ++ [w, y, x.y, r] reaches, after k guarded steps, a list whose front is p-headed (a TRANSFER), then the
+    generic run of [w[p:=c].q, x, y, r] (the next phase's datum, with q the new predecessor) reaches after k + 1
+    steps the th-image of that list, whose front is c-headed (a REEXEC). -/
+theorem replay_reexec (w : T) (q c : Nat) (hw : head w = S) (k : Nat) (a' : T) (rest : List T)
+    (hrun : run k (args w ++ [w, var 2, app (var 1) (var 2), var 3]) = some (a' :: rest))
+    (hok : runOK w k (args w ++ [w, var 2, app (var 1) (var 2), var 3]))
+    (hp : head a' = var 0) :
+    run (k + 1) [app (sb c w) (var q), var 1, var 2, var 3] = some ((a' :: rest).map (th w q c)) ∧
+      head (th w q c a') = var c := by
+  have hna : ¬ wpre w a' := wpre_head w hw 0 a' hp
+  refine ⟨?_, th_head0 w q c a' hna hp⟩
+  have hw2 : var 2 ≠ w := fun e => by rw [← e] at hw; simp [head] at hw
+  have hw3 : var 3 ≠ w := fun e => by rw [← e] at hw; simp [head] at hw
+  have hw1 : var 1 ≠ w := fun e => by rw [← e] at hw; simp [head] at hw
+  have hwxy : app (var 1) (var 2) ≠ w := fun e => by rw [← e] at hw; simp [head] at hw
+  have himg : (args w ++ [w, var 2, app (var 1) (var 2), var 3]).map (th w q c) =
+      args (sb c w) ++ [var q, var 2, app (var 1) (var 2), var 3] := by
+    rw [sb_args c w hw]
+    simp only [List.map_append, List.map_cons, List.map_nil]
+    have hargs : (args w).map (th w q c) = (args w).map (sb c) := by
+      apply List.map_congr_left
+      intro s hs
+      exact th_small w q c s (size_args w s hs)
+    rw [hargs, th_self w q c]
+    simp [th, hw1, hw2, hw3, hwxy]
+  have hstep : step [app (sb c w) (var q), var 1, var 2, var 3] =
+      some (args (sb c w) ++ [var q, var 2, app (var 1) (var 2), var 3]) := by
+    simp [step, head, sb_head c w hw, args]
+  have h1 := replay_run w q c k _ _ hok hrun
+  rw [himg] at h1
+  simp only [run]
+  rw [hstep]
+  exact h1
+
+#print axioms replay_run
+#print axioms replay_reexec
+
+/-! ### prefix replay: the part of the list below the active top is never touched -/
+
+theorem run_append : ∀ (k : Nat) (T1 T2 B : List T), run k T1 = some T2 → run k (T1 ++ B) = some (T2 ++ B)
+  | 0, T1, T2, B, h => by simp [run] at h; subst h; simp [run]
+  | k + 1, T1, T2, B, h => by
+    match T1, h with
+    | a :: b :: d :: R, h =>
+      simp only [run] at h
+      by_cases hS : head a = S
+      · have hs : step (a :: b :: d :: R) = some (args a ++ d :: app b d :: R) := by simp [step, hS]
+        rw [hs] at h; simp only at h
+        have hs2 : step (a :: b :: d :: R ++ B) = some (args a ++ d :: app b d :: (R ++ B)) := by
+          simp [step, hS]
+        simp only [run]
+        rw [hs2]
+        have := run_append k _ T2 B h
+        simpa using this
+      · have hs : step (a :: b :: d :: R) = none := by simp [step, hS]
+        rw [hs] at h; simp at h
+    | [], h => simp [run, step] at h
+    | [_], h => simp [run, step] at h
+    | [_, _], h => simp [run, step] at h
+
+/-- **Corollary (replay at the glue step).**  Let the innermost single wrapper be w = S.c0, glued onto y in a step
+    [c0, w, y] ++ R0 (pattern alpha of the creation lemma).  If the run of the top part [c0, w, y] reaches after k
+    guarded steps a p-headed front (by `run_append` this is exactly what the phase-2 run does above R0: the
+    TRANSFER), then the phase-3 datum w[p:=c].q reaches after k + 1 steps the th-image of that top part above
+    [x.y, r], with a c-headed front (REEXEC). -/
+theorem replay_glue (c0 : T) (q c : Nat) (k : Nat) (a' : T) (rest : List T)
+    (hrun : run k [c0, app S c0, var 2] = some (a' :: rest))
+    (hok : runOK (app S c0) k [c0, app S c0, var 2])
+    (hp : head a' = var 0) :
+    run (k + 1) [app (sb c (app S c0)) (var q), var 1, var 2, var 3] =
+        some ((a' :: rest).map (th (app S c0) q c) ++ [app (var 1) (var 2), var 3]) ∧
+      head (th (app S c0) q c a') = var c := by
+  have hw : head (app S c0) = S := by simp [head]
+  have hna : ¬ wpre (app S c0) a' := wpre_head (app S c0) hw 0 a' hp
+  refine ⟨?_, th_head0 (app S c0) q c a' hna hp⟩
+  have himg : [c0, app S c0, var 2].map (th (app S c0) q c) = [sb c c0, var q, var 2] := by
+    have h1 : th (app S c0) q c c0 = sb c c0 := th_small _ q c c0 (by simp [size]; omega)
+    have h2 : th (app S c0) q c (app S c0) = var q := th_self _ q c
+    have h3 : th (app S c0) q c (var 2) = var 2 := by
+      have : var 2 ≠ app S c0 := by intro h; cases h
+      simp [th, this]
+    simp [h1, h2, h3]
+  have hstep : step [app (sb c (app S c0)) (var q), var 1, var 2, var 3] =
+      some [sb c c0, var q, var 2, app (var 1) (var 2), var 3] := by
+    simp [step, head, sb, args]
+  have h1 := replay_run (app S c0) q c k _ _ hok hrun
+  rw [himg] at h1
+  have h2 := run_append k _ _ [app (var 1) (var 2), var 3] h1
+  simp only [run]
+  rw [hstep]
+  simpa using h2
+
+
+/-! ### general replay maps: replace w by a term tw and substitute atoms by terms -/
+
+/-- rho w tw sg: replace (outermost) occurrences of w by tw, and every atom var n by sg n -/
+def rho (w tw : T) (sg : Nat → T) : T → T
+  | S => if S = w then tw else S
+  | var n => if var n = w then tw else sg n
+  | app f x => if app f x = w then tw else app (rho w tw sg f) (rho w tw sg x)
+
+theorem rho_args (w tw : T) (sg : Nat → T) : ∀ a : T, ¬ wpre w a → head a = S →
+    args (rho w tw sg a) = (args a).map (rho w tw sg)
+  | S, h, _ => by
+    have : S ≠ w := fun e => h e
+    simp [rho, this, args]
+  | var n, _, hS => by simp [head] at hS
+  | app f x, h, hS => by
+    have h1 : app f x ≠ w := fun e => h (Or.inl e)
+    have h2 : ¬ wpre w f := fun e => h (Or.inr e)
+    simp only [rho, h1, ite_false, args]
+    rw [rho_args w tw sg f h2 (by simpa [head] using hS)]
+    simp
+
+theorem rho_headS (w tw : T) (sg : Nat → T) : ∀ a : T, ¬ wpre w a → head a = S → head (rho w tw sg a) = S
+  | S, h, _ => by
+    have : S ≠ w := fun e => h e
+    simp [rho, this, head]
+  | var n, _, hS => by simp [head] at hS
+  | app f x, h, hS => by
+    have h1 : app f x ≠ w := fun e => h (Or.inl e)
+    have h2 : ¬ wpre w f := fun e => h (Or.inr e)
+    simp only [rho, h1, ite_false, head]
+    exact rho_headS w tw sg f h2 (by simpa [head] using hS)
+
+/-- the head of the image of an atom-headed term is the head of the atom's image -/
+theorem rho_headvar (w tw : T) (sg : Nat → T) (n : Nat) : ∀ a : T, ¬ wpre w a → head a = var n →
+    head (rho w tw sg a) = head (sg n)
+  | S, _, hS => by simp [head] at hS
+  | var m, h, hS => by
+    have : var m ≠ w := fun e => h e
+    simp [head] at hS; subst hS
+    simp [rho, this]
+  | app f x, h, hS => by
+    have h1 : app f x ≠ w := fun e => h (Or.inl e)
+    have h2 : ¬ wpre w f := fun e => h (Or.inr e)
+    simp only [rho, h1, ite_false, head]
+    exact rho_headvar w tw sg n f h2 (by simpa [head] using hS)
+
+theorem replay_step_gen (w tw : T) (sg : Nat → T) (a b d : T) (R : List T) (hS : head a = S)
+    (hG : ¬ wpre w a) (hne : app b d ≠ w) :
+    step ((a :: b :: d :: R).map (rho w tw sg)) = some ((args a ++ d :: app b d :: R).map (rho w tw sg)) := by
+  simp only [List.map_cons, step, rho_headS w tw sg a hG hS, ite_true, rho_args w tw sg a hG hS,
+    List.map_append]
+  simp [rho, hne]
+
+/-- **General replay lemma (runs).** -/
+theorem replay_run_gen (w tw : T) (sg : Nat → T) : ∀ (k : Nat) (L L' : List T), runOK w k L →
+    run k L = some L' → run k (L.map (rho w tw sg)) = some (L'.map (rho w tw sg))
+  | 0, L, L', _, h => by simp [run] at h; subst h; simp [run]
+  | k + 1, L, L', hok, h => by
+    match L, hok, h with
+    | a :: b :: d :: R, hok, h =>
+      obtain ⟨⟨hG, hne⟩, hrest⟩ := hok
+      simp only [run] at h
+      by_cases hS : head a = S
+      · have hs : step (a :: b :: d :: R) = some (args a ++ d :: app b d :: R) := by simp [step, hS]
+        rw [hs] at h hrest
+        simp only at h hrest
+        have ih := replay_run_gen w tw sg k _ L' hrest h
+        simp only [run]
+        rw [replay_step_gen w tw sg a b d R hS hG hne]
+        exact ih
+      · have hs : step (a :: b :: d :: R) = none := by simp [step, hS]
+        rw [hs] at h; simp at h
+    | [], _, h => simp [run, step] at h
+    | [_], _, h => simp [run, step] at h
+    | [_, _], _, h => simp [run, step] at h
+
+/-- on terms smaller than w, rho is the atom substitution -/
+def asub (sg : Nat → T) : T → T
+  | S => S
+  | var n => sg n
+  | app f x => app (asub sg f) (asub sg x)
+
+theorem rho_small (w tw : T) (sg : Nat → T) : ∀ t : T, size t < size w → rho w tw sg t = asub sg t
+  | S, h => by
+    have : S ≠ w := fun e => by subst e; simp at h
+    simp [rho, this, asub]
+  | var n, h => by
+    have : var n ≠ w := fun e => by subst e; simp at h
+    simp [rho, this, asub]
+  | app f x, h => by
+    have h1 : app f x ≠ w := fun e => by subst e; simp at h
+    have hf : size f < size w := by simp [size] at h; omega
+    have hx : size x < size w := by simp [size] at h; omega
+    simp [rho, h1, asub, rho_small w tw sg f hf, rho_small w tw sg x hx]
+
+theorem rho_self (w tw : T) (sg : Nat → T) : rho w tw sg w = tw := by
+  cases w <;> simp [rho]
+
+/-- psi = (w -> y, y -> q.y, p -> c, other atoms fixed) -/
+def psiS (q c : Nat) : Nat → T := fun n => if n = 0 then var c else if n = 2 then app (var q) (var 2) else var n
+
+/-- **Corollary (pattern beta replay).**  Let the innermost single wrapper be w = S.(S.a1) with a1 free of y, glued
+    in a step [a1, w, y] ++ R0.  If the run of the top part [a1, w, y] reaches after k guarded steps a p-headed front
+    (the phase-2 TRANSFER), then the phase-3 datum w[p:=c].q, after two steps (opening and the sigma_C step
+    [S.a1', q, y] -> [a1', y, q.y]) and k more, reaches the psi-image of that top part above [x.y, r], whose front is
+    c-headed: REEXEC. -/
+theorem replay_beta (a1 : T) (q c : Nat) (ha1 : asub (psiS q c) a1 = sb c a1) (k : Nat) (a' : T) (rest : List T)
+    (hS1 : head a1 = S)
+    (hrun : run k [a1, app S (app S a1), var 2] = some (a' :: rest))
+    (hok : runOK (app S (app S a1)) k [a1, app S (app S a1), var 2])
+    (hp : head a' = var 0) :
+    run (k + 2) [app (sb c (app S (app S a1))) (var q), var 1, var 2, var 3] =
+        some ((a' :: rest).map (rho (app S (app S a1)) (var 2) (psiS q c)) ++ [app (var 1) (var 2), var 3]) ∧
+      head (rho (app S (app S a1)) (var 2) (psiS q c) a') = var c := by
+  have hw : head (app S (app S a1)) = S := by simp [head]
+  have hna : ¬ wpre (app S (app S a1)) a' := wpre_head _ hw 0 a' hp
+  refine ⟨?_, ?_⟩
+  · have himg : [a1, app S (app S a1), var 2].map (rho (app S (app S a1)) (var 2) (psiS q c)) =
+        [sb c a1, var 2, app (var q) (var 2)] := by
+      have h1 : rho (app S (app S a1)) (var 2) (psiS q c) a1 = sb c a1 := by
+        rw [rho_small _ _ _ a1 (by simp [size]; omega)]; exact ha1
+      have h2 := rho_self (app S (app S a1)) (var 2) (psiS q c)
+      have h3 : rho (app S (app S a1)) (var 2) (psiS q c) (var 2) = app (var q) (var 2) := by
+        have : var 2 ≠ app S (app S a1) := by intro h; cases h
+        simp [rho, this, psiS]
+      simp [h1, h2, h3]
+    have hS1' : head (sb c a1) = S := sb_head c a1 hS1
+    have hstep1 : step [app (sb c (app S (app S a1))) (var q), var 1, var 2, var 3] =
+        some [app S (sb c a1), var q, var 2, app (var 1) (var 2), var 3] := by
+      simp [step, head, sb, args]
+    have hstep2 : step [app S (sb c a1), var q, var 2, app (var 1) (var 2), var 3] =
+        some [sb c a1, var 2, app (var q) (var 2), app (var 1) (var 2), var 3] := by
+      simp [step, head, args]
+    have h1 := replay_run_gen (app S (app S a1)) (var 2) (psiS q c) k _ _ hok hrun
+    rw [himg] at h1
+    have h2 := run_append k _ _ [app (var 1) (var 2), var 3] h1
+    simp only [run]
+    rw [hstep1]
+    simp only
+    rw [hstep2]
+    simpa using h2
+  · rw [rho_headvar _ _ _ 0 a' hna hp]
+    simp [psiS, head]
+
+
+/-- occurrences of y = var 2 -/
+def occ2 : T → Nat
+  | S => 0
+  | var n => if n = 2 then 1 else 0
+  | app f x => occ2 f + occ2 x
+
+theorem occ2_args : ∀ t : T, occ2 t = 0 → ∀ s ∈ args t, occ2 s = 0
+  | S, _, s, hs => by simp [args] at hs
+  | var _, _, s, hs => by simp [args] at hs
+  | app f x, h, s, hs => by
+    simp only [occ2] at h
+    simp [args] at hs
+    rcases hs with hs | hs
+    · exact occ2_args f (by omega) s hs
+    · subst hs; omega
+
+theorem wpre_headeq (w : T) : ∀ a : T, wpre w a → head a = head w
+  | S, h => by simp [wpre] at h; rw [← h]
+  | var _, h => by simp [wpre] at h; rw [← h]
+  | app f x, h => by
+    rcases h with h | h
+    · rw [h]
+    · simp only [head]; exact wpre_headeq w f h
+
+/-- the map of the buffer-cycle replay: p -> c, y -> q, other atoms fixed -/
+def sgq (q c : Nat) : Nat → T := fun n => if n = 0 then var c else if n = 2 then var q else var n
+
+theorem asub_sgq_of_noy (q c : Nat) : ∀ t : T, occ2 t = 0 → asub (sgq q c) t = sb c t
+  | S, _ => by simp [asub, sb]
+  | var n, h => by
+    by_cases h0 : n = 0
+    · subst h0; simp [asub, sb, sgq]
+    · have h2 : n ≠ 2 := by intro e; subst e; simp [occ2] at h
+      simp [asub, sb, sgq, h0, h2]
+  | app f x, h => by
+    simp only [occ2] at h
+    simp [asub, sb, asub_sgq_of_noy q c f (by omega), asub_sgq_of_noy q c x (by omega)]
+
+/-- **Corollary (buffer-cycle replay, case (b)).**  Let w = b0.c0 be the innermost single wrapper, glued in the
+    phase-2 step [c0, w, y] ++ R0, so that phase 2 continues from the top part args c0 ++ [y, w.y].  Suppose that
+    in phase 3 the opened buffer c0'.q (c0' = c0[p:=c]) reaches the front, with s, t below it.  If the phase-2 top
+    part reaches a p-headed front (the TRANSFER) after k guarded steps, then phase 3 reaches, k + 1 steps later, the
+    image of that list under rho = (w.y -> t, y -> q, p -> c), whose front is c-headed: REEXEC. -/
+theorem replay_cycle (b0 c0 s t : T) (B : List T) (q c : Nat) (hS : head c0 = S) (hy : occ2 c0 = 0)
+    (hb0 : head b0 ≠ var 0)
+    (k : Nat) (a' : T) (rest : List T)
+    (hrun : run k (args c0 ++ [var 2, app (app b0 c0) (var 2)]) = some (a' :: rest))
+    (hok : runOK (app (app b0 c0) (var 2)) k (args c0 ++ [var 2, app (app b0 c0) (var 2)]))
+    (hp : head a' = var 0) :
+    run (k + 1) (app (sb c c0) (var q) :: s :: t :: B) =
+        some ((a' :: rest).map (rho (app (app b0 c0) (var 2)) t (sgq q c)) ++ (app s t :: B)) ∧
+      head (rho (app (app b0 c0) (var 2)) t (sgq q c) a') = var c := by
+  have hw : head (app (app b0 c0) (var 2)) = head b0 := by simp [head]
+  refine ⟨?_, ?_⟩
+  · have hc0S : head (sb c c0) = S := sb_head c c0 hS
+    have hstep : step (app (sb c c0) (var q) :: s :: t :: B) =
+        some (args (sb c c0) ++ [var q, t, app s t] ++ B) := by
+      simp [step, head, hc0S, args]
+    have himg : (args c0 ++ [var 2, app (app b0 c0) (var 2)]).map (rho (app (app b0 c0) (var 2)) t (sgq q c)) =
+        args (sb c c0) ++ [var q, t] := by
+      rw [sb_args c c0 hS]
+      simp only [List.map_append, List.map_cons, List.map_nil]
+      have hargs : (args c0).map (rho (app (app b0 c0) (var 2)) t (sgq q c)) = (args c0).map (sb c) := by
+        apply List.map_congr_left
+        intro e he
+        have hsz : size e < size (app (app b0 c0) (var 2)) := by
+          have := size_args c0 e he
+          simp [size]; omega
+        rw [rho_small _ _ _ e hsz]
+        exact asub_sgq_of_noy q c e (occ2_args c0 hy e he)
+      rw [hargs, rho_self]
+      have h2 : rho (app (app b0 c0) (var 2)) t (sgq q c) (var 2) = var q := by
+        have : var 2 ≠ app (app b0 c0) (var 2) := by intro h; cases h
+        simp [rho, this, sgq]
+      simp [h2]
+    have h1 := replay_run_gen (app (app b0 c0) (var 2)) t (sgq q c) k _ _ hok hrun
+    rw [himg] at h1
+    have h2 := run_append k _ _ (app s t :: B) h1
+    simp only [run]
+    rw [hstep]
+    simpa using h2
+  · have hna : ¬ wpre (app (app b0 c0) (var 2)) a' := by
+      intro hw'
+      -- a p-headed term is never prefixed by the S- or b0-headed w.y unless b0 is p-headed
+      have := wpre_headeq _ a' hw'
+      rw [hp, hw] at this
+      exact hb0 this.symm
+    rw [rho_headvar _ _ _ 0 a' hna hp]
+    simp [sgq, head]
+
+#print axioms replay_glue
+#print axioms replay_run_gen
+#print axioms replay_beta
+#print axioms replay_cycle

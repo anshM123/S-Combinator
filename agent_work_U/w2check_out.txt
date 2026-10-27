@@ -1,0 +1,3 @@
+steps 233421 violations {'A': 0, 'B': 495, 'C': 1348}
+C (['S(SS(SS))', 'SS(SS)(S(SS))'], 1)
+B (['SS(SSS)'], 1)

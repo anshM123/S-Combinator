@@ -158,3 +158,40 @@ theorem w1_survivor (C : List T) (hC : ∀ x, x ∈ C → closed x) (a b c : T)
       simpa using this
     subst hc
     exact ⟨hB, fun h => Or.inr (h1 h)⟩
+
+/-- **W1 for the right-spine machine.**  When a round ends by [S, b, c] -> [c, b.c], the right-spine machine (leftmost-
+    outermost evaluation after the left child c has been normalised) continues with the SECOND component b.c.
+    That state holds D, and if it holds D exactly once then b is closed and c = D: the round only replaced the
+    controller (no write onto the datum); any write leaves at least two copies of D in the next state. -/
+theorem w1_rm_next (C : List T) (hC : ∀ x, x ∈ C → closed x) (a b c : T)
+    (hr : Reach (C ++ [D]) [a, b, c]) :
+    0 < occ (app b c) ∧ (occ (app b c) = 1 → closed b ∧ c = D) := by
+  have hI : W1Inv [a, b, c] := inv_reach _ _ (Or.inl ⟨C, rfl, hC⟩) hr
+  rcases hI with ⟨C', hL, hC'⟩ | ⟨P, U, B, hL, hU, hB, _⟩
+  · -- phase 0: [a, b, c] = C' ++ [D] with C' closed, so c = D and b is closed
+    have hlen : C'.length = 2 := by
+      have := congrArg List.length hL
+      simp at this; omega
+    match C', hL, hC', hlen with
+    | [a', b'], hL, hC', _ =>
+      have e : a = a' ∧ b = b' ∧ c = D := by
+        simp only [List.cons_append, List.nil_append, List.cons.injEq] at hL
+        exact ⟨hL.1, hL.2.1, hL.2.2.1⟩
+      have hb : closed b := by rw [e.2.1]; exact hC' b' (by simp)
+      have hcD : c = D := e.2.2
+      refine ⟨?_, fun _ => ⟨hb, hcD⟩⟩
+      rw [hcD]; simp [occ, occ_closed b hb, occ_D]
+  · -- phase 1: b = U and c = B both contain D, so b.c holds at least two copies
+    have hlen : P.length = 1 := by
+      have := congrArg List.length hL
+      simp at this; omega
+    match P, hL, hlen with
+    | [p], hL, _ =>
+      have e : b = U ∧ c = B := by
+        simp only [List.cons_append, List.nil_append, List.cons.injEq] at hL
+        exact ⟨hL.2.1, hL.2.2.1⟩
+      rw [e.1, e.2]
+      refine ⟨by simp [occ]; omega, fun h => ?_⟩
+      simp [occ] at h; omega
+
+#print axioms w1_rm_next

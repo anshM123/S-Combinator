@@ -1,0 +1,384 @@
+
+/-! ## Theorem T: termination is all-or-nothing (Church's theorem F3 for the non-erasing S); finite multiway graph -/
+
+/-- strongly normalising: accessible for the converse of one-step reduction (no infinite reduction) -/
+def SN (t : T) : Prop := Acc (fun a b => Red b a) t
+
+theorem nf_sn {t : T} (h : NF t) : SN t := Acc.intro t (fun u hu => absurd hu (h u))
+
+/-- one or more steps, head-first -/
+inductive RP : T → T → Prop
+  | single {t u : T} : Red t u → RP t u
+  | cons {t u v : T} : Red t u → RP u v → RP t v
+
+theorem RP.trans {t u v : T} (h1 : RP t u) (h2 : RP u v) : RP t v := by
+  induction h1 with
+  | single h => exact RP.cons h h2
+  | cons h _ ih => exact RP.cons h (ih h2)
+
+theorem rp_left {f f' : T} (a : T) (h : RP f f') : RP (app f a) (app f' a) := by
+  induction h with
+  | single h => exact RP.single (Red.left a h)
+  | cons h _ ih => exact RP.cons (Red.left a h) ih
+
+theorem rp_right (f : T) {a a' : T} (h : RP a a') : RP (app f a) (app f a') := by
+  induction h with
+  | single h => exact RP.single (Red.right f h)
+  | cons h _ ih => exact RP.cons (Red.right f h) ih
+
+def AccP (t : T) : Prop := Acc (fun a b => RP b a) t
+
+theorem sn_accp {t : T} (h : SN t) : AccP t := by
+  unfold SN at h
+  induction h with
+  | intro t _ ih =>
+    unfold AccP
+    refine Acc.intro t (fun u hu => ?_)
+    cases hu with
+    | single h => exact ih u h
+    | cons h hr => exact (ih _ h).inv hr
+
+/-- terms with marked redexes: `MT.red x y z` is a MARKED redex S x y z -/
+inductive MT where
+  | S : MT
+  | app : MT → MT → MT
+  | red : MT → MT → MT → MT
+
+/-- forget the marks -/
+def er : MT → T
+  | MT.S => T.S
+  | MT.app f a => T.app (er f) (er a)
+  | MT.red x y z => T.app (T.app (T.app T.S (er x)) (er y)) (er z)
+
+/-- complete development: contract every marked redex -/
+def dev : MT → T
+  | MT.S => T.S
+  | MT.app f a => T.app (dev f) (dev a)
+  | MT.red x y z => T.app (T.app (dev x) (dev z)) (T.app (dev y) (dev z))
+
+/-- weight that decreases when a marked redex is contracted (finite developments) -/
+def W : MT → Nat
+  | MT.S => 1
+  | MT.app f a => W f + W a
+  | MT.red x y z => W x + W y + 2 * W z + 1
+
+/-- no marks -/
+def um : T → MT
+  | T.S => MT.S
+  | T.app f a => MT.app (um f) (um a)
+
+theorem er_um : ∀ t : T, er (um t) = t
+  | T.S => rfl
+  | T.app f a => by simp only [um, er, er_um f, er_um a]
+
+theorem dev_um : ∀ t : T, dev (um t) = t
+  | T.S => rfl
+  | T.app f a => by simp only [um, dev, dev_um f, dev_um a]
+
+theorem W_pos : ∀ m : MT, 1 ≤ W m
+  | MT.S => by simp [W]
+  | MT.app f a => by have := W_pos f; simp only [W]; omega
+  | MT.red x y z => by simp only [W]; omega
+
+/-- contraction of a marked redex (marks inside are carried along) -/
+inductive MStepM : MT → MT → Prop
+  | root (x y z : MT) : MStepM (MT.red x y z) (MT.app (MT.app x z) (MT.app y z))
+  | appL {f f' : MT} (a : MT) : MStepM f f' → MStepM (MT.app f a) (MT.app f' a)
+  | appR (f : MT) {a a' : MT} : MStepM a a' → MStepM (MT.app f a) (MT.app f a')
+  | redX {x x' : MT} (y z : MT) : MStepM x x' → MStepM (MT.red x y z) (MT.red x' y z)
+  | redY (x : MT) {y y' : MT} (z : MT) : MStepM y y' → MStepM (MT.red x y z) (MT.red x y' z)
+  | redZ (x y : MT) {z z' : MT} : MStepM z z' → MStepM (MT.red x y z) (MT.red x y z')
+
+/-- contraction of an unmarked redex -/
+inductive MStepU : MT → MT → Prop
+  | root (x y z : MT) : MStepU (MT.app (MT.app (MT.app MT.S x) y) z) (MT.app (MT.app x z) (MT.app y z))
+  | appL {f f' : MT} (a : MT) : MStepU f f' → MStepU (MT.app f a) (MT.app f' a)
+  | appR (f : MT) {a a' : MT} : MStepU a a' → MStepU (MT.app f a) (MT.app f a')
+  | redX {x x' : MT} (y z : MT) : MStepU x x' → MStepU (MT.red x y z) (MT.red x' y z)
+  | redY (x : MT) {y y' : MT} (z : MT) : MStepU y y' → MStepU (MT.red x y z) (MT.red x y' z)
+  | redZ (x y : MT) {z z' : MT} : MStepU z z' → MStepU (MT.red x y z) (MT.red x y z')
+
+/-- contracting a marked redex does not change the complete development -/
+theorem dev_M {m m' : MT} (h : MStepM m m') : dev m = dev m' := by
+  induction h with
+  | root x y z => rfl
+  | appL a _ ih => simp only [dev, ih]
+  | appR f _ ih => simp only [dev, ih]
+  | redX y z _ ih => simp only [dev, ih]
+  | redY x z _ ih => simp only [dev, ih]
+  | redZ x y _ ih => simp only [dev, ih]
+
+/-- contracting a marked redex lowers the weight (finite developments) -/
+theorem W_M {m m' : MT} (h : MStepM m m') : W m' < W m := by
+  induction h with
+  | root x y z => simp only [W]; omega
+  | appL a _ ih => simp only [W]; omega
+  | appR f _ ih => simp only [W]; omega
+  | redX y z _ ih => simp only [W]; omega
+  | redY x z _ ih => simp only [W]; omega
+  | redZ x y _ ih => simp only [W]; omega
+
+/-- contracting an unmarked redex moves the complete development at least one step (S erases nothing) -/
+theorem dev_U {m m' : MT} (h : MStepU m m') : RP (dev m) (dev m') := by
+  induction h with
+  | root x y z => exact RP.single (Red.redex _ _ _)
+  | appL a _ ih => simp only [dev]; exact rp_left _ ih
+  | appR f _ ih => simp only [dev]; exact rp_right _ ih
+  | redX y z _ ih => simp only [dev]; exact rp_left _ (rp_left _ ih)
+  | redY x z _ ih => simp only [dev]; exact rp_right _ (rp_left _ ih)
+  | redZ x y _ ih => simp only [dev]; exact (rp_left _ (rp_right _ ih)).trans (rp_right _ (rp_right _ ih))
+
+theorem er_inv {f : MT} {x y : T} (h : er f = app (app S x) y) :
+    ∃ x' y', f = MT.app (MT.app MT.S x') y' ∧ er x' = x ∧ er y' = y := by
+  cases f with
+  | S => simp [er] at h
+  | red a b c => simp [er] at h
+  | app f1 b =>
+    simp only [er, app.injEq] at h
+    obtain ⟨h1, h2⟩ := h
+    cases f1 with
+    | S => simp [er] at h1
+    | red a2 b2 c2 => simp [er] at h1
+    | app f2 a2 =>
+      simp only [er, app.injEq] at h1
+      obtain ⟨h3, h4⟩ := h1
+      cases f2 with
+      | S => exact ⟨a2, b, rfl, h4, h2⟩
+      | app _ _ => simp [er] at h3
+      | red _ _ _ => simp [er] at h3
+
+/-- every step of the unmarked term lifts to a marked or an unmarked step of the marked term -/
+theorem lift : ∀ (m : MT) (v : T), Red (er m) v →
+    (∃ m', MStepM m m' ∧ er m' = v) ∨ (∃ m', MStepU m m' ∧ er m' = v)
+  | MT.S, v, hv => by simp only [er] at hv; cases hv
+  | MT.app f a, v, hv => by
+    simp only [er] at hv
+    generalize hF : er f = F at hv
+    generalize hA : er a = A at hv
+    cases hv with
+    | redex x y z =>
+      obtain ⟨x', y', rfl, hx, hy⟩ := er_inv hF
+      right
+      refine ⟨MT.app (MT.app x' a) (MT.app y' a), MStepU.root x' y' a, ?_⟩
+      simp only [er, hx, hy, hA]
+    | left _ h =>
+      subst hF hA
+      rcases lift f _ h with ⟨m', hm, he⟩ | ⟨m', hm, he⟩
+      · exact Or.inl ⟨MT.app m' a, MStepM.appL a hm, by simp only [er, he]⟩
+      · exact Or.inr ⟨MT.app m' a, MStepU.appL a hm, by simp only [er, he]⟩
+    | right _ h =>
+      subst hF hA
+      rcases lift a _ h with ⟨m', hm, he⟩ | ⟨m', hm, he⟩
+      · exact Or.inl ⟨MT.app f m', MStepM.appR f hm, by simp only [er, he]⟩
+      · exact Or.inr ⟨MT.app f m', MStepU.appR f hm, by simp only [er, he]⟩
+  | MT.red x y z, v, hv => by
+    simp only [er] at hv
+    generalize hX : er x = X at hv
+    generalize hY : er y = Y at hv
+    generalize hZ : er z = Z at hv
+    cases hv with
+    | redex _ _ _ =>
+      left
+      refine ⟨MT.app (MT.app x z) (MT.app y z), MStepM.root x y z, ?_⟩
+      simp only [er, hX, hY, hZ]
+    | left _ h =>
+      cases h with
+      | left _ h2 =>
+        cases h2 with
+        | left _ h3 => cases h3
+        | right _ h3 =>
+          subst hX hY hZ
+          rcases lift x _ h3 with ⟨m', hm, he⟩ | ⟨m', hm, he⟩
+          · exact Or.inl ⟨MT.red m' y z, MStepM.redX y z hm, by simp only [er, he]⟩
+          · exact Or.inr ⟨MT.red m' y z, MStepU.redX y z hm, by simp only [er, he]⟩
+      | right _ h2 =>
+        subst hX hY hZ
+        rcases lift y _ h2 with ⟨m', hm, he⟩ | ⟨m', hm, he⟩
+        · exact Or.inl ⟨MT.red x m' z, MStepM.redY x z hm, by simp only [er, he]⟩
+        · exact Or.inr ⟨MT.red x m' z, MStepU.redY x z hm, by simp only [er, he]⟩
+    | right _ h =>
+      subst hX hY hZ
+      rcases lift z _ h with ⟨m', hm, he⟩ | ⟨m', hm, he⟩
+      · exact Or.inl ⟨MT.red x y m', MStepM.redZ x y hm, by simp only [er, he]⟩
+      · exact Or.inr ⟨MT.red x y m', MStepU.redZ x y hm, by simp only [er, he]⟩
+
+/-- conservation, marked form: if the complete development of m is strongly normalising, so is m -/
+theorem conserv (u : T) (hu : AccP u) : ∀ (n : Nat) (m : MT), dev m = u → W m ≤ n → SN (er m) := by
+  unfold AccP at hu
+  induction hu with
+  | intro u _ ihA =>
+    intro n
+    induction n with
+    | zero => intro m _ hW; have := W_pos m; omega
+    | succ n ihn =>
+      intro m hd hW
+      unfold SN
+      refine Acc.intro _ (fun v hv => ?_)
+      rcases lift m v hv with ⟨m', hM, he⟩ | ⟨m', hU, he⟩
+      · have h1 := W_M hM
+        have e1 := dev_M hM
+        rw [← he]
+        exact ihn m' (by rw [← e1, hd]) (by omega)
+      · have hr := dev_U hU
+        rw [hd] at hr
+        rw [← he]
+        exact ihA (dev m') hr (W m') m' rfl (Nat.le_refl _)
+
+/-- mark the contracted redex of a step -/
+theorem mark {t t1 : T} (h : Red t t1) : ∃ m : MT, er m = t ∧ dev m = t1 := by
+  induction h with
+  | redex x y z => exact ⟨MT.red (um x) (um y) (um z), by simp [er, er_um], by simp [dev, dev_um]⟩
+  | left a _ ih =>
+    obtain ⟨m, h1, h2⟩ := ih
+    exact ⟨MT.app m (um a), by simp [er, h1, er_um], by simp [dev, h2, dev_um]⟩
+  | right f _ ih =>
+    obtain ⟨m, h1, h2⟩ := ih
+    exact ⟨MT.app (um f) m, by simp [er, h1, er_um], by simp [dev, h2, dev_um]⟩
+
+/-- **Conservation.** If t → t1 and t1 is strongly normalising, so is t (one step never loses an infinite reduction). -/
+theorem conservation {t t1 : T} (h : Red t t1) (hs : SN t1) : SN t := by
+  obtain ⟨m, h1, h2⟩ := mark h
+  rw [← h1]
+  exact conserv t1 (sn_accp hs) (W m) m h2 (Nat.le_refl _)
+
+theorem sn_back {t u : T} (h : RedStar t u) : SN u → SN t := by
+  induction h with
+  | refl => exact id
+  | tail _ h2 ih => exact fun hs => ih (conservation h2 hs)
+
+/-- **Church's theorem for S (F3).** A term with a normal form is strongly normalising. -/
+theorem wn_sn {t n : T} (h : RedStar t n) (hn : NF n) : SN t := sn_back h (nf_sn hn)
+
+/-- strongly normalising terms have no infinite evolution (in any order, with any redex choices) -/
+theorem sn_no_infinite {t : T} (h : SN t) : ¬ ∃ s : Nat → T, s 0 = t ∧ ∀ k, Red (s k) (s (k + 1)) := by
+  unfold SN at h
+  induction h with
+  | intro t _ ih =>
+    rintro ⟨s, h0, hs⟩
+    apply ih (s 1) (by rw [← h0]; exact hs 0)
+    exact ⟨fun k => s (k + 1), rfl, fun k => hs (k + 1)⟩
+
+/-! ### The multiway graph of a normalising term is finite -/
+
+/-- all one-step reducts -/
+def reducts : T → List T
+  | S => []
+  | app (app (app S x) y) a =>
+    app (app x a) (app y a) ::
+      ((reducts (app (app S x) y)).map (fun f' => app f' a) ++ (reducts a).map (fun a' => app (app (app S x) y) a'))
+  | app f a => (reducts f).map (fun f' => app f' a) ++ (reducts a).map (fun a' => app f a')
+
+theorem reducts_left (f a f' : T) (h : f' ∈ reducts f) : app f' a ∈ reducts (app f a) := by
+  match f, h with
+  | S, h => simp [reducts] at h
+  | app S x, h => exact List.mem_append_left _ (List.mem_map.2 ⟨f', h, rfl⟩)
+  | app (app S x) y, h => exact List.mem_cons_of_mem _ (List.mem_append_left _ (List.mem_map.2 ⟨f', h, rfl⟩))
+  | app (app (app p q) r) y, h => exact List.mem_append_left _ (List.mem_map.2 ⟨f', h, rfl⟩)
+
+theorem reducts_right (f a a' : T) (h : a' ∈ reducts a) : app f a' ∈ reducts (app f a) := by
+  match f with
+  | S => exact List.mem_append_right _ (List.mem_map.2 ⟨a', h, rfl⟩)
+  | app S x => exact List.mem_append_right _ (List.mem_map.2 ⟨a', h, rfl⟩)
+  | app (app S x) y => exact List.mem_cons_of_mem _ (List.mem_append_right _ (List.mem_map.2 ⟨a', h, rfl⟩))
+  | app (app (app p q) r) y => exact List.mem_append_right _ (List.mem_map.2 ⟨a', h, rfl⟩)
+
+theorem reducts_complete {t u : T} (h : Red t u) : u ∈ reducts t := by
+  induction h with
+  | redex x y z => exact List.mem_cons_self
+  | left a _ ih => exact reducts_left _ a _ ih
+  | right f _ ih => exact reducts_right f _ _ ih
+
+theorem reducts_sound : ∀ (t u : T), u ∈ reducts t → Red t u
+  | S, u, h => by simp [reducts] at h
+  | app S a, u, h => by
+    have e : reducts (app S a) = (reducts S).map (fun f' => app f' a) ++ (reducts a).map (fun a' => app S a') := rfl
+    rw [e] at h
+    rcases List.mem_append.1 h with h | h
+    · simp [reducts] at h
+    · obtain ⟨a', ha, rfl⟩ := List.mem_map.1 h
+      exact Red.right _ (reducts_sound a a' ha)
+  | app (app S x) a, u, h => by
+    have e : reducts (app (app S x) a) =
+        (reducts (app S x)).map (fun f' => app f' a) ++ (reducts a).map (fun a' => app (app S x) a') := rfl
+    rw [e] at h
+    rcases List.mem_append.1 h with h | h
+    · obtain ⟨f', hf, rfl⟩ := List.mem_map.1 h
+      exact Red.left a (reducts_sound _ f' hf)
+    · obtain ⟨a', ha, rfl⟩ := List.mem_map.1 h
+      exact Red.right _ (reducts_sound a a' ha)
+  | app (app (app S x) y) a, u, h => by
+    have e : reducts (app (app (app S x) y) a) = app (app x a) (app y a) ::
+        ((reducts (app (app S x) y)).map (fun f' => app f' a) ++
+          (reducts a).map (fun a' => app (app (app S x) y) a')) := rfl
+    rw [e] at h
+    rcases List.mem_cons.1 h with rfl | h
+    · exact Red.redex x y a
+    rcases List.mem_append.1 h with h | h
+    · obtain ⟨f', hf, rfl⟩ := List.mem_map.1 h
+      exact Red.left a (reducts_sound _ f' hf)
+    · obtain ⟨a', ha, rfl⟩ := List.mem_map.1 h
+      exact Red.right _ (reducts_sound a a' ha)
+  | app (app (app (app p q) r) y) a, u, h => by
+    have e : reducts (app (app (app (app p q) r) y) a) =
+        (reducts (app (app (app p q) r) y)).map (fun f' => app f' a) ++
+          (reducts a).map (fun a' => app (app (app (app p q) r) y) a') := rfl
+    rw [e] at h
+    rcases List.mem_append.1 h with h | h
+    · obtain ⟨f', hf, rfl⟩ := List.mem_map.1 h
+      exact Red.left a (reducts_sound _ f' hf)
+    · obtain ⟨a', ha, rfl⟩ := List.mem_map.1 h
+      exact Red.right _ (reducts_sound a a' ha)
+
+theorem redstar_head {t u : T} (h : RedStar t u) : t = u ∨ ∃ t1, Red t t1 ∧ RedStar t1 u := by
+  induction h with
+  | refl => exact Or.inl rfl
+  | tail _ h2 ih =>
+    rcases ih with rfl | ⟨t1, h1, r1⟩
+    · exact Or.inr ⟨_, h2, RedStar.refl _⟩
+    · exact Or.inr ⟨t1, h1, RedStar.tail r1 h2⟩
+
+theorem collect (P : T → Prop) : ∀ L : List T, (∀ t1 ∈ L, P t1 → ∃ l : List T, ∀ u, RedStar t1 u → u ∈ l) →
+    (∀ t1 ∈ L, P t1) → ∃ l : List T, ∀ t1 ∈ L, ∀ u, RedStar t1 u → u ∈ l
+  | [], _, _ => ⟨[], fun t1 h => by simp at h⟩
+  | t0 :: L, h, hp => by
+    obtain ⟨l0, h0⟩ := h t0 (by simp) (hp t0 (by simp))
+    obtain ⟨l1, h1⟩ := collect P L (fun t1 ht => h t1 (by simp [ht])) (fun t1 ht => hp t1 (by simp [ht]))
+    refine ⟨l0 ++ l1, fun t1 ht u hu => ?_⟩
+    rcases List.mem_cons.1 ht with rfl | ht
+    · exact List.mem_append_left _ (h0 u hu)
+    · exact List.mem_append_right _ (h1 t1 ht u hu)
+
+/-- a strongly normalising term has finitely many reducts: its multiway graph is finite -/
+theorem finite_reducts {t : T} (h : SN t) : ∃ l : List T, ∀ u, RedStar t u → u ∈ l := by
+  unfold SN at h
+  induction h with
+  | intro t _ ih =>
+    obtain ⟨l, hl⟩ := collect (fun t1 => Red t t1) (reducts t)
+      (fun t1 _ hr => ih t1 hr) (fun t1 ht => reducts_sound t t1 ht)
+    refine ⟨t :: l, fun u hu => ?_⟩
+    rcases redstar_head hu with rfl | ⟨t1, h1, r1⟩
+    · exact List.mem_cons_self
+    · exact List.mem_cons_of_mem _ (hl t1 (reducts_complete h1) u r1)
+
+/-- **Theorem T.** For every S-term exactly one of the following holds (the first two-way split is classical):
+    (a) it is strongly normalising — no infinite evolution in any order — it has finitely many reducts (its multiway
+        graph is finite) and at most one normal form;
+    (b) every reduct has a further step — every maximal evolution, in any order, is infinite.
+    (Which case holds is decidable by Waldmann's theorem, cited, not formalised.) -/
+theorem theoremT (t : T) :
+    (SN t ∧ (∃ l : List T, ∀ u, RedStar t u → u ∈ l) ∧
+      ∀ n1 n2, RedStar t n1 → NF n1 → RedStar t n2 → NF n2 → n1 = n2) ∨
+    (∀ u, RedStar t u → ∃ v, Red u v) := by
+  rcases Classical.em (∃ n, RedStar t n ∧ NF n) with ⟨n, hn, nf⟩ | h
+  · have hs := wn_sn hn nf
+    exact Or.inl ⟨hs, finite_reducts hs, fun n1 n2 h1 f1 h2 f2 => nf_unique h1 h2 f1 f2⟩
+  · right
+    intro u hu
+    rcases Classical.em (∃ v, Red u v) with hv | hv
+    · exact hv
+    · exact absurd ⟨u, hu, fun v hv' => hv ⟨v, hv'⟩⟩ h
+
+#print axioms wn_sn
+#print axioms sn_no_infinite
+#print axioms finite_reducts
+#print axioms theoremT
