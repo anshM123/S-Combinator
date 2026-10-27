@@ -60,7 +60,7 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 | Theorem N* (list form), Corollary N* (layer bound) | `NStar.lean` | potential bound for counters: along a Böhm-tree path that never reads the cores, the layers that can still be added above one counter are bounded by a potential that never increases; explicitly, a counter with d layers of hole depth h under a context of hole depth H reaches at most d + H/h layers (unread core x, so its potential is 0) — the core of Theorem O (no bounded-cost two-counter simulation) |
 | Theorem H, Corollaries H1–H3 | `TheoremH.lean` | code that never inspects its inputs behaves the same on every input class of M35: no pair of gadgets S g1 g2 can hold two data cleanly, only the six nest classes can hold two data, and no S-term can hold three |
 | Theorem U* | `TheoremUstar.lean` | a head run that starts without 'fuel' (no closed element directly below data) never creates any, even through zero tests that execute marked data: counter-transfer designs need fuel built into the program |
-| Theorems UR-R, UR-C | `URCore.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); very likely overlaps Waldmann's "Nimm Zwei" (1997) |
+| Theorems UR-R, UR-C, the Observation | `URCore.lean`, `URObs.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); the Observation shows this is exactly 'one redex at every step', so it holds in every evaluation order; very likely overlaps Waldmann's "Nimm Zwei" (1997) |
 
 **The two agents' programmes**
 
