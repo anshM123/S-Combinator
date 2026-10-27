@@ -2,7 +2,8 @@
   agent_work/lean/INNER.lean  (non-universality agent, 2026-10-27).  CANON.lean (copied verbatim) plus the general
   innermost-dirty theorem `ordered_innermost`: from ANY S-headed ordered y-free datum (frozen atoms allowed), at a
   p-containing front, a right comb over y at position 3 whose wrappers are free of x, y, r has a p-containing
-  innermost wrapper.  (Ingredients from CANON/OT: good_nb2_run, ot_main's Good invariant, last_has_p.)
+  innermost wrapper; and `chain_step_innermost`: the datum handed to the next phase (V[y:=p', p:=c]) is an
+  ordered right comb, so every proper transfer after the first one of a Church chain is innermost-dirty.
 
   agent_work/lean/CANON.lean  (construction agent, 2026-10-27).  = SL.lean + OTD's OT/FH part + the combined corollary.  Plain Lean 4 core, no Mathlib.
   Theorem OTD = Theorem OT with FROZEN atoms allowed: `closed` now means "free of the atoms 0..3"
@@ -1328,5 +1329,73 @@ theorem ordered_innermost (G : T) (hh : head G = S) (ho : ordered G) (hy : occ 2
   have hV : rcy ds ∈ f :: w :: rcy ds :: rest := by simp
   exact last_has_p ds hne hds (hN (rcy ds) hV) hex
 
+
+/-! ### Every datum after the first transfer is an ordered right comb, so all later transfers are innermost-dirty -/
+
+/-- freeze the predecessor: var 0 -> var c -/
+def sbc (c : Nat) : T → T
+  | S => S
+  | var n => if n = 0 then var c else var n
+  | app f x => app (sbc c f) (sbc c x)
+
+theorem sbc_closed (c : Nat) (hc : 4 ≤ c) : ∀ t : T, occ 1 t = 0 → occ 2 t = 0 → occ 3 t = 0 → closed (sbc c t)
+  | S, _, _, _ => by simp [sbc, closed]
+  | var n, h1, h2, h3 => by
+    by_cases h0 : n = 0
+    · subst h0; simp [sbc, closed]; omega
+    · simp [sbc, h0, closed]
+      simp [occ] at h1 h2 h3
+      omega
+  | app f x, h1, h2, h3 => by
+    simp only [occ] at h1 h2 h3
+    exact ⟨sbc_closed c hc f (by omega) (by omega) (by omega), sbc_closed c hc x (by omega) (by omega) (by omega)⟩
+
+theorem rcomb_not_closed : ∀ (ds : List T) (b : T), ¬ closed b → ¬ closed (rcomb ds b)
+  | [], b, hb => by simpa [rcomb] using hb
+  | d :: ds, b, hb => by
+    simp only [rcomb, closed]
+    intro h; exact rcomb_not_closed ds b hb h.2
+
+theorem rcomb_ordered : ∀ (ds : List T) (b : T), (∀ d ∈ ds, closed d) → ordered b → ¬ closed b →
+    ordered (rcomb ds b)
+  | [], b, _, hb, _ => by simpa [rcomb] using hb
+  | d :: ds, b, hds, hb, hnc => by
+    simp only [rcomb]
+    refine ⟨fun _ hX => absurd hX (rcomb_not_closed ds b hnc), closed_ordered' d (hds d (by simp)),
+      rcomb_ordered ds b (fun x hx => hds x (by simp [hx])) hb hnc⟩
+
+theorem rcomb_occ2 : ∀ (ds : List T) (b : T), (∀ d ∈ ds, closed d) → occ 2 b = 0 → occ 2 (rcomb ds b) = 0
+  | [], b, _, hb => by simpa [rcomb] using hb
+  | d :: ds, b, hds, hb => by
+    simp only [rcomb, occ]
+    rw [occ_closed 2 (by decide) d (hds d (by simp)), rcomb_occ2 ds b (fun x hx => hds x (by simp [hx])) hb]
+
+theorem rcomb_head (d : T) (ds : List T) (b : T) : head (rcomb (d :: ds) b) = head d := by
+  simp [rcomb, head]
+
+/-- **Chain step.**  If a proper transfer hands over V = d1.(...(dm.y)) (wrappers free of x, y, r), the next datum
+    V[y := p', p := c] = rcomb (ds.map (sbc c)) p' (c >= 4 a fresh frozen atom) is an ordered y-free right comb; so
+    whenever its first wrapper is S-headed, `ordered_innermost` applies to it: every proper transfer of the next
+    phase is innermost-dirty. -/
+theorem chain_step_innermost (ds : List T) (c : Nat) (hc : 4 ≤ c)
+    (hds : ∀ d ∈ ds, occ 1 d = 0 ∧ occ 2 d = 0 ∧ occ 3 d = 0) (d0 : T) (ds0 : List T)
+    (hcons : ds.map (sbc c) = d0 :: ds0) (hS : head d0 = S)
+    (k : Nat) (f w : T) (es rest : List T) (hne : es ≠ []) (hes : ∀ e ∈ es, occ 1 e = 0 ∧ occ 2 e = 0 ∧ occ 3 e = 0)
+    (hrun : run k (args (rcomb (ds.map (sbc c)) (var 0)) ++ [var 2, app (var 1) (var 2), var 3]) =
+      some (f :: w :: rcy es :: rest))
+    (hf : occ 0 f ≠ 0) : occ 0 (es.getLast hne) ≠ 0 := by
+  have hcl : ∀ d ∈ ds.map (sbc c), closed d := by
+    intro d hd
+    simp at hd
+    obtain ⟨d', hd', rfl⟩ := hd
+    obtain ⟨h1, h2, h3⟩ := hds d' hd'
+    exact sbc_closed c hc d' h1 h2 h3
+  have hnc0 : ¬ closed (var 0) := by simp [closed]
+  have ho : ordered (rcomb (ds.map (sbc c)) (var 0)) := rcomb_ordered _ _ hcl trivial hnc0
+  have hy : occ 2 (rcomb (ds.map (sbc c)) (var 0)) = 0 := rcomb_occ2 _ _ hcl (by simp [occ])
+  have hh : head (rcomb (ds.map (sbc c)) (var 0)) = S := by rw [hcons, rcomb_head]; exact hS
+  exact ordered_innermost _ hh ho hy k f w es rest hne hes hrun hf
+
 #print axioms canonical_innermost
 #print axioms ordered_innermost
+#print axioms chain_step_innermost

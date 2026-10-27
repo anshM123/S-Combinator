@@ -48,8 +48,8 @@ Bottom line: NOT SOLVED.  No complete proof of non-universality exists; nothing 
 New since the coordinator's 'go for the money' message (all in agent_work/; every MACHINE-CHECKED file compiles
 with Lean 4.35 core, no sorry, standard axioms only):
 0. HEADLINE (generic phase model): every Church chain of proper transfers has length <= 2, and <= 1 if it starts
-   from an ordered datum.  Machine-checked chain: later data are ordered (immediate) -> transfers from ordered data
-   are innermost-dirty (INNER.lean `ordered_innermost`) -> after such a transfer the next phase cannot transfer
+   from an ordered datum.  Machine-checked chain: every transfer after the first is innermost-dirty, with no extra
+   hypothesis (INNER.lean `ordered_innermost`, `chain_step_innermost`) -> after such a transfer the next phase cannot transfer
    (PA.lean / FH / FHL / YD), the last step with per-case hypotheses that hold for 99.5-99.8% of all tested
    transfers; census: no chain of length >= 3 among all 227,239 data <= 11 leaves.  It does NOT prove R''_PUP or
    non-universality: re-execution (D3) is exactly what remains.
@@ -894,3 +894,14 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
   With step (1) (every datum after the first transfer is ordered in OTD's sense — immediate) and step (3) (the
   replay theorems PA / PB / PAM and FH / FHL / YD, per-case hypotheses), the chain bound 'at most two proper
   transfers per Church chain' is machine-checked up to the per-case hypotheses of step (3).
+* MACHINE-CHECKED (agent_work/lean/INNER.lean, now ~1,400 lines; no sorry): **`chain_step_innermost`** — steps (1)
+  and (2) of the chain bound in one statement: if a proper transfer hands over V = d1.(...(dm.y)) (wrappers free of
+  x, y, r), the next datum V[y := p', p := c] = rcomb (ds.map (sbc c)) p' (c >= 4) is an ordered y-free right comb
+  (`rcomb_ordered`, `sbc_closed`), so (when its first wrapper is S-headed; otherwise it is frozen-headed and FH
+  applies) every proper transfer of the next phase is innermost-dirty.  Hence in every Church chain all transfers
+  after the first are innermost-dirty — machine-checked without any per-case hypothesis.  Only step (3) (the
+  replay theorems) still carries per-case hypotheses.
+* COMPUTATIONALLY CERTIFIED (chain_len_rand.py 3 16 200000 and 4 22 1500000): random S-headed data with one or two
+  occurrences of the predecessor p (and occasionally an older frozen atom), 4-22 leaves: 1,413,396 data in all;
+  Church-chain lengths 0: 1,352,867; 1: 60,187; 2: 546; >= 3: NONE.  The chain bound (<= 2 proper transfers) holds
+  far beyond the exhaustive range, also for data with two copies of p.

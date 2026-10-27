@@ -53,6 +53,7 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
 | result | file | meaning |
 |---|---|---|
+| Access lemma, Lemma G1, Lemma 7 (iii) | `Geometry.lean` | a stored element re-enters the top two positions only with a second copy of itself directly below it (the geometric root of all junk), and the region below the lowest tagged element only shrinks from the top |
 | Barrier lemma | `Barrier.lean` | every S-term P run on two opaque arguments [P, x, y | r] hands control to an argument before it touches anything below them: loop bodies can never touch their accumulator |
 | Lemmas 8, 9 (core), Corollary 8(ii), Theorem J | `BarrierJ.lean` | data conservation; no write into data while two data are live; data stay in control; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
 | Lemma 10 | `Lemma10.lean` | no junk-free rotation: with two data, the bottom one can be brought in front of the other only together with a second copy of itself |

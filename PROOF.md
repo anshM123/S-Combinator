@@ -1343,6 +1343,8 @@ during the transfer (B absorbing closed constants from below it), entangled tape
 part, readers for Fibonacci words.
 
 ## Geometry of head runs: the access lemma and Lemma G1 — PROVED (elementary; audit 8: G1 correct, consequence corrected; audit 9: access lemma correct, positions 1-based)
+*MACHINE-CHECKED (lean/Geometry.lean, 2026-10-27): `access` (the access lemma), `g1_step` and `g1_run` (Lemma G1),
+and `last_step` (Lemma 7 (iii): the last element changes only by last := b·last).*
 *Access lemma.* In a step [a,b,c]++R ⇒ ch(a)++[c, b·c]++R an element that was at position ≥ 3 is at position 1 or 2
 afterwards only if it is c and |ch(a)| ≤ 1; then b·c, which contains a second copy of it, sits directly below it.
 *Proof.* R lands at positions ≥ |ch(a)| + 3 ≥ 3; c lands at |ch(a)| + 1 with b·c right below. ∎
