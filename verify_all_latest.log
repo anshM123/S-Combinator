@@ -86,3 +86,14 @@ PASS  Lean 4 (non-universality agent): Corollary AB-c (phase 3 via atom renaming
 PASS  Lean 4: F5 (Böhm trees invariant under reduction, every order) machine-checked  (1s)
 PASS  Lean 4: Theorem T (Church's theorem F3 for S, finite multiway graphs, all-or-nothing termination) machine-checked  (1s)
 PASS  Lean 4: Theorem H (uniformity) and Corollaries H1, H2, H3 machine-checked over M35 with variables  (35s)
+PASS  Lean 4: Lemma 4 (head-unstable terms are one syntactic class) and hnf congruence, on top of Q10  (40s)
+PASS  Lean 4: Theorem C (non-regular Böhm tree: infinitely many distinct finite subtrees) machine-checked  (1s)
+PASS  Lean 4 (universality agent): Lemma W1+ (single-datum descent-machine rounds are Fibonacci words)  (1s)
+PASS  Lean 4 (universality agent): Lemma W2 (two data: survivors are closed or atom-headed; no code store)  (1s)
+PASS  Lean 4 (universality agent): W2+ and comb rigidity (only combs carry two data across a round)  (1s)
+PASS  E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)  (0s)
+PASS  Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle  (5s)
+PASS  Proposition MW(a): (size, -leaf depth) strictly increases at every S-step  (0s)
+PASS  Clock channel: frozen under LO, time-dependent under parallel  (5s)
+
+97/97 checks passed

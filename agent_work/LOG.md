@@ -803,3 +803,10 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   FH 804, FHL 812, YD 53, PA 2,588, PB 128, PAM 466; OPEN 235 (162 single, 73 multi).
   For every covered handler, 'the next phase never makes a proper transfer' is a theorem (machine-checked
   statement + finite check of its phase-2 hypotheses); for the open ones it is certified by direct simulation.
+* EXPERIMENTALLY SUPPORTED (e2_dist.py 11; toward D3).  In the replay, phase 3's re-execution is the image of phase
+  2's transfer with the handler w.y replaced by e2 and y by e1 (the two elements following args(c0') when the first
+  c0'-prefixed front is opened).  Observed (e1, e2) at that front (467 real cases <= 11): (p', S-headed term with p'
+  and c) 192, (C-term, C-term) 116, (y, p'-headed Y-term) 100, (C-term, p') 18, (S-headed P'-term, p'-headed term)
+  16, (p', p'-headed term) 15, (p', y) 13.  So 're-execution replays the earlier activation' holds exactly (Lean:
+  replay_glue / replay_cycle / post_replay compute the re-execution list), but the replayed handler e2 is not
+  uniformly trivial; what the frozen value does next is outside the generic phase model.  D3 stays OPEN.
