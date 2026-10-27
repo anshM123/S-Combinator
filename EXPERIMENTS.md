@@ -1414,3 +1414,11 @@ the most changes are 3, all transient (e.g. E = □ (SS) S S, P = □ S: GGRGRRR
 refined alternately, E ≤ 4, P, Q ≤ 3, k ≤ 12): no chain with 4 or more changes. EXPERIMENTALLY SUPPORTED reading:
 along such chains colours stabilise to red; a proof would need the terminating-terms automaton (BEKW Fig. 11) and a
 general argument for arbitrary chains. Open.
+
+## E116 - Conjecture J at 13 leaves (main agent, 2026-10-27 evening)
+agent_work_EM/late_events.py all 13 1000 15 (output agent_work_EM/late_all13.txt, 1,146 s): leftmost walks of all
+208,012 closed S-terms with 13 leaves, up to 1,000 nodes each, burn-in 15. Flag 0 (L36): 124,616 walks end at the leaf
+S and 83,385 at a node without a head normal form within the step budget max(20000, 20 size); flag 1: 11 walks reach the
+1,000-node cap. No walk has a pop, jump or return after node 15. EXPERIMENTALLY SUPPORTED evidence for Conjecture J
+(previously all 58,786 terms with 12 leaves). The budget-based 'no head normal form' verdicts are not certificates
+(the linear bound C2 is proved only up to 19 leaves); the finite half itself is certified up to 16-19 leaves elsewhere.

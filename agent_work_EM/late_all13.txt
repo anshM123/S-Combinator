@@ -1,0 +1,4 @@
+all 13 nodes 1000 burn 15 time 1145.8
+(flag, status) counts: {(0, 'leaf'): 124616, (0, 'bot'): 83385, (1, 'cap'): 11}
+flag 0 walks with most late pops/jumps/returns (count, length, status, term, kinds, first events (j,kind,depth)):
+flag 1 walks with most late pops/jumps/returns (count, length, status, term, kinds, first events (j,kind,depth)):
