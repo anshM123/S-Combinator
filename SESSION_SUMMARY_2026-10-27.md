@@ -44,6 +44,14 @@ replays the earlier transfer) is machine-checked. D3 remains open.
   finite half is reduced to Conjecture EM (every infinite leftmost walk is eventually monotone); the same for the
   rightmost path under EM_R.
 
+## How the day ended
+At about 12:46 EDT the user's weekly usage limit was reached. The two running agents (Conjecture J; race material for
+Theorem RR) stopped mid-task, and the main agent could not act until the limit reset at 17:00, so the planned 16:30
+final integration happened at 17:20 instead. The auto-save loop had pushed everything up to 13:16. Partial results
+of the two stopped agents: Theorem B2, an exact bilinear ReplaceAll clock (machine-checked), plus a certified race
+family (STATUS R104); and 'no leftmost walk repeats a node', a hand proof that relies on Waldmann's no-spiral theorem
+(R105). Conjecture J and Theorem RR's hypothesis remain open.
+
 ## The EM agent's result (12:27 EDT)
 Cases (a') and (b) of Conjecture EM closed and machine-checked (lean/AgentEMA.lean, 8,480 lines, 65 theorems):
 `CA.depth_to_infinity`, `SC.EM_deep`, `SC.finite_half_of_J`. The leftmost-path finite half now reduces to Conjecture

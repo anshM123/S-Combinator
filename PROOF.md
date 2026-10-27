@@ -178,7 +178,9 @@ Hence **`SC.finite_half_of_J`: an infinite leftmost walk from an L36-flag-0 term
 S p τ). So Conjecture J (every infinite leftmost walk makes only finitely many jumps) implies the leftmost-path finite
 half for every flag-0 class, and with Proposition Q″ L36 would decide leftmost-path finiteness of S-terms. J is OPEN
 (EXPERIMENTALLY SUPPORTED: no late jump among all 58,786 terms with 12 leaves and 240,000 random compositions; no
-periodic leftmost walk found). EXPERIMENTALLY SUPPORTED: after burn-in all 37,657,000 steps of 13,151 long
+periodic leftmost walk found). PROVED (J agent, 12:47, relying on Waldmann's no-spiral theorem, BEKW Theorem 14,
+cited, not machine-checked): no leftmost walk repeats a node, so no infinite leftmost walk is eventually periodic.
+The J agent was stopped by the usage limit before it could go further. EXPERIMENTALLY SUPPORTED: after burn-in all 37,657,000 steps of 13,151 long
 flag-1 walks are pushes; no case (a') among 780,000 depth-1 returns. EXPERIMENTALLY
 SUPPORTED: no flag-0 walk runs 400 nodes among 656,250 6-letter trees over {S, SS, S(SS), B, M} (up to 42 leaves).
 
@@ -2753,6 +2755,13 @@ MACHINE-CHECKED (lean/AgentParTime.lean, lean/AgentLemma10Any.lean; Lean 4.35 co
   c + P(y) and c + Q(y) for prescribed polynomials, then S is universal under ReplaceAll with a linear-time
   tree-pattern detector (and configuration-level R″_PUP fails for ReplaceAll). OPEN: such race material for two or
   more parameters; probes found none (agent_work_P/numeral_products.py, junk_processes.py).
+* **Race material, partial (race agent, stopped by the usage limit at about 12:46):** Theorem B2 is MACHINE-CHECKED
+  (lean/AgentBilinear.lean, `theoremB2`): under ReplaceAll, n-bar m-bar S becomes normal at exactly pass nm + 2n - 2,
+  a bilinear clock. The family S (S N_12 (n-bar m-bar S)) (k-bar k-bar S) gives a race whose root pattern fires
+  exactly when nm + 2n < k^2 + 2k (COMPUTATIONALLY CERTIFIED for n, m, k <= 11, race_family.py). It is a family of
+  closed terms, one per parameter triple; Theorem RR needs one term whose single run creates such races for all
+  tuples, which remains OPEN. A finite scan (weight_scan.py) found that front-wrapping layers other than the numeral
+  layer have tied or non-affine weights, a hint that data-blind code cannot weight parameters independently.
 * **Reading.** Choosing ReplaceAll only re-times the leftmost-outermost skeleton and changes syntax inside list
   elements; control-level universality is the same question in every order. A ReplaceAll emulation would have to
   work through the detector (timing races), which Theorem RR makes precise.

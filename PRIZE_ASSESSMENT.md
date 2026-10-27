@@ -29,6 +29,11 @@ request; the prize submission itself still needs the user's approval. The one-pa
   occurrence, which is open but certified exhaustively up to 13 leaves. A universal mechanism would therefore have to re-execute frozen
   values or iterate data-blind calls. Open: R3 in general, D3 ('re-execution is call-like'), the phase decomposition of
   all head runs. (PROOF.md, 'Chain bound in the generic phase model'.)
+* **End of the run (17:20 EDT):** the weekly usage limit stopped the last two agents at about 12:46. Partial results:
+  an exact bilinear ReplaceAll clock (Theorem B2, machine-checked) with a certified race family, and a proof that no
+  leftmost walk repeats a node (relying on Waldmann's no-spiral theorem). Open as before: Conjecture J (the last step
+  to decidable leftmost-path finiteness) and Theorem RR's hypothesis (the last step to a ReplaceAll universality
+  construction).
 * **EM agent (12:27 EDT):** two of the three open cases of Conjecture EM are closed in Lean, so the leftmost-path finite
   half now rests on one conjecture, J (every infinite leftmost walk makes only finitely many jumps). With J, the 36-class
   model would decide leftmost-path finiteness of S-terms — a decidable Böhm-tree property beyond head normalisation.
