@@ -34,8 +34,8 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        [lean/YD.lean] this covers 1,078 of the 1,083 real handlers <= 11 leaves and 4,851 of 5,086 in the
        targeted family (hypotheses certified per case).  Supporting: REPLAY [lean/REPLAY.lean], AB-c
        [lean/ABC.lean], CANON/FH.  Hand: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB.  REFUTED: (B1).
-       OPEN: a proof of the per-case hypotheses (guards, B0) in general; pattern beta with c0 != S.a1; the
-       released-copy handlers (guard failures); i.e. a general replay theorem without case hypotheses.
+       OPEN: Conjecture R3 (LOG 04:10) = the replay theorems without per-case hypotheses (uncovered: pattern beta
+       with c0 != S.a1; released-copy handlers).  R3 + INNER.lean = the chain bound (<= 2 proper transfers).
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
@@ -905,3 +905,16 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
   occurrences of the predecessor p (and occasionally an older frozen atom), 4-22 leaves: 1,413,396 data in all;
   Church-chain lengths 0: 1,352,867; 1: 60,187; 2: 546; >= 3: NONE.  The chain bound (<= 2 proper transfers) holds
   far beyond the exhaustive range, also for data with two copies of p.
+* CONJECTURAL — **Conjecture R3 (the single missing piece of the chain bound).**  Let D be an S-headed ordered
+  y-free datum (frozen atoms allowed) whose generic run reaches a p-front [f, s, V | R] with V = v1.(...(vn.y))
+  proper (wrappers free of x, y, r) — by INNER.lean vn contains p.  Then the generic run of the next datum
+  V[y := p', p := c] never reaches a p'-front with a proper y-comb at position 3.
+  Status: PROVED (machine-checked, PA.lean) under per-case hypotheses on D's run (the glue of vn in pattern alpha —
+  or beta with c0 = S.a1 — and the replay guards; for several wrappers also the B0 condition), which hold for
+  1,078/1,083 right-comb data <= 11 leaves, 2,612/2,621 ordered data <= 11 leaves, 99.7-99.8% of random larger
+  data; COMPUTATIONALLY CERTIFIED with no exception on everything tested (exhaustive <= 11 leaves; 780k targeted;
+  1.4M random data up to 22 leaves).  The uncovered cases are (i) pattern beta with c0 != S.a1 (the code above the
+  glued wrapper is not the code that phase 3 re-runs) and (ii) released copies (the handler at the transfer is a
+  copy of vn.y released from an opened element; in phase 2 a copy of vn.y is then opened, which starts a nested
+  'phase-3-like' run of b0 on (c0, y) — a general proof would need an induction over such nestings).
+  Chain bound = INNER.lean (steps 1-2, unconditional) + Conjecture R3 (step 3).

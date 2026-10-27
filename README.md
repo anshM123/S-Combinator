@@ -9,6 +9,7 @@ PROVED / MACHINE-CHECKED / COMPUTATIONALLY CERTIFIED / EXPERIMENTALLY SUPPORTED 
 | File / folder | Contents |
 |---|---|
 | `RESULTS.md` | **start here**: one page with what is machine-checked, proved, and still open |
+| `SESSION_SUMMARY_2026-10-27.md` | what the 2026-10-27 session added (most of the machine-checked results) |
 | `lean/STATEMENTS.md` | the exact Lean statement of every headline machine-checked theorem, next to its English reading |
 | `PROOF.md` | every theorem, lemma and conjecture with its status label, proof or certificate |
 | `STATUS.md` | results table (R1–R84) |
