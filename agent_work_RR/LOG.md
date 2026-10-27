@@ -88,3 +88,42 @@ search, timeout <= 30 min per search.
   r + 7, but W S S, W W S, 3-bar W S, W 3-bar S do not normalise within caps (the base K restarts the counter).
 * swap_search2.py 8: no closed Z <= 8 leaves with Z u X Y ->* [X, u, ...]; X reaches the front only with u X as its
   argument (u X, u X (X (u X)), ...), as Lemma 10 requires (an X-headed term containing u contains X twice).
+
+## 2026-10-27 12:42 EDT E6-E7: two-letter words and natural junk -- COMPUTATIONALLY CERTIFIED (finite scans), negative
+* delay_scan.py 4 4 30 2000 (959 s): no 4-leaf delay gadget X over {N, M, S, s} with a non-separable delay either.
+* layer_scan.py 5 5 3000: data built by FRONT-WRAPPING with two letters, D = L^b (a-bar) and D = (SS.)^a (L^b SS),
+  L closed <= 5 leaves, processes D D S, D S, D S S, a, b <= 5: NO exact polynomial clock whose quadratic part is a
+  non-degenerate form (c11 != 0 and c11^2 != 4 c20 c02). So in every case found the clock depends on the word only
+  through ONE linear form of the letter counts (one effective parameter).
+* junk_nf.py (exact lazy ReplaceAll machine, 400-600 passes): race-shaped products S A B pushed as waiting elements in
+  the runs of the binary counter SSS(SS)S(SS(SS)) (90), K0 S(SS)S(S(S(SSS)))S (125 in 295 passes), the E36 reload term
+  (2), Theorem PL's loop (11) and the two square runs of Theorem NL (86, 118): in NONE are both sides non-normal
+  processes that normalise (n_par cap 200). Natural junk is not race material for normal forms either; race material
+  has to be engineered (agrees with agent_work_P's hnf probe).
+
+## 2026-10-27 12:55 EDT Race-node family with a marker pattern -- PROVED (durations: Theorem B2) + COMPUTATIONALLY CERTIFIED (pattern)
+* Encoder (per parameter triple; a FAMILY, not a single generating term): t(n, m, k) := S (S Mk A) B with
+  A = n-bar m-bar S, B = k-bar k-bar S, Mk = N_12 = S(S(...(S S))) (the nest with 13 leaves, a normal form).
+* Durations (Theorem B2, MACHINE-CHECKED): n_par(A) = nm + 2n - 2, n_par(B) = k^2 + 2k - 2. The root is an hnf, so it
+  evolves as S (S Mk P^j(A)) P^j(B) (P(S x y) = S P(x) P(y); Mk is normal).
+* Pattern pi: an occurrence of S (S Mk X) Y with X normal and Y not normal (a finite-tree-automaton check; linear time).
+  It fires at the root exactly at the passes j in [nm + 2n - 2, k^2 + 2k - 2), hence ever iff nm + 2n < k^2 + 2k:
+  a NON-SEPARABLE comparison.
+* 'pi matches nothing else' -- COMPUTATIONALLY CERTIFIED: race_family.py 11 scans every distinct subterm at every pass
+  until both sides are normal: 1331 of 1331 triples (n, m, k) <= 11 agree (pi fires at the root exactly on the
+  predicted passes, never elsewhere; it fires in 702 cases). Reason (proof sketch, not formalised): every term in the
+  runs of A and B has the shapes of Lemma U / Theorem B2 (numerals S S x, S R U, S S (k S) R, ...), in which S is never
+  applied to a single argument that is itself S-headed with one argument except S S; so no nest of depth >= 2, let alone
+  N_12, occurs except the marker.
+* What this is: race-node-level material meeting Theorem RR' for the FAMILY (one closed term per parameter tuple), with
+  exact non-separable durations. What it is NOT: Theorem RR's hypothesis, which needs ONE term whose single run
+  creates such nodes for all tuples (the generator), and prescribed polynomials P, Q (only B2-type durations here).
+
+## 2026-10-27 13:00 EDT E8: per-letter weights of front-wrapping layers are tied -- COMPUTATIONALLY CERTIFIED (finite scan) + heuristic reason
+* weight_scan.py 6 4 3 2500: for D = L^b(a-bar) with L closed <= 6 leaves (65 layers), the spine-role delay
+  (n_par(D S R) - n_par(R), R = 40-bar S) and the iterator-role count (from n_par(D k-bar S), k = 3, 5) are both exact
+  affine functions of (a, b) ONLY for L = SS (the numeral layer itself: weights (1,1) and (1,1), proportional). For
+  every other layer one of the roles is non-affine or does not normalise within the caps.
+* Heuristic reason: the spine role of a datum is its iterator role instantiated at X = S (D S R vs D X S), so a layer
+  that acts uniformly ('X Y -> X Y (rest X Y)', c times) has weight c in both roles; a non-proportional layer would
+  have to act differently according to the SHAPE of its argument X (data-driven inspection of a datum).

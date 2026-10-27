@@ -1,0 +1,21 @@
+all ['12', '400'] time 204.9
+(flag, end) counts: {(0, 'leaf'): 38250, (0, 'bot'): 20531, (1, 'cap'): 5}
+jump sources (all jumps): {'pop': 11825, 'jump': 7658, 'K0': 3492, 'tower': 3762, 'K1': 1382, 'K3': 92, 'K2': 192, 'init': 16796}
+jump sources (computed-separated jumps): {'K0': 3492, 'tower': 3762, 'pop': 1959, 'K1': 1382, 'K3': 92, 'K2': 192}
+(flag, #separated jumps) histogram: {(0, 0): 48025, (0, 1): 10633, (0, 2): 123, (1, 0): 5}
+walks with most separated jumps (seps, last sep index, end, length, flag, term, sep jumps):
+   (2, 7, 'leaf', 11, 0, 'S(S(S(S(SS)S(S(S(SS)))S)))', [(4, 'tower'), (7, 'pop')])
+   (2, 6, 'leaf', 10, 0, 'S(S(S(SS)S(S(S(SS)))S)S)', [(3, 'tower'), (6, 'pop')])
+   (2, 6, 'leaf', 10, 0, 'S(S(S(SS)S(S(S(SS)))S))S', [(3, 'tower'), (6, 'pop')])
+   (2, 5, 'leaf', 9, 0, 'SSS(S(SS)S(S(S(SS)))S)', [(2, 'tower'), (5, 'pop')])
+   (2, 5, 'leaf', 9, 0, 'S(S(SS)S(S(S(SS)))S)(SS)', [(2, 'tower'), (5, 'pop')])
+   (2, 5, 'leaf', 9, 0, 'S(SS)(S(SS)S(S(S(SS))))S', [(2, 'tower'), (5, 'pop')])
+   (2, 4, 'leaf', 5, 0, 'S(SSS(S(SSS(SSS))S))', [(2, 'K0'), (4, 'K0')])
+   (2, 4, 'leaf', 5, 0, 'S(SSS(S(S(SS)(SS)S)S))', [(2, 'K0'), (4, 'tower')])
+   (2, 4, 'leaf', 6, 0, 'S(SSS(S(SSS(SS)S)S))', [(2, 'K0'), (4, 'tower')])
+   (2, 4, 'leaf', 6, 0, 'S(SSS(S(S(SS)SSS)S))', [(2, 'K0'), (4, 'tower')])
+   (2, 4, 'leaf', 5, 0, 'S(S(SS)(S(SSS(SSS)))S)', [(2, 'tower'), (4, 'K0')])
+   (2, 4, 'leaf', 5, 0, 'S(S(SS)(S(S(SS)(SS)S))S)', [(2, 'tower'), (4, 'tower')])
+   (2, 4, 'leaf', 6, 0, 'S(S(SS)(S(SSS(SS)S))S)', [(2, 'tower'), (4, 'tower')])
+   (2, 4, 'leaf', 6, 0, 'S(S(SS)(S(S(SS)SSS))S)', [(2, 'tower'), (4, 'tower')])
+   (2, 4, 'leaf', 8, 0, 'S(SS(S(SS))(S(S(S(SS))))S)', [(2, 'tower'), (4, 'tower')])

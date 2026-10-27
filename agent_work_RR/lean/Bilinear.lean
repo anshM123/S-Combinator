@@ -8,6 +8,7 @@
     max(2k+1, k+1+r) on (stated as: normal at pass i iff 2k+1 <= i and k+1+r <= i).
   * `theoremB2`: (j+1)-bar (k+1)-bar S is normal at pass i iff (j+1)(k+1) + 2j <= i; i.e. with n = j+1, m = k+1:
     n_par(n-bar m-bar S) = nm + 2n - 2.
+  * `lemmaA`: (k+1)-bar R is normal at pass i iff k + r <= i (exact addition of a numeral to any clock R).
 -/
 
 inductive T where
@@ -159,6 +160,26 @@ theorem theoremB2 : ∀ (j k i : Nat),
       have h2 := le_mul_succ j k
       omega
 
+/-- Lemma A (exact addition): a numeral applied to ONE process adds its length minus one:
+    if R is normal exactly from pass r on, then (k+1)-bar R is normal exactly from pass k + r on. -/
+theorem lemmaA : ∀ (k : Nat) (R : T) (r : Nat), (∀ i, isNf (passN i R) = true ↔ r ≤ i) →
+    ∀ i, isNf (passN i (app (numP k) R)) = true ↔ k + r ≤ i
+  | 0, R, r, hR, i => by
+    show isNf (passN i (app (app S S) R)) = true ↔ 0 + r ≤ i
+    rw [passN_SAB, passN_S, isNf_SAB]
+    have hS : isNf S = true := rfl
+    rw [hS, Bool.true_and, hR i]; omega
+  | k + 1, R, r, hR, i => by
+    cases i with
+    | zero =>
+      show isNf (app (app (app S S) (numP k)) R) = true ↔ k + 1 + r ≤ 0
+      rw [isNf_redex]; simp
+    | succ i =>
+      rw [passN_succ']
+      show isNf (passN i (pass (app (app (app S S) (numP k)) R))) = true ↔ k + 1 + r ≤ i + 1
+      rw [pass_redex, passN_SAB, isNf_SAB, Bool.and_eq_true, hR i, lemmaA k R r hR i]
+      omega
+
 /-- sanity instances (kernel-checked by evaluation) -/
 example : isNf (passN 22 (app (app (numP 3) (numP 3)) S)) = true := by decide
 example : isNf (passN 21 (app (app (numP 3) (numP 3)) S)) = false := by decide
@@ -166,3 +187,4 @@ example : isNf (passN 21 (app (app (numP 3) (numP 3)) S)) = false := by decide
 #print axioms lemmaU
 #print axioms num_S_time
 #print axioms theoremB2
+#print axioms lemmaA

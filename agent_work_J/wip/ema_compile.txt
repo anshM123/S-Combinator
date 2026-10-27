@@ -1,0 +1,83 @@
+EMA.lean:349:26: warning: This simp argument is unused:
+  run
+
+Hint: Omit it from the simp argument list.
+  [apply] simp at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+'FH.flag_step' depends on axioms: [propext, Quot.sound]
+'FH.finite_half_TC' depends on axioms: [propext, Classical.choice, Quot.sound]
+'OM.omega_detect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FH.finite_half_Omega' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FH.finite_half_families' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RR.right_tail_detect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RR.right_reload_detect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RR.flagR_step' depends on axioms: [propext, Quot.sound]
+'RR.finite_half_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+EMA.lean:3166:47: warning: Variable name `h2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _h2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+'FG.finite_half_Omega_general' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FG.finite_half_general_families' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RG.right_reload_detect_gen' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RG.finite_half_right_general' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FM.fib_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FM.finite_half_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FM.finite_half_monotone_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RM.fib_step2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RM.finite_half_right_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RM.finite_half_right_monotone_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA.no_TT_chain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA.no_scenarioA' depends on axioms: [propext, Classical.choice, Quot.sound]
+'EM.finite_half_of_EM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'EM.finite_half_right_of_EMR' depends on axioms: [propext, Classical.choice, Quot.sound]
+EMA.lean:4994:6: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+'SA2.scenarioA_tower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA3.no_scenarioA_tower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA3.fuel_is_S' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA3.scenarioA_depth_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA4.return_types_S' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RSA.no_scenarioA_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA4.return_types_S' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA4.caseA_needs_T34' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CA.step_types' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CA.typed_dead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CA.chain_T2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CA.no_caseA' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CA.depth_to_infinity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CA.finite_half_of_J_EMdeep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.gamma_node' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.gamma_walk' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.jump_child' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.tower_letter_frozen' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.tower_letter_depth' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.EM_of_TP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.finite_half_of_J_TP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.no_SS_letter' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.tw2_skips' depends on axioms: [propext, Classical.choice, Quot.sound]
+'DP.no_tw3_push' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.fib_next' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.twr2_decomp' depends on axioms: [propext]
+'SC.base_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.base_exists' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.cyc_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.cyc_forever' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.cut_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.copy_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.no_escape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.K3_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.EM_deep_nt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.finite_half_of_J_NT' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.EM_of_cut' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.finite_half_of_J_NT2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.tower_cut_S' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.NT_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.EM_deep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SC.finite_half_of_J' depends on axioms: [propext, Classical.choice, Quot.sound]
+exit 0

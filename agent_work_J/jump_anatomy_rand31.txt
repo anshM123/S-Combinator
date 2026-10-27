@@ -1,0 +1,21 @@
+rand ['31', '400', '100000'] time 522.7
+(flag, end) counts: {(0, 'leaf'): 40490, (0, 'bot'): 59215, (1, 'cap'): 295}
+jump sources (all jumps): {'pop': 4258, 'K2': 1035, 'K0': 8923, 'init': 14900, 'K1': 4975, 'jump': 5868, 'tower': 2419, 'K3': 24}
+jump sources (computed-separated jumps): {'pop': 3037, 'K2': 1035, 'K0': 8923, 'K1': 4975, 'tower': 2419, 'K3': 24}
+(flag, #separated jumps) histogram: {(0, 0): 79376, (0, 1): 20249, (0, 2): 80, (1, 0): 291, (1, 1): 4}
+walks with most separated jumps (seps, last sep index, end, length, flag, term, sep jumps):
+   (2, 8, 'leaf', 11, 0, 'S(SS)(SS(SS(SSS)))(S(S(SS)(S(S(SS))(S(SS)))(S(S(SS))S))(S(SS)(S(S(SS))(S(SS)))))', [(2, 'K0'), (8, 'K2')])
+   (2, 7, 'leaf', 9, 0, 'SS(SS)S(S(S(SS))S(S(S(S(SS))S(S(SS)S))))', [(2, 'K2'), (7, 'pop')])
+   (2, 7, 'leaf', 8, 0, 'S(S(SS))(S(S(S(SS))(SS(SS))(SS(SS(SSS)))))(S(SS)(SSS))', [(3, 'K0'), (7, 'K0')])
+   (2, 7, 'leaf', 9, 0, 'SS(SS)(S(SS)(S(S(SS))(S(SS)))(S(S(S(SS))(S(SS))(S(SS)(SS(SS))))))', [(3, 'K2'), (7, 'K0')])
+   (2, 6, 'leaf', 9, 0, 'S(SS)(S(S(SS))(S(SS)))(S(SS(SS)(SS(SS)S(S(S(SS))(S(SS))(S(S(SS)))))))', [(2, 'K2'), (6, 'tower')])
+   (2, 6, 'leaf', 8, 0, 'S(SS)(S(S(SS))(S(SS)))(S(S(SS)(S(S(SS))(S(SS)))(SSS)))', [(2, 'K2'), (6, 'K0')])
+   (2, 6, 'leaf', 7, 0, 'S(S(SS)(SSSS)(S(SS)(S(S(SS)(SS)S))(SSS(SS))))', [(4, 'K1'), (6, 'tower')])
+   (2, 6, 'leaf', 7, 0, 'S(SS)(S(S(SS))(S(SS)))(S(S(SS)S(SS(SS)(SS(S(SS)(SS))))))', [(2, 'K2'), (6, 'K0')])
+   (2, 6, 'leaf', 7, 0, 'S(SS)(S(S(S(SS)))S)(S(SS)S(SS(SS)(SSS)))', [(2, 'K3'), (6, 'K0')])
+   (2, 6, 'leaf', 7, 0, 'S(SS)(S(S(SS))(S(SS)))(S(S(SS)S(SS)(SS(S(SS)(SS)))))', [(2, 'K2'), (6, 'K0')])
+   (2, 6, 'leaf', 8, 0, 'SS(S(SS)(SS))(S(S(SS))(S(SS))(S(SSSS(SS)(SSSS(S(SS(SS))S)))))', [(2, 'K2'), (6, 'K0')])
+   (2, 6, 'leaf', 8, 0, 'S(SS)(S(S(SS))(S(SS)))(S(S(SS)(S(S(SS))(S(SS)))(SS(SS))))', [(2, 'K2'), (6, 'K0')])
+   (2, 5, 'leaf', 6, 0, 'SS(SS)(S(S(SS)S(S(SSS)))(SS(SS)(SSSS)))', [(1, 'K0'), (5, 'pop')])
+   (2, 5, 'leaf', 7, 0, 'SS(S(SS)(SS))(S(S(SS)(S(S(SS))(S(SS)))(SS(S(SS)(SS))))(SS(SS)))', [(1, 'K0'), (5, 'K0')])
+   (2, 5, 'leaf', 6, 0, 'SS(SS)(S(S(S(SS))S(SS(SSS(SS))))(S(S(SS))(S(SS))(SS(SS))))', [(1, 'K0'), (5, 'pop')])
