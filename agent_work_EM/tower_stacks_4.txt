@@ -1,0 +1,5 @@
+maxlen 4 nodes 400 burn 60 time 1309.1 tops 18
+(flag, status) counts: {(0, 'leaf'): 296400, (0, 'bot'): 124158, (1, 'cap'): 732}
+walks reaching the node cap, by flag: {1: 732}
+flag-0 walks reaching the cap (should be none): []
+walks with late pops/jumps/returns (flag, status, length, term, kinds, first events):

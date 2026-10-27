@@ -1,0 +1,233 @@
+
+/-! ## Theorem PT (agent_work_P, parallel-universality agent, 2026-10-27)
+
+A ReplaceAll run is the head (leftmost-outermost) run sampled at increasing times, with every spine element reduced.
+`pass` is one ReplaceAll pass, Mathematica's  expr /. S[x_][y_][z_] :> x[z][y[z]] : the rule is tried at the root first;
+a matched redex is replaced and its instantiated x, y, z are not entered; otherwise the pass recurses into function and
+argument.  `passN n t` is the term after n passes.
+
+* `pass_head_step`: if t is not head-normal, t →h u in ONE head step and u reduces to `pass t` by an internal parallel step.
+* `pass_HN`: if t is head-normal, `pass t` is an internal parallel reduct of t.
+* `commute_one`, `commute_star`: internal reductions can be postponed past head steps without losing head steps.
+* `parallel_time_change` / `theoremPT`: for every n there is k and the k-th head reduct w of t (head reduction is
+  deterministic: `hstepN_det`) such that `passN n t` has the same head and the same number of spine arguments as w, its
+  spine arguments are position-wise reducts of w's, and k ≥ n as long as passN j t is not head-normal for j < n.
+-/
+
+/-- one ReplaceAll pass -/
+def pass : T → T
+  | S => S
+  | var n => var n
+  | app (app (app S x) y) a => app (app x a) (app y a)
+  | app f a => app (pass f) (pass a)
+
+def passN : Nat → T → T
+  | 0, t => t
+  | n + 1, t => pass (passN n t)
+
+theorem pass_app (f a : T) (h : ∀ x y, f ≠ app (app S x) y) : pass (app f a) = app (pass f) (pass a) := by
+  match f, h with
+  | S, _ => rfl
+  | var n, _ => rfl
+  | app S x, _ => rfl
+  | app (var n) x, _ => rfl
+  | app (app S x) y, h => exact absurd rfl (h x y)
+  | app (app (var n) x) y, _ => rfl
+  | app (app (app p q) r) y, _ => rfl
+
+theorem ipar_refl : ∀ t : T, IPar t t
+  | S => IPar.S
+  | var n => IPar.var n
+  | app f a => IPar.app (ipar_refl f) (par_refl a)
+
+/-- a pass is a parallel reduction step -/
+theorem par_pass : ∀ t : T, Par t (pass t)
+  | S => Par.S
+  | var n => Par.var n
+  | app f a => by
+    by_cases hr : ∃ x y, f = app (app S x) y
+    · obtain ⟨x, y, rfl⟩ := hr
+      exact Par.redex (par_refl x) (par_refl y) (par_refl a)
+    · have hr' : ∀ x y, f ≠ app (app S x) y := fun x y e => hr ⟨x, y, e⟩
+      rw [pass_app f a hr']
+      exact Par.app (par_pass f) (par_pass a)
+
+theorem head_S_args0 : ∀ t : T, head t = S → (args t).length = 0 → t = S
+  | S, _, _ => rfl
+  | var n, h, _ => by simp [head] at h
+  | app f a, _, h => by simp [args] at h
+
+theorem head_S_args2 (f : T) (hS : head f = S) (h2 : (args f).length = 2) : ∃ x y, f = app (app S x) y := by
+  match f, hS, h2 with
+  | S, _, h2 => simp [args] at h2
+  | var n, hS, _ => simp [head] at hS
+  | app S y, _, h2 => simp [args] at h2
+  | app (var n) y, hS, _ => simp [head] at hS
+  | app (app g x) y, hS, h2 =>
+    have hg : g = S := head_S_args0 g hS (by
+      simp only [args, List.length_append, List.length_singleton] at h2; omega)
+    exact ⟨x, y, by rw [hg]⟩
+
+/-- one pass on a term with a head redex = one head step, then an internal parallel step -/
+theorem pass_head_step : ∀ t : T, ¬ HN t → ∃ u, HStep t u ∧ IPar u (pass t)
+  | S, h => absurd (Or.inr (by simp [args])) h
+  | var n, h => absurd (Or.inl (by simp [head])) h
+  | app f a, h => by
+    by_cases hr : ∃ x y, f = app (app S x) y
+    · obtain ⟨x, y, rfl⟩ := hr
+      exact ⟨_, HStep.redex x y a, ipar_refl _⟩
+    · have hr' : ∀ x y, f ≠ app (app S x) y := fun x y e => hr ⟨x, y, e⟩
+      have hS : head f = S := Classical.byContradiction fun hc => h (Or.inl hc)
+      have hlen : 2 ≤ (args f).length := by
+        apply Classical.byContradiction
+        intro hc
+        apply h
+        apply Or.inr
+        simp only [args, List.length_append, List.length_singleton]
+        omega
+      have hf : ¬ HN f := by
+        intro hnf
+        rcases hnf with hnf | hnf
+        · exact hnf hS
+        · obtain ⟨x, y, e⟩ := head_S_args2 f hS (by omega)
+          exact hr' x y e
+      obtain ⟨u, hu, iu⟩ := pass_head_step f hf
+      refine ⟨app u a, HStep.left a hu, ?_⟩
+      rw [pass_app f a hr']
+      exact IPar.app iu (par_pass a)
+
+/-- on a head-normal term a pass is an internal parallel step -/
+theorem pass_HN : ∀ t : T, HN t → IPar t (pass t)
+  | S, _ => IPar.S
+  | var n, _ => IPar.var n
+  | app f a, h => by
+    by_cases hr : ∃ x y, f = app (app S x) y
+    · obtain ⟨x, y, rfl⟩ := hr
+      exfalso
+      rcases h with h | h
+      · exact h rfl
+      · simp [args] at h
+    · have hr' : ∀ x y, f ≠ app (app S x) y := fun x y e => hr ⟨x, y, e⟩
+      rw [pass_app f a hr']
+      exact IPar.app (pass_HN f (HN_left h)) (par_pass a)
+
+/-- head reduction with a step count -/
+inductive HStepN : Nat → T → T → Prop
+  | zero (t : T) : HStepN 0 t t
+  | succ {k : Nat} {t u v : T} : HStep t u → HStepN k u v → HStepN (k + 1) t v
+
+theorem hstepN_trans {a b : Nat} {t s w : T} (h1 : HStepN a t s) (h2 : HStepN b s w) : HStepN (a + b) t w := by
+  revert h2
+  induction h1 with
+  | zero => intro h2; rw [Nat.zero_add]; exact h2
+  | @succ k t0 u0 v0 h _ ih =>
+    intro h2
+    have := HStepN.succ h (ih h2)
+    rw [show k + 1 + b = k + b + 1 by omega]
+    exact this
+
+theorem hstar_count {t u : T} (h : HStar t u) : ∃ k, HStepN k t u := by
+  induction h with
+  | refl => exact ⟨0, HStepN.zero _⟩
+  | step h _ ih =>
+    obtain ⟨k, hk⟩ := ih
+    exact ⟨k + 1, HStepN.succ h hk⟩
+
+/-- internal parallel steps, iterated -/
+inductive IStar : T → T → Prop
+  | refl (t : T) : IStar t t
+  | tail {t u v : T} : IStar t u → IPar u v → IStar t v
+
+/-- postponement with counting: an internal parallel step followed by k head steps = at least k head steps followed by
+    an internal parallel step -/
+theorem commute_one {k : Nat} {u v : T} (hk : HStepN k u v) :
+    ∀ s, IPar s u → ∃ k', k ≤ k' ∧ ∃ w, HStepN k' s w ∧ IPar w v := by
+  induction hk with
+  | zero t => intro s hs; exact ⟨0, Nat.le_refl 0, s, HStepN.zero s, hs⟩
+  | @succ k u0 u1 v0 hh _ ih =>
+    intro s hs
+    obtain ⟨w0, hw0, pw0⟩ := ipar_hstep hs hh
+    obtain ⟨w1, hw1, iw1⟩ := par_decomp pw0
+    obtain ⟨j, hj⟩ := hstar_count hw1
+    obtain ⟨k', hk', w, hw, iw⟩ := ih w1 iw1
+    refine ⟨j + k' + 1, by omega, w, ?_, iw⟩
+    exact HStepN.succ hw0 (hstepN_trans hj hw)
+
+theorem commute_star {s u : T} (hi : IStar s u) :
+    ∀ k v, HStepN k u v → ∃ k', k ≤ k' ∧ ∃ w, HStepN k' s w ∧ IStar w v := by
+  induction hi with
+  | refl => intro k v hk; exact ⟨k, Nat.le_refl k, v, hk, IStar.refl v⟩
+  | @tail u0 u1 _ iuu ih =>
+    intro k v hk
+    obtain ⟨k1, hk1, w1, hw1, iw1⟩ := commute_one hk u0 iuu
+    obtain ⟨k2, hk2, w, hw, iw⟩ := ih k1 w1 hw1
+    exact ⟨k2, by omega, w, hw, IStar.tail iw iw1⟩
+
+/-- the ReplaceAll run, related to the head run: after n passes the term is an iterated internal parallel reduct of
+    the k-th head reduct, and k ≥ n while the run has not reached a head normal form -/
+theorem parallel_time_change (t : T) : ∀ n : Nat, ∃ k w, HStepN k t w ∧ IStar w (passN n t) ∧
+    ((∀ j, j < n → ¬ HN (passN j t)) → n ≤ k)
+  | 0 => ⟨0, t, HStepN.zero t, IStar.refl t, fun _ => Nat.le_refl 0⟩
+  | n + 1 => by
+    obtain ⟨k, w, hw, iw, hc⟩ := parallel_time_change t n
+    by_cases hn : HN (passN n t)
+    · refine ⟨k, w, hw, IStar.tail iw (pass_HN _ hn), ?_⟩
+      intro hall
+      exact absurd hn (hall n (Nat.lt_succ_self n))
+    · obtain ⟨u1, hu1, iu1⟩ := pass_head_step _ hn
+      obtain ⟨k', hk', w', hw', iw'⟩ := commute_star iw 1 u1 (HStepN.succ hu1 (HStepN.zero u1))
+      refine ⟨k + k', w', hstepN_trans hw hw', IStar.tail iw' iu1, ?_⟩
+      intro hall
+      have := hc (fun j hj => hall j (by omega))
+      omega
+
+theorem ipar_pw {s u : T} (h : IPar s u) : head s = head u ∧ Pw (args s) (args u) := by
+  induction h with
+  | S => exact ⟨rfl, Pw.nil⟩
+  | var n => exact ⟨rfl, Pw.nil⟩
+  | app _ ha ih => exact ⟨ih.1, pw_append ih.2 (Pw.cons (par_redstar ha) Pw.nil)⟩
+
+theorem istar_pw {s u : T} (h : IStar s u) : head s = head u ∧ Pw (args s) (args u) := by
+  induction h with
+  | refl => exact ⟨rfl, pw_refl _⟩
+  | tail _ hi ih =>
+    obtain ⟨e2, p2⟩ := ipar_pw hi
+    exact ⟨ih.1.trans e2, pw_trans ih.2 p2⟩
+
+/-- head reduction is deterministic, so the w of Theorem PT is THE k-th head reduct of t -/
+theorem hstep_det {t u u' : T} (h : HStep t u) (h' : HStep t u') : u = u' := by
+  induction h generalizing u' with
+  | redex x y z =>
+    cases h' with
+    | redex => rfl
+    | left _ h2 =>
+      cases h2 with
+      | left _ h3 => cases h3 with | left _ h4 => cases h4
+  | left a h ih =>
+    cases h' with
+    | redex x y z => cases h with | left _ h3 => cases h3 with | left _ h4 => cases h4
+    | left _ h2 => rw [ih h2]
+
+theorem hstepN_det {k : Nat} {t w w' : T} (h : HStepN k t w) (h' : HStepN k t w') : w = w' := by
+  induction h generalizing w' with
+  | zero => cases h'; rfl
+  | succ hh _ ih =>
+    cases h' with
+    | succ hh' h2 =>
+      rw [hstep_det hh hh'] at ih
+      exact ih h2
+
+/-- **Theorem PT.** After n ReplaceAll passes, the term has the same head and the same number of spine arguments as the
+    k-th head (leftmost-outermost) reduct w of t, its spine arguments are position-wise reducts of w's, and k ≥ n as
+    long as no earlier pass reached a head normal form. -/
+theorem theoremPT (t : T) (n : Nat) : ∃ k w, HStepN k t w ∧ head w = head (passN n t) ∧
+    Pw (args w) (args (passN n t)) ∧ ((∀ j, j < n → ¬ HN (passN j t)) → n ≤ k) := by
+  obtain ⟨k, w, hw, iw, hc⟩ := parallel_time_change t n
+  obtain ⟨e, p⟩ := istar_pw iw
+  exact ⟨k, w, hw, e, p, hc⟩
+
+#print axioms par_pass
+#print axioms pass_head_step
+#print axioms parallel_time_change
+#print axioms hstepN_det
+#print axioms theoremPT

@@ -1,0 +1,42 @@
+exit 0, 0 errors, 40 theorems checked, axioms used: ['Classical.choice', 'Quot.sound', 'propext']
+  FH.flag_step: propext, Quot.sound
+  FH.finite_half_TC: propext, Classical.choice, Quot.sound
+  OM.omega_detect: propext, Classical.choice, Quot.sound
+  FH.finite_half_Omega: propext, Classical.choice, Quot.sound
+  FH.finite_half_families: propext, Classical.choice, Quot.sound
+  RR.right_tail_detect: propext, Classical.choice, Quot.sound
+  RR.right_reload_detect: propext, Classical.choice, Quot.sound
+  RR.flagR_step: propext, Quot.sound
+  RR.finite_half_right: propext, Classical.choice, Quot.sound
+  FG.finite_half_Omega_general: propext, Classical.choice, Quot.sound
+  FG.finite_half_general_families: propext, Classical.choice, Quot.sound
+  RG.right_reload_detect_gen: propext, Classical.choice, Quot.sound
+  RG.finite_half_right_general: propext, Classical.choice, Quot.sound
+  FM.fib_step: propext, Classical.choice, Quot.sound
+  FM.finite_half_monotone: propext, Classical.choice, Quot.sound
+  FM.finite_half_monotone_all: propext, Classical.choice, Quot.sound
+  RM.fib_step2: propext, Classical.choice, Quot.sound
+  RM.finite_half_right_monotone: propext, Classical.choice, Quot.sound
+  RM.finite_half_right_monotone_all: propext, Classical.choice, Quot.sound
+  SA.no_TT_chain: propext, Classical.choice, Quot.sound
+  SA.no_scenarioA: propext, Classical.choice, Quot.sound
+  EM.finite_half_of_EM: propext, Classical.choice, Quot.sound
+  EM.finite_half_right_of_EMR: propext, Classical.choice, Quot.sound
+  SA2.scenarioA_tower: propext, Classical.choice, Quot.sound
+  SA3.no_scenarioA_tower: propext, Classical.choice, Quot.sound
+  SA3.fuel_is_S: propext, Classical.choice, Quot.sound
+  SA3.scenarioA_depth_one: propext, Classical.choice, Quot.sound
+  SA4.return_types_S: propext, Classical.choice, Quot.sound
+  RSA.no_scenarioA_right: propext, Classical.choice, Quot.sound
+  SA4.return_types_S: propext, Classical.choice, Quot.sound
+  SA4.caseA_needs_T34: propext, Classical.choice, Quot.sound
+  CA.step_types: propext, Classical.choice, Quot.sound
+  CA.typed_dead: propext, Classical.choice, Quot.sound
+  CA.chain_T2: propext, Classical.choice, Quot.sound
+  CA.no_caseA: propext, Classical.choice, Quot.sound
+  CA.depth_to_infinity: propext, Classical.choice, Quot.sound
+  CA.finite_half_of_J_EMdeep: propext, Classical.choice, Quot.sound
+  DP.gamma_node: propext, Classical.choice, Quot.sound
+  DP.gamma_walk: propext, Classical.choice, Quot.sound
+  DP.jump_child: propext, Classical.choice, Quot.sound
+LEAN OK: no errors, no sorry

@@ -1,0 +1,46 @@
+
+/-! ## Corollary PT-V: data placement is the same in every evaluation order (agent_work_P, 2026-10-27)
+
+Data are opaque variables.  S-reduction neither erases nor creates variables, so a reduct of a list element contains
+exactly the same data as the element.  With Theorem PT: after n ReplaceAll passes, the i-th list element contains
+datum v iff the i-th list element of the head run at the sampled time σ(n) = k does.  So whatever combination of data
+(which data share an element, in which list order) occurs under ReplaceAll already occurs in the leftmost-outermost
+head run at the sampled time; the clock channel cannot put data together that the head run keeps apart.
+-/
+
+def occ (v : Nat) : T → Bool
+  | S => false
+  | var n => n == v
+  | app f a => occ v f || occ v a
+
+theorem red_occ {t u : T} (h : Red t u) (v : Nat) : occ v u = occ v t := by
+  induction h with
+  | redex x y z =>
+    simp only [occ]
+    generalize occ v x = a
+    generalize occ v y = b
+    generalize occ v z = c
+    cases a <;> cases b <;> cases c <;> rfl
+  | left a _ ih => simp only [occ, ih]
+  | right f _ ih => simp only [occ, ih]
+
+theorem redstar_occ {t u : T} (h : RedStar t u) (v : Nat) : occ v u = occ v t := by
+  induction h with
+  | refl => rfl
+  | tail _ h ih => rw [red_occ h v, ih]
+
+theorem pw_occ {L L' : List T} (h : Pw L L') (v : Nat) : L.map (occ v) = L'.map (occ v) := by
+  induction h with
+  | nil => rfl
+  | cons ha _ ih => simp only [List.map_cons, redstar_occ ha v, ih]
+
+/-- **Corollary PT-V.** After n ReplaceAll passes the list has the length and head of the head run's list at the
+    sampled time k, and position by position the same data. -/
+theorem corollaryPT_data (t : T) (n : Nat) : ∃ k w, HStepN k t w ∧ head w = head (passN n t) ∧
+    (args w).length = (args (passN n t)).length ∧
+    (∀ v, (args w).map (occ v) = (args (passN n t)).map (occ v)) ∧
+    ((∀ j, j < n → ¬ HN (passN j t)) → n ≤ k) := by
+  obtain ⟨k, w, hw, e, p, hc⟩ := theoremPT t n
+  exact ⟨k, w, hw, e, pw_length p, fun v => pw_occ p v, hc⟩
+
+#print axioms corollaryPT_data

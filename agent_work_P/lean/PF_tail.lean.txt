@@ -1,0 +1,45 @@
+
+/-! ## Corollary PT-F: ReplaceAll reaches a head normal form no later than leftmost-outermost (agent_work_P, 2026-10-27)
+
+If the head (leftmost-outermost) run of t reaches a head-normal term after h steps, then some ReplaceAll iterate
+passN n t with n ≤ h is head-normal.  (With Theorem PT: k ≥ n head steps are done by pass n while no hnf has been
+reached; head reduction is deterministic and stops at a head-normal term.)  So h_par(t) ≤ h_LO(t): opening a waiting
+element costs at most what leftmost-outermost pays (Lemma PJ: max instead of sum).
+-/
+
+theorem HN_no_hstep {t u : T} (hn : HN t) (h : HStep t u) : False := by
+  induction h with
+  | redex x y z =>
+    rcases hn with hn | hn
+    · exact hn rfl
+    · simp [args] at hn
+  | left a _ ih => exact ih (HN_left hn)
+
+/-- k head steps from t can be split at any h ≤ k -/
+theorem hstepN_split : ∀ (h k : Nat) {t w : T}, h ≤ k → HStepN k t w → ∃ v, HStepN h t v ∧ HStepN (k - h) v w
+  | 0, k, t, w, _, hk => ⟨t, HStepN.zero t, by simpa using hk⟩
+  | h + 1, 0, t, w, hle, _ => absurd hle (by omega)
+  | h + 1, k + 1, t, w, hle, hk => by
+    cases hk with
+    | succ hs hk' =>
+      obtain ⟨v, hv1, hv2⟩ := hstepN_split h k (by omega) hk'
+      exact ⟨v, HStepN.succ hs hv1, by simpa using hv2⟩
+
+theorem corollaryPT_fast (t w : T) (h : Nat) (hw : HStepN h t w) (hn : HN w) :
+    ∃ n, n ≤ h ∧ HN (passN n t) := by
+  apply Classical.byContradiction
+  intro hno
+  have hall : ∀ j, j < h + 1 → ¬ HN (passN j t) := by
+    intro j hj hj'
+    exact hno ⟨j, by omega, hj'⟩
+  obtain ⟨k, w', hk, _, hc⟩ := parallel_time_change t (h + 1)
+  have hk1 := hc hall
+  obtain ⟨v, hv1, hv2⟩ := hstepN_split h k (by omega) hk
+  have hvw : v = w := hstepN_det hv1 hw
+  subst hvw
+  obtain ⟨j, hj⟩ : ∃ j, k - h = j + 1 := ⟨k - h - 1, by omega⟩
+  rw [hj] at hv2
+  cases hv2 with
+  | succ hs _ => exact HN_no_hstep hn hs
+
+#print axioms corollaryPT_fast

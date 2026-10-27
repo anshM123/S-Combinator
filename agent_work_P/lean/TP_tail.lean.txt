@@ -1,0 +1,42 @@
+
+/-! ## Transfer principle (agent_work_P, 2026-10-27)
+
+The *data signature* of a state is its head together with, for every spine position, the set of data (variables) the
+element at that position contains.  Every property of data signatures that holds for all leftmost-outermost head-run
+states of t holds for every state reachable from t by ANY reduction sequence (every evaluation order, ReplaceAll, the
+multiway system).  So head-run barriers about which data sit where (data counts, which data share an element, their
+order, closed material below data) are barriers for every evaluation order.
+-/
+
+def dsig (u : T) : T × List (Nat → Bool) := (head u, (args u).map (fun e => fun v => occ v e))
+
+theorem pw_dsig {L L' : List T} (h : Pw L L') :
+    L.map (fun e => fun v => occ v e) = L'.map (fun e => fun v => occ v e) := by
+  induction h with
+  | nil => rfl
+  | @cons a a' l l' ha _ ih =>
+    simp only [List.map_cons, ih]
+    congr 1
+    funext v
+    exact (redstar_occ ha v).symm
+
+theorem transfer_principle {t u : T} (Q : T × List (Nat → Bool) → Prop)
+    (hQ : ∀ k w, HStepN k t w → Q (dsig w)) (h : RedStar t u) : Q (dsig u) := by
+  obtain ⟨k, w, hw, iw⟩ := factorization h
+  obtain ⟨e, p⟩ := istar_pw iw
+  have hd : dsig w = dsig u := by
+    simp only [dsig, e, pw_dsig p]
+  rw [← hd]
+  exact hQ k w hw
+
+/-- the ReplaceAll instance -/
+theorem transfer_principle_replaceAll {t : T} (Q : T × List (Nat → Bool) → Prop)
+    (hQ : ∀ k w, HStepN k t w → Q (dsig w)) (n : Nat) : Q (dsig (passN n t)) := by
+  have hr : RedStar t (passN n t) := by
+    induction n with
+    | zero => exact RedStar.refl t
+    | succ n ih => exact ih.trans (par_redstar (par_pass (passN n t)))
+  exact transfer_principle Q hQ hr
+
+#print axioms transfer_principle
+#print axioms transfer_principle_replaceAll

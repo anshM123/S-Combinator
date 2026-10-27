@@ -1,0 +1,29 @@
+
+/-! ## Theorem PT-all: every evaluation order is a head run followed by internal reductions (agent_work_P, 2026-10-27)
+
+Head factorisation of arbitrary reductions: for every reduction sequence t →* u (any evaluation order, any path of the
+multiway system) there are k and the k-th head reduct w of t such that u is an iterated internal parallel reduct of w.
+So u has the head and the spine length of the head-run state w, its spine arguments are position-wise reducts of w's,
+and it holds the same data at the same positions.  Theorem PT is the ReplaceAll case with the extra bound k ≥ n.
+-/
+
+theorem factorization {t u : T} (h : RedStar t u) : ∃ k w, HStepN k t w ∧ IStar w u := by
+  induction h with
+  | refl => exact ⟨0, t, HStepN.zero t, IStar.refl t⟩
+  | @tail u0 v0 _ hr ih =>
+    obtain ⟨k, w, hw, iw⟩ := ih
+    obtain ⟨u1, hu1, iu1⟩ := par_decomp (red_par hr)
+    obtain ⟨j, hj⟩ := hstar_count hu1
+    obtain ⟨k', _, w', hw', iw'⟩ := commute_star iw j u1 hj
+    exact ⟨k + k', w', hstepN_trans hw hw', IStar.tail iw' iu1⟩
+
+/-- **Theorem PT-all.** Any state u reachable from t by any reduction sequence has the head, the spine length and the
+    position-wise data of some leftmost-outermost head-run state w of t, and its spine arguments are position-wise
+    reducts of w's. -/
+theorem theoremPT_all {t u : T} (h : RedStar t u) : ∃ k w, HStepN k t w ∧ head w = head u ∧
+    (args w).length = (args u).length ∧ Pw (args w) (args u) ∧ (∀ v, (args w).map (occ v) = (args u).map (occ v)) := by
+  obtain ⟨k, w, hw, iw⟩ := factorization h
+  obtain ⟨e, p⟩ := istar_pw iw
+  exact ⟨k, w, hw, e, pw_length p, p, fun v => pw_occ p v⟩
+
+#print axioms theoremPT_all

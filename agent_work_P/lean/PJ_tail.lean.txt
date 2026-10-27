@@ -1,0 +1,102 @@
+
+/-! ## Lemma LZ (prefix form) and Lemma PJ (process lemma: the max-plus law) for ReplaceAll
+    (agent_work_P, 2026-10-27)
+
+A list [e1, ..., em] stands for the term S e1 ... em, i.e. `(es.foldl app S)`.  More generally `R.foldl app u` is the
+term u applied to the further arguments R.
+* `pass_ext` (Lemma LZ (i), one pass): if u has head S and at least 3 spine arguments, a pass on u r1 ... rk is the pass
+  on u followed by the arguments, each passed once: below the head window every element ages by exactly one pass.
+* `passN_ext` (iterated): as long as u's own run has not reached a head normal form, j passes on u R⃗ are j passes of
+  u's own run with every element of R⃗ aged j times — the waiting elements evolve autonomously.
+* `lemmaPJ` (process lemma): if the list is [P^w(x0), r1, r2] ++ R and x0's own run is not head-normal at internal
+  times w, ..., w + j - 1, then after 1 + j passes the term is P^(w+j)(x0) applied to P^j(r2), P^j(r1 r2) and
+  P^(1+j)(r) for r in R.  With h = the first time x0's own run is head-normal and j = max(0, h - w): the head normal
+  form of x0 reaches the front 1 + max(0, h - w) passes after x is opened, i.e. at 1 + max(T, b + h) where T is the
+  opening pass and b = T - w the pass at which x0 began to wait.  Opening a waiting element is a max (join with its own
+  clock); the head machine without aging (leftmost-outermost) needs h_LO(x0) more steps, a sum.
+-/
+
+theorem passN_add (t : T) (a : Nat) : ∀ b : Nat, passN (a + b) t = passN b (passN a t)
+  | 0 => rfl
+  | b + 1 => by
+    show pass (passN (a + b) t) = pass (passN b (passN a t))
+    rw [passN_add t a b]
+
+theorem foldl_app_shape (u : T) : ∀ R : List T, args (R.foldl app u) = args u ++ R ∧ head (R.foldl app u) = head u
+  | [] => by simp
+  | r :: R => by
+    have ih := foldl_app_shape (app u r) R
+    simp only [List.foldl_cons]
+    refine ⟨?_, ?_⟩
+    · rw [ih.1]; simp [args]
+    · rw [ih.2]; rfl
+
+/-- Lemma LZ (i), one pass, with the waiting arguments: they are passed exactly once -/
+theorem pass_ext (u : T) (hS : head u = S) (h3 : 3 ≤ (args u).length) :
+    ∀ R : List T, pass (R.foldl app u) = (R.map pass).foldl app (pass u) := by
+  intro R
+  induction R generalizing u with
+  | nil => rfl
+  | cons r R ih =>
+    show pass (R.foldl app (app u r)) = (R.map pass).foldl app (app (pass u) (pass r))
+    have hne : ∀ x y, u ≠ app (app S x) y := by
+      intro x y e
+      subst e
+      simp [args] at h3
+    have h3' : 3 ≤ (args (app u r)).length := by
+      simp only [args, List.length_append, List.length_singleton]
+      omega
+    rw [ih (app u r) hS h3', pass_app u r hne]
+
+theorem map_passN_zero : ∀ R : List T, R.map (passN 0) = R
+  | [] => rfl
+  | r :: R => by
+    show passN 0 r :: R.map (passN 0) = r :: R
+    rw [map_passN_zero R]
+    rfl
+
+/-- iterated: while u's own run is not head-normal, the waiting arguments age autonomously -/
+theorem passN_ext (u : T) (R : List T) : ∀ j : Nat, (∀ i, i < j → ¬ HN (passN i u)) →
+    passN j (R.foldl app u) = (R.map (passN j)).foldl app (passN j u)
+  | 0, _ => by
+    show R.foldl app u = (R.map (passN 0)).foldl app u
+    rw [map_passN_zero R]
+  | j + 1, h => by
+    show pass (passN j (R.foldl app u)) = (R.map (passN (j + 1))).foldl app (pass (passN j u))
+    rw [passN_ext u R j (fun i hi => h i (by omega))]
+    have hj := h j (by omega)
+    have hS : head (passN j u) = S := Classical.byContradiction fun hc => hj (Or.inl hc)
+    have h3 : 3 ≤ (args (passN j u)).length :=
+      Classical.byContradiction fun hc => hj (Or.inr (by omega))
+    rw [pass_ext _ hS h3, List.map_map]
+    rfl
+
+/-- **Lemma PJ** (process lemma, the max-plus law of ReplaceAll evaluation) -/
+theorem lemmaPJ (x0 r1 r2 : T) (R : List T) (w j : Nat)
+    (hrun : ∀ i, i < j → ¬ HN (passN (w + i) x0)) :
+    passN (1 + j) (R.foldl app (app (app (app S (passN w x0)) r1) r2)) =
+      ((passN j r2 :: passN j (app r1 r2) :: R.map (passN (1 + j))).foldl app (passN (w + j) x0)) := by
+  -- the opening pass
+  have h1 : passN 1 (R.foldl app (app (app (app S (passN w x0)) r1) r2)) =
+      ((r2 :: app r1 r2 :: R.map pass).foldl app (passN w x0)) := by
+    show pass (R.foldl app (app (app (app S (passN w x0)) r1) r2)) = _
+    rw [pass_ext _ rfl (by simp [args])]
+    rfl
+  rw [passN_add _ 1 j, h1]
+  -- x0's own run continues for j passes, everything below ages
+  have hrun' : ∀ i, i < j → ¬ HN (passN i (passN w x0)) := by
+    intro i hi
+    rw [← passN_add x0 w i]
+    exact hrun i hi
+  rw [passN_ext (passN w x0) _ j hrun', ← passN_add x0 w j]
+  simp only [List.map_cons, List.map_map]
+  have hm : R.map (passN j ∘ pass) = R.map (passN (1 + j)) := by
+    apply List.map_congr_left
+    intro r _
+    show passN j (pass r) = passN (1 + j) r
+    rw [passN_add r 1 j]
+    rfl
+  rw [hm]
+
+#print axioms passN_ext
+#print axioms lemmaPJ

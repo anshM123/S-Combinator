@@ -1,0 +1,22 @@
+
+/-! ## Monotone re-timing (agent_work_P, 2026-10-27)
+
+Along any run t →* u →* u' the head-run times of the factorisation can be chosen monotone: if u is an internal reduct of
+the k-th head reduct of t, then u' is an internal reduct of the k'-th head reduct for some k' ≥ k.  So every evaluation
+order traverses the leftmost-outermost head run monotonically (possibly pausing during internal steps), with list
+elements internally reduced: the order can change WHEN the head-run states are visited and the syntax inside the list
+elements, never the sequence of head-run states itself.
+-/
+
+theorem factorization_mono {t u u' : T} (k : Nat) (w : T) (hw : HStepN k t w) (iw : IStar w u)
+    (h : RedStar u u') : ∃ k' w', k ≤ k' ∧ HStepN k' t w' ∧ IStar w' u' := by
+  induction h with
+  | refl => exact ⟨k, w, Nat.le_refl k, hw, iw⟩
+  | @tail u0 v0 _ hr ih =>
+    obtain ⟨k1, w1, hk1, hw1, iw1⟩ := ih
+    obtain ⟨u1, hu1, iu1⟩ := par_decomp (red_par hr)
+    obtain ⟨j, hj⟩ := hstar_count hu1
+    obtain ⟨k', _, w', hw', iw'⟩ := commute_star iw1 j u1 hj
+    exact ⟨k1 + k', w', by omega, hstepN_trans hw1 hw', IStar.tail iw' iu1⟩
+
+#print axioms factorization_mono

@@ -6146,7 +6146,7 @@ end SA4
 #print axioms SA4.caseA_needs_T34
 
 -- ======================================================================================
--- agent_work_EM additions (2026-10-27): namespace CA — case (a') of Conjecture EM
+-- agent_work_EM additions (2026-10-27): namespace CA — case (a') of Conjecture EM; namespace DP — deep walks, jumps
 -- ======================================================================================
 
 /-! ## Case (a') of Conjecture EM: typed return chains end in T2 — CA (agent_work_EM, 2026-10-27) -/
@@ -6515,3 +6515,364 @@ theorem depth_to_infinity (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u 
 end CA
 
 #print axioms CA.depth_to_infinity
+
+namespace CA
+
+open C
+open C.T
+open FM
+
+/-- **The remaining gap, precisely.**  Let u be an infinite leftmost walk from an L36-flag-0 term.  If u has only
+    finitely many jumps (nodes S p τ) and — in case its right-spine depth tends to infinity — is eventually monotone,
+    we get a contradiction.  So the leftmost finite half for flag 0 follows from (J) every infinite leftmost walk has
+    finitely many jumps, and (EM_deep) every eventually jump-free infinite leftmost walk whose depth tends to infinity
+    is eventually monotone.  (Scenario A — depth not tending to infinity — needs no conjecture any more.) -/
+theorem finite_half_of_J_EMdeep (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hflag : FH.flag (u 0) = false)
+    (hJ : ∃ N, ∀ j, N ≤ j → ∀ p τ, u j ≠ app (app S p) τ)
+    (hEMd : (∀ d, ∃ N, ∀ j, N ≤ j → d < SA2.msl (u j)) →
+      ∃ j0, ∀ j, j0 ≤ j → 3 ≤ (args (u j)).length ∧ u (j + 1) ≠ SA.rpart (u j)) : False := by
+  obtain ⟨N, hN⟩ := hJ
+  let v : Nat → T := fun j => u (N + j)
+  have hv : ∀ j, FH.LChild (v j) (v (j + 1)) := fun j => by
+    show FH.LChild (u (N + j)) (u (N + (j + 1)))
+    rw [show N + (j + 1) = N + j + 1 by omega]; exact hchild (N + j)
+  have hvflag : FH.flag (v 0) = false := by
+    show FH.flag (u (N + 0)) = false
+    rw [FH.flag_walk u hchild (N + 0)]; exact hflag
+  have hvnj : ∀ j p τ, v j ≠ app (app S p) τ := fun j p τ => hN (N + j) (by omega) p τ
+  have hdeep := depth_to_infinity v hv hvflag hvnj
+  apply EM.finite_half_of_EM u hchild hflag
+  apply hEMd
+  intro d
+  obtain ⟨M, hM⟩ := hdeep d
+  refine ⟨N + M, fun j hj => ?_⟩
+  have h1 : d < SA2.msl (u (N + (j - N))) := hM (j - N) (by omega)
+  rwa [show N + (j - N) = j by omega] at h1
+
+end CA
+
+#print axioms CA.finite_half_of_J_EMdeep
+
+/-! ## The reading lemma for deep jump-free walks — DP (agent_work_EM, 2026-10-27) -/
+
+namespace DP
+
+open C
+open C.T
+open FM
+
+theorem tower_S : Tower S := ⟨0, rfl⟩
+
+theorem nontower_ne_S (x : T) (h : ¬ Tower x) : x ≠ S := fun e => h (e ▸ tower_S)
+
+/-- **Reading lemma, node form.**  If the head run of the node (A.B).σ (A /= S) reaches a head normal form [ch, d] and
+    B, σ are non-towers, then A = tw (k+1) (so H(A.B) = S (tw k) B) and ch = Fw σ B k. -/
+theorem gamma_node (A B σ ch d : T) (hA : A ≠ S) (hB : ¬ Tower B) (hσ : ¬ Tower σ)
+    (h : Reach (args (app (app A B) σ)) [ch, d]) : ∃ k, A = tw (k + 1) ∧ ch = Fw σ B k := by
+  have hA1 := TC.args_ne_nil A hA
+  have hQ : 2 ≤ (args (app A B)).length := by rw [args_app]; simp; omega
+  obtain ⟨K, c0, hK, hch⟩ := fib_step (app A B) σ ch d hQ hσ h
+  rw [args_app] at hK
+  by_cases h2 : 2 ≤ (args A).length
+  · exfalso
+    have hK' : Reach (args (app A B)) [tw K, c0] := by rw [args_app]; exact hK
+    obtain ⟨K', c', _, hfw⟩ := fib_step A B (tw K) c0 h2 hB hK'
+    exact SA3.fw_nontower B c' hB K' (hfw ▸ ⟨K, rfl⟩)
+  · match hax : args A, hA1, h2 with
+    | [p], _, _ =>
+      rw [hax] at hK
+      have e := reach_stuck _ _ (by simp) hK
+      simp only [List.cons_append, List.nil_append, List.cons.injEq] at e
+      obtain ⟨hp, hc, _⟩ := e
+      refine ⟨K, ?_, ?_⟩
+      · rw [TC.args_one' A p hax, ← hp]; rfl
+      · rw [hch, ← hc]
+    | [], h1, _ => simp at h1
+    | _ :: _ :: _, _, h2 => simp at h2
+
+/-- **Reading lemma, walk form.**  In a jump-free infinite leftmost walk, a node (A.B).σ with B and σ non-towers has
+    A = tw (k+1) with k <= 2, and its child is σ (k = 0: a return), B.σ (k = 1) or σ.(B.σ) (k = 2). -/
+theorem gamma_walk (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (t : Nat) (A B σ : T) (hu : u t = app (app A B) σ)
+    (hB : ¬ Tower B) (hσ : ¬ Tower σ) : ∃ k, k ≤ 2 ∧ A = tw (k + 1) ∧ u (t + 1) = Fw σ B k := by
+  -- a computed node of the walk reaches its child
+  have hreach : ∀ j X Y Z, u j = app (app X Y) Z → X ≠ S → ∃ dd, Reach (args (u j)) [u (j + 1), dd] := by
+    intro j X Y Z hj hX
+    rcases hchild j with ⟨hlen, _, _⟩ | ⟨_, dd, hr⟩
+    · exfalso
+      rw [hj, args_app, args_app] at hlen
+      have h1 := TC.args_ne_nil X hX
+      have h2 : (args X ++ [Y] ++ [Z]).length = (args X).length + 2 := by simp
+      omega
+    · exact ⟨dd, hr⟩
+  have hAS : A ≠ S := by intro e; rw [e] at hu; exact hnj t B σ hu
+  obtain ⟨dd, hr⟩ := hreach t A B σ hu hAS
+  rw [hu] at hr
+  obtain ⟨k, hk, hch⟩ := gamma_node A B σ _ dd hAS hB hσ hr
+  refine ⟨k, ?_, hk, hch⟩
+  refine Classical.byContradiction (fun hk2 => ?_)
+  obtain ⟨m, rfl⟩ : ∃ m, k = m + 3 := ⟨k - 3, by omega⟩
+  -- the child Fw (m+3) = (X.Y).Z with X, Y, Z non-towers: the reading lemma at t+1 makes X a tower
+  have hnt : ∀ i, ¬ Tower (Fw σ B i) := fun i => SA3.fw_nontower σ B hσ i
+  obtain ⟨X, Y, hXY, hX, hY⟩ : ∃ X Y, Fw σ B (m + 1) = app X Y ∧ ¬ Tower X ∧ ¬ Tower Y := by
+    cases m with
+    | zero => exact ⟨B, σ, rfl, hB, hσ⟩
+    | succ m' => exact ⟨Fw σ B m', Fw σ B (m' + 1), Fw_add2 σ B m', hnt _, hnt _⟩
+  have hu1 : u (t + 1) = app (app X Y) (Fw σ B (m + 2)) := by
+    rw [hch, show m + 3 = (m + 1) + 2 by omega, Fw_add2, hXY]
+  obtain ⟨dd1, hr1⟩ := hreach (t + 1) X Y _ hu1 (nontower_ne_S X hX)
+  rw [hu1] at hr1
+  obtain ⟨k1, hk1, _⟩ := gamma_node X Y _ _ dd1 (nontower_ne_S X hX) hY (hnt (m + 2)) hr1
+  exact hX ⟨k1 + 1, hk1⟩
+
+end DP
+
+#print axioms DP.gamma_node
+#print axioms DP.gamma_walk
+
+namespace DP
+
+open C
+open C.T
+open FM
+
+/-- **Jump classification over a non-tower bottom.**  If the leftmost child of the node Q.v (Q with >= 2 arguments,
+    v a non-tower) is a jump node S p τ, then H(Q) = S (tw K) c0 with
+    K = 0: v = S p τ (the walk returned onto a stack level whose multiplier is S p);
+    K = 1: c0 = S p and τ = v (a DISCARD jump: the rightmost child of Q is S p, the stack v is dropped);
+    K = 2: v = S p and τ = c0.v (the jump target p lies below an S on the stack);
+    K = 3: c0 = S and p = v (the jump target is the stack v itself). -/
+theorem jump_child (Q v p τ d : T) (hQ : 2 ≤ (args Q).length) (hv : ¬ Tower v)
+    (h : Reach (args (app Q v)) [app (app S p) τ, d]) :
+    ∃ c0, (Reach (args Q) [tw 0, c0] ∧ v = app (app S p) τ) ∨
+      (Reach (args Q) [tw 1, c0] ∧ c0 = app S p ∧ τ = v) ∨
+      (Reach (args Q) [tw 2, c0] ∧ v = app S p ∧ τ = app c0 v) ∨
+      (Reach (args Q) [tw 3, c0] ∧ c0 = S ∧ p = v) := by
+  obtain ⟨K, c0, hK, hch⟩ := fib_step Q v _ d hQ hv h
+  refine ⟨c0, ?_⟩
+  match K, hK, hch with
+  | 0, hK, hch => exact Or.inl ⟨hK, hch.symm⟩
+  | 1, hK, hch =>
+    have e : Fw v c0 1 = app c0 v := rfl
+    rw [e] at hch
+    simp only [app.injEq] at hch
+    exact Or.inr (Or.inl ⟨hK, hch.1.symm, hch.2⟩)
+  | 2, hK, hch =>
+    rw [show (2 : Nat) = 0 + 2 from rfl, Fw_add2] at hch
+    simp only [app.injEq] at hch
+    have e : Fw v c0 (0 + 1) = app c0 v := rfl
+    exact Or.inr (Or.inr (Or.inl ⟨hK, hch.1.symm, by rw [← e]; exact hch.2⟩))
+  | 3, hK, hch =>
+    rw [show (3 : Nat) = 1 + 2 from rfl, Fw_add2] at hch
+    simp only [app.injEq] at hch
+    have e : Fw v c0 1 = app c0 v := rfl
+    rw [e] at hch
+    simp only [app.injEq] at hch
+    exact Or.inr (Or.inr (Or.inr ⟨hK, hch.1.1.symm, hch.1.2⟩))
+  | i + 4, _, hch =>
+    exfalso
+    rw [show i + 4 = (i + 2) + 2 by omega, Fw_add2, Fw_add2] at hch
+    simp only [app.injEq] at hch
+    -- Fw v c0 i = S, impossible for a non-tower v
+    exact SA3.fw_nontower v c0 hv i (hch.1.1 ▸ tower_S)
+
+end DP
+
+#print axioms DP.jump_child
+
+namespace DP
+
+open C
+open C.T
+open FM
+
+/-- **Tower letters are frozen.**  In a jump-free leftmost walk, once a stack segment tw (k+1).ρ (a tower letter on
+    top of ρ) is a right-spine suffix of a node, it stays a PROPER right-spine suffix of every later node: the node
+    tw (k+1).ρ = S (tw k) ρ is a jump node and is never visited, and non-jump steps keep proper suffixes. -/
+theorem tower_letter_frozen (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (t k : Nat) (ρ : T) (hs : Suf (app (tw (k + 1)) ρ) (u t)) :
+    ∀ e, Suf (app (tw (k + 1)) ρ) (u (t + e)) ∧ u (t + e) ≠ app (tw (k + 1)) ρ := by
+  have hne : ∀ s, u s ≠ app (tw (k + 1)) ρ := fun s h => hnj s (tw k) ρ (by rw [h]; rfl)
+  intro e
+  induction e with
+  | zero => exact ⟨hs, hne t⟩
+  | succ e ih =>
+    refine ⟨?_, hne _⟩
+    rw [show t + (e + 1) = t + e + 1 by omega]
+    exact SA.step_keeps _ _ _ (hchild (t + e)) ih.1 ih.2 (hnj (t + e))
+
+/-- ... and the walk stays strictly above it: the right-spine depth never drops to the level of the tower letter. -/
+theorem tower_letter_depth (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (t k : Nat) (ρ : T) (hs : Suf (app (tw (k + 1)) ρ) (u t)) :
+    ∀ e, SA2.msl (app (tw (k + 1)) ρ) < SA2.msl (u (t + e)) := by
+  intro e
+  obtain ⟨h1, h2⟩ := tower_letter_frozen u hchild hnj t k ρ hs e
+  generalize u (t + e) = x at h1 h2
+  cases x with
+  | S => exact absurd (suf_S _ h1).symm (by intro h; cases h)
+  | app p y =>
+    rcases suf_app_inv _ p y h1 with h | h
+    · exact absurd h h2
+    · have := SA2.msl_suf _ _ h
+      simp only [SA2.msl] at this ⊢
+      omega
+
+end DP
+
+#print axioms DP.tower_letter_frozen
+#print axioms DP.tower_letter_depth
+
+namespace DP
+
+open C
+open C.T
+open FM
+
+theorem msl_Fw (z c : T) : ∀ i, SA2.msl (Fw z c i) = SA2.msl z + i ∧ SA2.msl (Fw z c (i + 1)) = SA2.msl z + i + 1
+  | 0 => ⟨by simp [Fw], by simp [Fw, SA2.msl]⟩
+  | i + 1 => by
+    have ih := msl_Fw z c i
+    refine ⟨by rw [ih.2]; omega, ?_⟩
+    rw [show i + 1 + 1 = i + 2 from rfl, Fw_add2]
+    simp only [SA2.msl]
+    rw [ih.2]; omega
+
+/-- an up-crossing of level d between a and a + n -/
+theorem upcross (f : Nat → Nat) (d a : Nat) (ha : f a ≤ d) :
+    ∀ n, d < f (a + n) → ∃ p, a ≤ p ∧ p < a + n ∧ f p ≤ d ∧ d < f (p + 1) := by
+  intro n
+  induction n with
+  | zero => intro h; simp at h; omega
+  | succ n ih =>
+    intro h
+    by_cases h2 : d < f (a + n)
+    · obtain ⟨p, h1, h3, h4, h5⟩ := ih h2
+      exact ⟨p, h1, by omega, h4, h5⟩
+    · exact ⟨a + n, by omega, by omega, by omega, by rw [show a + n + 1 = a + (n + 1) by omega]; exact h⟩
+
+/-- **EM_deep from tower pushes (TP).**  Let u be a jump-free infinite leftmost walk whose right-spine depth tends to
+    infinity.  Suppose that from some time T on every stack (last argument) is a non-tower and every computed step that
+    pushes K >= 2 multipliers is an Omega-type push of a TOWER LETTER: H(q) = S (tw 2) (tw (k+1)).  Then u is
+    eventually monotone (no pops, jumps or returns).  Proof: a late return lands at a level d >= depth (u T); some step
+    p in [T, r) crosses level d upwards, so it pushes K >= 2, hence a tower letter tw (k+1) at level d, which is
+    frozen forever (tower_letter_depth) — the walk can never come back to level d. -/
+theorem EM_of_TP (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ)
+    (hdeep : ∀ d, ∃ N, ∀ j, N ≤ j → d < SA2.msl (u j)) (T : Nat)
+    (hTP : ∀ t, T ≤ t → ¬ Tower (SA.rpart (u t)) ∧
+      ∀ q σ K c, u t = app q σ → 2 ≤ (args q).length → Reach (args q) [tw K, c] → 2 ≤ K →
+        K = 2 ∧ ∃ k, c = tw (k + 1)) :
+    ∃ j0, ∀ j, j0 ≤ j → 3 ≤ (args (u j)).length ∧ u (j + 1) ≠ SA.rpart (u j) := by
+  obtain ⟨N, hN⟩ := hdeep (SA2.msl (u T))
+  have hnoret : ∀ r, T ≤ r → N ≤ r + 1 → u (r + 1) ≠ SA.rpart (u r) := by
+    intro r hTr hNr hret
+    have hr1 : SA2.msl (u r) = SA2.msl (u (r + 1)) + 1 := by
+      rw [hret]
+      match hur : u r with
+      | S => exfalso; have := hchild r; rw [hur] at this; exact CA.no_child_S _ this
+      | app f x => simp [SA.rpart, SA2.msl]
+    have hTd : SA2.msl (u T) ≤ SA2.msl (u (r + 1)) := by have := hN (r + 1) hNr; omega
+    obtain ⟨p, hp1, hp2, hp3, hp4⟩ := upcross (fun j => SA2.msl (u j)) (SA2.msl (u (r + 1))) T hTd (r - T)
+      (by show SA2.msl (u (r + 1)) < SA2.msl (u (T + (r - T))); rw [show T + (r - T) = r by omega]; omega)
+    have hp3' : SA2.msl (u p) ≤ SA2.msl (u (r + 1)) := hp3
+    have hp4' : SA2.msl (u (r + 1)) < SA2.msl (u (p + 1)) := hp4
+    clear hp3 hp4
+    -- analyse the up-going step at p
+    match hup : u p with
+    | S => exfalso; have := hchild p; rw [hup] at this; exact CA.no_child_S _ this
+    | app q σ =>
+      have hc := hchild p
+      rw [hup] at hc hp3'
+      rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, dd, hrr⟩
+      · rw [args_app] at hlen hrr
+        match hq : args q, hlen, hrr with
+        | [], _, hrr =>
+          simp only [List.nil_append, List.cons.injEq] at hrr
+          rw [← hrr.1] at hp4'
+          simp only [SA2.msl] at hp3'
+          omega
+        | [x], _, _ => exact hnj p x σ (by rw [hup, TC.args_one' q x hq])
+        | _ :: _ :: _, hlen, _ => simp at hlen
+      · rw [args_app] at hlen
+        have hq2 : 2 ≤ (args q).length := by simp at hlen; omega
+        have hσ : ¬ Tower σ := by have := (hTP p hp1).1; rw [hup] at this; exact this
+        obtain ⟨K, c, hK, hch⟩ := fib_step q σ _ dd hq2 hσ hrr
+        have hm := (msl_Fw σ c K).1
+        rw [← hch] at hm
+        simp only [SA2.msl] at hp3'
+        have hK2 : 2 ≤ K := by omega
+        obtain ⟨hK2', k, hck⟩ := (hTP p hp1).2 q σ K c hup hq2 hK hK2
+        subst hK2'
+        -- the tower letter c.σ sits at level msl σ + 1 = msl (u (r+1)) and is frozen from p+1 on
+        have hsuf : Suf (app (tw (k + 1)) σ) (u (p + 1)) := by
+          rw [hch, ← hck]
+          exact Suf.wrap _ _ Suf.refl
+        have hfz := tower_letter_depth u hchild hnj (p + 1) k σ hsuf (r - p)
+        rw [show p + 1 + (r - p) = r + 1 by omega] at hfz
+        simp only [SA2.msl] at hfz
+        omega
+  refine ⟨T + N, fun j hj => ⟨?_, hnoret j (by omega) (by omega)⟩⟩
+  have hc := hchild j
+  match huj : u j with
+  | S => rw [huj] at hc; exact absurd hc (CA.no_child_S _)
+  | app q σ =>
+    rw [huj] at hc
+    rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, _, _⟩
+    · exfalso
+      rw [args_app] at hlen hrr
+      match hq : args q, hlen, hrr with
+      | [], _, hrr =>
+        simp only [List.nil_append, List.cons.injEq] at hrr
+        apply hnoret j (by omega) (by omega)
+        rw [huj, ← hrr.1]; rfl
+      | [x], _, _ => exact hnj j x σ (by rw [huj, TC.args_one' q x hq])
+      | _ :: _ :: _, hlen, _ => simp at hlen
+    · exact hlen
+
+end DP
+
+#print axioms DP.EM_of_TP
+
+namespace DP
+
+open C
+open C.T
+open FM
+
+/-- **The finite half from (J) + (TP_deep).**  An infinite leftmost walk from an L36-flag-0 term is impossible if
+    (J) it makes only finitely many jumps, and (TP_deep) when its depth tends to infinity, from some time on its stacks
+    are non-towers and every computed step pushing K >= 2 multipliers is a push of a tower letter
+    (H(q) = S (tw 2) (tw (k+1))).  Uses CA.depth_to_infinity (Scenario A closed), DP.EM_of_TP and
+    EM.finite_half_of_EM. -/
+theorem finite_half_of_J_TP (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hflag : FH.flag (u 0) = false)
+    (hJ : ∃ N, ∀ j, N ≤ j → ∀ p τ, u j ≠ app (app S p) τ)
+    (hTP : (∀ d, ∃ N, ∀ j, N ≤ j → d < SA2.msl (u j)) → ∃ T, ∀ t, T ≤ t → ¬ Tower (SA.rpart (u t)) ∧
+      ∀ q σ K c, u t = app q σ → 2 ≤ (args q).length → Reach (args q) [tw K, c] → 2 ≤ K →
+        K = 2 ∧ ∃ k, c = tw (k + 1)) : False := by
+  apply CA.finite_half_of_J_EMdeep u hchild hflag hJ
+  intro hdeep
+  obtain ⟨N, hN⟩ := hJ
+  obtain ⟨T0, hT⟩ := hTP hdeep
+  let v : Nat → T := fun j => u (N + j)
+  have hv : ∀ j, FH.LChild (v j) (v (j + 1)) := fun j => by
+    show FH.LChild (u (N + j)) (u (N + (j + 1)))
+    rw [show N + (j + 1) = N + j + 1 by omega]; exact hchild (N + j)
+  have hvnj : ∀ j p τ, v j ≠ app (app S p) τ := fun j p τ => hN (N + j) (by omega) p τ
+  have hvdeep : ∀ d, ∃ M, ∀ j, M ≤ j → d < SA2.msl (v j) := by
+    intro d
+    obtain ⟨M, hM⟩ := hdeep d
+    exact ⟨M, fun j hj => hM (N + j) (by omega)⟩
+  obtain ⟨j0, hj0⟩ := EM_of_TP v hv hvnj hvdeep T0 (fun t ht => hT (N + t) (by omega))
+  refine ⟨N + j0, fun j hj => ?_⟩
+  have h := hj0 (j - N) (by omega)
+  have e1 : N + (j - N) = j := by omega
+  have e2 : N + (j - N + 1) = j + 1 := by omega
+  have h1 : 3 ≤ (args (u (N + (j - N)))).length ∧ u (N + (j - N + 1)) ≠ SA.rpart (u (N + (j - N))) := h
+  rw [e1, e2] at h1
+  exact h1
+
+end DP
+
+#print axioms DP.finite_half_of_J_TP
