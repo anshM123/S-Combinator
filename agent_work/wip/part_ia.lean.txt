@@ -1,0 +1,184 @@
+
+theorem Ytop_third (a b c : T) (R : List T) (ha : rk a ≤ 1) (hb : rk b ≤ 1) (hc : rk c = 2) :
+    Ytop (a :: b :: c :: R) = some c := by
+  unfold Ytop
+  simp only [Yl_cons]
+  have ha' : rk a ≠ 2 := by omega
+  have hb' : rk b ≠ 2 := by omega
+  simp [ha', hb', hc]
+
+theorem Yl_args_ne_nil (a : T) (hS : head a = S) (ha : rk a = 2) : Yl (args a) ≠ [] := by
+  intro h
+  have : rk a ≤ 1 := rk_le_of_args a hS 1 (fun s hs => by
+    rcases rk_cases s with h' | h' | h'
+    · omega
+    · omega
+    · exfalso
+      have : s ∈ Yl (args a) := by unfold Yl; simp [hs, h']
+      rw [h] at this; simp at this)
+  omega
+
+/-- a list of length <= 2 containing Z -/
+theorem mem_short (P : List T) (Z : T) (hZ : Z ∈ P) (hl : P.length ≤ 2) :
+    P = [Z] ∨ (∃ V, P = [Z, V]) ∨ (∃ V, P = [V, Z]) := by
+  match P, hZ, hl with
+  | [x], hZ, _ => simp at hZ; subst hZ; exact Or.inl rfl
+  | [x1, x2], hZ, _ =>
+    simp at hZ
+    rcases hZ with h | h
+    · subst h; exact Or.inr (Or.inl ⟨x2, rfl⟩)
+    · subst h; exact Or.inr (Or.inr ⟨x1, rfl⟩)
+  | _ :: _ :: _ :: _, _, hl => simp at hl
+
+theorem rk_var2 : rk (var 2) = 2 := by unfold rk; simp [occN]
+
+theorem ia_step (L1 : List T) (t : Nat) (a b c : T) (R : List T) (ha : head a = S)
+    (hrun : run t L1 = some (a :: b :: c :: R))
+    (hseg : Seg (a :: b :: c :: R)) (h2 : (Preg (a :: b :: c :: R)).length ≤ 2)
+    (h2' : (Preg (args a ++ c :: app b c :: R)).length ≤ 2)
+    (hc1 : IC1 (a :: b :: c :: R)) (hc2 : IC2 (a :: b :: c :: R))
+    (hc1' : IC1 (args a ++ c :: app b c :: R))
+    (hia : IA L1 t (a :: b :: c :: R)) : IA L1 (t + 1) (args a ++ c :: app b c :: R) := by
+  obtain ⟨hab, hbc, hcR⟩ := srt3 a b c R hseg.1
+  have hrbc : rk (app b c) = max (rk b) (rk c) := rk_app b c
+  have hna : noKZ a := hc2 a (by simp)
+  have hoa : ordT a := hseg.2 a (by simp)
+  have mono : ∀ Z, rsg L1 t Z → rsg L1 (t + 1) Z := rsg_mono L1 t (t + 1) (by omega)
+  intro Z hZ hcase
+  rcases hcase with ⟨hZin, hY⟩ | ⟨e, he, hsub⟩
+  · rw [Preg_append] at hZin
+    unfold Ytop at hY
+    rw [Yl_append] at hY
+    rcases rk_cases c with hc | hc | hc
+    · have ha0 : rk a = 0 := by omega
+      have hb0 : rk b = 0 := by omega
+      have hbc0 : rk (app b c) = 0 := by rw [hrbc]; omega
+      rw [Preg_args_closed a ha0] at hZin
+      rw [Yl_args_le1 a (by omega)] at hY
+      simp only [Preg_cons, Yl_cons, hc, hbc0] at hZin hY
+      simp at hZin hY
+      apply mono; apply hia Z hZ; left
+      refine ⟨by simp only [Preg_cons, ha0, hb0, hc]; simpa using hZin, ?_⟩
+      unfold Ytop; simp only [Yl_cons, ha0, hb0, hc]; simpa using hY
+    · have hbc1 : rk (app b c) = 1 := by rw [hrbc]; omega
+      have ha0 : rk a = 0 := by
+        rcases rk_cases a with h | h | h
+        · exact h
+        · exfalso
+          have hb1 : rk b = 1 := by omega
+          simp only [Preg_cons, h, hb1, hc, if_true, List.length_cons] at h2; omega
+        · omega
+      rw [Preg_args_closed a ha0] at hZin
+      rw [Yl_args_le1 a (by omega)] at hY
+      have hc2' : rk c ≠ 2 := by omega
+      have hbc2 : rk (app b c) ≠ 2 := by omega
+      simp only [Preg_cons, Yl_cons, hc, hbc1, hc2', hbc2, if_true, if_false, List.nil_append] at hZin hY
+      have hYL : Ytop (a :: b :: c :: R) = some (var 2) := by
+        unfold Ytop; simp only [Yl_cons]
+        have ha2 : rk a ≠ 2 := by omega
+        have hb2 : rk b ≠ 2 := by omega
+        simp [ha2, hb2, hc2', hY]
+      simp at hZin
+      rcases hZin with hZc | hZbc | hZR
+      · subst hZc
+        apply mono; apply hia Z hZ; left
+        refine ⟨?_, hYL⟩
+        simp only [Preg_cons, ha0, hc]
+        by_cases hb1 : rk b = 1 <;> simp [hb1]
+      · subst hZbc
+        obtain ⟨hb1, _⟩ := hZ
+        intro _
+        have hR : Preg R = [] := by
+          have h2'' := h2
+          simp [Preg_cons, ha0, hb1, hc] at h2''
+          first | exact h2'' | exact List.eq_nil_of_length_eq_zero (by omega)
+        have hR2 : ∀ x ∈ R, rk x = 2 := by
+          intro x hx
+          have := hcR x hx
+          rcases rk_cases x with h | h | h
+          · omega
+          · exfalso
+            have : x ∈ Preg R := by unfold Preg; simp [hx, h]
+            rw [hR] at this; simp at this
+          · exact h
+        have hYR : Yl R = R := by
+          unfold Yl; rw [List.filter_eq_self]; intro x hx; simp [hR2 x hx]
+        rw [hYR] at hY
+        obtain ⟨R', hR'⟩ : ∃ R', R = var 2 :: R' := by
+          match R, hY with
+          | x :: R', hY => simp at hY; exact ⟨R', by rw [hY]⟩
+        refine ⟨⟨t, by omega, a, R', by rw [hrun, hR']⟩, ?_⟩
+        by_cases h2c : twoP c
+        · apply mono; apply hia c h2c; left
+          exact ⟨by simp only [Preg_cons, ha0, hb1, hc]; simp, hYL⟩
+        · exact rsg_of_not2P L1 (t + 1) c h2c
+      · apply mono; apply hia Z hZ; left
+        refine ⟨?_, hYL⟩
+        simp only [Preg_cons, ha0, hc]
+        by_cases hb1 : rk b = 1 <;> simp [hb1, hZR]
+    · have hbc2 : rk (app b c) = 2 := by rw [hrbc]; omega
+      have hR : Preg R = [] := Preg_nil_of R (fun e he => by have := hcR e he; omega)
+      have hPL' : Preg (args a ++ c :: app b c :: R) = Preg (args a) := by
+        rw [Preg_append]; simp only [Preg_cons, hc, hbc2, hR]; simp
+      simp only [Preg_cons, hc, hbc2, hR] at hZin
+      simp at hZin
+      have hlen : (Preg (args a)).length ≤ 2 := by rw [← hPL']; exact h2'
+      rcases rk_cases a with ha' | ha' | ha'
+      · rw [Preg_args_closed a ha'] at hZin; simp at hZin
+      · -- P-front
+        rw [Yl_args_le1 a (by omega)] at hY
+        simp only [Yl_cons, hc, hbc2, if_true, List.nil_append] at hY
+        simp at hY
+        rcases mem_short _ Z hZin hlen with hP | ⟨V', hP⟩ | ⟨V', hP⟩
+        · exact absurd hZ (hc1' Z (by rw [hPL', hP]))
+        · exact absurd hZ (first_P_arg_not2P a ha hoa hna Z [V'] hP)
+        · obtain ⟨M', hM'1, haM, _⟩ := pair_prefix a ha hoa V' Z hP
+          have haeq : a = app M' Z := haM (Yl_args_le1 a (by omega))
+          have hZ1 : rk Z = 1 := twoP_rk Z hZ
+          have h2a : twoP a := by rw [haeq]; exact ⟨hM'1, hZ1⟩
+          have hb1 : rk b = 1 := by
+            rcases rk_cases b with h | h | h
+            · omega
+            · exact h
+            · exfalso
+              apply hc1 a _ h2a
+              have hb2 : rk b ≠ 1 := by omega
+              have hc2' : rk c ≠ 1 := by omega
+              simp only [Preg_cons, ha', hb2, hc2', hR]; simp
+          have hYL : Ytop (a :: b :: c :: R) = some (var 2) := by
+            rw [Ytop_third a b c R (by omega) (by omega) hc, hY]
+          have := hia a h2a (Or.inl ⟨by simp only [Preg_cons, ha']; simp, hYL⟩)
+          rw [haeq] at this
+          exact mono Z (this ⟨hM'1, hZ1⟩).2
+      · -- Y-front
+        obtain ⟨y', Y', hYa⟩ : ∃ y' Y', Yl (args a) = y' :: Y' := by
+          have hne := Yl_args_ne_nil a ha ha'
+          cases h : Yl (args a) with
+          | nil => exact absurd h hne
+          | cons y' Y' => exact ⟨y', Y', rfl⟩
+        rw [hYa] at hY
+        simp at hY
+        subst hY
+        rcases mem_short _ Z hZin hlen with hP | ⟨V', hP⟩ | ⟨V', hP⟩
+        · exact absurd hZ (hc1' Z (by rw [hPL', hP]))
+        · exact absurd hZ (first_P_arg_not2P a ha hoa hna Z [V'] hP)
+        · obtain ⟨M', hM'1, _, hsubA⟩ := pair_prefix a ha hoa V' Z hP
+          have h2M : twoP (app M' Z) := ⟨hM'1, twoP_rk Z hZ⟩
+          have := hia (app M' Z) h2M (Or.inr ⟨a, by simp, hsubA _ _ hYa⟩)
+          exact mono Z (this h2M).2
+  · simp at he
+    rcases he with he | he | he | he
+    · exact mono Z (hia Z hZ (Or.inr ⟨a, by simp, sub_trans _ _ _ hsub (sub_of_args a e he)⟩))
+    · rw [he] at hsub; exact mono Z (hia Z hZ (Or.inr ⟨c, by simp, hsub⟩))
+    · rw [he] at hsub
+      rcases hsub with h | h | h
+      · injection h with hZb hyc
+        subst hZb; subst hyc
+        have hb1 : rk Z = 1 := twoP_rk Z hZ
+        apply mono; apply hia Z hZ; left
+        refine ⟨?_, Ytop_third a Z (var 2) R (by omega) (by omega) rk_var2⟩
+        simp only [Preg_cons, hb1]
+        by_cases ha1 : rk a = 1 <;> simp [ha1]
+      · exact mono Z (hia Z hZ (Or.inr ⟨b, by simp, h⟩))
+      · exact mono Z (hia Z hZ (Or.inr ⟨c, by simp, h⟩))
+    · exact mono Z (hia Z hZ (Or.inr ⟨e, by simp [he], hsub⟩))

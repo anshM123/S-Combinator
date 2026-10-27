@@ -1,0 +1,8 @@
+1237 S(S(S(SSS)S))p ('FH',)
+92 SSS(S(SS(SS)(Sp))) ('n=2', 'L2:vP-alpha L1:vP-alpha', '-', 'reexec')
+8 SS(SS)(S(SS(SS)(Sp))) ('n=2', 'L2:vP-alpha L1:vP-alpha', '-', "p'-front nonproper")
+6 S(S(S(SSS)S))(S(SS)p) ('n=2', 'L2:vP-frontC L1:vC-atomhead', 'IGEN', 'reexec')
+4 S(S(S(S(SS))S))(S(SS)p) ('n=2', 'L2:vP-frontC L1:vC-atomhead', '-', 'reexec')
+3 S(S(SSS(S(SS))))(S(SS)p) ('n=2', 'L2:vP-frontC L1:vC-alpha', '-', 'call')
+2 S(S(S(S(SS))(SS)))(S(SS)p) ('n=2', 'L2:vP-frontC L1:vC-frontC', '-', 'call')
+2 S(S(S(SS)S(SS)))(S(SS)p) ('n=2', 'L2:vP-frontC L1:vC-alpha', '-', 'reexec')

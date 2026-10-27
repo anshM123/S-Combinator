@@ -1474,3 +1474,49 @@ non-universality or R''_PUP.
   Remarks: (i) no use of (Z), INV-Y or non-IGEN; (ii) only single occurrence (2P terms not initial), (F), (AB);
   (iii) the same proof shows the stronger 'every list with P-region [X_i, w] (i >= 1) and Ytop y is preceded by
   (S1)'.  Status: PROVED by hand; Lean formalisation next (agent_work/wip/S1_*.lean).
+* 07:22 Lean formalisation of (S1) in progress (agent_work/wip/S1_core.lean, standalone, compiles so far): class rank
+  rk (0 closed / 1 P / 2 Y), hereditarily sorted spines ordT, segment invariant Seg (seg_run), Lemma AB in rank
+  form (ab3_step, ab3_run, ab3_bound: before a list whose third element has rank 2, every reachable list has
+  |P-region| <= 2), spine/subterm toolkit (spine_prefix, spine_last, srt_split, rk_le_of_args), Claim C
+  (ic_step: no 2P term alone in the P-region, no subterm K.Z), FI-W (iw_step, X-sequence inX).  Next: FI-A, FI-B
+  (history predicates GOOD / (S1)-occurred), the main induction, and the corollary with beta_main of R3F.lean.
+* 07:28 **MACHINE-CHECKED (draft agent_work/wip/S1_core.lean, 1,322 lines, standalone, Lean 4.35 core; lean_check
+  'LEAN OK: no errors, no sorry'; axioms propext / Classical.choice / Quot.sound): THEOREM S1 (`s1_core`)** in generic
+  form: for ANY run from a start list L1 that is rank-sorted with hereditarily rank-sorted spines (`Seg`) and has at
+  most ONE occurrence of p in total, which reaches at some time T' a list whose THIRD element has rank 2 (contains
+  x, y or r - e.g. a proper transfer): if at a time tg <= T' the run passes through a1 :: w :: y :: R0 with
+  w = b0.c0 of rank 1 (a P-term) and a1 a P-term different from c0, then at some time s <= tg it passes through
+  args(c0) ++ w :: y :: B.  Supporting machine-checked lemmas: seg_run (OTD-type invariant in rank form),
+  ab3_bound (Lemma AB in rank form), ic_step (Claim C), iw_step (FI-W, X-sequence), ia_step (FI-A, GOOD creations),
+  ib_step (FI-B), s1_inv (all invariants by induction), s1_base (single occurrence at the start).
+  Next: R3G.lean = R3F.lean + these sections + the corollary with beta_main / alpha_main / closedglue_main.
+* 07:33 **MACHINE-CHECKED: agent_work/lean/R3G.lean** (4,983 lines = R3F.lean verbatim + S1 sections; lean_check
+  'LEAN OK: no errors, no sorry'; axioms propext / Classical.choice / Quot.sound).  New theorems:
+  - `s1_core` (THEOREM S1, generic form, see 07:28) with seg_run, ab3_bound, ic_step, iw_step, ia_step, ib_step,
+    s1_inv, s1_base;
+  - **THEOREM R3-SINGLE (`r3_single`)**: hypotheses - D S-headed, ordT D (= INNER's `ordered` for x,y,r-free terms:
+    closed spine arguments first), D free of x, y, r, occN 0 D <= 1; phase 2 (run from [D, x, y, r]) reaches at
+    T' a p-front f :: b :: (b0.c0).y :: R; b0, c0 S-headed, b0.c0 free of x, y, r; fresh hole atoms h1, h2 >= 4
+    absent from D; fresh3 H (w.y); and H1ok(c0) (the handler-only condition of beta_main).  Conclusion: in the
+    next phase (datum (b0.c0)[p:=c].p') every p'-headed front has a y-free element or the bare y at position 3.
+    Proof: `creation` (the node w.y is created by a glue [a1, w, y] at some tg < T'); a1 = c0 -> alpha_main;
+    a1 closed -> closedglue_main; a1 a P-term != c0 -> s1_core gives c0 on (w, y) before tg -> beta_main.
+    H1ok is used ONLY in the last case; ALPHA and CLOSEDGLUE need no handler condition.
+  - `r3_single_example`: every hypothesis of r3_single discharged (by decide / rfl) for the pattern-beta datum
+    S(S(SS))S(S(Sp)) (glue front Sp, c0 = S(Sp)): the theorem is not vacuous.
+  So for single-wrapper handlers of ordered single-occurrence data, R3 is now machine-checked with NO structural
+  hypothesis; the only remaining condition is H1ok(c0) in pattern beta (certified: it fails in 1 of 589 beta cases
+  <= 13 leaves, S(S(SS))(SS)(S(S(SS))(S(Sp))), where b0 = SS makes the next phase call p' with the bare y).
+* 07:50 MACHINE-CHECKED (agent_work/lean/R3G.lean updated, 5,215 lines; lean_check 'LEAN OK: no errors, no sorry'):
+  **THEOREM PAXB (`paxb_main`, handler-only)**: single wrapper w = b0.c0 (b0, c0 S-headed, y-free, fresh hole atoms
+  k1, k2 absent from b0): if the two-hole run of args(b0) ++ [k1, k2] never reaches a k1-headed front (b0 never
+  calls its first argument, so the next phase never runs c0'), every p'-front of the next phase has a y-free
+  element or the bare y at position 3.  (paxb_corr: the next phase is the tauB-image of b0's two-hole run plus the
+  untouched bottom [y, x.y, r]; two barriers keep the abstract list >= 2 long.)
+  **`r3_single2`**: R3-SINGLE with the handler-only condition weakened to 'H1ok(c0) OR b0 never calls its first
+  hole'.  COMPUTATIONALLY CERTIFIED that this condition holds in EVERY single-wrapper transfer found (s1/resid.py
+  13 exhaustive: the only H1-residual datum family S(S(SS))(SS)(S(S(SS))(S(Sp))) has b0 = SS, whose run stops at
+  its SECOND hole; s1/resid.py rand 41 24 4000000: 3 residual cases, same type; s1/residtarget.py 5 5 8 (data
+  S.K.B.C with K, B closed <= 5 leaves, C <= 8 leaves): 4 residual cases, same type).  ALPHA / CLOSEDGLUE cases need
+  no condition at all.
+  Lemma audit (s1/lemcheck.py 7: 428 runs, 15 single-wrapper transfers): no violation of F, C1, C2, FA, FW, FB, S1.

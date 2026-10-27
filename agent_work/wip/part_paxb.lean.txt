@@ -1,0 +1,229 @@
+
+/-! ## S1 Part 9: THEOREM PAXB (handler-only): if b0 never calls its FIRST hole, the next phase is safe -/
+
+/-- the next-phase image of b0's two-hole run: p -> c, k1 -> c0', k2 -> p' (= var 0), other atoms fixed -/
+def tauB (c k1 k2 : Nat) (c0' : T) : Nat → T := fun n =>
+  if n = 0 then var c else if n = k1 then c0' else if n = k2 then var 0 else var n
+
+theorem asub_tauB_sb (c k1 k2 : Nat) (c0' : T) (hk1 : k1 ≠ 0) (hk2 : k2 ≠ 0) :
+    ∀ t : T, occN k1 t = 0 → occN k2 t = 0 → asub (tauB c k1 k2 c0') t = sb c t
+  | S, _, _ => by simp [asub, sb]
+  | var n, ha, hb => by
+    by_cases h0 : n = 0
+    · subst h0; simp [asub, sb, tauB]
+    · have n1 : n ≠ k1 := by intro e; subst e; simp [occN] at ha
+      have n2 : n ≠ k2 := by intro e; subst e; simp [occN] at hb
+      simp [asub, sb, tauB, h0, n1, n2]
+  | app f x, ha, hb => by
+    simp only [occN] at ha hb
+    simp [asub, sb, asub_tauB_sb c k1 k2 c0' hk1 hk2 f (by omega) (by omega),
+      asub_tauB_sb c k1 k2 c0' hk1 hk2 x (by omega) (by omega)]
+
+theorem occ2_asub_tauB (c k1 k2 : Nat) (c0' : T) (hc2 : c ≠ 2) (hk1 : k1 ≠ 0) (hk2 : k2 ≠ 0) (hk12 : k1 ≠ k2)
+    (h0' : occ2 c0' = 0) : ∀ t : T, occ2 t = 0 → occ2 (asub (tauB c k1 k2 c0') t) = 0
+  | S, _ => by simp [asub, occ2]
+  | var n, h => by
+    have hn : n ≠ 2 := by intro e; subst e; simp [occ2] at h
+    by_cases h0 : n = 0
+    · subst h0; simp [asub, tauB, occ2, hc2]
+    · by_cases h1 : n = k1
+      · subst h1; simp [asub, tauB, hk1, h0']
+      · by_cases h2 : n = k2
+        · subst h2; simp [asub, tauB, hk2, hk12.symm, occ2]
+        · simp [asub, tauB, h0, h1, h2, occ2, hn]
+  | app f x, h => by
+    simp only [occ2] at h
+    simp only [asub, occ2]
+    rw [occ2_asub_tauB c k1 k2 c0' hc2 hk1 hk2 hk12 h0' f (by omega),
+      occ2_asub_tauB c k1 k2 c0' hc2 hk1 hk2 hk12 h0' x (by omega)]
+
+theorem head_asub_tauB (c k1 k2 : Nat) (c0' : T) (hc : c ≠ 0) (hc0' : head c0' = S) (hk1 : k1 ≠ 0)
+    (hk12 : k1 ≠ k2) : ∀ g : T, head (asub (tauB c k1 k2 c0') g) = var 0 → head g = var k2
+  | S, h => by simp [asub, head] at h
+  | var n, h => by
+    by_cases h0 : n = 0
+    · subst h0; simp [asub, tauB, head] at h; exact absurd h hc
+    · by_cases h1 : n = k1
+      · subst h1; simp [asub, tauB, hk1, hc0'] at h
+      · by_cases h2 : n = k2
+        · subst h2; rfl
+        · exfalso; simp [asub, tauB, h0, h1, h2, head] at h
+  | app f x, h => by
+    simp only [asub, head] at h ⊢
+    exact head_asub_tauB c k1 k2 c0' hc hc0' hk1 hk12 f h
+
+theorem nHB_two_first (h1 h2 : Nat) (g e : T) (h : 2 ≤ nHB h1 h2 [g, e]) : isHB h1 h2 g = true := by
+  simp only [nHB] at h
+  cases hg : isHB h1 h2 g <;> cases he : isHB h1 h2 e <;> simp [hg, he] at h ⊢
+
+/-- the next phase follows b0's two-hole run as long as b0 never calls its first hole -/
+theorem paxb_corr (b0 : T) (c k1 k2 : Nat) (c0' : T) (hk1 : k1 ≠ 0) (hk2 : k2 ≠ 0) (hk12 : k1 ≠ k2) (hc0' : head c0' = S)
+    (hNK1 : ∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var k1, var k2]) = some (g :: L) → head g ≠ var k1) :
+    ∀ (j : Nat) (L' : List T),
+      run j ((args b0 ++ [var k1, var k2]).map (asub (tauB c k1 k2 c0')) ++ [var 2, app (var 1) (var 2), var 3]) = some L' →
+      ∃ Aj, run j (args b0 ++ [var k1, var k2]) = some Aj ∧
+        L' = Aj.map (asub (tauB c k1 k2 c0')) ++ [var 2, app (var 1) (var 2), var 3] := by
+  intro j
+  induction j with
+  | zero =>
+    intro L' h
+    refine ⟨_, rfl, ?_⟩
+    simp only [run, Option.some.injEq] at h
+    exact h.symm
+  | succ j ih =>
+    intro L' h
+    obtain ⟨L'', hL'', hs⟩ := run_succ_split _ j L' h
+    obtain ⟨Aj, hAj, hL''e⟩ := ih L'' hL''
+    have hnb : 2 ≤ nHB k1 k2 Aj := by
+      have := nHB_run k1 k2 j _ _ hAj
+      have h0 : 2 ≤ nHB k1 k2 (args b0 ++ [var k1, var k2]) := by
+        rw [nHB_append]
+        have : nHB k1 k2 [var k1, var k2] = 2 := by simp [nHB, isHB, head]
+        omega
+      omega
+    rw [hL''e] at hs
+    obtain ⟨a, b, d, R, hlist, haS, hL'⟩ := step_some _ L' hs
+    match Aj, hnb, hlist, hAj with
+    | [], hnb, _, _ => simp [nHB] at hnb
+    | [g], hnb, _, _ => have := nHB_le_length k1 k2 [g]; simp at this; omega
+    | [g, e2], hnb, hlist, hAj =>
+      exfalso
+      have hg : isHB k1 k2 g = true := nHB_two_first k1 k2 g e2 hnb
+      simp only [List.map_cons, List.map_nil, List.cons_append, List.nil_append, List.cons.injEq] at hlist
+      obtain ⟨hga, _⟩ := hlist
+      unfold isHB at hg
+      simp only [Bool.or_eq_true, decide_eq_true_eq] at hg
+      rcases hg with hg | hg
+      · exact hNK1 j g [e2] hAj hg
+      · rw [← hga, asub_headvar _ k2 g hg] at haS
+        have : tauB c k1 k2 c0' k2 = var 0 := by simp [tauB, hk12.symm, hk2]
+        rw [this] at haS; simp [head] at haS
+    | g :: e2 :: e3 :: rest, _, hlist, hAj =>
+      simp only [List.map_cons, List.cons_append, List.cons.injEq] at hlist
+      obtain ⟨hga, hgb, hgd, hR⟩ := hlist
+      have hgS : head g = S := by
+        rcases head_cases g with hg | ⟨n, hn⟩
+        · exact hg
+        · exfalso
+          rw [← hga, asub_headvar _ n g hn] at haS
+          by_cases h1 : n = k1
+          · subst h1; exact hNK1 j g _ hAj hn
+          · have : head (tauB c k1 k2 c0' n) ≠ S := by
+              simp only [tauB]
+              by_cases h0 : n = 0
+              · rw [if_pos h0]; simp [head]
+              · by_cases h2 : n = k2
+                · rw [if_neg h0, if_neg h1, if_pos h2]; simp [head]
+                · rw [if_neg h0, if_neg h1, if_neg h2]; simp [head]
+            exact this haS
+      have hstepA : step (g :: e2 :: e3 :: rest) = some (args g ++ e3 :: app e2 e3 :: rest) := by
+        simp [step, hgS]
+      refine ⟨args g ++ e3 :: app e2 e3 :: rest, run_succ_of (args b0 ++ [var k1, var k2]) j _ _ hAj hstepA, ?_⟩
+      rw [hL', ← hga, ← hgb, ← hgd, ← hR]
+      rw [asub_args _ g hgS]
+      simp [asub]
+
+/-- **THEOREM PAXB.**  Single wrapper w = b0.c0 (b0, c0 S-headed, y-free).  If the two-hole run of b0
+    (args(b0) ++ [k1, k2], k1, k2 fresh) never reaches a k1-headed front - b0 never calls its first argument, so the
+    next phase never runs c0' - then every p'-headed front of the next phase has a y-free element or the bare y at
+    position 3.  (A handler-only condition on b0; no hypothesis on the earlier phase.) -/
+theorem paxb_main (b0 c0 : T) (c k1 k2 : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hk1 : 4 ≤ k1) (hk2 : 4 ≤ k2)
+    (hk12 : k1 ≠ k2) (hb0S : head b0 = S) (hc0S : head c0 = S) (hy0 : occ2 b0 = 0) (hy1 : occ2 c0 = 0)
+    (hf1 : occN k1 b0 = 0) (hf2 : occN k2 b0 = 0)
+    (hNK1 : ∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var k1, var k2]) = some (g :: L) →
+      head g ≠ var k1) :
+    ∀ (m : Nat) (f b d : T) (R : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f :: b :: d :: R) →
+      head f = var 0 → occ2 d = 0 ∨ d = var 2 := by
+  intro m f b d R hm hf
+  have hk1' : k1 ≠ 0 := by omega
+  have hk2' : k2 ≠ 0 := by omega
+  have hb0' : head (sb c b0) = S := sb_head c b0 hb0S
+  have hc0' : head (sb c c0) = S := sb_head c c0 hc0S
+  have hy1' : occ2 (sb c c0) = 0 := sb_occ2 c hc2 c0 hy1
+  have hA : (args b0 ++ [var k1, var k2]).map (asub (tauB c k1 k2 (sb c c0))) =
+      args (sb c b0) ++ [sb c c0, var 0] := by
+    rw [sb_args c b0 hb0S]
+    simp only [List.map_append, List.map_cons, List.map_nil]
+    have hargs : (args b0).map (asub (tauB c k1 k2 (sb c c0))) = (args b0).map (sb c) := by
+      apply List.map_congr_left
+      intro s hs
+      exact asub_tauB_sb c k1 k2 (sb c c0) hk1' hk2' s (occN_args k1 b0 hf1 s hs) (occN_args k2 b0 hf2 s hs)
+    rw [hargs]
+    simp [asub, tauB, hk1', hk2', hk12.symm]
+  have hstep0 : step [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] =
+      some (args (sb c b0) ++ [sb c c0, var 0] ++ [var 2, app (var 1) (var 2), var 3]) := by
+    simp [step, head, hb0', args]
+  match m, hm with
+  | 0, hm =>
+    simp [run] at hm
+    rw [← hm.1] at hf; simp [head, hb0'] at hf
+  | m' + 1, hm =>
+    simp only [run, hstep0] at hm
+    rw [← hA] at hm
+    obtain ⟨Aj, hAj, hLe⟩ := paxb_corr b0 c k1 k2 (sb c c0) hk1' hk2' hk12 hc0' hNK1 m' _ hm
+    have hnb : 2 ≤ nHB k1 k2 Aj := by
+      have := nHB_run k1 k2 m' _ _ hAj
+      have h0 : 2 ≤ nHB k1 k2 (args b0 ++ [var k1, var k2]) := by
+        rw [nHB_append]
+        have : nHB k1 k2 [var k1, var k2] = 2 := by simp [nHB, isHB, head]
+        omega
+      omega
+    have hy2A : ∀ e ∈ Aj, occ2 e = 0 := by
+      have hz := occ_run_zero 2 m' _ Aj (by
+        intro e he
+        simp at he
+        rcases he with he | he | he
+        · rw [← occ2_eq]; exact occ2_args b0 hy0 e he
+        · subst he; simp [occN]; omega
+        · subst he; simp [occN]; omega) hAj
+      intro e he; rw [occ2_eq]; exact hz e he
+    match Aj, hnb, hLe, hy2A with
+    | [], hnb, _, _ => simp [nHB] at hnb
+    | [g], hnb, _, _ => have := nHB_le_length k1 k2 [g]; simp at this; omega
+    | [g, e2], _, hLe, _ =>
+      simp only [List.map_cons, List.map_nil, List.cons_append, List.nil_append, List.cons.injEq] at hLe
+      right; exact hLe.2.2.1
+    | g :: e2 :: e3 :: rest, _, hLe, hy2A =>
+      simp only [List.map_cons, List.cons_append, List.cons.injEq] at hLe
+      left
+      rw [hLe.2.2.1]
+      exact occ2_asub_tauB c k1 k2 (sb c c0) hc2 hk1' hk2' hk12 hy1' e3 (hy2A e3 (by simp))
+
+/-- **THEOREM R3-SINGLE' (`r3_single2`).**  As r3_single, with the handler-only condition weakened to
+    'H1ok(c0) OR b0 never calls its first hole' (in the latter case PAXB applies with no phase-2 hypothesis). -/
+theorem r3_single2 (D b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : 4 ≤ h1) (hh2 : 4 ≤ h2)
+    (h12 : h1 ≠ h2) (hH : 4 ≤ H)
+    (hDS : head D = S) (hDo : ordT D) (hD1 : occN 1 D = 0) (hD2 : occN 2 D = 0) (hD3 : occN 3 D = 0)
+    (hDp : occN 0 D ≤ 1) (hDh1 : occN h1 D = 0) (hDh2 : occN h2 D = 0)
+    (hb0S : head b0 = S) (hc0S : head c0 = S) (hw1 : occN 1 (app b0 c0) = 0) (hw2 : occN 2 (app b0 c0) = 0)
+    (hw3 : occN 3 (app b0 c0) = 0) (hV : fresh3 H (app (app b0 c0) (var 2)))
+    (T' : Nat) (f b : T) (R : List T)
+    (hT : run T' [D, var 1, var 2, var 3] = some (f :: b :: app (app b0 c0) (var 2) :: R)) (hf : head f = var 0)
+    (hcond : (∀ (k : Nat) (g : T) (L : List T), run k (args c0 ++ [var h1, var h2]) = some (g :: L) →
+      head g = var h1 → (args g).head? = some (var h2) ∨ (args g = [] ∧ ∃ b' R', L = b' :: var h2 :: R')) ∨
+      (∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var h1, var h2]) = some (g :: L) → head g ≠ var h1)) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  rcases hcond with hH1 | hNK1
+  · exact r3_single D b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS hDo hD1 hD2 hD3 hDp hDh1 hDh2 hb0S hc0S hw1 hw2
+      hw3 hV T' f b R hT hf hH1
+  · -- fresh holes are absent from b0 (it is part of the handler, built from D, x, y, r)
+    have hz : ∀ hh, 4 ≤ hh → occN hh D = 0 → occN hh b0 = 0 := by
+      intro hh h4 hD
+      have hzr := occ_run_zero hh T' _ _ (by
+        intro e he
+        simp at he
+        rcases he with he | he | he | he <;> subst he
+        · exact hD
+        · simp [occN]; omega
+        · simp [occN]; omega
+        · simp [occN]; omega) hT (app (app b0 c0) (var 2)) (by simp)
+      simp only [occN] at hzr; omega
+    have hy0 : occ2 b0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+    have hy1 : occ2 c0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+    exact paxb_main b0 c0 c h1 h2 hc hc2 hh1 hh2 h12 hb0S hc0S hy0 hy1 (hz h1 hh1 hDh1) (hz h2 hh2 hDh2) hNK1
+
+#print axioms paxb_main
+#print axioms r3_single2
