@@ -14,14 +14,15 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | Proposition Q | `PropQ.lean` | every term whose class in the 39-element productivity model is in F_P is productive (no ⊥ anywhere in its Böhm tree): one half of Conjecture C6, the conjectured answer to BEKW Question 5 |
 | Proposition Q″ | `PathModels.lean` | the "infinite" verdicts of the leftmost-path (36 classes) and rightmost-path (19 classes) models are correct |
 | Lemma 8, Theorem J | `BarrierJ.lean` | data conservation; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
+| Lemma 10 | `Lemma10.lean` | no junk-free rotation: with two data, the bottom one can be brought in front of the other only together with a second copy of itself |
 | Lemma P, Theorem LP1 | `LP1.lean` | if S·t·A·B has a head normal form, t's leftmost Böhm-tree path ends at S; hence every term whose M35 class is in F outside the five two-argument-dead classes D2 has a finite leftmost path ending at S |
 | Theorems UR-R, UR-C | `URCore.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); very likely overlaps Waldmann's "Nimm Zwei" (1997) |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
 
 ## Proved by hand (with computer-certified finite facts)
 * Theorem O: no bounded-cost two-counter simulation (independently audited).
-* Lemmas 8–10, Theorem J, Proposition M: with opaque data, code cannot write into data, rotate it cleanly, or append
-  like a tag system in one pass.
+* Lemma 9 and Proposition M: with opaque data, code cannot write into data or append like a tag system in one pass
+  (Lemmas 8 and 10 and Theorem J, the other barrier lemmas, are machine-checked above).
 * Theorem NM: morphic regularity of head runs is false (square runs), while the weaker R″_PUP holds for every certified run.
 * Per-term exactness certificates for every census counter (152/152 at 12 leaves) and for 850/850 random endpoints up to
   640 leaves (loop, nested-loop, call and comb provers); 86/150 sampled parallel (ReplaceAll) runs.

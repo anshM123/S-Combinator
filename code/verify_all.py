@@ -163,6 +163,8 @@ CHECKS = [
   ["lean_check.py", "../lean/PropQ.lean"], [r"LEAN OK: no errors, no sorry", r"kp1: \(none\)", r"propQ: propext, Classical.choice, Quot.sound"], 2400),
  ("Lean 4: Lemma 8 (data conservation) and Theorem J (global writes, at most one per run) machine-checked",
   ["lean_check.py", "../lean/BarrierJ.lean"], [r"LEAN OK: no errors, no sorry", r"dcount_step: propext, Quot.sound", r"theoremJ_unique: propext, Classical.choice, Quot.sound"], 900),
+ ("Lean 4: Lemma 10 (no junk-free rotation) machine-checked",
+  ["lean_check.py", "../lean/Lemma10.lean"], [r"LEAN OK: no errors, no sorry", r"lemma10: propext, Classical.choice, Quot.sound"], 900),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",

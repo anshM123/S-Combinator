@@ -9,6 +9,40 @@ All files of this agent live in agent_work_U/.
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
+## INTERIM 04:00 (written 02:40 EDT; supersedes nothing — first summary)
+**Status: no universal construction; no partial win (no non-PUP run).  All results below are labelled.**
+What I tried (all files in agent_work_U/):
+1. NEW FRAMEWORK, the descent machine DM (dm.py): leftmost-outermost evaluation restricted to the leftmost Boehm path,
+   i.e. the head machine plus the erasure rule [c, d] -> ch(c) at every head normal form (PROVED, elementary).  It is
+   the one place where leftmost-outermost evaluation ERASES (the second hnf component is frozen for ever while the
+   path stays infinite).  By Lemma P it is embedded in the head run of t A B, so it is 'full re-execution with
+   erasure'.
+2. DM capabilities (PROVED by inspection, checked by dm.py): Church booleans in tail position (S X Y => X,
+   SS X Y => Y), clean application (S(SS) X Y => X Y), identity (SSSS X => X), unboxing ((S x) y => x), and the
+   selection gadget S(SS)(SS) E b => b (E b) (E (SS E) b), which keeps the full state in both branches.
+3. DM limits (PROVED elementary + COMPUTATIONALLY CERTIFIED in bounded ranges):
+   - a round that keeps data ends [S, b, c] -> survivor c = the bottom element; the bottom only changes by wraps
+     w.c with a stale copy left above, erased only if the wrap is the very last step: ONE closed wrap per round;
+   - single-datum DM = a stack machine with pop / rewrite-top / branch-on-top, the stack never grows without copying
+     the datum (growth1.py: 20,000 random runs, 0 growth);
+   - two opaque data: every first round either executes a datum or erases all data (survcat.py, C <= 8 leaves); no
+     round modifies one stack and keeps the other (twostack.py, h <= 8); 3-argument rules never erase and always pass
+     the deepest argument through (headcat.py, lincat.py <= 8 leaves).
+   Reading: the DM is pushdown-like (with copies, higher-order-pushdown-like) — it gives data-dependent SELECTION
+   (which the head-run capability map lacked) but no second independent store.
+4. Call-by-value / innermost view (cbv.py): by Prop. CF all orders share Boehm-level control; innermost syntax of a
+   driver-built tower is the CBV iterate nf(G[x]).  Searches: CBV functions on unary values (cbvfun/cbvsize,
+   a <= 9), CBV iterations (cbviter, f <= 7), CBV string transducers (cbvtrans, b <= 8): only affine sizes, exact
+   linear recurrences, constant or fixed-prefix maps — non-erasure duplicates the argument at every distributive
+   step.  (A size-cache bug in dm.truncate produced a false 'irregular' signal at 03:00; fixed and re-run.)
+5. Word/round searches in DM and head runs (wordround.py, selfword.py, combhalve*.py): no fixed-format word rounds,
+   no self-transforming words, no comb halving (q, v <= 6).
+Strongest concrete result: the DM selection mechanism + the 'one closed wrap per round' lemma, which together
+explain why leftmost-path programs are pushdown-like; no construction.
+Next: (a) try to turn the single-datum stack machine plus datum copies (x1 (c x1)) into two counters, or prove the
+2-datum obstruction in general; (b) parallel evaluation's clock channel (the only mechanism that changes a datum
+below another without touching it).
+
 ## 01:40 EDT  Direction chosen: the DESCENT MACHINE (leftmost-outermost along the leftmost Böhm path)
 * Observation (PROVED, elementary): leftmost-outermost evaluation restricted to the leftmost Böhm path is the
   deterministic list machine DM:  |L| >= 3: [a,b,c|R] -> ch(a)++[c, b.c|R];  |L| = 2: [c,d] -> ch(c);  |L| = 1: [c] -> ch(c);
@@ -67,3 +101,29 @@ All files of this agent live in agent_work_U/.
   symbols a in {S(SS)S, S(SS)(SS), SSS, S(SSS)S}, the DM run of h.(a.X).Y (X, Y opaque stack rests) never reaches,
   within 6 round ends, a survivor C.P.Q (C closed) holding X once in P and Y once in Q other than the trivial
   'apply' survivor (a.X).Y.  No round modifies one stack while keeping the other (push/pop on either stack).
+* COMPUTATIONALLY CERTIFIED (bounded, negative): cbviter.py 7 5 14 300000 — CBV iterations x_{k+1} = nf(f x_k) for
+  normal forms f <= 7 leaves, x0 <= 5 leaves: every size sequence is an exact linear recurrence (ratios 3 or 4,
+  e.g. f = SS(SSS): 1, 6, 21, 66, 201, ...); nothing irregular.  growth1.py 1 20000 5 6 4000 3: in 20,000 random
+  single-datum DM runs (stack of 6 random symbols <= 5 leaves over an opaque base X) the comb depth over X never
+  exceeds its initial value while X stays single — no stack growth without copying the datum, as predicted.
+* Analysis (orders): by Proposition CF every head-fair order, and rightmost-outermost / innermost as long as the
+  arguments normalise, follows the SAME Boehm-level control as the head run; they differ only in how far each piece of
+  syntax has been evaluated (innermost: arguments in normal form).  So under innermost evaluation the syntax of a
+  driver-built tower L_{m+1} = G[L_m] is the CBV iterate nf(G[L_m]) = BT(L_m).  A universal map x -> nf(G[x]) would
+  therefore be Boehm-level universality (it would refute C5).  Being tested next: can nf(G[.]) act as a sequential
+  transducer on string encodings enc(0w) = S enc(w), enc(1w) = S P enc(w)?
+* COMPUTATIONALLY CERTIFIED (bounded, negative): cbvtrans.py 8 4 200000 (+ cbvtrans_filter.py; output
+  agent_work_U/cbvtrans_8.txt) — for every normal form b <= 8 leaves and four (P, E) choices, the CBV normal forms
+  nf(b enc(w)) (enc(0w) = S enc(w), enc(1w) = S P enc(w), |w| <= 4) contain an encoded string at a fixed address only
+  as a constant (713 cases) or as u.w for a fixed prefix u (186 cases); one artefact (address hit depends on the first
+  bit).  No internal rewriting: x -> nf(b x) is 'prefix-only' in this range (non-erasure duplicates x at every
+  distributive step (S p q)*w = (p*w)*(q*w)).
+
+## 02:45 EDT  The right-spine machine RM (rightmost Boehm path with finite left children)
+* Observation (PROVED, elementary): if every left component normalises, leftmost-outermost evaluation finishes the
+  left child c of each hnf S c d (emitting its normal form) and then evaluates d.  Along the right spine this is the
+  list machine RM: head steps as usual; at [c, d] -> emit nf(c), continue with ch(d).  Since every round ends
+  [S, b, c] -> [c, b.c], the next state is b.c: the element left at position 2 becomes the CODE and the bottom
+  element c the DATUM; nothing is erased (the DM erases d, the RM keeps both).  After a write [SS, w, c] the next
+  state is c.(w.c): the OLD datum is executed with the NEW datum as argument (data-dependent control for free).
+  The emitted normal forms form an output stream (Boehm-level, so a universal RM would refute C5).

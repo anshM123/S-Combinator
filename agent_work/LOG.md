@@ -566,3 +566,29 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   OPEN: a replay relation covering ALL real phase-2 outputs (the exact theta-alignment covers 38/836; other cases
   align only on the top part of the lists, with input maps such as y -> p'.y); this is exactly what a proof of
   'phase 3 is never proper' needs.
+* MACHINE-CHECKED (agent_work/lean/YD.lean, 270 lines, Lean 4.35 core, no sorry; axioms propext, Quot.sound):
+  Lemma YD.  `yd_main`: from any list satisfying YDI (no element is the bare y; no S-headed subterm has the bare y
+  as a spine argument; every subterm d.y has d = x), no reachable list contains a proper y-comb (d1.(...(dm.y)),
+  m >= 1, wrappers free of x, y, r) as an element — so no proper transfer at position 2 or 3, ever.
+  `yd_bareS`: for every datum S.U with U S-headed and free of y, the generic run of [S.U, x, y, r] never contains a
+  proper y-comb (the second step glues the bare y onto x.y and YDI holds from then on).  Atoms other than x, y, r
+  are arbitrary (live or frozen), so this applies in every phase.
+* MACHINE-CHECKED (agent_work/lean/REPLAY.lean, 235 lines, Lean 4.35 core, no sorry; axioms propext,
+  Quot.sound): the REPLAY RELATION.  th w q c = replace (outermost) occurrences of the term w by the atom q and the
+  live atom p = var 0 by c.  `replay_step` / `replay_run`: a head step (and hence a run) commutes with th as long as
+  no front is w-prefixed and no step glues b onto d with b.d = w.  `replay_reexec`: if w is S-headed and the generic
+  run of args w ++ [w, y, x.y, r] (= the run of the self-application w.w) reaches a p-headed front (TRANSFER) under
+  these guards, then the generic run of the next phase's datum w[p:=c].q reaches after one more step the th-image
+  of that list, whose front is c-headed (REEXEC).  So whenever a phase-2 run passes through args w ++ [w, y, x.y, r]
+  and then transfers (the 38 aligned cases <= 11 leaves; replay2.py also checks the guards implicitly, since the
+  replay ran to the end in all 38), the next phase re-executes the frozen value instead of transferring.
+* MACHINE-CHECKED (agent_work/lean/MSLS.lean, 1,280 lines, Lean 4.35 core, no sorry; axioms propext,
+  Classical.choice, Quot.sound): **Theorem MSL, STRICT form** — the core proof is now done once for an arbitrary
+  level structure (a predicate Lev with: every level is a P-term; a level d.l' has d closed and l' a level), and
+  instantiated twice.  `msl_glue_strict` / `msl_main_strict`: for the datum K.l (K closed, l = d2.(...(dk.p)) with
+  closed wrappers, frozen atoms allowed), every P-element glued onto a Y-element is prefixed by one of the datum's
+  OWN levels l, l', ..., p, or all of its P spine arguments are; hereditarily for all subterms w.q.  This is exactly
+  the computationally certified classification of ml_wrappers.py (p-headed / level-prefixed / S-headed with only
+  p-headed or level-prefixed P-arguments) and is strictly stronger than the generous form (`msl_glue_gen`, = MSL.lean),
+  which also counts invented combs such as (S.S).L2 as levels.  The strict form matters: the general-shape phase-3
+  counterexamples (goodhits*.py) all have generous-comb wrappers that are not datum levels.

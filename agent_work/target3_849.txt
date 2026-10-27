@@ -1,0 +1,2 @@
+626 K x 586 tails
+Counter({'p2 front-y': 165785, 'p2 pfront': 117627, 'p2 budget': 69997, 'p2 proper3': 13041, 'p3 reexec': 9371, 'p3 pfront': 3212, 'p3 front-y': 408, 'p2 front-x': 386, 'p3 front-x': 50})

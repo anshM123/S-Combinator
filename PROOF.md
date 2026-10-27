@@ -449,7 +449,11 @@ register updates are both of the forbidden kind. Universality would need rearran
 universal; the natural formal target for the opposite (H1) is a simulation of Böhm-tree paths by a
 pushdown-with-copying (higher-order pushdown) system.
 
-## Lemma 10 (no junk-free rotation) — PROVED
+## Lemma 10 (no junk-free rotation) — PROVED and MACHINE-CHECKED (lean/Lemma10.lean, 2026-10-27)
+*Lean (`lemma10`, standard axioms):* the invariant J1, J2, K below is preserved by every head step (`inv_step`), for a
+start (A ++ X :: B) ++ Y :: C with A, B, C free of both atoms, X free of y and Y free of x. This is slightly more general
+than the statement: X and Y need not be variable-headed. An atom-headed front is stuck in the Lean machine, so the run
+never opens a variable-headed element.
 Let a head run start with two variable-headed data elements x above y (plus closed elements) and never open a
 variable-headed element. Then every element headed by y that contains x contains at least two occurrences of y.
 *Proof (replaced after the audit: the original used Lemma 8(ii), which needs termination; this one does not).*
