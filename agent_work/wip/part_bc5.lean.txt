@@ -1,0 +1,97 @@
+
+/-- **THEOREM R3-SINGLE (all shapes, unconditional).**  For an S-headed ordered datum D free of x, y, r with at most
+    one p and ANY single-wrapper handler (b0.c0).y of its phase-2 transfer (b0.c0 free of x, y, r; fresh hole
+    atoms): the next phase never makes a proper transfer.  (b0 atom-headed: the next datum never moves; c0
+    atom-headed: pah_main; both S-headed: r3_single_unc.) -/
+theorem r3_single_all_unc (D b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : 4 ≤ h1) (hh2 : 4 ≤ h2)
+    (h12 : h1 ≠ h2) (hH : 4 ≤ H)
+    (hDS : head D = S) (hDo : ordT D) (hD1 : occN 1 D = 0) (hD2 : occN 2 D = 0) (hD3 : occN 3 D = 0)
+    (hDp : occN 0 D ≤ 1) (hDh1 : occN h1 D = 0) (hDh2 : occN h2 D = 0)
+    (hw1 : occN 1 (app b0 c0) = 0) (hw2 : occN 2 (app b0 c0) = 0)
+    (hw3 : occN 3 (app b0 c0) = 0) (hV : fresh3 H (app (app b0 c0) (var 2)))
+    (T' : Nat) (f b : T) (R : List T)
+    (hT : run T' [D, var 1, var 2, var 3] = some (f :: b :: app (app b0 c0) (var 2) :: R)) (hf : head f = var 0) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  have hy0 : occ2 b0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+  have hy1 : occ2 c0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+  rcases head_cases b0 with hb0S | ⟨n, hn⟩
+  · rcases head_cases c0 with hc0S | ⟨n', hn'⟩
+    · exact r3_single_unc D b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS hDo hD1 hD2 hD3 hDp hDh1 hDh2 hb0S hc0S hw1
+        hw2 hw3 hV T' f b R hT hf
+    · have hn2 : n' ≠ 2 := by
+        intro e; subst e
+        have : occ2 c0 ≠ 0 := by
+          have key : ∀ t : T, head t = var 2 → occ2 t ≠ 0 := by
+            intro t; induction t with
+            | S => intro h; simp [head] at h
+            | var m => intro h; simp [head] at h; subst h; simp [occ2]
+            | app f x ihf _ => intro h; simp only [head] at h; simp only [occ2]; have := ihf h; omega
+          exact key c0 hn'
+        exact this hy1
+      exact pah_main b0 c0 c n' hc2 hb0S hy0 hy1 hn' hn2
+  · intro m f' b' d' R' hm hf'
+    obtain ⟨hne0, hneS⟩ := head_sb_var c n hc b0 hn
+    have hD'h : head (app (app (sb c b0) (sb c c0)) (var 0)) = head (sb c b0) := rfl
+    match m, hm with
+    | 0, hm =>
+      simp only [run, Option.some.injEq, List.cons.injEq] at hm
+      rw [← hm.1, hD'h] at hf'; exact absurd hf' hne0
+    | m' + 1, hm =>
+      simp only [run] at hm
+      rw [step_head_ne _ _ (by rw [hD'h]; exact hneS)] at hm
+      simp at hm
+
+/-- **R3-RC (single-wrapper handlers, unconditional).**  For every S-headed right comb rcombT ds p over p with
+    closed wrappers ds (frozen atoms allowed) - every datum of a Church chain after its first transfer - every
+    single-wrapper proper transfer (b0.c0).y (b0.c0 free of x, y, r) is followed by a next phase without a proper
+    transfer. -/
+theorem r3_rc_unc (ds : List T) (b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : 4 ≤ h1)
+    (hh2 : 4 ≤ h2) (h12 : h1 ≠ h2) (hH : 4 ≤ H) (hds : ∀ d ∈ ds, rk d = 0)
+    (hDS : head (rcombT ds (var 0)) = S) (hDh1 : occN h1 (rcombT ds (var 0)) = 0)
+    (hDh2 : occN h2 (rcombT ds (var 0)) = 0)
+    (hw1 : occN 1 (app b0 c0) = 0) (hw2 : occN 2 (app b0 c0) = 0)
+    (hw3 : occN 3 (app b0 c0) = 0) (hV : fresh3 H (app (app b0 c0) (var 2)))
+    (T' : Nat) (f b : T) (R : List T)
+    (hT : run T' [rcombT ds (var 0), var 1, var 2, var 3] = some (f :: b :: app (app b0 c0) (var 2) :: R))
+    (hf : head f = var 0) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  obtain ⟨ho, h0, h1', h2', h3', _⟩ := rcombT_rk_occ ds hds
+  exact r3_single_all_unc (rcombT ds (var 0)) b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS ho h1' h2' h3' (by omega)
+    hDh1 hDh2 hw1 hw2 hw3 hV T' f b R hT hf
+
+/-! non-vacuity: a pattern-beta datum whose c0 violates H1ok (its h1-front is the B-form front h1.(X.h1) over h2),
+    S(S(SS))(SS)(S(S(SS))(S(Sp))) (13 leaves): every hypothesis of r3_single_unc is discharged -/
+def exBD : T := app (app (app S (app S (app S S))) (app S S)) (app (app S (app S (app S S))) (app S (app S (var 0))))
+def exBb0 : T := app S S
+def exBc0 : T := app (app S (app S (app S S))) (app S (app S (var 0)))
+def exBR : List T := ((run 12 [exBD, var 1, var 2, var 3]).getD []).drop 3
+
+theorem exBD_run : run 12 [exBD, var 1, var 2, var 3] =
+    some (var 0 :: var 2 :: app (app exBb0 exBc0) (var 2) :: exBR) := by
+  decide
+
+theorem exBD_ordT : ordT exBD := by
+  simp [exBD, ordT, args, head, rk, occN]
+
+/-- c0 = S(S(SS))(S(Sp)) does NOT satisfy H1ok: after 3 steps its two-hole run is at the B-form front
+    h1.((S(Sp)).h1) with h2 at position 3 (X = S(Sp)) -/
+theorem exBc0_BF : run 3 (args exBc0 ++ [var 5, var 6]) =
+    some [app (var 5) (app (app S (app S (var 0))) (var 5)),
+      app (app (app S (app S (var 0))) (var 5)) (app (var 5) (app (app S (app S (var 0))) (var 5))), var 6] := by
+  decide
+
+theorem r3_single_unc_example : ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+    run m [app (app (sb 4 exBb0) (sb 4 exBc0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+    head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 :=
+  r3_single_unc exBD exBb0 exBc0 4 5 6 7 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) exBD_ordT (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) ⟨by decide, by decide, by decide⟩
+    12 (var 0) (var 2) exBR exBD_run (by decide)
+
+#print axioms r3_single_all_unc
+#print axioms r3_rc_unc
+#print axioms r3_single_unc_example

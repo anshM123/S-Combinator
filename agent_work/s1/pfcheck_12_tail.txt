@@ -1,0 +1,11 @@
+489 ('FH', 'vn atom') S(S(S(SSS)S))p
+454 ('FH', 'PF') SSS(S(SSS(Sp)))
+189 ('FH', 'bn atom') S(S(S(SSS)S))(pS)
+82 ('MWA2', 'PF') SSS(S(SS(SS)(Sp)))
+58 ('FH', 'bn atom-headed') S(S(S(SSS)S))(pSS)
+40 ('FH', 'K2') SS(SS)(S(SSS(Sp)))
+18 ('MWA2', 'K2') SS(SS)(S(SS(SS)(Sp)))
+9 ('IL-ATOM', 'PF') S(S(S(S(SS))S))(S(SS)p)
+7 ('FH', 'TAIL') SS(S(SS))(S(S(SSS)p))
+6 ('IGEN', 'PF') S(S(S(SSS)S))(S(SS)p)
+2 ('IL-NH', 'PF') S(S(S(S(SS))S))(S(SSSp))

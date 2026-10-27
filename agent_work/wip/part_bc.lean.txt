@@ -1,0 +1,147 @@
+
+/-! ## S1 Part 18: BARRIER ORDER - the form of c0's hole front in pattern beta.
+    Started at the S1 list args(c0) ++ [w, y | B], the abstract run of args(c0) ++ [h1, h2] stays, up to its hole
+    front, in a CHAIN state K ++ [E_j(X_i, h1), E_{j+1}, h2 | units] (K closed, X_i a P-term) or in a UNIT state
+    (every h1 lies inside a unit h1.h2 or (h1.(X.h1)).h2).  Hence an h1-front is h1.h2..., the bare h1 over h2,
+    h1.(X.h1) over h2 (BF1) or h1.(X.h1).h2... (BF2, X S-headed); the chain index is bounded by Lemma AB. -/
+
+def unitT (h1 h2 : Nat) (u : T) : Prop :=
+  u = app (var h1) (var h2) ∨
+  ∃ X, head X = S ∧ rk X = 1 ∧ occN h1 X = 0 ∧ occN h2 X = 0 ∧ u = app (app (var h1) (app X (var h1))) (var h2)
+
+theorem unitT_head (h1 h2 : Nat) (u : T) (hu : unitT h1 h2 u) : head u = var h1 := by
+  unfold unitT at hu
+  rcases hu with hu | ⟨X, _, _, _, _, hu⟩ <;> subst hu <;> simp [head]
+
+/-- every occurrence of h1 lies inside a unit -/
+def InvU (h1 h2 : Nat) : T → Prop
+  | S => True
+  | var n => n ≠ h1
+  | app f x => unitT h1 h2 (app f x) ∨ (InvU h1 h2 f ∧ InvU h1 h2 x)
+
+theorem InvU_of_free (h1 h2 : Nat) : ∀ t : T, occN h1 t = 0 → InvU h1 h2 t
+  | S, _ => trivial
+  | var n, h => by
+    simp only [occN] at h
+    show n ≠ h1
+    intro e; subst e; simp at h
+  | app f x, h => by
+    simp only [occN] at h
+    exact Or.inr ⟨InvU_of_free h1 h2 f (by omega), InvU_of_free h1 h2 x (by omega)⟩
+
+theorem InvU_unit (h1 h2 : Nat) (u : T) (hu : unitT h1 h2 u) : InvU h1 h2 u := by
+  have hu' := hu
+  unfold unitT at hu'
+  rcases hu' with e | ⟨X, _, _, _, _, e⟩
+  · subst e; exact Or.inl hu
+  · subst e; exact Or.inl hu
+
+theorem InvU_args (h1 h2 : Nat) : ∀ t : T, InvU h1 h2 t → head t = S → ∀ e ∈ args t, InvU h1 h2 e
+  | S, _, _, e, he => by simp [args] at he
+  | var _, _, h, _, _ => by simp [head] at h
+  | app f x, hi, hS, e, he => by
+    simp only [head] at hS
+    simp only [InvU] at hi
+    rcases hi with hu | ⟨hf, hx⟩
+    · have := unitT_head h1 h2 _ hu; simp only [head] at this; rw [hS] at this; simp at this
+    · simp only [args, List.mem_append, List.mem_singleton] at he
+      rcases he with he | he
+      · exact InvU_args h1 h2 f hf hS e he
+      · subst he; exact hx
+
+theorem InvU_front (h1 h2 : Nat) : ∀ g : T, InvU h1 h2 g → head g = var h1 →
+    (args g).head? = some (var h2) ∨ ∃ X, head X = S ∧ rk X = 1 ∧ occN h1 X = 0 ∧ occN h2 X = 0 ∧
+      ∃ A, args g = app X (var h1) :: var h2 :: A
+  | S, _, h => by simp [head] at h
+  | var n, hi, h => by
+    simp only [head] at h; injection h with h; subst h
+    exact absurd rfl hi
+  | app f x, hi, h => by
+    simp only [head] at h
+    simp only [InvU] at hi
+    rcases hi with hu | ⟨hf, _⟩
+    · unfold unitT at hu
+      rcases hu with hu | ⟨X, hX1, hX2, hX3, hX4, hu⟩
+      · rw [hu]; left; simp [args]
+      · rw [hu]; right; exact ⟨X, hX1, hX2, hX3, hX4, [], by simp [args]⟩
+    · rcases InvU_front h1 h2 f hf h with h' | ⟨X, hX1, hX2, hX3, hX4, A, hA⟩
+      · left
+        simp only [args]
+        cases hfa : args f with
+        | nil => rw [hfa] at h'; simp at h'
+        | cons a l => rw [hfa] at h'; simp at h'; simp [h']
+      · right; exact ⟨X, hX1, hX2, hX3, hX4, A ++ [x], by simp [args, hA]⟩
+
+theorem InvU_step (h1 h2 : Nat) (a b c : T) (R : List T) (ha : head a = S)
+    (h : ∀ e ∈ a :: b :: c :: R, InvU h1 h2 e) : ∀ e ∈ args a ++ c :: app b c :: R, InvU h1 h2 e := by
+  intro e he
+  simp only [List.mem_append, List.mem_cons] at he
+  rcases he with he | he | he | he
+  · exact InvU_args h1 h2 a (h a (by simp)) ha e he
+  · subst he; exact h _ (by simp)
+  · subst he; exact Or.inr ⟨h b (by simp), h c (by simp)⟩
+  · exact h e (by simp [he])
+
+theorem chainE_head2 (U V : T) (n : Nat) : head (chainE U V (n + 2)) = head (chainE U V n) := by
+  simp [chainE, head]
+
+theorem chainE_head_par (U V : T) : ∀ m, head (chainE U V (2 * m)) = head U ∧
+    head (chainE U V (2 * m + 1)) = head V
+  | 0 => by simp [chainE]
+  | m + 1 => by
+    obtain ⟨h0, h1⟩ := chainE_head_par U V m
+    refine ⟨?_, ?_⟩
+    · rw [show 2 * (m + 1) = 2 * m + 2 by omega, chainE_head2]; exact h0
+    · rw [show 2 * (m + 1) + 1 = (2 * m + 1) + 2 by omega, chainE_head2]; exact h1
+
+theorem chainE_asub (h1 h2 : Nat) (e1 e2 Xi : T) (hX1 : occN h1 Xi = 0) (hX2 : occN h2 Xi = 0) :
+    ∀ j, asub (sg2 h1 h2 e1 e2) (chainE Xi (var h1) j) = chainE Xi e1 j
+  | 0 => by show asub _ Xi = Xi; exact asub_sg2_id h1 h2 e1 e2 Xi hX1 hX2
+  | 1 => by simp [chainE, asub, sg2]
+  | j + 2 => by
+    simp only [chainE, asub]
+    rw [chainE_asub h1 h2 e1 e2 Xi hX1 hX2 j, chainE_asub h1 h2 e1 e2 Xi hX1 hX2 (j + 1)]
+
+theorem Preg_args_chainE_odd (U V : T) (hU : rk U = 1) (hV : rk V = 1) (hV1 : 1 ≤ (Preg (args V)).length) :
+    ∀ m, m + 1 ≤ (Preg (args (chainE U V (2 * m + 1)))).length
+  | 0 => by simpa [chainE] using hV1
+  | m + 1 => by
+    have := Preg_args_chainE_odd U V hU hV hV1 m
+    rw [show 2 * (m + 1) + 1 = (2 * m + 1) + 2 by omega, Preg_args_chainE U V hU hV (2 * m + 1),
+      List.length_append]
+    simp; omega
+
+theorem Preg_three (A : List T) (e1 e2 e3 : T) (B : List T) (h1 : rk e1 = 1) (h2 : rk e2 = 1)
+    (h3 : rk e3 = 1) : 3 ≤ (Preg (A ++ e1 :: e2 :: e3 :: B)).length := by
+  rw [Preg_append]
+  simp only [Preg_cons, h1, h2, h3, if_true, List.length_append, List.length_cons]
+  omega
+
+/-- an S-headed sorted P-term with at most one P-argument: args = closed part ++ [its P-argument] -/
+theorem args_split1 (X : T) (hS : head X = S) (hr : rk X = 1) (ho : ordT X)
+    (h1 : (Preg (args X)).length ≤ 1) :
+    ∃ K X', args X = K ++ [X'] ∧ (∀ k ∈ K, rk k = 0) ∧ rk X' = 1 ∧ X' ∈ args X := by
+  obtain ⟨C, P, Y, hL, hC, hP, hY⟩ := srt_split (args X) (ordT_srt X ho hS)
+  have hY0 : Y = [] := by
+    cases Y with
+    | nil => rfl
+    | cons y Y' =>
+      exfalso
+      have hy : y ∈ args X := by rw [hL]; simp
+      have := rk_args_le X y hy; have := hY y (by simp); omega
+  have hPr : Preg (args X) = P := by rw [hL]; exact Preg_split C P Y hC hP hY
+  obtain ⟨s, hs, hs1⟩ := P_has_P_arg X hS hr
+  have hsP : s ∈ P := by
+    rw [← hPr]; unfold Preg; simp [hs, hs1]
+  rw [hPr] at h1
+  rcases P with _ | ⟨X', _ | ⟨z, P'⟩⟩
+  · simp at hsP
+  · exact ⟨C, X', by rw [hL, hY0]; simp, hC, hP X' (by simp), by rw [hL]; simp⟩
+  · simp at h1
+
+def ChainSt (h1 h2 : Nat) (La : List T) : Prop :=
+  ∃ K Xi j Ta, La = K ++ chainE Xi (var h1) j :: chainE Xi (var h1) (j + 1) :: var h2 :: Ta ∧
+    (∀ k ∈ K, rk k = 0 ∧ occN h1 k = 0 ∧ occN h2 k = 0) ∧ rk Xi = 1 ∧ ordT Xi ∧ occN h1 Xi = 0 ∧
+    occN h2 Xi = 0 ∧ (∀ e ∈ Ta, unitT h1 h2 e)
+
+#print axioms args_split1

@@ -1,0 +1,94 @@
+
+/-! ## S1 Part 19: REPLAY-PF - a handler-only sufficient condition for handlers with ANY number of wrappers -/
+
+def tauP (c k2 : Nat) : Nat → T := fun n => if n = 0 then var c else if n = k2 then var 0 else var n
+
+theorem asub_tauP_sb (c k2 : Nat) (hk2 : k2 ≠ 0) : ∀ t : T, occN k2 t = 0 → asub (tauP c k2) t = sb c t
+  | S, _ => by simp [asub, sb]
+  | var n, h => by
+    by_cases h0 : n = 0
+    · subst h0; simp [asub, sb, tauP]
+    · have n2 : n ≠ k2 := by intro e; subst e; simp [occN] at h
+      simp [asub, sb, tauP, h0, n2]
+  | app f x, h => by
+    simp only [occN] at h
+    simp [asub, sb, asub_tauP_sb c k2 hk2 f (by omega), asub_tauP_sb c k2 hk2 x (by omega)]
+
+/-- **THEOREM REPLAY-PF.**  Let the innermost wrapper of a handler be bn.cn (bn S-headed, k2 a fresh atom).  If the
+    INNERMOST REPLAY - the run of args(bn) ++ [cn, k2], k2 standing for the new predecessor - reaches a p-headed
+    front, then the next phase of the handler, whatever its outer wrappers ws, has NO p'-front at all: it is guarded
+    until the innermost level is opened, then follows the replay (p -> c, k2 -> p') and stops at the c-headed image
+    of that front.  (No hypothesis on the earlier phase or on the outer wrappers.) -/
+theorem replay_pf (ws : List T) (bn cn : T) (c k2 : Nat) (hc : c ≠ 0) (hk2 : 4 ≤ k2) (hbnS : head bn = S)
+    (hfb : occN k2 bn = 0) (hfc : occN k2 cn = 0) (j : Nat) (g : T) (Lg : List T)
+    (hj : run j (args bn ++ [cn, var k2]) = some (g :: Lg)) (hg : head g = var 0) :
+    ∀ (m : Nat) (f' : T) (L' : List T),
+      run m [rcombT ((ws ++ [app bn cn]).map (sb c)) (var 0), var 1, var 2, var 3] = some (f' :: L') →
+      head f' ≠ var 0 := by
+  intro m f' L' hm hf'
+  have hk2' : k2 ≠ 0 := by omega
+  obtain ⟨Ln', hLn'⟩ : ∃ Ln', Ln' = app (app (sb c bn) (sb c cn)) (var 0) := ⟨_, rfl⟩
+  have hD3 : rcombT ((ws ++ [app bn cn]).map (sb c)) (var 0) = rcombT (ws.map (sb c)) Ln' := by
+    simp only [List.map_append, List.map_cons, List.map_nil]
+    rw [rcombT_append, hLn']; simp [sb]
+  rw [hD3] at hm
+  have hbn' : head (sb c bn) = S := sb_head c bn hbnS
+  have hLnS : head Ln' = S := by simp [hLn', head, hbn']
+  have h0 : ∀ e ∈ [rcombT (ws.map (sb c)) Ln', var 1, var 2, var 3], guarded Ln' e := by
+    intro e he
+    simp at he
+    rcases he with he | he | he | he <;> subst he
+    · rw [hLn']; exact guarded_rcombT c hc _ ws
+    · simp [guarded]
+    · simp [guarded]
+    · simp [guarded]
+  rcases guarded_phase Ln' hLnS _ h0 m _ hm with hG | ⟨m1, L1, L2, hlt, hr1, hg1, hx1, hs2, hrest⟩
+  · exact guarded_head Ln' (by rw [hLnS]; simp) f' (hG f' (by simp)) hf'
+  · obtain ⟨f1, b1, d1, R1, hL1, hwp⟩ := hx1
+    obtain ⟨us, hus, _⟩ := guarded_prefix_args Ln' f1 hwp (hg1 f1 (by rw [hL1]; simp))
+    have hf1S : head f1 = S := by rw [wpre_headeq Ln' f1 hwp]; exact hLnS
+    rw [hL1] at hs2
+    simp only [step, hf1S, ite_true, Option.some.injEq] at hs2
+    have hA : (args bn ++ [cn, var k2]).map (asub (tauP c k2)) = args Ln' := by
+      have hargsLn : args Ln' = args (sb c bn) ++ [sb c cn, var 0] := by simp [hLn', args]
+      rw [hargsLn, sb_args c bn hbnS]
+      simp only [List.map_append, List.map_cons, List.map_nil]
+      have hargs : (args bn).map (asub (tauP c k2)) = (args bn).map (sb c) := by
+        apply List.map_congr_left
+        intro s hs
+        exact asub_tauP_sb c k2 hk2' s (occN_args k2 bn hfb s hs)
+      rw [hargs, asub_tauP_sb c k2 hk2' cn hfc]
+      simp [asub, tauP, hk2']
+    have hL2 : L2 = (args bn ++ [cn, var k2]).map (asub (tauP c k2)) ++ (us ++ d1 :: app b1 d1 :: R1) := by
+      rw [← hs2, hus, hA]; simp
+    rw [hL2] at hrest
+    have himg : ∀ i Ai, run i (args bn ++ [cn, var k2]) = some Ai →
+        run i ((args bn ++ [cn, var k2]).map (asub (tauP c k2)) ++ (us ++ d1 :: app b1 d1 :: R1)) =
+          some (Ai.map (asub (tauP c k2)) ++ (us ++ d1 :: app b1 d1 :: R1)) :=
+      fun i Ai hi => run_append i _ _ _ (asub_run _ i _ _ hi)
+    have hgc : head (asub (tauP c k2) g) = var c := by rw [asub_headvar _ 0 g hg]; simp [tauP, head]
+    rcases Nat.lt_or_ge j (m - m1 - 1) with hjl | hjl
+    · -- the image of the replay is stuck at step j (c-headed front)
+      have hnone : run (j + 1) ((args bn ++ [cn, var k2]).map (asub (tauP c k2)) ++
+          (us ++ d1 :: app b1 d1 :: R1)) = none := by
+        rw [run_add j 1, himg j _ hj, Option.bind_some]
+        simp only [List.map_cons, List.cons_append]
+        simp [run, step_head_ne _ _ (by rw [hgc]; simp)]
+      have := run_none_after (j + 1) (m - m1 - 1) _ hnone (by omega)
+      rw [hrest] at this; simp at this
+    · obtain ⟨Ai, hAi, _⟩ := run_prefix j (m - m1 - 1) _ _ hj hjl
+      have h2 := himg _ _ hAi
+      rw [hrest] at h2
+      rcases Nat.lt_or_ge (m - m1 - 1) j with hlt' | hge'
+      · obtain ⟨g', rest', hg', hg'S⟩ := run_front_S j (m - m1 - 1) _ _ _ hj hlt' hAi
+        rw [hg'] at h2
+        simp only [List.map_cons, List.cons_append, Option.some.injEq, List.cons.injEq] at h2
+        have := asub_headS (tauP c k2) g' hg'S
+        rw [← h2.1, hf'] at this; simp at this
+      · have he : m - m1 - 1 = j := by omega
+        rw [he, hj] at hAi; injection hAi with hAi
+        subst hAi
+        simp only [List.map_cons, List.cons_append, Option.some.injEq, List.cons.injEq] at h2
+        rw [← h2.1, hf'] at hgc; simp at hgc; exact hc hgc.symm
+
+#print axioms replay_pf

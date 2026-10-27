@@ -1,0 +1,108 @@
+
+/-- **BARRIER ORDER (front classification).**  In the setting of beta_class, every h1-front of c0's abstract
+    two-hole run is h1.h2..., the bare h1 with h2 at position 3, or a B-form front h1.(X.h1) followed by h2 with X a
+    hole-free P-term (S-headed, or the front is h1.(X.h1) with h2 at position 3). -/
+theorem beta_front (L1 : List T) (T' : Nat) (f b d : T) (RT : List T)
+    (hT : run T' L1 = some (f :: b :: d :: RT)) (hf : head f = var 0)
+    (hbound : ∀ s Ls, s ≤ T' → run s L1 = some Ls → (Preg Ls).length ≤ 2)
+    (w : T) (hwS : head w = S) (hwr : rk w = 1) (hw1 : 1 ≤ (Preg (args w)).length)
+    (c0 : T) (h1 h2 : Nat) (h12 : h1 ≠ h2) (hc0S : head c0 = S) (hc0r : rk c0 = 1) (hc0o : ordT c0)
+    (hc0h1 : occN h1 c0 = 0) (hc0h2 : occN h2 c0 = 0)
+    (s : Nat) (hsT : s ≤ T') (B : List T) (hs : run s L1 = some (args c0 ++ w :: var 2 :: B)) :
+    ∀ k g L, run k (args c0 ++ [var h1, var h2]) = some (g :: L) → head g = var h1 →
+      ((args g).head? = some (var h2) ∨ (args g = [] ∧ ∃ b' L', L = b' :: var h2 :: L')) ∨
+      ∃ X, rk X = 1 ∧ occN h1 X = 0 ∧ occN h2 X = 0 ∧ BFfront X h1 h2 g L ∧
+        (head X = S ∨ (args g = [app X (var h1)] ∧ ∃ b' L', L = b' :: var h2 :: L')) := by
+  intro k g L hk hg
+  rcases beta_class L1 T' f b d RT hT hf hbound w hwS hwr hw1 c0 h1 h2 h12 hc0S hc0r hc0o hc0h1 hc0h2 s hsT B hs
+    k _ hk with ⟨K, Xi, j, Ta, hL, hK, hXr, hXo, hX1, hX2, hTa⟩ | hInv
+  · cases K with
+    | cons k1 K' =>
+      exfalso
+      simp only [List.cons_append, List.cons.injEq] at hL
+      rw [hL.1] at hg
+      exact occN_head h1 k1 hg (hK k1 (by simp)).2.1
+    | nil =>
+      simp only [List.nil_append, List.cons.injEq] at hL
+      obtain ⟨hgE, hLE⟩ := hL
+      obtain ⟨m, hm⟩ : ∃ m, j = 2 * m ∨ j = 2 * m + 1 := ⟨j / 2, by omega⟩
+      rcases hm with hm | hm
+      · exfalso
+        have := (chainE_head_par Xi (var h1) m).1
+        rw [← hm, ← hgE, hg] at this
+        exact occN_head h1 Xi this.symm hX1
+      · rcases (by omega : j = 1 ∨ j = 3 ∨ 5 ≤ j) with hj | hj | hj
+        · subst hj
+          left; right
+          rw [hgE, hLE]; exact ⟨by simp [chainE, args], _, _, rfl⟩
+        · subst hj
+          right
+          refine ⟨Xi, hXr, hX1, hX2, ⟨hg, Or.inl ⟨?_, _, _, hLE⟩⟩, Or.inr ⟨?_, _, _, hLE⟩⟩ <;>
+            rw [hgE] <;> simp [chainE, args]
+        · -- an odd chain element E_j (j >= 5) at the front: opening its image leaves >= 3 P-elements
+          exfalso
+          obtain ⟨hck, hle⟩ := c0_image L1 T' f b d RT hT hf c0 w (var 2) h1 h2 h12 hc0h1 hc0h2 s hsT B hs k _ hk
+          have hcj := chainE_asub h1 h2 w (var 2) Xi hX1 hX2
+          have hs2 : sg2 h1 h2 w (var 2) h2 = var 2 := by simp [sg2, Ne.symm h12]
+          have hlist : (g :: L).map (asub (sg2 h1 h2 w (var 2))) ++ B = chainE Xi w j :: chainE Xi w (j + 1) ::
+              var 2 :: (Ta.map (asub (sg2 h1 h2 w (var 2))) ++ B) := by
+            rw [hgE, hLE]; simp [hcj, asub, hs2]
+          rw [hlist] at hck
+          have hjS : head (chainE Xi w j) = S := by
+            have := (chainE_head_par Xi w m).2; rw [← hm] at this; rw [this]; exact hwS
+          have hlt : s + k < T' := by
+            rcases Nat.lt_or_ge (s + k) T' with h | h
+            · exact h
+            · exfalso
+              have he : s + k = T' := by omega
+              rw [he, hT] at hck; injection hck with hck; injection hck with hck _
+              rw [hck, hjS] at hf; simp at hf
+          have hstep : step (chainE Xi w j :: chainE Xi w (j + 1) :: var 2 ::
+              (Ta.map (asub (sg2 h1 h2 w (var 2))) ++ B)) = some (args (chainE Xi w j) ++ var 2 ::
+                app (chainE Xi w (j + 1)) (var 2) :: (Ta.map (asub (sg2 h1 h2 w (var 2))) ++ B)) := by
+            simp [step, hjS]
+          have hr1 := run_succ_of L1 (s + k) _ _ hck hstep
+          have hb := hbound _ _ (by omega) hr1
+          rw [Preg_append, List.length_append] at hb
+          have := Preg_args_chainE_odd Xi w hXr hwr hw1 m
+          rw [← hm] at this
+          omega
+  · rcases InvU_front h1 h2 g (hInv g (by simp)) hg with hA | ⟨X, hXS, hXr, hX1, hX2, A, hA⟩
+    · left; left; exact hA
+    · right; exact ⟨X, hXr, hX1, hX2, ⟨hg, Or.inr ⟨A, hA⟩⟩, Or.inl hXS⟩
+
+/-- the glue front of pattern beta lies in the X-sequence of c0 (FI-W at the glue) -/
+theorem s1_inX (L1 : List T) (w b0 c0 : T) (hw : w = app b0 c0) (hwr : rk w = 1)
+    (hS : Seg L1) (hp : (L1.map (occN 0)).sum ≤ 1)
+    (T' : Nat) (f b d : T) (R : List T) (hT : run T' L1 = some (f :: b :: d :: R)) (hd : rk d = 2)
+    (tg : Nat) (htg : tg ≤ T') (a1 : T) (R0 : List T) (hg : run tg L1 = some (a1 :: w :: var 2 :: R0))
+    (ha1 : rk a1 = 1) : inX c0 a1 := by
+  have hbound : ∀ s Ls, s ≤ T' → run s L1 = some Ls → (Preg Ls).length ≤ 2 :=
+    fun s Ls hs hr => ab3_bound L1 hS T' f b d R hT hd s Ls hs hr
+  obtain ⟨_, _, hiw, _, _⟩ := s1_inv L1 w b0 c0 hw hwr hS hp T' hbound tg htg tg _ (Nat.le_refl _) hg
+  have hSg := seg_run tg L1 _ hS hg
+  have hyR := srt_tail_ge (var 2) R0 (srt_tail w _ (srt_tail a1 _ hSg.1))
+  rw [rk_var2] at hyR
+  have hR0 : Preg R0 = [] := Preg_nil_of R0 (fun e he => by have := hyR e he; omega)
+  have hP : Preg (a1 :: w :: var 2 :: R0) = [a1, w] := by
+    simp only [Preg_cons, ha1, hwr, rk_var2, hR0]; simp
+  exact hiw.2 a1 hP
+
+theorem inX_occ (c0 : T) : ∀ U, inX c0 U → U = c0 ∨ occN 0 c0 ≠ 0 := by
+  intro U hU
+  induction hU with
+  | base => exact Or.inl rfl
+  | next M U' _ hon ih =>
+    right
+    rcases ih with ih | ih
+    · rw [ih] at hon
+      obtain ⟨_, hP⟩ := hon
+      have hU'm : U' ∈ Preg (args c0) := by rw [hP]; simp
+      unfold Preg at hU'm; simp at hU'm
+      have h1 := occN_args_le 0 c0 U' hU'm.1
+      have h2 := occN0_of_rk1 U' hU'm.2
+      omega
+    · exact ih
+
+#print axioms beta_front
+#print axioms inX_occ

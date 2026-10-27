@@ -1655,3 +1655,74 @@ non-universality or R''_PUP.
     the B-form front is reached from the S1 list args(c0) ++ [w, y | B], opening it gives args(b0) ++ [c0, X.w, y |
     R'] (`bf_step`), then bform_nk1 and paxb_main.  The remaining single-wrapper gap is now: c0's first hole front is
     h1-headed but neither of H1ok form nor of B-form, and b0 calls its first hole.
+* 09:25 (draft wip/R3G_bc.lean compiles, not yet installed) BARRIER ORDER, invariant form: `beta_class` - in the S1
+  setting (list args(c0) ++ [w, y | B] at time s, |P| <= 2 up to the p-front) every list of c0's abstract two-hole
+  run is in a CHAIN state K ++ [E_j(X_i, h1), E_j+1, h2 | units] (K closed, X_i a sorted hole-free P-term) or in a
+  UNIT state (every h1 lies inside a unit h1.h2 or (h1.(X.h1)).h2, X S-headed).  Chain steps / closed-code steps
+  keep the chain state; [k1, k2] above the pair, or opening E_j with j >= 4, would put 3 P-elements into the image
+  (Lemma AB); opening E_0 = X_i glues h1 onto h2 (unit state); opening E_2 = X_i.h1 recurses into the unique
+  P-argument of X_i (args_split1) with the unit (h1.(X_i.h1)).h2 appended.  Next: the front classification and
+  the unconditional single-wrapper theorem.
+* 09:31 **MACHINE-CHECKED (agent_work/lean/R3G.lean, 8,162 lines, 'LEAN OK: no errors, no sorry'; axioms propext,
+  Classical.choice, Quot.sound): R3 FOR SINGLE-WRAPPER HANDLERS WITHOUT ANY HANDLER CONDITION.**
+  - `beta_front` (BARRIER ORDER, front classification): in the S1 setting every h1-front of c0's two-hole run is
+    h1.h2..., the bare h1 with h2 at position 3, or a B-form front h1.(X.h1) followed by h2 (X a hole-free P-term;
+    S-headed, or the front is h1.(X.h1) over h2).  Chain elements E_j with j >= 5 at the front are excluded by
+    Lemma AB (`Preg_args_chainE_odd`).  `s1_inX` + `inX_occ`: the beta glue front lies in c0's X-sequence (FI-W),
+    so c0 contains p.
+  - `bform_nk1g`: BF-NK1 for any such X (a non-S-headed X would stop the earlier phase with y at position 3).
+  - **`r3_single_unc`**: hypotheses exactly those of r3_single WITHOUT H1ok - S-headed ordered datum D free of x, y,
+    r with occN 0 D <= 1; phase 2 reaches a p-front f :: b :: (b0.c0).y :: R; b0, c0 S-headed; b0.c0 free of x, y, r;
+    fresh hole atoms.  Conclusion: the next phase of (b0.c0).y never makes a proper transfer.  Proof: alpha
+    (alpha_main), closed glue (closedglue_main), beta: s1_core, then H1ok-form front (beta_main) or B-form front
+    (bf_step, bform_nk1g, paxb_main).
+  - `r3_single_all_unc` (ANY single wrapper b0.c0, atom-headed parts included) and `r3_rc_unc` (every S-headed right
+    comb over p with closed wrappers, i.e. every datum of a Church chain after its first transfer): unconditional.
+  - Non-vacuity: `r3_single_unc_example` discharges every hypothesis for S(S(SS))(SS)(S(S(SS))(S(Sp))) (13 leaves,
+    transfer at step 12), whose c0 = S(S(SS))(S(Sp)) VIOLATES H1ok (`exBc0_BF`: its two-hole run reaches the B-form
+    front h1.((S(Sp)).h1) over h2 after 3 steps) - the case no earlier theorem covered without the NK1 condition.
+  So R3-1 holds for every single-wrapper handler; what remains of R3-1 is the MULTI-wrapper case.
+* 09:34 COMPUTATIONALLY CERTIFIED, consistent with the barrier order (s1/bfcheck.py: form of c0's first hole front in
+  every single-wrapper pattern-beta transfer with a P-front, ordered single-occurrence data): <= 12 leaves (bfcheck_12):
+  187 transfers, c0 never calls its holes in all of them; exactly 13 leaves (bfcheck_13): 383 'no hole front' + 1
+  B-form front BF1 (S(S(SS))(SS)(S(S(SS))(S(Sp))), the r3_single_unc_example datum); random 4-22 leaves, 1,500,000
+  samples (bfcheck_r22): 400 + 1 BF1.  No other form ever occurs (as beta_front now proves).  s1/condcheck.py rc 13:
+  all handler conditions of the right-comb coverage decided.  s1/lemcheck.py random audits (14 leaves) timed out
+  twice without output and are NOT counted (the lemmas they audit are now machine-checked anyway).
+* 09:43 Process note: to restart my own s1/pfcheck.py runs (started 09:42 with a labelling bug) I killed PIDs 80963,
+  80964, 80966, 80967 (my pfcheck.py processes and their timeout wrappers).  The kill loop also tried two tokens
+  parsed from multi-line ps output ('=' and '1700'); both failed ('no such process') and nothing else was touched.
+  From now on I kill only PIDs I have read individually.
+* 09:43 EXPERIMENTALLY SUPPORTED (s1/mwcheck.py 12, 13 13, rand 171 22 1500000: anatomy of every multi-wrapper proper
+  transfer that is neither FH nor IGEN, ordered single-occurrence data): (i) the innermost code cn NEVER calls its
+  holes or is atom-headed (all 794 cases: <= 12 leaves: 111, exactly 13: 364, random: 319); (ii) inner glue in pattern alpha
+  is NEVER followed by a re-opening of the innermost level; (iii) inner glue by a closed front is ALWAYS followed by a
+  re-opening (I-Ln); (iv) inner pattern beta occurs (NHALL), without re-opening.  So every such transfer is in MWA2,
+  IL-ATOM/IL-NH (re-opening) or NHALL (no re-opening, every c_j hole-free-running).
+  s1/pfcheck.py 12 (the 'innermost replay' args(bn) ++ [cn, k2], k2 standing for p'): it reaches a p-front (PF) in
+  58 of the 117 non-FH multi-wrapper cases, runs out of arguments (hnf) in 41, and reaches k2 only in a list of
+  length < 3 (K2short) in 18 - never a k2-front in a list of length >= 3.
+* 09:47 MACHINE-CHECKED (agent_work/lean/R3G.lean, 8,256 lines, 'LEAN OK: no errors, no sorry'): **THEOREM REPLAY-PF
+  (`replay_pf`)** - a handler-only sufficient condition for handlers with ANY number of wrappers: if the innermost
+  wrapper is bn.cn (bn S-headed; k2 a fresh atom) and the INNERMOST REPLAY, the run of args(bn) ++ [cn, k2], reaches a
+  p-headed front, then the next phase of rcombT ((ws ++ [bn.cn])[p := c]) p' has NO p'-front at all, for ANY outer
+  wrappers ws (no hypothesis on the earlier phase).  Proof: guarded until the innermost level is opened
+  (guarded_phase), then the run follows the replay under p -> c, k2 -> p' (asub_run) and stops at the c-headed image.
+  COMPUTATIONALLY CERTIFIED (s1/pfcheck.py 12 / 13 13 / rand 181 22 1500000, multi-wrapper transfers that are not
+  FH): the replay reaches a p-front in 58/117 (<= 12 leaves), 200/392 (13 leaves), 211/330 (random) of them -
+  including 6/12 resp. 13/15 of the NHALL cases; otherwise it runs out of arguments ('hnf') or reaches k2 in a list of
+  length < 3 (where the outer levels decide); a k2-front in a list of length >= 3 occurs (2 + 8 MWA2 cases) and is
+  harmless (y-free position 3).  So for multi-wrapper handlers R3 can only fail through the replay running out of
+  arguments - the precise point where the outer wrappers matter.
+* 09:54 MACHINE-CHECKED (agent_work/lean/R3G.lean, 8,364 lines, 'LEAN OK: no errors, no sorry'): **THEOREM REPLAY-PF2
+  (`replay_pf2`)**: REPLAY-PF with two abstract tail elements - if the run of args(bn) ++ [cn, k2, t1, t2] (k2 for
+  p', t1, t2 for the first two elements below the innermost level when the next phase opens it; all fresh atoms
+  absent from bn, cn) reaches a p-headed front, then the next phase of the handler has NO p'-front at all, whatever
+  its outer wrappers (when the innermost level is opened, at least two elements lie below it; the next phase
+  follows the replay under p -> c, k2 -> p', t1, t2 -> those elements and stops at the c-headed image).
+  COMPUTATIONALLY CERTIFIED (s1/pfcheck.py ... tail2 / tail1 / tail): with tail atoms the replay never runs out of
+  arguments in the data: <= 12 leaves, all 117 non-FH multi-wrapper transfers: p-front 99 (every IL-ATOM, IL-NH and
+  IGEN case, 82/100 MWA2), k2-front with a TAIL atom at position 3 in 18 (MWA2: there the outer level decides);
+  random 4-22 leaves (rand 181 22 1500000 tail2): p-front 271 of 330 (all IL-ATOM 12, all IL-NH 10, NHALL 13/15,
+  MWA2 232/288, IGEN 4/5), k2-front with a tail atom at position 3: 50 (48 MWA2, 2 NHALL), k2-front with a replay
+  element (y-free) at position 3: 8 (MWA2, harmless), a tail atom at the front: 1 (IGEN).

@@ -1,0 +1,5 @@
+274 S(S(S(SS)))S(S(SS)p) ('S1+H1ok', 'all decided')
+18 S(S(S(S(SS))S))(S(SS)(Sp)) ('IL-NH', 'all decided')
+12 S(SS)S(SSS(S(SS))(S(Sp))) ('NHALL', 'all decided')
+1 S(S(SS))(SS)(S(S(SS))(S(Sp))) ('S1+NK1', 'all decided')
+exit 0
