@@ -11,6 +11,7 @@ out = subprocess.run([lean, path], capture_output=True, text=True, encoding="utf
 text = out.stdout + out.stderr
 errors = [l for l in text.splitlines() if ": error" in l]
 axioms = re.findall(r"'(\w+)' depends on axioms: \[([^\]]*)\]", text)
+axioms += [(name, "(none)") for name in re.findall(r"'(\w+)' does not depend on any axioms", text)]
 bad = [name for name, ax in axioms if "sorryAx" in ax]
 print(f"exit {out.returncode}, {len(errors)} errors, {len(axioms)} theorems checked, axioms used: "
       f"{sorted({a.strip() for _, ax in axioms for a in ax.split(',')})}")

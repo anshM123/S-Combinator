@@ -389,3 +389,42 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   fails trivially before the innermost level of D3 is opened (P' = [D3]); (BUF) 'if the C-region is empty, the
   P'-bottom is not p'-headed' fails: D3 = S(SS)(S c)p' reaches [ (S c)p', p'((S c)p'), y, ... ] at step 3 (C empty,
   P'-bottom p'-headed) — the run then opens the buffer (S c)p', releasing c at the front (REEXEC) one step later.
+* MSL candidate invariants in phase 2 (msl_check.py; LP* = prefixed by a datum level L_j, j >= 2, or p-headed):
+  on all 428 multi-level right combs <= 8 leaves, MQ ('P-region nonempty => contains an LP* element'), MT ('|P| = 2 =>
+  non-LP* members have only LP* P-arguments') and GL ('P glued onto Y is LP* or has only LP* P-arguments') never fail;
+  the auxiliary guess MA (arguments glued onto LP* elements are LP*-good) FAILS (2 runs, e.g. S(S(SSS))S(Sp) at step
+  6: L2.(S L2).(S(S L2)(L2(S L2)))).  N = 10 run in progress.
+* EXAMPLE (phase-3-shaped datum NOT produced by any tested phase-2 run): D3 = S(S(SSc)).p' runs
+  [S(SSc), p', y, xy, r] -> [SSc, y, p'y, ...] -> [S, c, p'y, y(p'y), ...] -> [p'y, c(p'y), y(p'y), xy, r]: a p'-headed
+  front with the proper y-term c(p'y) at position 2 (u-input) and y(p'y) at position 3 (v-input).  So 'no p'-front
+  above a proper y-term at position 2' is false for general phase-3-SHAPED data; any proof must use the shape of
+  phase-2 outputs (its wrapper S(S(SS p)) has a non-level-prefixed P-argument, which MSL's GL excludes).  Decision:
+  'proper transfer' from now on means a proper right comb at POSITION 3 (the v-input of the predecessor's next
+  activation); position 2 is the u-input and is only available glued to position 3.
+* COMPUTATIONALLY CERTIFIED NEGATIVE CONTROL, position 3 (p3shape_pos3.py 1 60000 14): phase-3-SHAPED single-level
+  data D3 = W.p' (W random <= 14 leaves, contains the frozen c, ordered) DO make proper transfers at POSITION 3:
+  4 of ~12,500 samples, e.g. W = S(S(S(SSS)(c1))) stuck at [p'y, S(p'y), c1(p'y), y(p'y), ...] (v-input c1(p'y)).
+  So 'phase 3 is never proper' (certified for real phase-2 outputs) is false for general phase-3 shapes even with the
+  position-3 definition; its proof MUST use the shape of phase-2 dirty wrappers (here w = S(S(S(SSS) p)) has a
+  non-level-prefixed P-argument, excluded by the MSL candidate GL).
+* PROVED (Lemma AB, absorbing P-count; hand proof, general).  In any generic run whose lists have the form
+  CL* ++ P* ++ Y* (CL free of the live atom p and of x, y, r; P contains p but no x, y, r; Y contains x, y or r) and
+  whose S-headed P-elements are ordered, if the P-region ever has >= 3 elements it has >= 3 elements for ever, and no
+  later step glues a P-element onto a Y-element.  Proof: with k >= 3 P-elements a step's classes are non-decreasing;
+  (CL,CL,P) adds one, (CL,P,P) keeps k, (CL,P,Y) needs k = 1, (P,P,P) opens a P-front which releases >= 1
+  P-argument (it contains p in some spine argument, which then contains no x, y, r), giving k - 1 + #P-args >= k;
+  (P,P,Y) needs k = 2; a Y-front needs k = 0.  A P-onto-Y glue needs P inside the first two positions.  ∎
+  Corollary: a proper transfer (p-headed front, proper y-term at position 2 or 3) can occur only while |P| <= 2, and
+  every wrapper glued onto y was glued while |P| <= 2.
+* PROVED (phase 3, single-level D3 = W'.p', case analysis; hand proof, not audited): with regions CL* C* P'* Y*
+  (C = contains the frozen c, no p', x, y, r): (a) the C-region never empties by opening (an S-headed C-element
+  releases >= 1 C-argument; a c-headed one is stuck), only by gluing its bottom element onto the P'-top (a 'buffer'
+  C0.X, P'-count +1) or onto the Y-top (only when P' is empty); (b) every p'-headed front needs C = CL = empty;
+  (c) while C is nonempty no closed element is directly above the P'-top, so no insertion t.X happens.
+  Case (i), the last C-element is disposed onto P': then |P'| >= 2 from then on until a buffer is opened, opening a
+  buffer re-releases C-elements directly above the P'-top, |P'| = 1 never coexists with C = empty, and the Y-top stays
+  the bare y; so every p'-front has the bare y at position k'+1 <= 3 or |P'| >= 3: NO proper transfer.  Case (ii), the
+  unique P'-element is glued onto the bare y during the opening of a C-front (sigma_C), after which P' stays empty
+  for ever: here proper transfers are possible for general shapes (the control above), via 'y glued down, then
+  C-disposals onto the exposed p'-headed Y-element'.  So the open part of 'phase 3 is never proper' is exactly case
+  (ii), and it needs the MSL shape of the phase-2 wrapper.
