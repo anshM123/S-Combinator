@@ -1,0 +1,17 @@
+  violation, then phase 4 front-y 1
+  violation, then phase 4 reexec 7
+next phase front-y 340
+next phase pfront 2041
+next phase proper3 8
+next phase reexec 13211
+ordered data 237730
+proper transfers 15600
+violation: D = S(Sp)(S(S(S(SSS)p)))  V = S(S(S(SSS)p))y  V3 = c1(py)
+violation: D = S(Sp)(S(S(SSS(SSp))))  V = S(S(SSS(SSp)))y  V3 = S(SS(c1))(py)
+violation: D = S(Sp)(S(S(S(SSS)(pS))))  V = S(S(S(SSS)(pS)))y  V3 = c1S(py)
+violation: D = S(Sp)(S(S(S(SSS)(Sp))))  V = S(S(S(SSS)(Sp)))y  V3 = S(c1)(py)
+violation: D = S(Sp)(S(S(S(SS(SS))p)))  V = S(S(S(SS(SS))p))y  V3 = c1(py)
+violation: D = S(Sp)(S(S(S(SSSS)p)))  V = S(S(S(SSSS)p))y  V3 = c1(py)
+violation: D = S(Sp)(S(S(S(SS)(SS)p)))  V = S(S(S(SS)(SS)p))y  V3 = c1(SS(c1))(py)
+violation: D = S(S(pS))(S(S(S(SSS)p)))  V = S(S(S(SSS)p))y  V3 = c1(py)
+EXIT 0

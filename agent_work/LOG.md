@@ -1,4 +1,9 @@
 # PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:30 EDT
+!! R3 AGENT CORRECTION (2026-10-27 05:35 EDT; details: section '2026-10-27 R3 agent' at the end of this log):
+!! Conjecture R3 as stated below (ALL ordered data) is REFUTED - machine-checked counterexample with two occurrences
+!! of p, D = S(Sp)(S(S(S(SS)(SS)p))) (agent_work/lean/R3B.lean, r3_cx_*).  Hence 'at most 1 proper transfer from an
+!! ordered start' is FALSE for multi-occurrence data.  The bound '<= 2' needs R3 only for right combs over p (one
+!! occurrence) and is not refuted; R3 for single-occurrence ordered data stays OPEN (certified <= 13 leaves).
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -1089,3 +1094,181 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
   contexts only (ONE occurrence of p); the right-comb data that the '<= 2' bound needs also have one occurrence.
   Consequence for the task: the correct target is R3 for right-comb data (enough for '<= 2') and possibly for
   single-occurrence ordered data (needed for '<= 1 from an ordered start').  Checking both next.
+* 05:16 MACHINE-CHECKED: new file agent_work/lean/R3B.lean (= R3A content + pax_main, core_bareS, pamf_main + the
+  counterexample; compiles, no sorry): `r3_cx_ordered` (D = S(Sp)(S(S(S(SS)(SS)p))) is S-headed, y-free and ordered
+  in INNER.lean's sense), `r3_cx_phase2` (run 2 [D, x, y, r] = [p, y, w.y, x.y, r]), `r3_cx_next` (the next datum is
+  w[p:=c].p'), `r3_cx_phase3` (run 7 of the next datum = [p'y, c(p'y), c(SSc)(p'y), y(p'y), xy, r]: a p'-front with
+  a proper y-comb at position 3).  So Conjecture R3 in the generality of the THEOREM INDEX is REFUTED by a
+  kernel-checked computation, and with it 'a Church chain from an ordered start makes at most 1 proper transfer'.
+* 05:18 COMPUTATIONALLY CERTIFIED (r3/r3search.py, random search for R3 violations):
+  ord2 (ordered data with exactly two occurrences of p, <= 14 / <= 18 leaves): 1 of 6,017 / 2 of 38,666 proper
+  transfers violate R3, all of the form S(Sp)(S(S(...p...))) (e.g. S(Sp)(S(S(SSS(SSp))))): pattern-beta glue
+  [Sp, w, y] handing over an arbitrary dangerous w.
+  ord1 (ordered data with exactly ONE occurrence of p, 4-18 leaves, 863,585 ordered S-headed data, 62,650 proper
+  transfers): NO violation.  (rcomb: running.)
+  INTERIM READING: R3 is false as stated (multi-occurrence data) but consistent with all evidence for data with a
+  single occurrence of p, in particular for right combs over p with closed wrappers - the only data the chain
+  bound '<= 2' needs (every datum after the first transfer is such a comb, chain_step_innermost).
+* 05:22 COMPUTATIONALLY CERTIFIED (r3/r3census.py, exhaustive):
+  (a) ordered S-headed data with exactly TWO occurrences of p and <= 11 leaves ('two 11'): 237,730 data, 15,600
+  proper transfers, 8 R3 VIOLATIONS (10 or 11 leaves, all of the shape S(Sp)(S(S(...))) or S(S(pS))(S(S(...))),
+  e.g. S(Sp)(S(S(S(SSS)p))) whose next phase transfers c1.(p'.y)); after each violation phase 4 ends in REEXEC (7)
+  or a y-call (1): chains of length exactly 2 from ordered starts, none of length 3.
+  (b) ordered S-headed data with ONE occurrence of p and exactly 12 leaves ('one 12'): 149,226 data, 5,965 proper
+  transfers, NO violation (next phase: REEXEC 4,710, non-proper p'-front 938, y-call 249, x-call 1, budget 67).
+  With the predecessor's census (<= 11 leaves, 2,621 transfers from ordered 1-hole data, no violation) R3 holds for
+  all single-occurrence ordered data up to 12 leaves.
+* 05:26 COMPUTATIONALLY CERTIFIED: (a) r3/r3census.py one 13: all S-headed ordered data with ONE occurrence of p and
+  exactly 13 leaves: 534,888 data, 19,730 proper transfers, NO R3 violation.  So R3 holds for every
+  single-occurrence ordered datum with <= 13 leaves (with the predecessor's <= 11 census and 'one 12').
+  (b) r3/chain_cover.py (Church chains from ALL S-headed data with one occurrence of p, <= 11 leaves, and with two
+  occurrences, <= 11 leaves): 183 resp. 290 chains of length 2 (8 of the latter from ORDERED two-occurrence
+  starts: the R3 counterexamples), none longer; EVERY transfer made by a later datum D_2 is of class FH (171 / 287:
+  a wrapper p-headed, or frozen-headed, or with leftmost path to p or to a frozen atom - the frozen atom c1 left in
+  D_2's innermost wrapper by the dirty first transfer) or ALPHA (12 / 3).  Both classes are machine-checked with NO
+  per-case hypothesis (OTD/FH1/FHL, R3A.lean alpha_main).  New conjecture R3-chain: every proper transfer made by a
+  datum D_2 = V_1[y:=p, p:=c1] (V_1 a proper handler of any first datum) is of class FH, ALPHA or IGEN.  Random
+  test r3/chain_cover_rand.py 7 16 100000: 69 length-2 chains, all second transfers FH.  Larger runs started.
+  (c) MACHINE-CHECKED (wip/R3C.lean): `ln0_main` (if the next phase never opens a copy of its innermost level it
+  has no p'-front at all; class LN0).
+* 05:28 MACHINE-CHECKED (wip/R3C.lean = R3B content + parts 9-10; compiles, no sorry): **THEOREM BETA0
+  (`beta_main`)**: single wrapper w = b0.c0; if the earlier phase (any run from L0) runs c0 on the holes (w, y), i.e.
+  reaches args(c0) ++ [w, y] ++ B2, and later reaches a p-front list, and c0 satisfies the residual condition
+  H1ok (whenever the abstract run of args(c0) ++ [h1, h2] reaches an h1-headed front, it is h1.h2.(...) or the bare
+  h1 with h2 at position 3), then the next phase of w.y never makes a proper transfer.  (c0 never calls its holes:
+  PAF; calls h2: a y-front of the earlier phase, impossible; calls h1 under H1ok: the earlier phase lays out
+  args(w.y): IGEN.)  r3/h1ok.py 11: all 37 single-wrapper pattern-beta handlers <= 11 leaves satisfy both
+  hypotheses ('c0 on (w, y)' in phase 2: 37/37; F(c0) = p 33, F(c0) = h1 with H1ok 4).  This reduces pattern beta to
+  the STRUCTURAL claim 'phase 2 runs c0 on (w, y)', which holds in all single-occurrence data tested and fails for
+  the two-occurrence counterexample (there the glue [Sp, w, y] is not preceded by any execution of c0).
+* 05:30 MACHINE-CHECKED (wip/R3C.lean; compiles, no sorry): **THEOREM PBT (`pbt_main`)**: pattern beta with
+  c0 = S.a1 - if the earlier phase (any run from L0) opens (S.a1).w with y at position 3 (w = b0.(S.a1)) and later
+  reaches a p-front list, the next phase of w.y never makes a proper transfer.  No replay guard and no condition on
+  c0: H1ok is automatic for c0 = S.a1 (`h1ok_Sa1`: after the first abstract step h1 occurs only inside copies of
+  h1.h2, invariant gH preserved by every step, `gH_run`), so BETA0 applies.  This is pb_main of PA.lean with all its
+  per-case hypotheses removed.  Structural single-wrapper classes now: ALPHA (glue [c0, w, y]), PBT (front
+  (S.a1).w over y), BETA0 (c0 run on (w, y) + H1ok of c0), IGEN.
+* 05:30 COMPUTATIONALLY CERTIFIED (random): (a) r3/r3search.py 3 22 3000000 rcomb: 3,000,000 random right combs over p
+  with 1-3 closed wrappers (<= 22 leaves), 122,541 proper transfers, NO R3 violation.  (b) r3/chain_cover_rand.py
+  12 16 3000000 and 11 22 1500000 (random data with one or two occurrences of p, as chain_len_rand.py): 1,916 and
+  738 chains of length 2 (one from an ordered start, a two-occurrence R3 counterexample), none of length >= 3; the
+  transfer of EVERY later datum is of class FH (1,901 / 731) or ALPHA (15 / 7) - both machine-checked with no
+  per-case hypothesis.  So in every Church chain observed (exhaustive <= 11 leaves with one or two occurrences of p;
+  4.5M random data up to 22 leaves) the second transfer is certified harmless by a theorem without per-case
+  hypotheses (the classes are decided by the shape of the second handler and by the glue step).
+* 05:31 COMPUTATIONALLY CERTIFIED (r3/cover.py with the structural classes PBT and BETA0 added; hypotheses checked
+  per case): all ordered S-headed data <= 11 leaves (one occurrence of p): 2,621/2,621 transfers covered -
+  single wrapper (2,287): FH 982, ALPHA 1,245, PBT 51, BETA0 1, IGEN 8, i.e. ALL by theorems whose only
+  hypotheses are structural facts of the run (the glue / front pattern, or IGEN) and, for BETA0, the c0-only
+  condition H1ok; multi-wrapper (334): FH 310, YD 2, LN0 10, PAM-F 12 (handler-only hypotheses).
+  Targeted family (t 7 4 9, 5,086): single wrapper 3,686 = FH 808, ALPHA 2,588, PBT 128, BETA0 50, IGEN 108, PAX 4;
+  multi-wrapper 1,400 = FH 808, YD 53, IGEN 2, LN0 257, PAM-F 260 + 8 (b0 = S), open 12 (certified non-proper
+  by simulation).
+* 05:34 (correction to the 05:22 entry: the 8 two-occurrence violations have 10 or 11 leaves, e.g.
+  S(Sp)(S(S(S(SSS)p))) has 10; the machine-checked counterexample S(Sp)(S(S(S(SS)(SS)p))) has 11.)
+  COMPUTATIONALLY CERTIFIED (r3/s1test.py one 10 / two 10: every proper single-wrapper transfer glued in pattern beta,
+  all S-headed data <= 10 leaves): the STRUCTURAL CLAIM (S1) 'phase 2 runs c0 on (w, y) before the glue' holds in
+  ALL 18 cases from ORDERED single-occurrence data (F(c0) = p 15, F(c0) = h1 with H1ok and I-gen 3), so BETA0 covers
+  them; it FAILS for non-ordered single-occurrence data (e.g. S(Sp)(S(SS)S), innermost-CLEAN transfer, next phase
+  proper - R3 needs orderedness, as OT predicts) and for ordered two-occurrence data (e.g. S(Sp)(S(SSp)); 1 of
+  them, S(Sp)(S(S(S(SSS)p))), violates R3).  So (S1) for ordered single-occurrence data is exactly the missing
+  structural step for single-wrapper R3; both hypotheses 'ordered' and 'one occurrence' are necessary.
+* 05:36 Installed agent_work/lean/R3C.lean (consolidated: PA.lean 1-1574 + all R3 sections; compiles, no sorry).
+  Inserted a clearly marked 5-line correction note at the top of the PROOF STATUS block (R3 refuted as stated;
+  '<= 1 from an ordered start' false for multi-occurrence data; '<= 2' not refuted).  Next: Theorem NHALL
+  (multi-wrapper, hypothesis only on the wrappers' codes: every level's c-code never calls its two holes; proof:
+  the next phase descends level by level through barrier phases whose bottoms keep a y-free or bare-y first
+  element), to replace the phase-3-run conditions of PAM-F / LN0.
+* 05:40 MACHINE-CHECKED (wip/R3D.lean = R3C content + parts 12-14; compiles, no sorry; axioms propext,
+  Classical.choice, Quot.sound): **THEOREM NHALL (`nhall_main`)**: for a handler V = v1.(...(vn.y)) with ANY number
+  of wrappers, if every wrapper v_j = b_j.c_j has S-headed y-free b_j, c_j and the abstract run of
+  args(c_j) ++ [h1, h2] never calls h1 or h2, then in the next phase every p'-headed front has a y-free element or
+  the bare y at position 3.  Proof (`descend`, induction on the wrapper list): the next phase descends level by
+  level; at each level a barrier phase (barriers: c_j'-prefixed and next-level-prefixed elements, generic lemmas
+  `phaseQ`, `big2_step`, `big2_pos3`) keeps the bottom untouched; a c_j'-front is a re-execution by paf_post; a
+  next-level front starts the next level with a bottom whose first element is y-free or the bare y (`big2_pos3`) and
+  whose elements stay guarded (`guarded_mono`, `guarded_prefix_args`); at the innermost level pa_core_g applies.
+  This replaces the phase-3-run conditions of PAM / PAM-F / LN0 by conditions on the handler's codes c_j only.
+* 05:45 COMPUTATIONALLY CERTIFIED (r3/s1rand.py 5 18 2000000; r3/creation.py one 11 and rand 6 18 1000000):
+  structural claim (S1) on random ORDERED single-occurrence data up to 18 leaves: all 755 pattern-beta
+  single-wrapper transfers have 'c0 run on (w, y) before the glue' (F(c0) = p 647, F(c0) = h1 with H1ok and I-gen
+  106, H1-residual 2 - the latter with a non-proper next phase, PAX type).  Anatomy (60 exhaustive <= 11 + 365
+  random <= 18): the node w = b0.c0 is ALWAYS created by an S-duplication step whose front has exactly one argument,
+  [S.a'', b0, c0 | R] -> [a'', c0, w | R] -> args(a'') ++ [w, c0.w | R] (so c0.w exists from the next step on), and
+  c0 later runs on (w, y) by opening c0.w (or (c0.w).y) with y as its next argument.  A proof of (S1) would follow
+  the executions of w and c0.w after this creation (two-hole argument: right after the creation a'' must execute w
+  or c0.w before anything below them); NOT done.
+* 05:49 Final Lean file: agent_work/lean/R3D.lean (3,237 lines = PA.lean lines 1-1574 verbatim + R3-agent sections;
+  lean_check: 'LEAN OK: no errors, no sorry', 19 theorems printed, axioms only propext / Classical.choice /
+  Quot.sound).  R3A.lean, R3B.lean, R3C.lean are earlier checkpoints of the same file (all compile; R3D supersedes
+  them).  Re-check of all 19 files in agent_work/lean/: ABC, MSL, MSLS, YD, REPLAY, PA, FH1, FHL, INNER, R3A-R3D
+  pass lean_check; OC, OT, OTD, SL, CANON, AB compile with exit 0 and contain no sorry - lean_check.py reports
+  'CHECK FAILED' for them only because they contain no '#print axioms' line (unchanged since before this session).
+
+# FINAL (R3 agent; written 05:50 EDT 2026-10-27; any later progress is appended as 'FINAL addendum')
+BOTTOM LINE.  Conjecture R3 as stated in the THEOREM INDEX (for ALL S-headed ordered y-free data) is REFUTED by a
+machine-checked counterexample with two occurrences of p; with it the claim 'a Church chain from an ordered start
+makes at most 1 proper transfer' is false.  The chain bound '<= 2 proper transfers' is NOT refuted (it needs R3 only
+for data after the first transfer, which are right combs over p with one occurrence of p), but it is still NOT
+proved in general.  R3 for single-occurrence ordered data (R3-1), in particular for right combs (R3-RC), is OPEN,
+COMPUTATIONALLY CERTIFIED far beyond the old range, and reduced to two precisely stated structural claims.  New
+machine-checked theorems remove ALL replay guards of PA/PB/PAM and hold for runs from ANY list.  Nothing here proves
+non-universality or R''_PUP.
+1. REFUTATION - MACHINE-CHECKED (agent_work/lean/R3D.lean: r3_cx_ordered, r3_cx_phase2, r3_cx_next, r3_cx_phase3,
+   kernel computation by rfl/simp).  D = S(Sp)(S(S(S(SS)(SS)p))) is S-headed, y-free, ordered in INNER.lean's sense;
+   [D,x,y,r] -> [Sp, w, y, xy, r] -> [p, y, w.y, xy, r] (w = S(S(S(SS)(SS)p)), a proper, innermost-dirty
+   transfer); the next datum w[p:=c].p' reaches after 7 steps [p'y, c(p'y), c(SSc)(p'y), y(p'y), xy, r]: a p'-front
+   with the proper y-comb c(SSc).(p'.y) at position 3.  Census (r3/r3census.py two 11): 8 such violations among
+   15,600 transfers of ordered two-occurrence data <= 11 leaves (10-11 leaves), each followed by phase 4 = REEXEC or
+   a y-call (chains of length exactly 2).  Mechanism: a pattern-beta glue [Sp, w, y] hands over an arbitrary w; the
+   bad w are the old negative-control shapes (b0 = S, c0 calls its second argument).
+2. MACHINE-CHECKED (agent_work/lean/R3D.lean, 3,237 lines = PA.lean 1-1574 + new sections; Lean 4.35 core; no sorry;
+   axioms propext, Classical.choice, Quot.sound; R3A/R3B/R3C.lean are earlier checkpoints).  Frame: the earlier
+   phase is ANY run from ANY list L0 that later reaches a p-front list with >= 3 elements (no orderedness, any number
+   of occurrences of p); conclusion 'the next phase never makes a proper transfer' means: every p'-headed front of
+   the run of [V[y:=p', p:=c], x, y, r] has a y-free element or the bare y at position 3.
+   - asub_run (runs commute with every atom substitution - no guard), nHB_stop (two hole atoms are two barriers),
+     gcl (GENERAL CORRESPONDENCE LEMMA: two images of one abstract run tie the outcomes of the two phases).
+   - IGEN igen_main: if the earlier phase lays out args(V) ++ B2 at some time before its p-front, the next phase has
+     NO p'-front at all (any number of wrappers).
+   - ALPHA alpha_main: single wrapper w = b0.c0 glued in pattern alpha ([c0, w, y] reached) => R3 for w.y.  NO other
+     hypothesis (replaces pa_main and both replay guards).
+   - PBT pbt_main: pattern beta with c0 = S.a1 (front (S.a1).w over y reached) => R3 for w.y; no other hypothesis
+     (replaces pb_main).
+   - BETA0 beta_main: c0 runs on (w, y) (list args(c0) ++ [w, y] ++ B2 reached) + condition H1ok on c0 alone =>
+     R3 for w.y.
+   - Handler-only: paf_main (single wrapper: c0's abstract run on two holes never calls them), pax_main (the next
+     phase never opens c0'), pamf_main (multi-wrapper: innermost c0 condition + bottom condition B0ok or b0 = S),
+     ln0_main (next phase never opens its innermost level), NHALL nhall_main (ANY number of wrappers: every level's
+     c_j never calls its holes; proof = level-by-level descent through barrier phases, `descend`).
+3. COMPUTATIONALLY CERTIFIED (scripts in agent_work/r3/):
+   - no R3 violation for ordered data with ONE occurrence of p: <= 11 (predecessor), exactly 12 (149,226 data,
+     5,965 transfers) and exactly 13 leaves (534,888 data, 19,730 transfers) [r3census.py one 12 / one 13]; random
+     4-18 leaves 62,650 transfers [r3search.py 2 18 3000000 ord1]; random right combs <= 22 leaves 122,541 transfers
+     [r3search.py 3 22 3000000 rcomb].
+   - coverage by the theorems of item 2 (hypotheses checked per case) [cover.py]: right combs <= 11: 1,083/1,083
+     (FH 421, YD 2, ALPHA 605, PBT 32, BETA0 1, IGEN 4, NHALL 18); all ordered one-occurrence data <= 11:
+     2,621/2,621 (single wrapper 2,287 ALL by FH/ALPHA/PBT/BETA0/IGEN); targeted family t 7 4 9: 5,074/5,086, the 12
+     open are multi-wrapper and certified non-proper by simulation.
+   - Church chains [chain_cover.py one 11 / two 11; chain_cover_rand.py 12 16 3000000 and 11 22 1500000]: no chain
+     of length >= 3; EVERY transfer of a later datum D_2 is of class FH (171 / 287 / 1,901 / 731) or ALPHA (12 / 3 /
+     15 / 7), i.e. covered by a machine-checked theorem with no per-case hypothesis beyond the shape of the handler
+     or the glue.
+4. OPEN (precisely):
+   (a) R3-1 / R3-RC in general.  Single wrapper: everything is reduced to the structural claim
+       (S1) 'in a run from an ORDERED datum with ONE occurrence of p, a single wrapper w = b0.c0 glued in pattern
+       beta has had c0 run on (w, y) before the glue' (then BETA0; H1ok holds or the next phase never opens c0',
+       PAX).  Certified: all 18 / 755 cases (exhaustive <= 10 / random <= 18) [s1test.py, s1rand.py]; anatomy: w is
+       always created by [S.a'', b0, c0, y] and c0.w is later opened over y [creation.py, creation2.py].  Both
+       hypotheses are necessary: (S1) fails for non-ordered one-occurrence data (where R3 fails: innermost-clean
+       transfers) and for ordered two-occurrence data (item 1).
+   (b) multi-wrapper handlers: covered only by handler-only theorems (NHALL, PAMF, LN0); a structural reason why
+       every level's c-code avoids its holes (or why the bottom condition holds) is missing; 12 targeted cases are
+       covered by no theorem (certified by simulation).
+   (c) consequently the chain bound '<= 2' is machine-checked only for chains whose second transfer falls in the
+       classes above (all observed chains do), and '<= 1 from an ordered start' only for one-occurrence starts whose
+       transfer falls in them.  D3 (what re-execution does) is untouched.
+5. Bookkeeping: all LOG entries of this agent are under '2026-10-27 R3 agent' with their scripts; a 5-line
+   correction note was inserted at the top of PROOF STATUS.  The main agent's PROOF.md section 'Chain bound in the
+   generic phase model' states '<= 1 from an ordered start' and R3 for ordered data: these need correcting (not
+   edited here: outside agent_work/).

@@ -1,0 +1,22 @@
+('ALPHA', 'S', "p'-front nonproper") 413
+('ALPHA', 'S', 'reexec') 832
+('BETA0', 'S', 'reexec') 1
+('FH', 'M', 'budget') 3
+('FH', 'M', 'call') 74
+('FH', 'M', 'reexec') 233
+('FH', 'S', 'reexec') 982
+('IGEN', 'S', 'call') 8
+('NHALL', 'M', "p'-front nonproper") 4
+('NHALL', 'M', 'reexec') 18
+('PBT', 'S', "p'-front nonproper") 15
+('PBT', 'S', 'reexec') 36
+('YD', 'M', 'reexec') 2
+total 2621 open 0
+example ALPHA ['SS(SS)(Sp)', 'SSSS(Sp)', 'SSS(S(SS)p)']
+example BETA0 ['S(S(SS))S(S(SS)(S(Sp)))']
+example FH ['SSS(Sp)', 'S(SS)Sp', 'SSS(S(pS))']
+example IGEN ['S(SS)S(SS(S(Sp)))', 'S(SS)S(SS(S(S(pS))))', 'S(S(SS))S(SS(S(Sp)))']
+example NHALL ['SSS(S(SS(SS)(Sp)))', 'SSS(S(SSSS(Sp)))', 'S(SS)S(SS(SS)(Sp))']
+example PBT ['SSS(S(SS))(S(Sp))', 'S(S(SS))(SS)(S(Sp))', 'S(SS)S(SS)(S(Sp))']
+example YD ['S(S(S(S(SS))S))(S(SS)p)', 'S(S(S(SSS)S))(S(SS)p)']
+EXIT 0

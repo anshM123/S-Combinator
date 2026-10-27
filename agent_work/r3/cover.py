@@ -46,9 +46,21 @@ def classify(D, budget=1500):
     if multi == "S":
         gl = [t for t, L in enumerate(hist) if len(L) >= 3 and L[-2] == vn and L[-3] == Y]
         if gl and hist[gl[0]][-1] == c0: return ("ALPHA", multi, o3)
+        if hm.L[c0] == 0 and any(len(L) >= 3 and L[-1] == hm.app(c0, vn) and L[-3] == Y for L in hist):
+            return ("PBT", multi, o3)
+        import h1ok as H1
+        ac0, _ = hm.spine(c0)
+        c0wy = any(len(L) >= len(ac0) + 2 and list(reversed(L[-(len(ac0) + 2):])) == ac0 + [vn, Y] for L in hist)
+        if c0wy and H1.h1ok(c0) != "H1 RESIDUAL": return ("BETA0", multi, o3)
         if nh: return ("PAF", multi, o3)
         if not reaches_x1(V, c0): return ("PAX", multi, o3)
         return ("open", multi, o3)
+    allnh = True
+    for w in ws:
+        if w <= 0 or hm.head(w) != 0 or hm.L[w] <= -1 or hm.head(hm.R[w]) != 0 or hm.head(hm.L[w]) != 0:
+            allnh = False; break
+        if fc0.F(hm.R[w]) in ("h1", "h2"): allnh = False; break
+    if allnh: return ("NHALL", multi, o3)
     r = mw.info(D)
     if r is not None and r[1] == "Ln never opened": return ("LN0", multi, o3)
     b0ok = r is not None and r[0] != "FH" and (r[2] in ("B0: bare y", "B0: y-free", "B0: none"))

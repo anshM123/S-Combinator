@@ -1,0 +1,9 @@
+('chain length 0', 'non-ordered start') 1567762
+('chain length 0', 'ordered start') 823893
+('chain length 1', 'non-ordered start') 87681
+('chain length 1', 'ordered start') 72441
+('chain length 2', 'non-ordered start') 1915
+('chain length 2', 'ordered start') 1
+('transfer of D_2', 'ALPHA') 15
+('transfer of D_2', 'FH') 1901
+EXIT 0

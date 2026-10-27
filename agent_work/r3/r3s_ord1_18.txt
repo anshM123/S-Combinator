@@ -1,0 +1,3 @@
+data 863585
+proper transfers 62650
+EXIT 0

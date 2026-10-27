@@ -8,6 +8,10 @@
       machine whose atom-headed fronts are stuck)
   in which every node still contains x and no node is headed by x.  So the leftmost walk of W0.x reaches the leaf S,
   reaches a node without head normal form, becomes closed (x dropped), or executes x.
+  `V.theorem_V_right`: the same for the RIGHTMOST Böhm path (RChild: the last argument of a node with <= 2 arguments,
+  or the second component of the head normal form of a node with >= 3 arguments): there is no infinite rightmost walk
+  of W0.x in which no node is headed by x.  (A rightmost walk never drops its bottom, so an infinite rightmost path
+  executes its last argument within finitely many nodes.)  Its k = 0 chain is an R-chain (`C.no_R_chain`).
   Contents: namespace C = lean/Strip.lean (stripping theorem: no infinite H(P_j) = S S P_(j+1), no infinite
   H(W_j) = S (S S) W_(j+1)); namespace V = lean/StripV.lean (k = 1 round lemma) + lean/W1F.lean (Fibonacci survivor
   classification W1+) + the main agent's Lemma 8 / Corollary 8(ii) (lean/BarrierJ.lean, as copied in lean/W2.lean)
@@ -1224,8 +1228,189 @@ theorem theorem_V (W0 : C.T) (u : Nat → T) (h0 : u 0 = app (emb W0) X)
   exact no_k1_walk Wf (fun j => Classical.choose (hstep j).2)
     (fun j => ⟨(hstep j).1, Classical.choose_spec (hstep j).2⟩)
 
+
+/-! ## Theorem V for the RIGHTMOST Böhm path -/
+
+/-- one rightmost step: the last argument of a node with 1 or 2 arguments, or the second component of the head normal
+    form reached by the head run of a node with >= 3 arguments -/
+def RChild (u u' : T) : Prop :=
+  ((args u).length ≤ 2 ∧ ∃ front, args u = front ++ [u']) ∨ (3 ≤ (args u).length ∧ ∃ c, Reach (args u) [c, u'])
+
+theorem fib_odd_args_last (W : T) (m : Nat) :
+    args (fib W (2 * (m + 1) + 1)) = args (fib W (2 * m + 1)) ++ [fib W (2 * (m + 1))] := by
+  have h1 : 2 * (m + 1) + 1 = (2 * m + 1) + 2 := by omega
+  have h2 : (2 * m + 1) + 1 = 2 * (m + 1) := by omega
+  rw [h1, fib_succ2, h2]; rfl
+
+/-- the last step into a 2-list comes from [S, b, c] (for runs starting with >= 3 elements) -/
+theorem final_pred (A : List T) (c d : T) (hA : 3 ≤ A.length) (h : Reach A [c, d]) :
+    ∃ b, Reach A [S, b, c] ∧ d = app b c := by
+  cases h with
+  | refl => simp at hA
+  | tail h1 hs =>
+    rename_i L1
+    obtain ⟨a, b, hL1, hd⟩ := final_step _ c d hs
+    subst hL1
+    have ha : a = S := by
+      simp only [step] at hs
+      split at hs
+      · rename_i hh
+        simp only [Option.some.injEq] at hs
+        have hlen := congrArg List.length hs
+        simp at hlen
+        have : args a = [] := by
+          cases h' : args a with
+          | nil => rfl
+          | cons _ _ => rw [h'] at hlen; simp at hlen
+        exact args_nil_S a this hh
+      · simp at hs
+    subst ha
+    exact ⟨b, h1, hd⟩
+
+/-- from a node W.x (W closed, >= 2 arguments) the rightmost child is B.x with H(W) = S S B, or a Fibonacci word
+    fib W' (k+2) -/
+theorem r_round (W : C.T) (c d : T) (hW : 2 ≤ (C.args W).length)
+    (h : Reach ((C.args W).map emb ++ [X]) [c, d]) :
+    (∃ B : C.T, d = app (emb B) X ∧ C.R W B) ∨ (∃ W' k, nv W' = true ∧ d = fib W' (k + 2)) := by
+  have hL : 3 ≤ ((C.args W).map emb ++ [X]).length := by simp; omega
+  obtain ⟨b, hr, hd⟩ := final_pred _ c d hL h
+  rcases w1f_inv_reach _ (allc_map_emb _) _ hr with ⟨C', hC', hEq⟩ | ⟨C', W', k, hC', hW', hEq⟩ | h3
+  · -- phase 0: [S, b, c] = C' ++ [X], so c = X and b is closed
+    have hsplit := List.append_inj' (show [S, b] ++ [c] = C' ++ [X] from hEq) rfl
+    have hcX : c = X := by simpa using hsplit.2
+    have hb : nv b = true := hC' b (by rw [← hsplit.1]; simp)
+    obtain ⟨B, rfl⟩ := closed_emb b hb
+    left
+    refine ⟨B, by rw [hd, hcX], ?_⟩
+    have hL' : 2 ≤ ((C.args W).map emb).length := by simp; omega
+    rcases k1_reach _ hL' _ hr with ⟨L1, hr1, _, hEq1⟩ | ⟨p, q, P2, _, _, _, hEq1⟩ |
+        ⟨p, q, d', _, _, hEq1⟩ | ⟨p, q, c', d', _, _, _, _, hr2⟩ | ⟨q, _, hEq1⟩
+    · have hs1 := List.append_inj' (show [S, emb B] ++ [c] = L1 ++ [X] from hEq1) rfl
+      rw [← hs1.1] at hr1
+      obtain ⟨L', hL'eq, hC⟩ := reach_emb_inv _ _ hr1
+      match L', hL'eq with
+      | [y1, y2], hL'eq =>
+        simp only [List.map_cons, List.map_nil, List.cons.injEq] at hL'eq
+        have h1 : y1 = C.T.S := emb_inj _ _ (by rw [← hL'eq.1]; rfl)
+        have h2 : y2 = B := emb_inj _ _ hL'eq.2.1.symm
+        rw [h1, h2] at hC
+        exact hC
+      | [], hL'eq => simp at hL'eq
+      | [_], hL'eq => simp at hL'eq
+      | _ :: _ :: _ :: _, hL'eq => simp at hL'eq
+    · exfalso
+      have := congrArg List.getLast? hEq1
+      rw [hcX] at this
+      simp [X] at this
+    · have := congrArg List.length hEq1; simp at this
+    · exfalso
+      have hD : DBot (args c' ++ [app q X, app d' (app q X)]) := ⟨args c' ++ [app q X], d', q, X, by simp⟩
+      obtain ⟨M, a0, b0, c0, hM⟩ := dbot_reach _ _ hD hr2
+      have := congrArg List.getLast? hM
+      rw [hcX] at this
+      simp [X] at this
+    · have := congrArg List.length hEq1; simp at this
+  · -- phase 1: [S, b, c] = C' ++ [fib k, fib (k+1)], so d = fib (k+2)
+    have hsplit := List.append_inj' (show [S] ++ [b, c] = C' ++ [fib W' k, fib W' (k + 1)] from hEq) rfl
+    have hbc : b = fib W' k ∧ c = fib W' (k + 1) := by simpa using hsplit.2
+    right
+    refine ⟨W', k, hW', ?_⟩
+    rw [hd, hbc.1, hbc.2]; rfl
+  · exfalso
+    have e : dcount [S, b, c] = 0 + dcount [b, c] := rfl
+    have := dcount_le_length [b, c]
+    simp at this
+    omega
+
+/-- **Theorem V, rightmost path.**  Let W0 be closed and x a variable.  There is no infinite rightmost walk
+    u 0 = W0.x, u 1, ... in which no node is headed by x.  (A rightmost walk never drops its bottom; so an infinite
+    rightmost path executes its last argument within finitely many nodes.) -/
+theorem theorem_V_right (W0 : C.T) (u : Nat → T) (h0 : u 0 = app (emb W0) X)
+    (hchild : ∀ i, RChild (u i) (u (i + 1))) (hhead : ∀ i, head (u i) = S) : False := by
+  have key : ∀ j, ∃ W : C.T, u j = app (emb W) X := by
+    intro j
+    induction j with
+    | zero => exact ⟨W0, h0⟩
+    | succ j ih =>
+      obtain ⟨W, hW⟩ := ih
+      have hc := hchild j
+      rw [hW] at hc
+      simp only [RChild] at hc
+      rw [show args (app (emb W) X) = args (emb W) ++ [X] from rfl, emb_args] at hc
+      rcases hc with ⟨hlen, front, hr⟩ | ⟨hlen, c, hr⟩
+      · exfalso
+        have hl := congrArg List.getLast? hr
+        simp at hl
+        have hh := hhead (j + 1)
+        rw [← hl] at hh
+        simp [X, head] at hh
+      · have hW2 : 2 ≤ (C.args W).length := by simp at hlen; omega
+        rcases r_round W c _ hW2 hr with ⟨B, hB, _⟩ | ⟨W', k, hW', hk⟩
+        · exact ⟨B, hB⟩
+        · exfalso
+          rcases odd_or_even k with ⟨m, rfl⟩ | ⟨m, rfl⟩
+          · have hh := hhead (j + 1)
+            rw [hk, show 2 * m + 2 = 2 * (m + 1) by omega, head_fib_even] at hh
+            simp at hh
+          · obtain ⟨hdh, hdc⟩ := fib_odd_args W' hW' (m + 1)
+            have hdc := hdc (by omega)
+            have e3 : 2 * m + 1 + 2 = 2 * (m + 1) + 1 := by omega
+            have hk' : u (j + 1) = fib W' (2 * (m + 1) + 1) := by rw [hk, e3]
+            have hc2 := hchild (j + 1)
+            rw [hk'] at hc2
+            simp only [RChild] at hc2
+            rcases hc2 with ⟨hlen2, front2, hr2⟩ | ⟨hlen2, c2, hr2⟩
+            · have hmem : u (j + 2) ∈ args (fib W' (2 * (m + 1) + 1)) := by rw [hr2]; simp
+              cases hv : nv (u (j + 2))
+              · obtain ⟨n, hn⟩ := hdh _ hmem hv
+                have := hhead (j + 2); rw [hn] at this; simp at this
+              · have hlen3 : front2.length ≤ 1 := by
+                  have := congrArg List.length hr2; simp at this; omega
+                have hdc2 : dcount (args (fib W' (2 * (m + 1) + 1))) ≤ 1 := by
+                  rw [hr2, dcount_append]
+                  have := dcount_le_length front2
+                  simp [dcount, hv]; omega
+                omega
+            · obtain ⟨N, hN⟩ := reach_run _ _ hr2
+              have hfin := cor8ii N _ _ hN (by simp) hdc hdh
+              obtain ⟨b2, _, hd2⟩ := final_pred _ _ _ hlen2 hr2
+              have hx : XBot (args (fib W' (2 * (m + 1) + 1))) := by
+                rw [fib_odd_args_last W' m]
+                exact ⟨_, _, rfl, fib_data W' _⟩
+              rcases xbot_final _ _ _ hx hr2 with h0 | h0
+              · have := congrArg List.length h0; simp at this; omega
+              · have hnv : nv (u (j + 2)) = false := by rw [hd2]; simp [nv, h0]
+                obtain ⟨n, hn⟩ := hfin _ (by simp) hnv
+                have := hhead (j + 2); rw [hn] at this; simp at this
+  let Wf : Nat → C.T := fun j => Classical.choose (key j)
+  have hWf : ∀ j, u j = app (emb (Wf j)) X := fun j => Classical.choose_spec (key j)
+  apply C.no_R_chain Wf
+  intro j
+  have hc := hchild j
+  rw [hWf j, hWf (j + 1)] at hc
+  simp only [RChild] at hc
+  rw [show args (app (emb (Wf j)) X) = args (emb (Wf j)) ++ [X] from rfl, emb_args] at hc
+  rcases hc with ⟨hlen, front, hr⟩ | ⟨hlen, c, hr⟩
+  · exfalso
+    have := congrArg List.getLast? hr
+    simp [X] at this
+  · have hW2 : 2 ≤ (C.args (Wf j)).length := by simp at hlen; omega
+    rcases r_round (Wf j) c _ hW2 hr with ⟨B, hB, hR⟩ | ⟨W', k, _, hk⟩
+    · have : B = Wf (j + 1) := by
+        simp only [app.injEq] at hB
+        exact emb_inj _ _ hB.1.symm
+      rw [← this]; exact hR
+    · exfalso
+      rw [fib_succ2] at hk
+      simp only [app.injEq] at hk
+      have h2 := hk.2
+      cases k with
+      | zero => simp [fib, X] at h2
+      | succ k => rw [fib_succ2] at h2; simp [X] at h2
+
 end V
 
 #print axioms V.k1_round
 #print axioms V.no_k1_walk
 #print axioms V.theorem_V
+#print axioms V.theorem_V_right

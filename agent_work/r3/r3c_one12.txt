@@ -1,0 +1,8 @@
+next phase budget 67
+next phase front-x 1
+next phase front-y 249
+next phase pfront 938
+next phase reexec 4710
+ordered data 149226
+proper transfers 5965
+EXIT 0
