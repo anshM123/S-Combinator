@@ -1,0 +1,53 @@
+lean/EMBase.lean:349:26: warning: This simp argument is unused:
+  run
+
+Hint: Omit it from the simp argument list.
+  [apply] simp at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+'FH.flag_step' depends on axioms: [propext, Quot.sound]
+'FH.finite_half_TC' depends on axioms: [propext, Classical.choice, Quot.sound]
+'OM.omega_detect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FH.finite_half_Omega' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FH.finite_half_families' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RR.right_tail_detect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RR.right_reload_detect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RR.flagR_step' depends on axioms: [propext, Quot.sound]
+'RR.finite_half_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+lean/EMBase.lean:3166:47: warning: Variable name `h2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _h2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+'FG.finite_half_Omega_general' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FG.finite_half_general_families' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RG.right_reload_detect_gen' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RG.finite_half_right_general' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FM.fib_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FM.finite_half_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FM.finite_half_monotone_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RM.fib_step2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RM.finite_half_right_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RM.finite_half_right_monotone_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA.no_TT_chain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA.no_scenarioA' depends on axioms: [propext, Classical.choice, Quot.sound]
+'EM.finite_half_of_EM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'EM.finite_half_right_of_EMR' depends on axioms: [propext, Classical.choice, Quot.sound]
+lean/EMBase.lean:4994:6: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+'SA2.scenarioA_tower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA3.no_scenarioA_tower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA3.fuel_is_S' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA3.scenarioA_depth_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA4.return_types_S' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RSA.no_scenarioA_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA4.return_types_S' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SA4.caseA_needs_T34' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+real	1m35.823s
+user	0m0.015s
+sys	0m0.015s
+exit 0

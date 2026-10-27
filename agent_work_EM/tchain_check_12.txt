@@ -1,0 +1,1 @@
+n 12 time 56.9 violations: {} transitions: {'->T2': 119, 'R': 1564}
