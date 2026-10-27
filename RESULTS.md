@@ -68,6 +68,7 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
 | result | file | meaning |
 |---|---|---|
+| Leftmost-path finite half: known mechanisms excluded | `AgentFiniteHalf.lean` | the leftmost-path model's flag is invariant along leftmost steps, and both known infinite leftmost mechanisms (the reload cycle and the Omega cycle, and any mixture) only occur in flag-1 classes; the finite half still needs 'every infinite walk eventually uses only these steps' (Conjecture SF) |
 | `shnf_two_vars`, comb rigidity for any two data | `AgentWR.lean` | for closed M, M x y reaches an S-headed head normal form only if M = S or M = S(S(…(S S)…)): with two opaque arguments, S-code either hands control to an argument or is a comb |
 | Lemmas W1+, W2, W2+ and comb rigidity | `AgentW1F/W2/W2R.lean` | leftmost-path (descent-machine) rounds: a single datum only forms Fibonacci words; with two data no code can store them, and the only code that carries both across a round is a comb S(S(…(S S)…)), which just swaps them Fibonacci-style — no second independent store |
 | Chain bound, steps 1–2 | `AgentINNER.lean` | every datum after the first transfer of a Church chain is an ordered right comb, and every later transfer is innermost-dirty (no extra hypotheses) |
@@ -106,7 +107,9 @@ A universal emulation needs an encoder, an evaluation order and a halting detect
 1. C5′: decidability of MSO properties of Böhm trees. Special cases are open too: the completeness halves of C6
    (= BEKW Question 5, productivity) and C8, and the finite halves of the path models. These are certified up to 16–19
    leaves. A size-change attack on the leftmost half fails for every finite abstraction (FAILED_APPROACHES 29), and
-   neither class-level acyclicity nor node size proves the C6 or leftmost halves (E114, FAILED_APPROACHES 30).
+   neither class-level acyclicity nor node size proves the C6 or leftmost halves (E114, FAILED_APPROACHES 30). For the
+   leftmost half the two known infinite mechanisms are now excluded from flag-0 classes (machine-checked, R97);
+   what is left is Conjecture SF.
 2. Configuration-level regularity (R″_PUP) of every head run and of every other evaluation order. The
    non-universality agents' phase programme (agent_work/) bounds Church chains by two transfers in the covered cases;
    still open: R3 for one occurrence of the predecessor in general (R3 for several occurrences is refuted), "re-execution

@@ -1,0 +1,13 @@
+P w-term shapes:
+   1904 w
+   181 q(w)
+   83 w(q(w))
+   2 q(w)(w(q(w)))
+   2 q(q(w))
+P-region configurations with a w-term:
+   1808 SSS(Sp) ('q', 'w', 'ytop=y')
+   96 S(S(SS))S(S(Sp)) ('w', 'q(w)', 'ytop=y')
+   81 S(S(SS))S(S(Sp)) ('q(w)', 'w(q(w))', 'ytop=y')
+   2 S(S(S(SS)))(SS)(S(Sp)) ('w(q(w))', 'q(w)(w(q(w)))', 'ytop=y')
+   2 S(S(S(SS)))(SS)(S(Sp)) ('q', 'q(w)', 'ytop=y')
+   2 S(S(S(SS)))(SS)(S(Sp)) ('q(w)', 'q(q(w))', 'ytop=y')

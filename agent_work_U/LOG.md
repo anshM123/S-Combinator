@@ -11,29 +11,64 @@ the clock; '~' marks times reconstructed from `date` outputs.  From now on every
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## SUMMARY (refreshed 06:10 EDT by `date`; draft of the FINAL summary — supersedes the INTERIM block below)
+## FINAL SUMMARY (written 06:54 EDT by `date`; will be refreshed if later work changes it)
+**Brief (universality): no universal construction was found; no partial win.**  All results are obstructions or
+structure theory, labelled below.  Nothing was submitted, posted or published.
+**Coordinator task 04:03 (leftmost-path finite half for the joint classes (14,28), (14,26)): NOT fully proved; no
+counterexample; the two known infinite mechanisms are excluded by end-to-end machine-checked theorems, and the
+remaining gap is one precise conjecture (SF).**
+MACHINE-CHECKED (Lean 4 core, no Mathlib, no sorry, axioms among propext / Classical.choice / Quot.sound; compile with
+~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean <file>; all re-compiled today):
+* agent_work_U/lean/FiniteHalf.lean (2,911 lines; contains the main agent's lean/PathModels.lean verbatim as namespace
+  PM): FH.flag_step — the L36 flag is invariant along every leftmost step; FH.finite_half_TC — no infinite leftmost
+  walk from a flag-0 term ends in tail calls over a fixed bottom (reload mechanism); FH.finite_half_Omega — none ends
+  in tail calls + canonical Omega steps (Omega mechanism); FH.finite_half_families — none ends in any mixture.
+* agent_work_U/lean/Reload.lean (1,587): every infinite chain of fuel-S tail calls is eventually the reload cycle
+  N_i N_m S (RC2.reload_classification_full, walk_reload_full); no infinite tail calls over a bottom /= S
+  (FZ.no_tail_calls_fuel).
+* agent_work_U/lean/TheoremV.lean (1,416): Theorem V, leftmost and rightmost (an infinite path consumes its last
+  argument; closed code over an untouched datum cannot run forever).
+* agent_work_U/lean/LargePush.lean (613): an infinite leftmost path has infinitely many large pushes.
+* agent_work_U/lean/Strip.lean (402), StripV.lean (772): stripping theorem (no infinite H(P_j) = S S P_(j+1) or
+  S (S S) P_(j+1)); k = 1 round lemma.
+* Earlier today: lean/W1, W1F, W2, W2F, W2R, WR (descent-machine round classification, comb rigidity, shnf_two_vars).
+COMPUTATIONALLY CERTIFIED: flag invariance on 16,580 concrete steps; only the canonical counters N_k / w_k arise from
+R- / R2-chains into B / M (<= 12 leaves); reload and Omega node classes; censuses of large pushes and jumps.
+PROVED (paper): Scenario-A structure (jump-free bounded-depth walks: return multipliers trace an infinite rightmost
+path; the frozen bottom is executed infinitely often).
+CONJECTURAL: SF (every infinite leftmost walk eventually uses only tail calls and canonical Omega steps; all 74 known
+infinite walks, 25,900 steps after burn-in) — SF + FiniteHalf.lean => the finite half for every flag-0 class, hence
+(with Prop. Q'') decidability of leftmost-path infinity and (D2') for the leftmost path.  Conjectures F, G.
+EXPERIMENTALLY SUPPORTED: no counterexample in about 1.5 million leftmost walks of targeted terms beyond the 16-leaf
+census (gadget trees, self-applications, random component terms to 60 leaves, restart / Omega / fuel / jump searches).
+Strongest concrete result: FiniteHalf.lean — end-to-end machine-checked exclusion of the reload and Omega mechanisms
+from flag-0 classes, with flag invariance.  Most promising next step: prove SF (or its pieces: finitely many jumps;
+finitely many non-tail-call, non-Omega steps) — e.g. by extending the wrap-history invariant WH of
+lean/FiniteHalf.lean to multi-push steps.
+
+## SUMMARY (refreshed 06:53 EDT by `date`; draft of the FINAL summary — supersedes the INTERIM block below)
 **A. Universality (the brief): no universal construction; no partial win.  Machine-checked obstructions only.**
-**B. Leftmost-path finite half for (14,28), (14,26) (coordinator, 04:03): NOT fully proved, no counterexample; the
-tail-call scenario is PROVED and MACHINE-CHECKED end to end.**  All Lean files: Lean 4 core, no Mathlib, no sorry,
-axioms among propext / Classical.choice / Quot.sound, compiled with ~/.elan/toolchains/leanprover--lean4---v4.35.0.
-1. lean/FiniteHalfTC.lean (2,487 lines) — `FH.finite_half_TC`: an infinite leftmost walk from a term whose L36 class
-   has flag 0 (e.g. any term of (14,28), (14,26)) never ends in tail calls over a fixed bottom.  `FH.flag_step`: the
-   L36 flag is invariant along every leftmost step.  `FH.flag_reload`: all reload nodes are flag 1.  (Includes the
-   main agent's lean/PathModels.lean verbatim as namespace PM.)
-2. lean/Reload.lean (1,587 lines) — reload classification: every infinite chain of fuel-S tail calls is eventually
-   the reload cycle N_i N_m S (`RC2.reload_classification_full`, `walk_reload_full`); no infinite tail-call walk
-   over a bottom /= S (`FZ.no_tail_calls_fuel`).
-3. lean/TheoremV.lean (1,416 lines) — Theorem V (leftmost and rightmost): closed code above an untouched datum
-   cannot drive an infinite path; an infinite path consumes its last argument.
-4. lean/LargePush.lean (613) — every infinite leftmost path has infinitely many large pushes.
-5. lean/Strip.lean (402), lean/StripV.lean (772) — stripping theorem, k = 1 round lemma.
-6. Earlier (01:14-04:03): lean/W1, W1F, W2, W2F, W2R, WR — descent-machine round classification, comb rigidity.
-7. Open for the finite half: Scenario A with genuine excursions, Scenario B (unbounded stack; the Omega cycle
-   w_i w_k, w_0 = S(S(SS))(S(SS)), w_(j+1) = S(SS) w_j, is the known example), Scenario C (infinitely many jumps;
-   never observed).  By FH.flag_step it suffices to show that such walks visit a flag-1 node.
+**B. Leftmost-path finite half for (14,28), (14,26) (coordinator, 04:03): NOT fully proved, no counterexample; both
+known infinite mechanisms are EXCLUDED from flag-0 classes by end-to-end machine-checked theorems.**  All Lean files:
+Lean 4 core, no Mathlib, no sorry, axioms among propext / Classical.choice / Quot.sound,
+~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean.
+1. lean/FiniteHalf.lean (2,911 lines; includes the main agent's PathModels.lean verbatim as namespace PM):
+   `FH.flag_step` (the L36 flag is invariant along every leftmost step); `FH.finite_half_TC` (no flag-0 walk ends in
+   tail calls over a fixed bottom — the reload mechanism); `FH.finite_half_Omega` (no flag-0 walk ends in tail calls
+   plus canonical Omega steps — the Omega mechanism); `FH.finite_half_families` (any mixture of the two).
+2. lean/Reload.lean (1,587): reload classification — every infinite chain of fuel-S tail calls is eventually the
+   reload cycle N_i N_m S (`RC2.reload_classification_full`); no infinite tail calls over a bottom /= S.
+3. lean/TheoremV.lean (1,416): Theorem V, leftmost and rightmost — an infinite path consumes its last argument.
+4. lean/LargePush.lean (613): an infinite leftmost path has infinitely many large pushes.
+5. lean/Strip.lean (402), lean/StripV.lean (772): stripping theorem, k = 1 round lemma.
+6. Earlier: lean/W1, W1F, W2, W2F, W2R, WR — descent-machine round classification, comb rigidity.
+7. Remaining gap for the full finite half: **Conjecture SF** — every infinite leftmost walk eventually uses only tail
+   calls and canonical Omega steps (EXPERIMENTALLY SUPPORTED: all 74 known infinite walks, 25,900 steps after burn-in;
+   all Omega steps there have second component S(SS)).  SF + FiniteHalf.lean => the finite half.
 8. Evidence (EXPERIMENTALLY SUPPORTED, no counterexample beyond the 16-leaf census): reload-assembling trees, gadget
-   trees, all self-applications with X <= 12 leaves and 40,000 random X <= 24, random component terms up to 60
-   leaves, non-S fuels, R19-guided Scenario-A searches, jump searches.
+   trees (<= 5 letters; 6 letters over 5 gadgets running), all self-applications with X <= 12 leaves and 40,000
+   random X <= 24, random component terms up to 60 leaves, non-S fuels, R19-guided Scenario-A searches, restart-shape
+   and generalized-Omega searches, jump searches.
 
 ## INTERIM 04:00 (refreshed 03:53 EDT by `date`; first version written ~02:38)
 **Status: no universal construction; no partial win (no non-PUP run).  Labels as in the entries below.**
@@ -760,3 +795,33 @@ H(p) = S S y it refills once: H(p S) = S S (y S)).  R(P, P') means H(P) = S S P'
     flag(s x y) = flag(x) and class invariance under head reduction: [u] = [S c (b c)] for a computed node), and
     every reload node N_i N_m S is flag 1 (classes of N_k are constant for k >= 1).  A flag-0 walk can therefore not
     end in the reload cycle; over a bottom Z /= S tail calls are R2-steps, and R2-chains are finite by (2).
+* MACHINE-CHECKED END-TO-END (06:38 EDT, `date`): **finite half, Omega scenario** — agent_work_U/lean/FiniteHalf.lean
+  (2,859 lines; supersedes FiniteHalfTC.lean, which it contains; no sorry; axioms propext, Classical.choice,
+  Quot.sound).  New: `OM.omega_detect` (if the leftmost child of t.sigma (sigma /= S, t with >= 2 arguments) is
+  sigma.(q'.sigma), then H(t) = S (S(SS)) q'; proof by a full wrap-history invariant WH), `OM.Om_M` (H(Y) =
+  S(S(SS))(S(SS)) forces Y = M), `OM.Rchain_to_M` (an R2-chain ending at M starts at a counter w_d),
+  `FH.flag_omega` (all Omega nodes w_i w_k with i < k or i = 0 are flag 1, kernel computation), and
+  `FH.finite_half_Omega`: **an infinite leftmost walk from a flag-0 term (e.g. in (14,28), (14,26)) never ends in
+  nodes (t j).(s j) whose steps are tail calls over the stack (s (j+1) = s j) or canonical Omega steps
+  (t (j+1) = s j, s (j+1) = S(SS).(s j)).**  So both known infinite mechanisms — the reload cycle and the Omega
+  cycle — are excluded from flag-0 classes by machine-checked proofs.  Remaining for the full finite half: Conjecture SF
+  (every infinite walk eventually uses only tail calls and Omega steps) and Omega steps whose second component is not
+  S(SS) (never observed: all 954 Omega steps in known infinite walks have q' = S(SS)).
+* MACHINE-CHECKED (06:53 EDT, `date`): `FH.finite_half_families` added to agent_work_U/lean/FiniteHalf.lean (now
+  2911 lines, no sorry; axioms propext, Classical.choice, Quot.sound): **an infinite leftmost walk from a
+  flag-0 term (e.g. any term of (14,28), (14,26)) never ends in a sequence of computed nodes (t j).(s j) whose steps
+  are tail calls over the stack (s (j+1) = s j) or canonical Omega steps (t (j+1) = s j, s (j+1) = S(SS).(s j))** —
+  any mixture of the two known infinite mechanisms (finitely many Omega steps: finite_half_TC; infinitely many: the
+  stack is never S afterwards and finite_half_Omega applies).  (Process note: a stray 'cat' in my shell command
+  blocked for 10 minutes; I stopped my own cat process, PID 76440, and the compile then completed.)
+* EXPERIMENTALLY SUPPORTED (06:53 EDT, `date`; long_hunt3.py 6 -> long_hunt3_6.txt): all 656,250 trees of exactly 6 letters
+  over {S, SS, S(SS), B, M} (up to 42 leaves): of the 385,663 flag-0 terms with an hnf, 266,054 walks end at S and
+  119,609 reach a round over the step budget; none runs 400 nodes; size-large pushes per walk <= 4.  No candidate.
+* EXPERIMENTALLY SUPPORTED (06:56 EDT, `date`; omega_general_hunt.py 7): walks started at non-canonical Omega bases
+  (S(S(SS)) q').sigma for all q', sigma <= 7 leaves (38,809 terms with an hnf): every walk ends (at S: 21,903; in a
+  diverging round: 16,905) except one, which runs 300 nodes in a flag-1 class using only canonical Omega steps;
+  non-canonical Omega steps (second component /= S(SS)) occur at most 3 times per walk.  Supports SF's restriction to
+  canonical Omega steps.
+* EXPERIMENTALLY SUPPORTED (07:07 EDT, `date`; stepfamily2.py 5): all 211 flag-1 terms among the 5-letter gadget trees over
+  {S, SS, S(SS), B, M} whose walks run 400 nodes: after a burn-in of 100 nodes every one of the 63,300 steps is a tail
+  call (61,159) or a canonical Omega step (2,141); no pop, jump, non-canonical Omega step or other step.  (SF.)

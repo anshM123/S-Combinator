@@ -1,0 +1,3 @@
+1536 SSS(Sp) ('no INV-PY violation', 'bad creations 0', 'creations 1')
+148 SSS(S(SSSp)) ('violations: inside c0', 'bad creations 0', 'creations 1')
+28 SSS(S(S(S(SS))Sp)) ('violations: inside c0,unrelated', 'bad creations 0', 'creations 1')

@@ -1,0 +1,4 @@
+2279 SSS(Sp) ('single', 'nonIGEN', 'INV-PY')
+307 S(S(S(SSS)S))p ('multi', 'nonIGEN', 'INV-PY')
+27 S(S(S(SSS)S))(Sp) ('multi', 'IGEN', 'INV-PY')
+8 S(SS)S(SS(S(Sp))) ('single', 'IGEN', 'VIOL PYY/y@2')

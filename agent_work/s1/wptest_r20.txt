@@ -1,0 +1,2 @@
+34178 SS(SS)(Sp) ('nonIGEN', 'WP', 'WY', 'WG')
+111 SS(S(SS))(S(S(S(SS))(SSSp))) ('IGEN', 'WP', 'WY', 'WG')

@@ -1,0 +1,2 @@
+1704 SSS(Sp) ('nonIGEN', 'WP', 'WY', 'WG')
+8 S(SS)S(SS(S(Sp))) ('IGEN', 'WP', 'WY', 'WG')

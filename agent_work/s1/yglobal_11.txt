@@ -1,0 +1,5 @@
+1553 SSS(Sp) ('alpha', 'nonIGEN', 'Ytop=y always', 'no Y-front', '-')
+75 S(S(SS))S(S(Sp)) ('beta-P', 'nonIGEN', 'Ytop=y always', 'no Y-front', '-')
+74 S(SS)(SSS(Sp)) ('alpha', 'nonIGEN', 'Ytop changes', 'Y-front', 'consumed by CYY')
+8 S(SS)S(SS(S(Sp))) ('beta-P', 'IGEN', 'Ytop changes', 'Y-front', 'consumed by PYY')
+2 S(SS)(S(S(SS))S(S(Sp))) ('beta-P', 'nonIGEN', 'Ytop changes', 'Y-front', 'consumed by CYY')

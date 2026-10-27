@@ -1,0 +1,3 @@
+5227 SSS(Sp) ('alpha', 'z=y', ())
+223 S(S(SS))S(S(Sp)) ('beta-P', 'z=y', (('c0.w', 'y'),))
+34 S(SS)S(SS(S(Sp))) ('beta-P', 'z=y', (('P.w', 'y'), ('c0.w', 'y')))

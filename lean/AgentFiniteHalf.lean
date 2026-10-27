@@ -1,16 +1,21 @@
 /-
-  agent_work_U/lean/FiniteHalfTC.lean  (universality agent, 2026-10-27).  Plain Lean 4 core, no Mathlib.
+  agent_work_U/lean/FiniteHalf.lean  (universality agent, 2026-10-27).  Plain Lean 4 core, no Mathlib.
 
-  END-TO-END THEOREM for the leftmost-path finite half, tail-call scenario:
-  `FH.finite_half_TC`: an infinite leftmost walk from a closed S-term whose L36 class has flag 0 (e.g. any term of the
-  joint classes (14,28), (14,26)) never ends in tail calls over a fixed bottom (nodes (f j).Z, each child the next
-  node, f j with >= 2 arguments).
-  Ingredients: (1) namespace PM = the main agent's lean/PathModels.lean, copied verbatim inside a namespace (L36 and M35
-  tables, kernel-checked S-identities and closure facts flag(s.x) = flag(x), flag(s.x.y) = flag(x), class invariance
-  under head runs); (2) namespaces C, TC, RC, FZ, RC2 = agent_work_U/lean/Reload.lean (stripping theorem, reload
-  classification, no tail calls over a bottom /= S); (3) namespace FH: the bridge C.T -> PM.Tm, flag invariance along
-  leftmost steps (`FH.flag_step`), the flags of the reload nodes (`FH.flag_reload`, by kernel computation), and the
-  final theorem.
+  END-TO-END THEOREMS for the leftmost-path finite half (both known infinite mechanisms excluded for flag-0 terms):
+  * `FH.finite_half_TC`: an infinite leftmost walk from a closed S-term whose L36 class has flag 0 (e.g. any term of
+    the joint classes (14,28), (14,26)) never ends in computed tail calls over a fixed bottom (nodes (f j).Z, each
+    child the next node, f j with >= 2 arguments) — the RELOAD mechanism (fuel S) and all its variants.
+  * `FH.finite_half_Omega`: such a walk never ends in a sequence of nodes (t j).(s j) (t j with >= 2 arguments,
+    s j /= S) whose steps are tail calls over the stack or canonical Omega steps (new top = old stack, new stack =
+    S(SS).(old stack)) — the OMEGA mechanism (S(S(SS))(S(SS)) applied to itself).
+  * `FH.finite_half_families`: COMBINED — such a walk never ends in a sequence of computed nodes whose steps are tail
+    calls over the stack or canonical Omega steps (the step families of both known mechanisms, in any mixture).
+  * `FH.flag_step`: the L36 flag is invariant along every leftmost step.
+  Ingredients: namespace PM = the main agent's lean/PathModels.lean copied verbatim inside a namespace (L36/M35 tables,
+  kernel-checked S-identities and closure facts, class invariance under head runs); namespaces C/TC/RC/FZ/RC2 =
+  agent_work_U/lean/Reload.lean (stripping theorem, reload classification); namespace OM: the wrap-history invariant,
+  `OM.omega_detect` (an Omega-shaped child forces H(t) = S (S(SS)) q'), R2-chains into M are the counters w_d;
+  namespace FH: bridge to PM, flags of reload and Omega nodes (kernel computation), the two theorems.
 -/
 
 namespace PM
@@ -2854,3 +2859,53 @@ theorem finite_half_Omega (u : Nat → C.T) (hchild : ∀ j, LChild (u j) (u (j 
 end FH
 
 #print axioms FH.finite_half_Omega
+
+namespace FH
+open C
+open C.T
+
+/-- **Combined theorem.**  An infinite leftmost walk from a term whose L36 class has flag 0 (e.g. in (14,28),
+    (14,26)) never ends in a sequence of computed nodes (t j).(s j) whose steps are tail calls over the stack
+    (s (j+1) = s j) or canonical Omega steps (t (j+1) = s j, s (j+1) = S(SS).(s j)) — i.e. it never ends in the step
+    families of the two known infinite mechanisms (reload cycle, Omega cycle). -/
+theorem finite_half_families (u : Nat → C.T) (hchild : ∀ j, LChild (u j) (u (j + 1))) (hflag : flag (u 0) = false)
+    (j0 : Nat) (t s : Nat → C.T)
+    (hform : ∀ j, u (j0 + j) = app (t j) (s j) ∧ 2 ≤ (C.args (t j)).length)
+    (hstep : ∀ j, s (j + 1) = s j ∨ (t (j + 1) = s j ∧ s (j + 1) = app OM.SSS1 (s j))) : False := by
+  by_cases hfin : ∃ N, ∀ j, N ≤ j → s (j + 1) = s j
+  · -- finitely many Omega steps: from N on the bottom is fixed, a tail-call walk
+    obtain ⟨N, hN⟩ := hfin
+    have hconst : ∀ e, s (N + e) = s N := by
+      intro e
+      induction e with
+      | zero => rfl
+      | succ e ih => rw [show N + (e + 1) = N + e + 1 by omega, hN (N + e) (by omega), ih]
+    exact finite_half_TC u hchild hflag (j0 + N) (s N) (fun e => t (N + e))
+      (fun e => ⟨by rw [show j0 + N + e = j0 + (N + e) by omega, (hform (N + e)).1, hconst e], (hform (N + e)).2⟩)
+  · -- some Omega step at j1: afterwards the stack is never S
+    have : ∃ j1, s (j1 + 1) ≠ s j1 := by
+      refine Classical.byContradiction (fun h => hfin ⟨0, fun j _ => Classical.byContradiction (fun h' => h ⟨j, h'⟩)⟩)
+    obtain ⟨j1, hj1⟩ := this
+    have hne : ∀ e, s (j1 + 1 + e) ≠ S := by
+      intro e
+      induction e with
+      | zero =>
+        rcases hstep j1 with h | ⟨_, h⟩
+        · exact absurd h hj1
+        · simp only [Nat.add_zero]; rw [h]; intro h'; cases h'
+      | succ e ih =>
+        rw [show j1 + 1 + (e + 1) = j1 + 1 + e + 1 by omega]
+        rcases hstep (j1 + 1 + e) with h | ⟨_, h⟩
+        · rw [h]; exact ih
+        · rw [h]; intro h'; cases h'
+    exact finite_half_Omega u hchild hflag (j0 + (j1 + 1)) (fun e => t (j1 + 1 + e)) (fun e => s (j1 + 1 + e))
+      (fun e => ⟨by rw [show j0 + (j1 + 1) + e = j0 + (j1 + 1 + e) by omega]; exact (hform _).1,
+        (hform _).2, hne e⟩)
+      (fun e => by
+        have := hstep (j1 + 1 + e)
+        simp only [show j1 + 1 + (e + 1) = j1 + 1 + e + 1 by omega]
+        exact this)
+
+end FH
+
+#print axioms FH.finite_half_families

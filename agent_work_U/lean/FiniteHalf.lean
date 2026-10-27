@@ -1,16 +1,21 @@
 /-
-  agent_work_U/lean/FiniteHalfTC.lean  (universality agent, 2026-10-27).  Plain Lean 4 core, no Mathlib.
+  agent_work_U/lean/FiniteHalf.lean  (universality agent, 2026-10-27).  Plain Lean 4 core, no Mathlib.
 
-  END-TO-END THEOREM for the leftmost-path finite half, tail-call scenario:
-  `FH.finite_half_TC`: an infinite leftmost walk from a closed S-term whose L36 class has flag 0 (e.g. any term of the
-  joint classes (14,28), (14,26)) never ends in tail calls over a fixed bottom (nodes (f j).Z, each child the next
-  node, f j with >= 2 arguments).
-  Ingredients: (1) namespace PM = the main agent's lean/PathModels.lean, copied verbatim inside a namespace (L36 and M35
-  tables, kernel-checked S-identities and closure facts flag(s.x) = flag(x), flag(s.x.y) = flag(x), class invariance
-  under head runs); (2) namespaces C, TC, RC, FZ, RC2 = agent_work_U/lean/Reload.lean (stripping theorem, reload
-  classification, no tail calls over a bottom /= S); (3) namespace FH: the bridge C.T -> PM.Tm, flag invariance along
-  leftmost steps (`FH.flag_step`), the flags of the reload nodes (`FH.flag_reload`, by kernel computation), and the
-  final theorem.
+  END-TO-END THEOREMS for the leftmost-path finite half (both known infinite mechanisms excluded for flag-0 terms):
+  * `FH.finite_half_TC`: an infinite leftmost walk from a closed S-term whose L36 class has flag 0 (e.g. any term of
+    the joint classes (14,28), (14,26)) never ends in computed tail calls over a fixed bottom (nodes (f j).Z, each
+    child the next node, f j with >= 2 arguments) — the RELOAD mechanism (fuel S) and all its variants.
+  * `FH.finite_half_Omega`: such a walk never ends in a sequence of nodes (t j).(s j) (t j with >= 2 arguments,
+    s j /= S) whose steps are tail calls over the stack or canonical Omega steps (new top = old stack, new stack =
+    S(SS).(old stack)) — the OMEGA mechanism (S(S(SS))(S(SS)) applied to itself).
+  * `FH.finite_half_families`: COMBINED — such a walk never ends in a sequence of computed nodes whose steps are tail
+    calls over the stack or canonical Omega steps (the step families of both known mechanisms, in any mixture).
+  * `FH.flag_step`: the L36 flag is invariant along every leftmost step.
+  Ingredients: namespace PM = the main agent's lean/PathModels.lean copied verbatim inside a namespace (L36/M35 tables,
+  kernel-checked S-identities and closure facts, class invariance under head runs); namespaces C/TC/RC/FZ/RC2 =
+  agent_work_U/lean/Reload.lean (stripping theorem, reload classification); namespace OM: the wrap-history invariant,
+  `OM.omega_detect` (an Omega-shaped child forces H(t) = S (S(SS)) q'), R2-chains into M are the counters w_d;
+  namespace FH: bridge to PM, flags of reload and Omega nodes (kernel computation), the two theorems.
 -/
 
 namespace PM
@@ -2643,3 +2648,264 @@ theorem omega_detect (t σ q' d : T) (ht : 2 ≤ (args t).length) (hσ : σ ≠ 
 
 end OM
 #print axioms OM.omega_detect
+
+namespace OM
+
+open C
+open C.T
+open TC
+open RC
+
+theorem SSS1_ne_SS : SSS1 ≠ SS := by
+  intro h; simp only [SSS1, SS, app.injEq] at h; cases h.2
+
+theorem w_ne_SS (k : Nat) : w k ≠ SS := by
+  cases k with
+  | zero => intro h; simp only [w, M, SS, app.injEq] at h; cases h.1
+  | succ k => intro h; simp only [w, SS, app.injEq] at h; cases h.1
+
+theorem lastArg_w (k : Nat) : lastArg (w k) ≠ SS := by
+  cases k with
+  | zero => exact SSS1_ne_SS
+  | succ k => exact w_ne_SS k
+
+/-- the middle argument of a 2-argument application -/
+def mid : T → T
+  | app (app _ a) _ => a
+  | _ => S
+
+theorem w_succ_ne_M (k : Nat) : w (k + 1) ≠ M := by
+  intro h
+  have := congrArg mid h
+  exact SSS1_ne_SS this.symm
+
+/-- R2-steps into a term whose last argument is not S S are syntactic -/
+theorem R2_into (Y V : T) (hV : lastArg V ≠ SS) (h : R2 Y V) : Y = app (app S SS) V := by
+  by_cases h2 : (args Y).length ≤ 2
+  · have e := (reach_stuck _ _ h2 h).symm
+    exact args_two Y SS V e
+  · obtain ⟨b, hb⟩ := final_app _ _ _ (by omega) h
+    rw [hb] at hV; exact absurd rfl hV
+
+/-- H(Y) = S (S(SS)) (S(SS)) forces Y = M -/
+theorem Om_M (Y : T) (h : Om Y SSS1) : Y = M := by
+  by_cases h2 : (args Y).length ≤ 2
+  · have e := (reach_stuck _ _ h2 h).symm
+    exact args_two Y SSS1 SSS1 e
+  · exfalso
+    obtain ⟨b, hb⟩ := final_app _ _ _ (by omega) h
+    have := congrArg size hb
+    simp [size] at this
+    have := size_pos b
+    omega
+
+/-- an R2-chain of length d ending at M starts at w d -/
+theorem Rchain_to_M : ∀ (d : Nat) (y : Nat → T), y d = M → (∀ s, s < d → R2 (y s) (y (s + 1))) → y 0 = w d := by
+  intro d
+  induction d with
+  | zero => intro y h _; simpa [w] using h
+  | succ d ih =>
+    intro y hd hR
+    have h1 := ih (fun s => y (s + 1)) hd (fun s hs => hR (s + 1) (by omega))
+    have h0 := R2_into (y 0) (y 1) (by rw [h1]; exact lastArg_w d) (hR 0 (by omega))
+    rw [h0, h1]; rfl
+
+/-- determinism of R2 on w (i+1) -/
+theorem R2_w (i : Nat) (t' : T) (h : R2 (w (i + 1)) t') : t' = w i := by
+  have e := (reach_stuck _ _ (by simp [w, args]) h)
+  have : args (w (i + 1)) = [SS, w i] := rfl
+  rw [this] at e
+  simp only [List.cons.injEq] at e
+  exact e.2.1
+
+theorem not_R2_M (t' : T) : ¬ R2 M t' := by
+  intro h
+  have e := (reach_stuck _ _ (by simp [M, args]) h)
+  have : args M = [SSS1, SSS1] := rfl
+  rw [this] at e
+  simp only [List.cons.injEq] at e
+  exact SSS1_ne_SS e.1.symm
+
+end OM
+
+namespace FH
+
+open C
+open C.T
+
+set_option maxRecDepth 200000 in
+theorem cls_w_succ : ∀ k, PM.clsLft (toTm (OM.w (k + 1))) = PM.clsLft (toTm (OM.w 1))
+  | 0 => rfl
+  | k + 1 => by
+    have ih := cls_w_succ k
+    show PM.mulLft (PM.clsLft (toTm (app S RC.SS))) (PM.clsLft (toTm (OM.w (k + 1)))) = PM.clsLft (toTm (OM.w 1))
+    rw [ih]
+    decide +kernel
+
+set_option maxRecDepth 200000 in
+/-- the Omega nodes w_i w_k with i < k or i = 0 are flag 1 -/
+theorem flag_omega (i k : Nat) (h : i < k ∨ i = 0) : flag (app (OM.w i) (OM.w k)) = true := by
+  unfold flag
+  show PM.flagLft (PM.mulLft (PM.clsLft (toTm (OM.w i))) (PM.clsLft (toTm (OM.w k)))) = true
+  cases i with
+  | zero =>
+    cases k with
+    | zero => decide +kernel
+    | succ k => rw [cls_w_succ k]; decide +kernel
+  | succ i =>
+    rcases h with h | h
+    · obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
+      rw [cls_w_succ i, cls_w_succ k']; decide +kernel
+    · cases h
+
+/-- **Theorem (finite half, Omega scenario).**  An infinite leftmost walk from a term whose L36 class has flag 0
+    never ends in a sequence of nodes (t j).(s j) (t j with >= 2 arguments, s j /= S) in which every step is either a
+    tail call over the stack (s (j+1) = s j) or a canonical Omega step (t (j+1) = s j, s (j+1) = S(SS).(s j)). -/
+theorem finite_half_Omega (u : Nat → C.T) (hchild : ∀ j, LChild (u j) (u (j + 1))) (hflag : flag (u 0) = false)
+    (j0 : Nat) (t s : Nat → C.T)
+    (hform : ∀ j, u (j0 + j) = app (t j) (s j) ∧ 2 ≤ (C.args (t j)).length ∧ s j ≠ S)
+    (hstep : ∀ j, s (j + 1) = s j ∨ (t (j + 1) = s j ∧ s (j + 1) = app OM.SSS1 (s j))) : False := by
+  -- the computed step from each node
+  have hreach : ∀ j, ∃ d, C.Reach (C.args (app (t j) (s j))) [app (t (j + 1)) (s (j + 1)), d] := by
+    intro j
+    have hc := hchild (j0 + j)
+    rw [(hform j).1, show j0 + j + 1 = j0 + (j + 1) by omega, (hform (j + 1)).1] at hc
+    rcases hc with ⟨hlen, _, _⟩ | ⟨_, d, hr⟩
+    · exfalso; rw [C.args_app] at hlen; have := (hform j).2.1; simp at hlen; omega
+    · exact ⟨d, hr⟩
+  -- tail calls are R2-steps of the tops; Omega steps happen at the top M
+  have hR2 : ∀ j, s (j + 1) = s j → R2 (t j) (t (j + 1)) := by
+    intro j hs
+    obtain ⟨d, hr⟩ := hreach j
+    rw [hs] at hr
+    exact FZ.tail_call_fuel (t j) (t (j + 1)) (s j) d (hform j).2.1 (hform j).2.2 hr
+  have hOm : ∀ j, t (j + 1) = s j → s (j + 1) = app OM.SSS1 (s j) → t j = OM.M := by
+    intro j ht hs
+    obtain ⟨d, hr⟩ := hreach j
+    rw [ht, hs] at hr
+    exact OM.Om_M _ (OM.omega_detect (t j) (s j) OM.SSS1 d (hform j).2.1 (hform j).2.2 hr)
+  have hnotboth : ∀ j, ¬ (s (j + 1) = s j ∧ s (j + 1) = app OM.SSS1 (s j)) := by
+    intro j ⟨h1, h2⟩
+    rw [h1] at h2
+    exact OM.size_app_ne _ _ h2.symm
+  -- infinitely many Omega steps
+  have hinf : ∀ N, ∃ j, N ≤ j ∧ s (j + 1) ≠ s j := by
+    intro N
+    refine Classical.byContradiction (fun hno => ?_)
+    have hall : ∀ j, N ≤ j → s (j + 1) = s j := fun j hj =>
+      Classical.byContradiction (fun h => hno ⟨j, hj, h⟩)
+    exact no_R2_chain (fun i => t (N + i)) (fun i => by
+      have := hR2 (N + i) (hall (N + i) (by omega))
+      rw [show N + (i + 1) = N + i + 1 by omega]; exact this)
+  -- an Omega step at j1 and a later one at j2: the stack at j1 is a counter w d
+  have homega : ∀ j, s (j + 1) ≠ s j → t (j + 1) = s j ∧ s (j + 1) = app OM.SSS1 (s j) := by
+    intro j h
+    rcases hstep j with h1 | h1
+    · exact absurd h1 h
+    · exact h1
+  have next_omega : ∀ (dd j : Nat), s (j + 1) ≠ s j → s (j + dd + 2) ≠ s (j + dd + 1) →
+      ∃ d, s j = OM.w d := by
+    intro dd
+    induction dd using Nat.strongRecOn with
+    | _ dd ih =>
+      intro j hj hjd
+      by_cases hmid : ∃ e, e < dd ∧ s (j + e + 2) ≠ s (j + e + 1)
+      · obtain ⟨e, he, hne⟩ := hmid
+        exact ih e he j hj hne
+      · -- between j+1 and j+dd+1 only tail calls: the tops t (j+1), ..., t (j+dd+1) form an R2-chain ending at M
+        have htail : ∀ e, e < dd → s (j + e + 2) = s (j + e + 1) := fun e he =>
+          Classical.byContradiction (fun h => hmid ⟨e, he, h⟩)
+        obtain ⟨ht1, _⟩ := homega j hj
+        obtain ⟨_, _⟩ := homega (j + dd + 1) hjd
+        have hM : t (j + dd + 1) = OM.M := hOm (j + dd + 1) (homega _ hjd).1 (homega _ hjd).2
+        have hchain := OM.Rchain_to_M dd (fun e => t (j + 1 + e)) (by show t (j + 1 + dd) = OM.M; rw [show j + 1 + dd = j + dd + 1 by omega]; exact hM)
+          (fun e he => by
+            show R2 (t (j + 1 + e)) (t (j + 1 + (e + 1)))
+            have := hR2 (j + 1 + e) (by rw [show j + 1 + e + 1 = j + e + 2 by omega, show j + 1 + e = j + e + 1 by omega]; exact htail e he)
+            rw [show j + 1 + (e + 1) = j + 1 + e + 1 by omega]; exact this)
+        simp only [Nat.add_zero] at hchain
+        exact ⟨dd, by rw [← ht1]; exact hchain⟩
+  obtain ⟨j1, _, hj1⟩ := hinf 0
+  obtain ⟨j2, hj2, hj2'⟩ := hinf (j1 + 1)
+  obtain ⟨d, hd⟩ := next_omega (j2 - j1 - 1) j1 hj1
+    (by rw [show j1 + (j2 - j1 - 1) + 2 = j2 + 1 by omega, show j1 + (j2 - j1 - 1) + 1 = j2 by omega]; exact hj2')
+  have htj1 : t j1 = OM.M := hOm j1 (homega j1 hj1).1 (homega j1 hj1).2
+  -- from j1 on, the state is an Omega node (w i, w k) with i < k or i = 0
+  have inv : ∀ e, ∃ i k, (i < k ∨ i = 0) ∧ t (j1 + e) = OM.w i ∧ s (j1 + e) = OM.w k := by
+    intro e
+    induction e with
+    | zero => exact ⟨0, d, Or.inr rfl, by simpa [OM.w] using htj1, by simpa using hd⟩
+    | succ e ih =>
+      obtain ⟨i, k, hik, hti, hsk⟩ := ih
+      rw [show j1 + (e + 1) = j1 + e + 1 by omega]
+      rcases hstep (j1 + e) with hs | ⟨ht, hs⟩
+      · -- tail call: i >= 1 and the top counts down
+        have hr := hR2 (j1 + e) hs
+        rw [hti] at hr
+        cases i with
+        | zero => exact absurd hr (OM.not_R2_M _)
+        | succ i =>
+          refine ⟨i, k, ?_, OM.R2_w i _ hr, by rw [hs, hsk]⟩
+          rcases hik with h | h
+          · left; omega
+          · cases h
+      · -- Omega step: the top was M, i.e. i = 0
+        refine ⟨k, k + 1, Or.inl (by omega), by rw [ht, hsk], by rw [hs, hsk]; rfl⟩
+  obtain ⟨i, k, hik, hti, hsk⟩ := inv 0
+  have hfl := flag_walk u hchild (j0 + (j1 + 0))
+  rw [(hform (j1 + 0)).1, hti, hsk, flag_omega i k hik, hflag] at hfl
+  exact absurd hfl (by decide)
+
+end FH
+
+#print axioms FH.finite_half_Omega
+
+namespace FH
+open C
+open C.T
+
+/-- **Combined theorem.**  An infinite leftmost walk from a term whose L36 class has flag 0 (e.g. in (14,28),
+    (14,26)) never ends in a sequence of computed nodes (t j).(s j) whose steps are tail calls over the stack
+    (s (j+1) = s j) or canonical Omega steps (t (j+1) = s j, s (j+1) = S(SS).(s j)) — i.e. it never ends in the step
+    families of the two known infinite mechanisms (reload cycle, Omega cycle). -/
+theorem finite_half_families (u : Nat → C.T) (hchild : ∀ j, LChild (u j) (u (j + 1))) (hflag : flag (u 0) = false)
+    (j0 : Nat) (t s : Nat → C.T)
+    (hform : ∀ j, u (j0 + j) = app (t j) (s j) ∧ 2 ≤ (C.args (t j)).length)
+    (hstep : ∀ j, s (j + 1) = s j ∨ (t (j + 1) = s j ∧ s (j + 1) = app OM.SSS1 (s j))) : False := by
+  by_cases hfin : ∃ N, ∀ j, N ≤ j → s (j + 1) = s j
+  · -- finitely many Omega steps: from N on the bottom is fixed, a tail-call walk
+    obtain ⟨N, hN⟩ := hfin
+    have hconst : ∀ e, s (N + e) = s N := by
+      intro e
+      induction e with
+      | zero => rfl
+      | succ e ih => rw [show N + (e + 1) = N + e + 1 by omega, hN (N + e) (by omega), ih]
+    exact finite_half_TC u hchild hflag (j0 + N) (s N) (fun e => t (N + e))
+      (fun e => ⟨by rw [show j0 + N + e = j0 + (N + e) by omega, (hform (N + e)).1, hconst e], (hform (N + e)).2⟩)
+  · -- some Omega step at j1: afterwards the stack is never S
+    have : ∃ j1, s (j1 + 1) ≠ s j1 := by
+      refine Classical.byContradiction (fun h => hfin ⟨0, fun j _ => Classical.byContradiction (fun h' => h ⟨j, h'⟩)⟩)
+    obtain ⟨j1, hj1⟩ := this
+    have hne : ∀ e, s (j1 + 1 + e) ≠ S := by
+      intro e
+      induction e with
+      | zero =>
+        rcases hstep j1 with h | ⟨_, h⟩
+        · exact absurd h hj1
+        · simp only [Nat.add_zero]; rw [h]; intro h'; cases h'
+      | succ e ih =>
+        rw [show j1 + 1 + (e + 1) = j1 + 1 + e + 1 by omega]
+        rcases hstep (j1 + 1 + e) with h | ⟨_, h⟩
+        · rw [h]; exact ih
+        · rw [h]; intro h'; cases h'
+    exact finite_half_Omega u hchild hflag (j0 + (j1 + 1)) (fun e => t (j1 + 1 + e)) (fun e => s (j1 + 1 + e))
+      (fun e => ⟨by rw [show j0 + (j1 + 1) + e = j0 + (j1 + 1 + e) by omega]; exact (hform _).1,
+        (hform _).2, hne e⟩)
+      (fun e => by
+        have := hstep (j1 + 1 + e)
+        simp only [show j1 + 1 + (e + 1) = j1 + 1 + e + 1 by omega]
+        exact this)
+
+end FH
+
+#print axioms FH.finite_half_families

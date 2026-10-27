@@ -1,0 +1,4 @@
+26624 SS(SS)(S(pS)) ('alpha', 'nonIGEN', 'INV-Y', '|P|<=2')
+678 SSS(S(SS))(S(Sp)) ('beta-P', 'nonIGEN', 'INV-Y', '|P|<=2')
+74 SSS(SS)(S(SS)S(SS(S(Sp)))) ('beta-P', 'IGEN', 'Ytop changes', '|P|<=2')
+3 SS(SS(S(SS)))(S(S(SSS)(SS(SS)p))) ('alpha', 'IGEN', 'INV-Y', '|P|<=2')

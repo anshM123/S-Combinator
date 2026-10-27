@@ -149,6 +149,18 @@ an infinite Böhm tree (one half of C8). (iv) Lemma 13, Proposition T's search a
 triples (a, b, β) once peels (syntactic, structurally decreasing) are separated from refills and the refill's second
 component is known not to be S (Lemma 15).
 
+## Leftmost-path finite half: the known infinite mechanisms are excluded (universality agent, 2026-10-27; re-verified by the main agent)
+MACHINE-CHECKED (lean/AgentFiniteHalf.lean, a copy of agent_work_U/lean/FiniteHalf.lean, built on lean/PathModels.lean):
+`FH.flag_step` — the L36 flag is invariant along every leftmost Böhm-tree step (closure facts flag(s·x) = flag(x),
+flag(s·x·y) = flag(x) and class invariance); `FH.finite_half_TC` — an infinite leftmost walk from a flag-0 term never
+ends in tail calls over a fixed bottom (every reload node N_i N_m S has flag 1, kernel computation; full tail-call
+classification in agent_work_U/lean/Reload.lean); `FH.finite_half_Omega` — nor in canonical Omega steps
+(t' = s, s' = S(SS)·s); `FH.finite_half_families` — nor in any mixture. So both mechanisms by which leftmost paths are
+known to be infinite are confined to flag-1 classes, including for the resisting classes (14,28), (14,26).
+OPEN: Conjecture SF (every infinite leftmost walk eventually uses only tail calls and canonical Omega steps) and Omega
+steps with a second component other than S(SS) (none among 954 Omega steps in known infinite walks). EXPERIMENTALLY
+SUPPORTED: no flag-0 walk runs 400 nodes among 656,250 6-letter trees over {S, SS, S(SS), B, M} (up to 42 leaves).
+
 ## Proposition Q″ (the "infinite" verdicts of the leftmost- and rightmost-path models are correct) — PROVED (uses Theorem Q10) and MACHINE-CHECKED in Lean 4 (lean/PathModels.lean, 2026-10-27)
 *Lean (main agent, 2026-10-27).* `propQ2Lft` / `propQ2Rgt`: if the L36 (resp. R19) class of t is flagged, then for every
 depth d the leftmost (resp. rightmost) Böhm-tree path has d further nodes, each with a head normal form (`InfLft` /

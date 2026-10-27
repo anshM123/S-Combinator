@@ -1,0 +1,596 @@
+D = S(S(SS))S(S(Sp))  w = S(S(Sp))  b0 = S  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(S(SS)))S(Sp)  w = Sp(S(Sp))  b0 = Sp  c0 = S(Sp)  a1 = Sp
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS)S(SS(S(Sp)))  w = S(SS(S(Sp)))  b0 = S  c0 = SS(S(Sp))  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 PPY front=w P=[w, c0 w] Ytop=y
+    4 PYY front=c0 P=[c0] Ytop=y
+    5 CPY front=b0 P=[b0(b0 p)] Ytop=Y*
+    6 YYY front=Y:c0 w y P=[] Ytop=Y*
+    7 CPP P=[b0(b0 p), w] Ytop=y
+    8 PPY front=w P=[w, b0(b0 p) w] Ytop=y
+    9 PYY front=c0 P=[c0] Ytop=y
+    10 CPY front=b0 P=[b0(b0 p)] Ytop=Y*
+    11 YYY front=Y:b0(b0 p) w y P=[] Ytop=Y*
+    12 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))S(S(S(pS)))  w = S(S(S(pS)))  b0 = S  c0 = S(S(pS))  a1 = S(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p b0) P=[b0(p b0), w] Ytop=y
+    END front=p b0 pos3=w y
+D = SSS(S(SS))(S(Sp))  w = S(S(SS))(S(Sp))  b0 = S(S(SS))  c0 = S(Sp)  a1 = Sp
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))(SS)(S(Sp))  w = SS(S(Sp))  b0 = SS  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS)S(SS)(S(Sp))  w = SS(S(SS))(S(Sp))  b0 = SS(S(SS))  c0 = S(Sp)  a1 = Sp
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(S(SS)))S(S(pS))  w = S(pS)(S(S(pS)))  b0 = S(pS)  c0 = S(S(pS))  a1 = S(pS)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))SS(S(Sp))  w = SS(S(SS))(S(Sp))  b0 = SS(S(SS))  c0 = S(Sp)  a1 = Sp
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS)S(SS(S(S(pS))))  w = S(SS(S(S(pS))))  b0 = S  c0 = SS(S(S(pS)))  a1 = S(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 PPY front=w P=[w, c0 w] Ytop=y
+    4 PYY front=c0 P=[c0] Ytop=y
+    5 CPY front=b0 P=[b0(b0(p b0))] Ytop=Y*
+    6 YYY front=Y:c0 w y P=[] Ytop=Y*
+    7 CPP P=[b0(b0(p b0)), w] Ytop=y
+    8 PPY front=w P=[w, b0(b0(p b0)) w] Ytop=y
+    9 PYY front=c0 P=[c0] Ytop=y
+    10 CPY front=b0 P=[b0(b0(p b0))] Ytop=Y*
+    11 YYY front=Y:b0(b0(p b0)) w y P=[] Ytop=Y*
+    12 PPY front=b0(p b0) P=[b0(p b0), w] Ytop=y
+    END front=p b0 pos3=w y
+D = S(S(SS))S(S(S(p(SS))))  w = S(S(S(p(SS))))  b0 = S  c0 = S(S(p(SS)))  a1 = S(p(SS))
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p k) P=[b0(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))S(S(S(pSS)))  w = S(S(S(pSS)))  b0 = S  c0 = S(S(pSS))  a1 = S(pSS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p b0 b0) P=[b0(p b0 b0), w] Ytop=y
+    END front=p b0 b0 pos3=w y
+D = S(S(SS))S(S(S(SS)p))  w = S(S(S(SS)p))  b0 = S  c0 = S(S(SS)p)  a1 = S(SS)p
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    6 CPY front=k P=[p] Ytop=y
+    END front=p y pos3=w y
+D = S(S(SS))S(SS(S(Sp)))  w = S(SS(S(Sp)))  b0 = S  c0 = SS(S(Sp))  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 CPP P=[b0(b0 p), w] Ytop=y
+    6 PPY front=w P=[w, b0(b0 p) w] Ytop=y
+    7 PYY front=c0 P=[c0] Ytop=y
+    8 CPY front=b0 P=[b0(b0 p)] Ytop=Y*
+    9 YYY front=Y:b0(b0 p) w y P=[] Ytop=Y*
+    10 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = SSS(S(SS))(S(S(pS)))  w = S(S(SS))(S(S(pS)))  b0 = S(S(SS))  c0 = S(S(pS))  a1 = S(pS)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))(SS)(S(S(pS)))  w = SS(S(S(pS)))  b0 = SS  c0 = S(S(pS))  a1 = S(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(SS)S(SS)(S(S(pS)))  w = SS(S(SS))(S(S(pS)))  b0 = SS(S(SS))  c0 = S(S(pS))  a1 = S(pS)
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(S(SS)))S(S(p(SS)))  w = S(p(SS))(S(S(p(SS))))  b0 = S(p(SS))  c0 = S(S(p(SS)))  a1 = S(p(SS))
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(S(SS)))S(S(pSS))  w = S(pSS)(S(S(pSS)))  b0 = S(pSS)  c0 = S(S(pSS))  a1 = S(pSS)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k k pos3=w y
+D = S(S(S(SS)))S(S(SS)p)  w = S(SS)p(S(S(SS)p))  b0 = S(SS)p  c0 = S(S(SS)p)  a1 = S(SS)p
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    7 CPY front=k P=[p] Ytop=y
+    END front=p y pos3=w y
+D = S(S(SS))SS(S(S(pS)))  w = SS(S(SS))(S(S(pS)))  b0 = SS(S(SS))  c0 = S(S(pS))  a1 = S(pS)
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))(S(SS))(S(Sp))  w = S(SS)(S(Sp))  b0 = S(SS)  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))(SSS)(S(Sp))  w = SSS(S(Sp))  b0 = SSS  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SS(SS)(S(SS))(S(Sp))  w = SS(S(SS))(S(Sp))  b0 = SS(S(SS))  c0 = S(Sp)  a1 = Sp
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SSSS(S(SS))(S(Sp))  w = SS(S(SS))(S(Sp))  b0 = SS(S(SS))  c0 = S(Sp)  a1 = Sp
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(S(SS)))(SS)(S(Sp))  w = SS(S(Sp))  b0 = SS  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 CPP P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=w(c0 w) P=[w(c0 w), c0 w(w(c0 w))] Ytop=y
+    6 CPP P=[c0, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, c0(c0 w)] Ytop=y
+    8 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS)(S(S(SS))S(S(Sp)))  w = S(S(Sp))  b0 = S  c0 = S(Sp)  a1 = Sp
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS)(S(S(S(SS)))S(Sp))  w = Sp(S(Sp))  b0 = Sp  c0 = S(Sp)  a1 = Sp
+    6 CPP P=[c0, w] Ytop=y
+    7 CPP P=[w, c0 w] Ytop=y
+    8 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    9 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p pos3=w y
+D = SSS(S(S(SS))S(S(Sp)))  w = S(S(Sp))  b0 = S  c0 = S(Sp)  a1 = Sp
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = SSS(S(S(S(SS)))S(Sp))  w = Sp(S(Sp))  b0 = Sp  c0 = S(Sp)  a1 = Sp
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS)S(SS(S(S(p(SS)))))  w = S(SS(S(S(p(SS)))))  b0 = S  c0 = SS(S(S(p(SS))))  a1 = S(p(SS))
+    2 CPP P=[c0, w] Ytop=y
+    3 PPY front=w P=[w, c0 w] Ytop=y
+    4 PYY front=c0 P=[c0] Ytop=y
+    5 CPY front=b0 P=[b0(b0(p k))] Ytop=Y*
+    6 YYY front=Y:c0 w y P=[] Ytop=Y*
+    7 CPP P=[b0(b0(p k)), w] Ytop=y
+    8 PPY front=w P=[w, b0(b0(p k)) w] Ytop=y
+    9 PYY front=c0 P=[c0] Ytop=y
+    10 CPY front=b0 P=[b0(b0(p k))] Ytop=Y*
+    11 YYY front=Y:b0(b0(p k)) w y P=[] Ytop=Y*
+    12 PPY front=b0(p k) P=[b0(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(SS)S(SS(S(S(pSS))))  w = S(SS(S(S(pSS))))  b0 = S  c0 = SS(S(S(pSS)))  a1 = S(pSS)
+    2 CPP P=[c0, w] Ytop=y
+    3 PPY front=w P=[w, c0 w] Ytop=y
+    4 PYY front=c0 P=[c0] Ytop=y
+    5 CPY front=b0 P=[b0(b0(p b0 b0))] Ytop=Y*
+    6 YYY front=Y:c0 w y P=[] Ytop=Y*
+    7 CPP P=[b0(b0(p b0 b0)), w] Ytop=y
+    8 PPY front=w P=[w, b0(b0(p b0 b0)) w] Ytop=y
+    9 PYY front=c0 P=[c0] Ytop=y
+    10 CPY front=b0 P=[b0(b0(p b0 b0))] Ytop=Y*
+    11 YYY front=Y:b0(b0(p b0 b0)) w y P=[] Ytop=Y*
+    12 PPY front=b0(p b0 b0) P=[b0(p b0 b0), w] Ytop=y
+    END front=p b0 b0 pos3=w y
+D = S(SS)S(SS(S(S(SS)p)))  w = S(SS(S(S(SS)p)))  b0 = S  c0 = SS(S(S(SS)p))  a1 = S(SS)p
+    2 CPP P=[c0, w] Ytop=y
+    3 PPY front=w P=[w, c0 w] Ytop=y
+    4 PYY front=c0 P=[c0] Ytop=y
+    5 CPY front=b0 P=[b0(k p)] Ytop=Y*
+    6 YYY front=Y:c0 w y P=[] Ytop=Y*
+    7 CPP P=[b0(k p), w] Ytop=y
+    8 PPY front=w P=[w, b0(k p) w] Ytop=y
+    9 PYY front=c0 P=[c0] Ytop=y
+    10 CPY front=b0 P=[b0(k p)] Ytop=Y*
+    11 YYY front=Y:b0(k p) w y P=[] Ytop=Y*
+    12 PPY front=k p P=[k p, w] Ytop=y
+    13 CPY front=k P=[p] Ytop=y
+    END front=p y pos3=w y
+D = S(SS)S(SS(SS(S(Sp))))  w = S(SS(SS(S(Sp))))  b0 = S  c0 = SS(SS(S(Sp)))  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 PPY front=w P=[w, c0 w] Ytop=y
+    4 PYY front=c0 P=[c0] Ytop=y
+    5 CPY front=b0 P=[k(b0(b0 p))] Ytop=Y*
+    6 YYY front=Y:c0 w y P=[] Ytop=Y*
+    7 CPP P=[k(b0(b0 p)), w] Ytop=y
+    8 PPY front=w P=[w, k(b0(b0 p)) w] Ytop=y
+    9 PYY front=c0 P=[c0] Ytop=y
+    10 CPY front=b0 P=[k(b0(b0 p))] Ytop=Y*
+    11 YYY front=Y:k(b0(b0 p)) w y P=[] Ytop=Y*
+    12 CPP P=[b0(b0 p), w] Ytop=y
+    13 PPY front=w P=[w, b0(b0 p) w] Ytop=y
+    14 PYY front=c0 P=[c0] Ytop=y
+    15 CPY front=b0 P=[k(b0(b0 p))] Ytop=Y*
+    16 YYY front=Y:b0(b0 p) w y P=[] Ytop=Y*
+    17 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))S(S(S(p(S(SS)))))  w = S(S(S(p(S(SS)))))  b0 = S  c0 = S(S(p(S(SS))))  a1 = S(p(S(SS)))
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p k) P=[b0(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))S(S(S(p(SSS))))  w = S(S(S(p(SSS))))  b0 = S  c0 = S(S(p(SSS)))  a1 = S(p(SSS))
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p k) P=[b0(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))S(S(S(pS(SS))))  w = S(S(S(pS(SS))))  b0 = S  c0 = S(S(pS(SS)))  a1 = S(pS(SS))
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p b0 k) P=[b0(p b0 k), w] Ytop=y
+    END front=p b0 k pos3=w y
+D = S(S(SS))S(S(S(p(SS)S)))  w = S(S(S(p(SS)S)))  b0 = S  c0 = S(S(p(SS)S))  a1 = S(p(SS)S)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p k b0) P=[b0(p k b0), w] Ytop=y
+    END front=p k b0 pos3=w y
+D = S(S(SS))S(S(S(pSSS)))  w = S(S(S(pSSS)))  b0 = S  c0 = S(S(pSSS))  a1 = S(pSSS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(p b0 b0 b0) P=[b0(p b0 b0 b0), w] Ytop=y
+    END front=p b0 b0 b0 pos3=w y
+D = S(S(SS))S(S(S(SSSp)))  w = S(S(S(SSSp)))  b0 = S  c0 = S(S(SSSp))  a1 = S(SSSp)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=b0(k p) P=[b0(k p), w] Ytop=y
+    6 PYY front=k p P=[k p] Ytop=y
+    7 CCP P=[p] Ytop=Y*
+    END front=p pos3=w y
+D = S(S(SS))S(S(S(SS)(pS)))  w = S(S(S(SS)(pS)))  b0 = S  c0 = S(S(SS)(pS))  a1 = S(SS)(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k(p b0) P=[k(p b0), w] Ytop=y
+    6 CPY front=k P=[p b0] Ytop=y
+    END front=p b0 y pos3=w y
+D = S(S(SS))S(S(S(SS)(Sp)))  w = S(S(S(SS)(Sp)))  b0 = S  c0 = S(S(SS)(Sp))  a1 = S(SS)(Sp)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k(b0 p) P=[k(b0 p), w] Ytop=y
+    6 CPY front=k P=[b0 p] Ytop=y
+    8 YYY front=Y:b0 p y P=[] Ytop=Y*
+    END front=p pos3=w y
+D = S(S(SS))S(SS(S(S(pS))))  w = S(SS(S(S(pS))))  b0 = S  c0 = SS(S(S(pS)))  a1 = S(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 CPP P=[b0(b0(p b0)), w] Ytop=y
+    6 PPY front=w P=[w, b0(b0(p b0)) w] Ytop=y
+    7 PYY front=c0 P=[c0] Ytop=y
+    8 CPY front=b0 P=[b0(b0(p b0))] Ytop=Y*
+    9 YYY front=Y:b0(b0(p b0)) w y P=[] Ytop=Y*
+    10 PPY front=b0(p b0) P=[b0(p b0), w] Ytop=y
+    END front=p b0 pos3=w y
+D = S(S(SS))S(S(SS)(S(Sp)))  w = S(S(SS)(S(Sp)))  b0 = S  c0 = S(SS)(S(Sp))  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 CPP P=[b0(b0 p), w] Ytop=y
+    6 CPP P=[w, b0(b0 p) w] Ytop=y
+    7 PPY front=b0(b0 p) w P=[b0(b0 p) w, w(b0(b0 p) w)] Ytop=y
+    8 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = SSS(S(SS))(S(S(p(SS))))  w = S(S(SS))(S(S(p(SS))))  b0 = S(S(SS))  c0 = S(S(p(SS)))  a1 = S(p(SS))
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = SSS(S(SS))(S(S(pSS)))  w = S(S(SS))(S(S(pSS)))  b0 = S(S(SS))  c0 = S(S(pSS))  a1 = S(pSS)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k(p k k) P=[k(p k k), w] Ytop=y
+    END front=p k k pos3=w y
+D = SSS(S(SS))(S(S(SS)p))  w = S(S(SS))(S(S(SS)p))  b0 = S(S(SS))  c0 = S(S(SS)p)  a1 = S(SS)p
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k p P=[k p, w] Ytop=y
+    7 CPY front=k P=[p] Ytop=y
+    END front=p y pos3=w y
+D = S(S(SS))(SS)(S(S(p(SS))))  w = SS(S(S(p(SS))))  b0 = SS  c0 = S(S(p(SS)))  a1 = S(p(SS))
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k(p b0) P=[k(p b0), w] Ytop=y
+    END front=p b0 pos3=w y
+D = S(S(SS))(SS)(S(S(pSS)))  w = SS(S(S(pSS)))  b0 = SS  c0 = S(S(pSS))  a1 = S(pSS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k(p k k) P=[k(p k k), w] Ytop=y
+    END front=p k k pos3=w y
+D = S(S(SS))(SS)(S(S(SS)p))  w = SS(S(S(SS)p))  b0 = SS  c0 = S(S(SS)p)  a1 = S(SS)p
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    6 CPY front=b0 P=[p] Ytop=y
+    END front=p y pos3=w y
+D = S(SS)S(SS)(S(S(p(SS))))  w = SS(S(SS))(S(S(p(SS))))  b0 = SS(S(SS))  c0 = S(S(p(SS)))  a1 = S(p(SS))
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(SS)S(SS)(S(S(pSS)))  w = SS(S(SS))(S(S(pSS)))  b0 = SS(S(SS))  c0 = S(S(pSS))  a1 = S(pSS)
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k(p k k) P=[k(p k k), w] Ytop=y
+    END front=p k k pos3=w y
+D = S(SS)S(SS)(S(S(SS)p))  w = SS(S(SS))(S(S(SS)p))  b0 = SS(S(SS))  c0 = S(S(SS)p)  a1 = S(SS)p
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k p P=[k p, w] Ytop=y
+    8 CPY front=k P=[p] Ytop=y
+    END front=p y pos3=w y
+D = S(S(S(SS)))S(S(p(S(SS))))  w = S(p(S(SS)))(S(S(p(S(SS)))))  b0 = S(p(S(SS)))  c0 = S(S(p(S(SS))))  a1 = S(p(S(SS)))
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(S(SS)))S(S(p(SSS)))  w = S(p(SSS))(S(S(p(SSS))))  b0 = S(p(SSS))  c0 = S(S(p(SSS)))  a1 = S(p(SSS))
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(S(SS)))S(S(pS(SS)))  w = S(pS(SS))(S(S(pS(SS))))  b0 = S(pS(SS))  c0 = S(S(pS(SS)))  a1 = S(pS(SS))
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k k pos3=w y
+D = S(S(S(SS)))S(S(p(SS)S))  w = S(p(SS)S)(S(S(p(SS)S)))  b0 = S(p(SS)S)  c0 = S(S(p(SS)S))  a1 = S(p(SS)S)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k k pos3=w y
+D = S(S(S(SS)))S(S(pSSS))  w = S(pSSS)(S(S(pSSS)))  b0 = S(pSSS)  c0 = S(S(pSSS))  a1 = S(pSSS)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p k k k pos3=w y
+D = S(S(S(SS)))S(S(SSSp))  w = S(SSSp)(S(S(SSSp)))  b0 = S(SSSp)  c0 = S(S(SSSp))  a1 = S(SSSp)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    7 PYY front=k p P=[k p] Ytop=y
+    8 CCP P=[p] Ytop=Y*
+    END front=p pos3=w y
+D = S(S(S(SS)))S(S(SS)(pS))  w = S(SS)(pS)(S(S(SS)(pS)))  b0 = S(SS)(pS)  c0 = S(S(SS)(pS))  a1 = S(SS)(pS)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    7 CPY front=k P=[p k] Ytop=y
+    END front=p k y pos3=w y
+D = S(S(S(SS)))S(S(SS)(Sp))  w = S(SS)(Sp)(S(S(SS)(Sp)))  b0 = S(SS)(Sp)  c0 = S(S(SS)(Sp))  a1 = S(SS)(Sp)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=b0 P=[b0, w] Ytop=y
+    7 CPY front=k P=[k p] Ytop=y
+    9 YYY front=Y:k p y P=[] Ytop=Y*
+    END front=p pos3=w y
+D = S(S(SS))SS(S(S(p(SS))))  w = SS(S(SS))(S(S(p(SS))))  b0 = SS(S(SS))  c0 = S(S(p(SS)))  a1 = S(p(SS))
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))SS(S(S(pSS)))  w = SS(S(SS))(S(S(pSS)))  b0 = SS(S(SS))  c0 = S(S(pSS))  a1 = S(pSS)
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=k(p k k) P=[k(p k k), w] Ytop=y
+    END front=p k k pos3=w y
+D = S(S(SS))SS(S(S(SS)p))  w = SS(S(SS))(S(S(SS)p))  b0 = SS(S(SS))  c0 = S(S(SS)p)  a1 = S(SS)p
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=k p P=[k p, w] Ytop=y
+    9 CPY front=k P=[p] Ytop=y
+    END front=p y pos3=w y
+D = S(S(SS))(S(SS))(S(S(pS)))  w = S(SS)(S(S(pS)))  b0 = S(SS)  c0 = S(S(pS))  a1 = S(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(SS))(SSS)(S(S(pS)))  w = SSS(S(S(pS)))  b0 = SSS  c0 = S(S(pS))  a1 = S(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = SS(SS)(S(SS))(S(S(pS)))  w = SS(S(SS))(S(S(pS)))  b0 = SS(S(SS))  c0 = S(S(pS))  a1 = S(pS)
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = SSSS(S(SS))(S(S(pS)))  w = SS(S(SS))(S(S(pS)))  b0 = SS(S(SS))  c0 = S(S(pS))  a1 = S(pS)
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(S(S(SS)))(SS)(S(S(pS)))  w = SS(S(S(pS)))  b0 = SS  c0 = S(S(pS))  a1 = S(pS)
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 CPP P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=w(c0 w) P=[w(c0 w), c0 w(w(c0 w))] Ytop=y
+    6 CPP P=[c0, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, c0(c0 w)] Ytop=y
+    8 PPY front=k(p k) P=[k(p k), w] Ytop=y
+    END front=p k pos3=w y
+D = S(SS)(S(S(SS))S)(S(Sp))  w = S(S(Sp))  b0 = S  c0 = S(Sp)  a1 = Sp
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=b0 p P=[b0 p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))(S(S(SS)))(S(Sp))  w = S(S(SS))(S(Sp))  b0 = S(S(SS))  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))(S(SSS))(S(Sp))  w = S(SSS)(S(Sp))  b0 = S(SSS)  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))(SS(SS))(S(Sp))  w = SS(SS)(S(Sp))  b0 = SS(SS)  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))(S(SS)S)(S(Sp))  w = S(SS)S(S(Sp))  b0 = S(SS)S  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(SS))(SSSS)(S(Sp))  w = SSSS(S(Sp))  b0 = SSSS  c0 = S(Sp)  a1 = Sp
+    2 CPP P=[c0, w] Ytop=y
+    3 CPP P=[w, c0 w] Ytop=y
+    4 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    5 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(S(S(SS)))(S(SS))(S(Sp))  w = S(Sp)(S(SS)(S(Sp)))  b0 = S(Sp)  c0 = S(SS)(S(Sp))  a1 = Sp
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 CPP P=[b0, w] Ytop=y
+    7 CPP P=[w, b0 w] Ytop=y
+    8 PPY front=b0 w P=[b0 w, w(b0 w)] Ytop=y
+    9 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SS(S(SS))(S(SS))(S(Sp))  w = S(SS)(S(SS))(S(Sp))  b0 = S(SS)(S(SS))  c0 = S(Sp)  a1 = Sp
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SS(SSS)(S(SS))(S(Sp))  w = SSS(S(SS))(S(Sp))  b0 = SSS(S(SS))  c0 = S(Sp)  a1 = Sp
+    3 CPP P=[c0, w] Ytop=y
+    4 CPP P=[w, c0 w] Ytop=y
+    5 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    6 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SS(SS)S(S(SS))(S(Sp))  w = SSS(S(SS))(S(Sp))  b0 = SSS(S(SS))  c0 = S(Sp)  a1 = Sp
+    4 CPP P=[c0, w] Ytop=y
+    5 CPP P=[w, c0 w] Ytop=y
+    6 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    7 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SSSSS(S(SS))(S(Sp))  w = SSS(S(SS))(S(Sp))  b0 = SSS(S(SS))  c0 = S(Sp)  a1 = Sp
+    5 CPP P=[c0, w] Ytop=y
+    6 CPP P=[w, c0 w] Ytop=y
+    7 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    8 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SS(S(S(SS)))(SS)(S(Sp))  w = SS(S(Sp))  b0 = SS  c0 = S(Sp)  a1 = Sp
+    6 CPP P=[c0, w] Ytop=y
+    7 CPP P=[w, c0 w] Ytop=y
+    8 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    9 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SS(S(SS)S)(SS)(S(Sp))  w = SS(S(SS))(S(Sp))  b0 = SS(S(SS))  c0 = S(Sp)  a1 = Sp
+    8 CPP P=[c0, w] Ytop=y
+    9 CPP P=[w, c0 w] Ytop=y
+    10 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    11 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = SS(S(SS))S(SS)(S(Sp))  w = SS(S(SS))(S(Sp))  b0 = SS(S(SS))  c0 = S(Sp)  a1 = Sp
+    9 CPP P=[c0, w] Ytop=y
+    10 CPP P=[w, c0 w] Ytop=y
+    11 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    12 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS(S(SS)))SS(S(Sp))  w = SS(S(SS))(S(Sp))  b0 = SS(S(SS))  c0 = S(Sp)  a1 = Sp
+    10 CPP P=[c0, w] Ytop=y
+    11 CPP P=[w, c0 w] Ytop=y
+    12 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    13 PPY front=k p P=[k p, w] Ytop=y
+    END front=p pos3=w y
+D = S(SS)(S(S(S(SS)))S)(Sp)  w = Sp(S(Sp))  b0 = Sp  c0 = S(Sp)  a1 = Sp
+    6 CPP P=[c0, w] Ytop=y
+    7 CPP P=[w, c0 w] Ytop=y
+    8 PPY front=c0 w P=[c0 w, w(c0 w)] Ytop=y
+    9 PPY front=b0 P=[b0, w] Ytop=y
+    END front=p pos3=w y
