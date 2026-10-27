@@ -1,0 +1,4 @@
+1 {'S': 8} longest S-walks: [(2, 'S(SS)(SS)', (27, 13)), (2, 'S(SSS)', (3, 5)), (3, 'S(S(SS))(S(SS))', (8, 21))] 0 s
+2 {'S': 71, ('skip', 1, 1): 1} longest S-walks: [(4, 'S(S(SS))(S(SS))S', (14, 28)), (4, 'SS(SS)(S(S(SS))(S(SS)))', (14, 28)), (4, 'SSS(S(S(SS))(S(SS)))', (14, 28))] 0 s
+3 {'S': 818, ('skip', 1, 1): 8, 'bot?': 61, ('skip', 0, 0): 209} longest S-walks: [(5, 'SSS(SS(SS)(S(S(SS))(S(SS))))', (14, 28)), (5, 'SSS(SSS(S(S(SS))(S(SS))))', (14, 28)), (8, 'S(SS)(SS)(SS(SS))(SS)', (14, 28))] 1 s
+4 {'S': 11188, ('skip', 1, 1): 68, 'bot?': 2495, ('skip', 0, 0): 7825} longest S-walks: [(9, 'SSS(S(SS)(SS)(SS(SS))(SS))', (14, 28)), (10, 'SS(S(SS)(SS))(SS(SS))(SS)', (14, 28)), (14, 'S(SS)(SS)(SS(SS(SS)))(SS)', (14, 28))] 33 s

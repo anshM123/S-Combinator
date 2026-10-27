@@ -1,0 +1,20 @@
+('FH', 'M', 'budget') 3
+('FH', 'M', 'call') 52
+('FH', 'M', 'reexec') 172
+('FH', 'S', 'reexec') 194
+('M-I-Ln', 'M', 'reexec') 2
+('M-IIa', 'M', "p'-front nonproper") 4
+('M-IIa', 'M', 'reexec') 14
+('S-IIa', 'S', "p'-front nonproper") 154
+('S-IIa', 'S', 'reexec') 451
+('S-IIb(c0=S.a1)', 'S', "p'-front nonproper") 8
+('S-IIb(c0=S.a1)', 'S', 'reexec') 24
+('S-IIb(other)', 'S', 'call') 4
+('S-IIb(other)', 'S', 'reexec') 1
+total 1083
+example FH ['S(SS)Sp', 'SSS(SS)p', 'S(SS)SSp']
+example M-I-Ln ['S(S(S(S(SS))S))(S(SS)p)', 'S(S(S(SSS)S))(S(SS)p)']
+example M-IIa ['S(SS)S(SS(SS)(Sp))', 'S(SS)S(SSSS(Sp))', 'S(SS)S(SS(S(SS))(Sp))']
+example S-IIa ['SS(SS)(Sp)', 'SSSS(Sp)', 'SS(S(SS))(Sp)']
+example S-IIb(c0=S.a1) ['S(S(S(SS)))S(S(SS)p)', 'SSS(S(SS))(S(Sp))', 'S(S(SS))(SS)(S(Sp))']
+example S-IIb(other) ['S(SS)S(SS(S(Sp)))', 'S(S(SS))S(SS(S(Sp)))', 'S(S(SS))S(S(SS)(S(Sp)))']

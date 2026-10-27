@@ -4,3 +4,6 @@ INCONSISTENT: []
 2 {('S', 0): 42}
 3 {('S', 0): 396, ('bot?', 0): 71, ('reload', 1): 7}
 4 {('S', 0): 4369, ('bot?', 0): 2531, ('reload', 1): 54}
+5 {('S', 0): 55375, ('bot?', 0): 60018, ('reload', 1): 425}
+examples: {('S', 0): 'S', ('bot?', 0): 'S(SS)(SS)S(S(SS)(SS))', ('reload', 1): 'S(SS)(SS)(S(SS)(SS))S'}
+INCONSISTENT: []

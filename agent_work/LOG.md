@@ -972,3 +972,26 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
 * THEOREM INDEX update (04:25): INNER.lean — ordered_innermost (any ordered datum: proper transfers are
   innermost-dirty), chain_step_innermost (every transfer after the first in a Church chain is innermost-dirty);
   PA.lean — reexec_replays_transfer, replayed_handler_trivial (with BIv, pa_phase_v, x1_handler), trivH_next.
+
+## 2026-10-27 R3 agent (new non-universality agent; started 04:20 EDT)
+* 04:24 Start.  Task: prove Conjecture R3 (LOG THEOREM INDEX, 'CONJECTURAL — Conjecture R3') without the per-case
+  hypotheses of pa_main / pb_main / pam_main, making the chain bound unconditional.  Read PROOF STATUS, FINAL, the
+  THEOREM INDEX, Phase 4 entries, PA.lean (pa_core, post_replay, pa_main, pb_main).  New scripts go in
+  agent_work/r3/, Lean work in progress in agent_work/wip/ (files prefixed R3_), finished files in lean/ (new files
+  only).  First script: r3/trace23.py (phase-2 / phase-3 traces of one datum).
+* 04:34 IDEA (hand, to be checked and formalised).  Work in the 'V-run frame': phase 3 is the run of
+  args(V) ++ [g1, g2, g3] (g1, g2, g3 = phase 3's y, x.y, r as opaque bottom atoms) with phase 2's own atoms p, y;
+  phase 3's p'-fronts are the y-fronts of the V-run, its REEXECs the p-fronts, its CALLs the g-fronts.
+  (GCL, general correspondence lemma) If some list reachable in the V-run is tau(A) ++ ... and some list reachable
+  in phase 2 BEFORE its transfer is sigma2(A) ++ ..., for an abstract list A and atom substitutions sigma2, tau that
+  FIX p and y, then both runs follow the abstract run of A until its first atom-headed front F; phase 2 transfers
+  later, so F is not y-headed (phase 2 would CALL), and F p-headed means a V-run p-front (phase-3 REEXEC).
+  Two consequences for a single wrapper V = w.y, w = b0.c0:
+  (I) if phase 2 EVER opens a (w.y)-prefixed element before its transfer (the 'guard failure'), A = args(b0) ++
+  [c0, y] aligns phase 2 just after that opening with the V-run's start; the bottoms are atoms (holes), whose
+  V-run images g1, g2, g3 are CALLs; so phase 3 has NO p'-front at all.
+  (II) otherwise, pattern alpha: A = args(c0) ++ [h1, h2] ++ (bottom holes) aligns phase 2's glue list
+  (h1 -> y, h2 -> w.y) with the V-run's first c0-prefixed opening (h1 -> e1, h2 -> e2); h1-, h2-headed elements are
+  two barriers that never disappear, so the bottom is never read before an h1-/h2-front; an h1-front is a phase-2
+  CALL, an h2-front is excluded by (II); so F is p-headed and phase 3 re-executes.  This would remove BOTH replay
+  guards of pa_main (re-creation of w.y is harmless in the abstract formulation; a (w.y)-prefixed front is case I).

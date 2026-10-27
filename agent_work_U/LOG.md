@@ -323,3 +323,26 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   (5 terms, 3 distinct profiles) are linear reload counters (round lengths 5/6 or 3/4; survivor sizes count down by 2
   or 3 and reload one step higher) — no nested (square) leftmost paths in this range, consistent with W2/W2R (no
   second independent counter on the leftmost path).
+
+## Leftmost-path finite half for the component {(14,28),(14,26)} (coordinator suggestion 04:03) — started 04:04 EDT
+* Tools (all in agent_work_U/): classes.py (joint L36 x M35 classifier over data/model36_leftpath.txt and
+  data/model35_hn.txt, read-only), comp_runs.py / comp_detail.py / walkshow.py (leftmost walks with DM rounds),
+  comp_shapes.py (809 distinct arg-class shapes of computed component nodes <= 10 leaves — the class abstraction of
+  component nodes is very fragmented), reload_classes.py, reload_hunt.py, reload_hunt2.py, long_hunt.py.
+* COMPUTATIONALLY CERTIFIED (04:28 EDT, reload_hunt2.py 5; output reload_hunt2_out.txt): over ALL trees with <= 5 letters
+  from the alphabet {S, SS, B = S(SS)(SS), N1 = SS B, N2 = SS N1, S(SS)} (121,955 terms, up to 35 leaves, far beyond
+  the 16-leaf census), every term whose leftmost walk reaches a reload node N_i N_k S (i >= 0, k >= 1; proved
+  infinite, PROOF.md 'Reload cycles') within 80 nodes has an L36 flag-1 class (486 terms), and no other walk ran
+  80 nodes without ending.  No inconsistency with L36.  (A first run used a loose pattern that also accepted
+  N_i N_0 S; N_0 = B in the second slot does NOT reload — B is not of the form SS M' — so those 'hits' were false
+  alarms; fixed before any conclusion was drawn.)
+* EXPERIMENTALLY SUPPORTED: reload terms with other fuels, N_i N_k f for all closed f <= 8 leaves (i <= 2, k <= 3):
+  classes (14,33) (no hnf) for 5,562 of them, (14,28) for 63, (9,28) only for f = S; e.g. N_1 N_3 (SS) walks into
+  a node S(SS)(SS)(SS)(...) of class (14,33) whose round diverges.  The fuel must be exactly S: the round of
+  [S, N, M, f] (M = SS M') reaches [f, M' f, N M f] and ends with survivor N M f only if args f = [] (f = S).
+* Structural note (PROVED, elementary; = Lemma P/Lemma 7(iii) in the main agent's language): for u with >= 2 spine
+  arguments, the head run of u.v follows u's leftmost path with a tail [v] that only grows (each 2-component node
+  S x y maps the tail T to [T0, y T0] ++ T[1:], each 1-component node S x maps it to [T1, T0 T1] ++ T[2:]); hence
+  u.v has an hnf only if u's path ends at the leaf S, and then u.v and the 'tau-node' S tau_0 ... tau_r (tau = tail
+  when u's path reaches S) have the same leftmost child.  Consequences: u in P (infinite path) => u.v = bottom (this
+  is L36's row 9 = all 14); P(u.v) <=> P(tau-node) when u's path ends at S.
