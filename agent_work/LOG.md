@@ -428,3 +428,8 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   for ever: here proper transfers are possible for general shapes (the control above), via 'y glued down, then
   C-disposals onto the exposed p'-headed Y-element'.  So the open part of 'phase 3 is never proper' is exactly case
   (ii), and it needs the MSL shape of the phase-2 wrapper.
+* MACHINE-CHECKED (agent_work/lean/AB.lean, Lean 4.35 core, no sorry; axioms propext, Classical.choice,
+  Quot.sound): Lemma AB.  `ab_step` / `ab_run` / `ab_no_glue`: for lists C ++ Pl ++ Yl (C free of atoms 0..3 —
+  frozen atoms allowed, so phase 3's C-elements count here —, Pl contains p = var 0 and no x, y, r, Yl contains
+  x, y or r) with all elements ordered and |Pl| >= 3, every later list keeps |Pl| >= 3 and no step ever glues a
+  P-element onto a Y-element.

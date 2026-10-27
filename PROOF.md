@@ -823,7 +823,15 @@ reproduces P39 exactly (E22). **Conjecture C7 (shallow ⊥):** if t is not produ
 C6; a proof of C6's completeness half for all t still needs a well-foundedness argument.
 
 ---------------------------------------------------------------------------------------------------
-## Theorem P2 (Böhm-tree finiteness counts modulo 2) — PROVED (uses Theorem A and a certified finite M35 computation)
+## Theorem P2 (Böhm-tree finiteness counts modulo 2) — PROVED and MACHINE-CHECKED in Lean 4 (lean/P2_Parity.lean, 2026-10-27)
+*Lean (main agent, 2026-10-27).* `P2 : ∀ j, BTFin (args (T j)) ↔ (j % 2 = 0 ∨ j = 1)`, with BTFin the inductive Böhm-tree
+finiteness over the deterministic head machine (a ⊥ leaf when no hnf is ever reached). Axioms: propext, Classical.choice,
+Quot.sound. The M35 facts (S-identity over all 35³ triples, closure of the class range, hnf shapes, the fixed point
+pre(5) = pre(4), the four ⊥-classes) are checked by the kernel with `decide +kernel` over a base-35 bignum encoding of
+the table, and the checkers depend on NO axioms. Theorem A is in lean/TheoremA_M35.lean. The Lean proof follows the hand
+proof below step by step: uniqueness of the hnf (`hnf_unique`, `btfin_hnf`), the run lemma (`run_spine`), the
+head-run lemma (`head_run_T`), the class facts (`pre_fix`, `W_notF`), the odd seed (`not_bt_path`, by induction on
+the finiteness derivation) and the induction on j.
 Let X = SSS, Y = SS and T_j = S S^{×j} X Y, the S-term whose head S has the j+2 spine arguments
 [S, …, S (j times), X, Y]; in left-spine notation T_j = S^{j+1}(SSS)(SS), so T_j = E[P^j[S]] with the pumping context
 P[u] = u S and the outer context E[u] = u X Y. **Then BT(T_j) is finite iff j is even or j = 1.** Equivalently the family

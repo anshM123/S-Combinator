@@ -151,6 +151,8 @@ CHECKS = [
   ["lean_check.py", "../lean/AgentCANON.lean"], [r"LEAN OK: no errors, no sorry", r"canonical_innermost: propext, Classical.choice, Quot.sound"], 1200),
  ("Lean 4: Theorem A (M35 class not in F => no head normal form); S-identity and hnf shapes kernel-checked with no axioms",
   ["lean_check.py", "../lean/TheoremA_M35.lean"], [r"LEAN OK: no errors, no sorry", r"checkS_true: \(none\)", r"checkH_true: \(none\)", r"theoremA: propext, Quot.sound"], 900),
+ ("Lean 4: Theorem P2 (Böhm-tree finiteness of S S^j (SSS)(SS) iff j even or j = 1) machine-checked",
+  ["lean_check.py", "../lean/P2_Parity.lean"], [r"LEAN OK: no errors, no sorry", r"P2: propext, Classical.choice, Quot.sound"], 1200),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",
