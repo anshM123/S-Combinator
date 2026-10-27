@@ -3,7 +3,8 @@
 **Wolfram's S Combinator Challenge is not solved by this work.** This page summarises what is proved, what is
 machine-checked, and exactly what remains open, in both directions. Labels: MACHINE-CHECKED (Lean 4, no `sorry`,
 standard axioms only) > PROVED (hand proof) > COMPUTATIONALLY CERTIFIED > EXPERIMENTALLY SUPPORTED > CONJECTURAL.
-Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: `PROOF.md`, section "Master Reduction".
+Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: `PROOF.md`, section "Master Reduction";
+the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
 ## Machine-checked in Lean 4 (`lean/`, re-checked by `code/verify_all.py`)
 
