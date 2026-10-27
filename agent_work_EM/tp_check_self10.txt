@@ -1,0 +1,4 @@
+self 10 nodes 1000 time 3.7
+terms: {'flag0 (not walked)': 19446, 'deep': 1, 'bounded': 1}
+second-half step tally (deep walks; jumps counted in all long walks): {('step', 1, ''): 487, ('step', 2, 'S(SS)'): 13}
+TP violations in deep walks (term, kind, K, c0): []

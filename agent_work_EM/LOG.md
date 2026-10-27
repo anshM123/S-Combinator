@@ -128,3 +128,73 @@ returning reads, code tops whose last argument is a tower.  Status: ARGUED only.
   deep (depth growing); over the second halves of these walks all 601,200 steps are tail calls (K = 1: 587,167) or
   K = 2 pushes with c0 = S(SS) = tw 2 (14,033) — exactly TP (and the generalized Omega cycle); no pop, jump, return,
   K = 3 or other push.  37 further long flag-1 walks have bounded depth (reload type).
+
+## 11:17 EDT — full re-check: lean/EMA.lean (6,878 lines) LEAN OK (exit 0, 0 errors, no sorry; 44 theorem
+##   lines checked by #print axioms, all among propext / Classical.choice / Quot.sound) — output lean/EMA_check.txt
+* MACHINE-CHECKED in this file (new today): CA.T4_shape, CA.typed_dead, CA.step_types, CA.chain_T2, CA.no_caseA,
+  CA.depth_to_infinity, CA.finite_half_of_J_EMdeep, DP.gamma_node, DP.gamma_walk, DP.jump_child,
+  DP.tower_letter_frozen, DP.tower_letter_depth, DP.EM_of_TP, DP.finite_half_of_J_TP.
+
+## 11:17 EDT — ARGUED (not proved): why TP_deep should hold — reads of stack copies
+Terminology for a deep jump-free walk (all stacks with two non-tower levels): a LETTER is a right-spine multiplier
+of the stack; a K = 2 step q.σ -> σ.(c.σ) pushes the letter c and puts the COPY σ on top; the walk then READS the copy
+letter by letter (DP.gamma_walk): tw1 = SS returns (to the level below the copy), tw2 = S(SS) skips, tw3 = S(S(SS))
+pushes the rest R of the copy as a letter and reads a copy of the current stack; a letter S gives a jump node, any
+other letter with a non-tower rest kills the walk.  Matching (proof of DP.EM_of_TP): every late pop/return lands on a
+level created by an up-crossing push, i.e. on c.σ after a K = 2 push of a NON-tower letter c (resumed as code), or on
+σ.(c.σ) after a K = 3 push (tower letters are frozen: DP.tower_letter_frozen).
+Argued steps toward TP_deep: (1) a frozen tw1 letter ever at the top of the stack forbids any permanent growth above
+it (every later K = 2 read returns at once; K = 3 pushes lead to jump nodes), contradicting depth -> infinity;
+(2) a frozen non-tower letter can never be read, so every later read must stop above it; temporary letters (pushed by
+returning pushes, copy-rests) are non-towers, hence a permanent push happens only when the top letter of the stack is
+a frozen tower letter; (3) a permanent tw3 letter is re-read inside its own nested copy and then meets the pushed
+copy-rest R (death); so eventually all permanent letters are tw2 and every read passes the whole stack and re-runs
+the same base program, whose first push never returns — no further returns (generalized Omega cycle).
+Status: ARGUED; the bookkeeping (first permanent push, temporary letters, the base program) is not written out.
+
+## 11:21 EDT — EXPERIMENTALLY SUPPORTED: J and TP on further families (no violation anywhere)
+* tower_stacks.py 4 400 60 (tower_stacks_4.txt): 421,290 walks q.Z (Z = words of length <= 4 over
+  {S, SS, S(SS), S(S(SS)), B, M, SSS, S(SS)S} on 5 bases, 18 tops): no flag-0 walk runs 400 nodes (296,400 end at S,
+  124,158 reach a diverging head run); 732 flag-1 walks run 400 nodes, none with a pop/jump/return after node 60.
+* tp_check.py tower 4 1000 (tp_check_tower4.txt): 211 deep flag-1 walks of 1,000 nodes from tower-stack starts:
+  second halves = 102,682 tail calls + 2,818 K = 2 pushes of the letter S(SS); no jump, no other push (TP, J hold).
+* tp_check.py self 11 1000: the long flag-1 self-applications X X, X X S, S X X, X (S X) (X with 11 leaves) are
+  5 bounded-depth (reload-type) walks; no jump in their second halves.
+
+## 11:24 EDT — MACHINE-CHECKED (vs compiled base): no SS letter on top of a stack (DP.no_SS_letter)
+* DP.no_SS_letter: in a jump-free infinite leftmost walk no node has the form X.(SS.ρ) with ρ a non-tower.
+  Proof (formal): SS.ρ = S S ρ is a jump node, hence frozen (DP.tower_letter_frozen); from any node X'.(SS.ρ) the next
+  step is K = 1 (to c.(SS.ρ)), K = 2 (the pushed copy SS.ρ is read by DP.gamma_walk and returns at once to
+  c.(SS.ρ)), or K = 0 / K = 3 / K >= 4 / pop / jump, each of which reaches a jump node or contradicts DP.gamma_walk;
+  so the walk returns infinitely often to the level directly above the non-tower SS.ρ — impossible by SA.no_scenarioA.
+  Consequences for TP_deep: no K = 2 or K = 3 step ever pushes the letter SS (= tw1) over a non-tower stack, and no
+  copy put on top by a K = 2 step starts with SS; the remaining TP violations are K = 2 pushes of S or of non-tower
+  letters (incl. tw3 reads, which push the rest of the copy) and K = 3 pushes of S(SS).
+
+## 11:28 EDT — MACHINE-CHECKED (vs compiled base): S(SS)-letters are skipped; no push over S(SS)^n.S(S(SS)).B
+* DP.Twr2 Y n = S(SS) applied n times on top of Y.  DP.tw2_skips: a node (S(SS)^n Y).X with Y, X non-towers reaches
+  Y.X in exactly n steps (reading lemma with k = 1, n times).
+* DP.no_tw3_push: in a jump-free infinite walk no K = 2 step (H(q) = S (S(SS)) c) starts at a node q.σ with
+  σ = S(SS)^n (S(S(SS)).B), B a non-tower.  (The copy σ is read: n skips, then S(S(SS)) pushes B and puts c.σ on top;
+  c = SS is excluded by DP.no_SS_letter, c = S(SS) re-reads σ down to the same S(S(SS)) and then meets the letter B,
+  c = S(S(SS)) meets B at once; a non-tower letter is excluded by DP.gamma_walk.)
+* Meaning: the copy put on top by any K = 2 step is read by S(SS)-skips until its first other letter, which can only be
+  SS (then the read returns; by no_SS_letter such an SS was never pushed — it belongs to the part of the stack present
+  from the start) or a letter whose rest is a tower (the BASE of the stack); S(S(SS)), S and non-tower letters are
+  impossible there.
+
+## 11:28 EDT — ARGUED (not formalised): TP_deep, and hence EM_deep, by a 'base action' case split
+Setting: jump-free, depth -> infinity, stacks eventually two-level non-towers.  Fix a late time T1 with a frozen bottom
+segment; every K = 2 copy read skips S(SS)-letters (tw2_skips) and stops at the same place (an initial SS or the base
+B*); there the walk performs a FIXED 'base action' — determined by B* alone, after the finite TT-chain of tail calls of
+the base program (SA.no_TT_chain): RET (a return), CALL(c*) (a K = 2 push of c*), or K3(c*).
+ RET: every K = 2 push is resumed and K = 3 pushes end in a jump node, so nothing is ever pushed permanently —
+      contradicts depth -> infinity (strict cut times push permanently).
+ CALL(c*): the nested read of the current stack meets the enclosing pushed letter first; SS (no_SS_letter),
+      S(S(SS)) (no_tw3_push), S (jump) and non-tower letters (gamma_walk) are impossible, so it is S(SS), the read
+      reaches the base again, and the CALL recurses forever: every later K >= 2 push is the CALL of c* = S(SS) — TP.
+ K3(c*): c* = S(SS) (SS by no_SS_letter); the next base action meets the copied stack as a letter: death by gamma_walk.
+So TP_deep holds, and DP.EM_of_TP gives EM_deep.  Missing for a proof: the formal 'frozen base' bookkeeping (a fixed
+B* below every late copy, the base program's determinism), the transient before the first late K = 2 push, and the
+'stacks eventually two-level non-towers' hypothesis.  Status: ARGUED.  The machine-checked ingredients are DP.gamma_walk,
+DP.tower_letter_frozen, DP.no_SS_letter, DP.tw2_skips, DP.no_tw3_push, DP.EM_of_TP, SA.no_TT_chain, SA.no_scenarioA.

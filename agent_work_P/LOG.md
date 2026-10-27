@@ -201,3 +201,149 @@ Task: look for universal emulation by S under parallel (ReplaceAll-style) evalua
   body contains a call built from y1 ('data holding data' is allowed, but building the body from y1 while y2 is being
   incremented is a write into one of two live data). OPEN: whether a skeleton can build race pairs with non-separable
   polynomial durations for all tuples; no construction found in the attempt above (design sketch only, no search).
+
+## 2026-10-27 11:18 EDT Theorem BC-par (ReplaceAll reveals every Boehm-tree node) -- MACHINE-CHECKED
+* agent_work_P/lean/ParTime.lean, `replaceAll_reveals` (+ `node`, `revealed`, `pass_HN_exact`, `passN_HN_exact`,
+  `node_forward`, `node_backward`, `replaceAll_hn`); lean_check: LEAN OK, no sorry (propext, Classical.choice,
+  Quot.sound).
+* `node t p`: the Boehm tree of t has a node at path p (some reduct head-normal, then recursively in argument p_i);
+  `revealed u p`: u is already head-normal along p. Theorem: node t p -> exists n, revealed (passN n t) p.
+  `passN_HN_exact`: on a head-normal term, j passes act argument-wise (head kept, args mapped by passN j): the
+  arguments of a head normal form evolve independently and in lockstep.
+* Meaning: ReplaceAll is Boehm-complete (fair); leftmost-outermost is not (it never leaves an infinite leftmost
+  subtree). So under ReplaceAll a detector can observe ANY Boehm-tree node in finite time, and races between sibling
+  subtrees are physically observable. Order-independent content (which nodes exist) is unchanged (F5/CF).
+
+## 2026-10-27 11:24 EDT Exploratory probes for multi-parameter race durations -- inconclusive; memory incident
+* numeral_products.py (write-free templates with two S-numerals, leftmost-outermost hnf times, n, m <= 5): within the
+  caps the only 'non-separable' instances are boundary effects (T constant for n, m >= 2; e.g. N (M S) S: T = 5 for all
+  n, m >= 2); several templates (N M S S for n >= 3, N M SS S) exceed the size caps. No genuine product durations
+  found; the probe does not decide anything.
+* Memory incident: the first run of numeral_products.py had no memory guard; its hash-cons table grew to 15.7 GB. Its
+  bash wrapper was stopped (TaskStop) and the python process itself was killed by its own PID (94832, command line
+  checked: 'python.exe numeral_products.py 6') at about 11:21. No other process was touched (tp_check.py PID 119604
+  left running). The script now stops at 2,000,000 hash-cons nodes.
+* Final re-checks (11:23): ParTime.lean "exit 0, 0 errors, 14 theorems checked ... LEAN OK: no errors, no sorry";
+  Lemma10Any.lean "exit 0, 0 errors, 3 theorems checked ... LEAN OK"; maxplus_check.py 600 1 -> 241 agree, 0
+  mismatches; max_gadget.py 20 -> 400/400.
+
+## 2026-10-27 11:28 EDT Probe: junk of a reload head run as ReplaceAll processes -- EXPERIMENTALLY SUPPORTED (one term)
+* junk_processes.py "S(S(SS))(S(SS))(SS)SSS" 120 (the E36 reload term with closed arguments): every product b.c pushed in
+  120 head steps, run as its own ReplaceAll process, head-normalises within 0-5 passes independently of the cycle, or has
+  no hnf within the caps (pushed at the opcode-4 steps). Natural junk here carries no parameter-dependent finite durations.
+
+## FINAL (parallel universality agent) -- 2026-10-27 11:28 EDT
+
+### Bottom line
+No universal emulation by S under ReplaceAll (parallel) evaluation was found, and none is claimed. Instead the parallel
+order is now pinned down by machine-checked theorems. A ReplaceAll run -- in fact every evaluation order and every path
+of the multiway system -- is the leftmost-outermost head run traversed monotonically (re-timed), with every list
+element replaced by one of its reducts (Theorems PT, PT-all). So the head-run skeleton and the placement of data are
+the same in every order (Corollary PT-V, transfer principle), and Lemma 10 holds in every order. What ReplaceAll adds is
+exactly: (a) waiting elements evolve autonomously, and opening one is a max-plus JOIN with its own clock (Lemma PJ);
+(b) fairness: it reveals every Boehm-tree node (Theorem BC-par); (c) it is never slower to a head normal form
+(Corollary PT-F). The clock channel can therefore change only WHEN head-run states are visited and the syntax INSIDE
+list elements -- never the skeleton. A ReplaceAll universal emulation would have to be detector-mediated: a data-blind
+skeleton that creates unboundedly many races whose outcomes a bounded-time detector reads. Theorem RR shows this would
+suffice (via MRDP) and isolates the missing ingredient: race pairs with prescribed NON-SEPARABLE polynomial durations
+for all parameter tuples, i.e. inserting several parameters into call templates -- a question about head runs alone,
+constrained by the order-independent data-placement barriers. Open.
+Rules (PRIZE_ASSESSMENT 'Rules', STATUS R34): a universality proof may pick any evaluation order. By Theorem PT-all
+the choice of order can only re-time the leftmost-outermost skeleton and change syntax inside list elements, so picking
+ReplaceAll (or any order) helps only an emulation whose detector reads timing or intermediate syntax; control-level
+(skeleton-level) universality is the same question in every order.
+
+### Constructed / proved (label; file; theorem names)
+Lean files: agent_work_P/lean/ParTime.lean (= lean/Standard.lean lines 1-370 verbatim, then PT_tail, PJ_tail, PV_tail,
+PF_tail, PA_tail, TP_tail, PM_tail, TM_tail, BC_tail, PassCheck_tail .lean.txt concatenated in this order) and
+agent_work_P/lean/Lemma10Any.lean (= lean/Lemma10.lean lines 1-400 without its #print lines, then L10_tail.lean.txt).
+Both: `cd code && python lean_check.py ../agent_work_P/lean/FILE.lean` -> "LEAN OK: no errors, no sorry" (last runs:
+ParTime.lean 11:29, 15 theorems printed; Lemma10Any.lean 11:23, 3 printed); axioms propext, Classical.choice,
+Quot.sound only. Both files are standalone (no imports).
+1. Theorem PT -- MACHINE-CHECKED (`theoremPT`, `parallel_time_change`; tools `pass`, `pass_head_step`, `pass_HN`,
+   `par_pass`, `commute_one`, `commute_star`, `hstepN_det`). After n passes the term has the head and spine length of
+   the k-th head reduct w (unique by `hstepN_det`), its spine arguments are position-wise reducts of w's, and k >= n
+   while no pass before n reached a head normal form.
+2. Lemma LZ (prefix form) and Lemma PJ (max-plus law) -- MACHINE-CHECKED (`pass_ext`, `passN_ext`, `lemmaPJ`).
+   Waiting elements age autonomously; for the list [P^w(x0), r1, r2, R...], the head normal form of x0 is at the front
+   1 + max(0, h - w) passes after the opening (h = x0's own first hnf time): opening = max(T, b + h), while
+   leftmost-outermost pays the sum. Random check of the list form: maxplus_check.py, 952/952 (seeds 1-4).
+3. Corollary PT-V (data placement is order-independent) -- MACHINE-CHECKED (`corollaryPT_data`, `red_occ`).
+4. Corollary PT-F (h_par <= h_LO) -- MACHINE-CHECKED (`corollaryPT_fast`).
+5. Theorem PT-all, monotone re-timing, transfer principle -- MACHINE-CHECKED (`factorization`, `theoremPT_all`,
+   `factorization_mono`, `transfer_principle`, `transfer_principle_replaceAll`, `transfer_monotone`): every state
+   reachable in any order is an internal reduct of a head-run state, reached monotonically; every property of (head,
+   data per spine position) that holds for all head-run states holds in every order, and every relation that holds
+   between earlier and later head-run states holds between earlier and later states of any run (e.g. Lemma 8's
+   non-decreasing data count; that instantiation is a hand step, Lemma 8 being machine-checked in lean/BarrierJ.lean's
+   list framework). This extends Prop. CF from hnf events to infinite head runs.
+6. Theorem BC-par (ReplaceAll reveals every Boehm-tree node; the arguments of a head normal form evolve in lockstep) --
+   MACHINE-CHECKED (`replaceAll_reveals`, `passN_HN_exact`, `node_forward`, `node_backward`).
+7. Lemma 10 in every evaluation order -- MACHINE-CHECKED (Lemma10Any.lean: `red_inv`, `hstep_inv`, `lemma10_any`,
+   `lemma10_replaceAll`): no junk-free rotation of two data in any order or in the multiway system.
+8. The Lean `pass` equals the project's Python ReplaceAll pass on 30 random instances -- MACHINE-CHECKED by `decide`
+   (gen_pass_examples.py -> PassCheck_tail.lean.txt).
+9. Exact max/monus gadget -- PROVED (Lemma PJ) + COMPUTATIONALLY CERTIFIED: with flat combs D_d (d+3 leaves, a delay of
+   d passes), S D_d R D_e Y lays out D_e's hnf at pass 3 + max(d, e) under ReplaceAll (opcode 2 + (e monus d) at pass
+   2 + d) versus 3 + d + e under leftmost-outermost (opcode e + 2). max_gadget.py 40: 1,600/1,600 pairs.
+10. Clock-channel capacity -- PROVED + EXPERIMENTALLY SUPPORTED: a clock W opened at age w delivers exactly
+   spine(P^max(w,h)(W)) (Lemma PJ), so its only effect is a time shift of autonomous runs; it saturates for normalising
+   clocks (at most N(W)+1 values). clock_capacity.py 9 40 20000 3000 (all 2,056 terms <= 9 leaves): 1,737 normalise
+   within 40 passes (largest time 18); 5 head-normalise without normalising and are age-injective (33-39 distinct
+   deliveries in 40 ages); 314 hit the size cap (163 with an hnf, 151 without an hnf within 3,000 head steps).
+11. Theorem RR (race reduction) -- PROVED as a reduction (MRDP cited): a computable family of terms whose ReplaceAll runs
+   create, for every y in N^r, a race node S A_y B_y with h_par(A_y) = c + P(y) and h_par(B_y) = c + Q(y) (P, Q given
+   natural-coefficient polynomials), recognisable by a fixed pattern, would make S universal under ReplaceAll with a
+   linear-time tree-pattern detector (a finite tree automaton; if the finished processes have fixed shapes, even a word
+   automaton on the serialisation, class D4 -- in that case it would also refute configuration-level R''_PUP there).
+12. Transfer table (PROVED from 1-7; details in the 11:12 entry): Lemma 8, Cor. 8(ii), Lemma 9 (a), Theorem J at the
+   hnf, Lemma 10 (MACHINE-CHECKED), Theorem U*, and the Boehm-tree-level barriers (H, N*, comb rigidity) hold in every
+   order; the access lemma holds up to reduction; the barrier lemma's control part holds, its 'waiting elements are
+   frozen' part does not (R43); the cost lemmas (11, 12, Theorem O) transfer only to the re-timed head-step count, not
+   to pass counts.
+
+### Refuted / corrected
+* agent_work_U's note 'parallel clock channel argued contractive' (no file behind it): CORRECTED -- true for normalising
+  clocks (saturation), false in general (age-injective clocks exist, item 10; R43's clock shows 6 distinct shapes); in
+  every case the clock acts only as a time shift (Lemma PJ, Theorem PT-all).
+* My own first join design via tree calls S C x y needs a pass-through hnf S S c; there is none among the contexts
+  S C_m u v (w) with u, v, w <= 3 leaves (search_passthru.py: 0 found); flat combs provide it (passthru_scan.py 10:
+  39 pass-through terms <= 10 leaves, the longest delays are the flat combs, h = leaves - 3).
+
+### Open
+1. The hypothesis of Theorem RR: can a data-blind skeleton build race pairs with non-separable polynomial durations for
+   all parameter tuples (r >= 2)? Not blocked by Prop. CF (no data-dependent control is needed) nor by the
+   data-blindness of calls (Theorem N gives products by nesting a numeral around a call); constrained by Theorem J
+   (one closed layer per Boehm-tree step around all live data), Lemma 10 (every order) and Theorem U*. One parameter is
+   easy and useless (decidable). No construction; the probes were inconclusive: numeral_products.py (write-free
+   numeral templates: only boundary effects or size-cap overflows) and junk_processes.py (the E36 reload term
+   S(S(SS))(S(SS))(SS)SSS, 120 head steps: every junk product pushed is a process with hnf time 0-5, independent of the
+   cycle, or has no hnf within the caps; the same for the binary counter SSS(SS)S(SS(SS)), 400 head steps: 149 junk
+   processes with hnf time 0, 57 with 1, 194 without an hnf within the caps, saved in junk_bc.txt -- natural junk
+   carries no parameter-dependent finite durations; race material would have to be engineered).
+2. Configuration-level R''_PUP for ReplaceAll (needed for D4 in the Master Reduction): now reduced to the head-run
+   skeleton (Theorem PT) + max-plus re-timing (Lemma PJ) + the autonomous ReplaceAll runs of the list elements (the same
+   kind of object, recursively). Open.
+3. Detector class D2 under ReplaceAll: every Boehm-tree node is observable (Theorem BC-par), so existential Boehm-tree
+   properties become ReplaceAll halting problems; their decidability is C5' (open, unchanged).
+4. Krob route: do timed Boehm trees (reveal times, max-plus by Lemma PJ, with sharing from S's duplication) realise
+   unboundedly ambiguous max-plus behaviour? Tiny sample (bt_reveal.py, the 5 terms of item 10): reveal times trivial
+   (EXPERIMENTALLY SUPPORTED only). Open.
+
+### Scripts behind the numbers (all in agent_work_P/)
+ptools.py (helpers: the direct ReplaceAll pass of code/parallel_eval.py, head steps, tree calls); maxplus_check.py
+(952/952); max_gadget.py (1,600/1,600); clock_capacity.py (2,056-term classification); passthru_scan.py (39 pass-through
+terms <= 10 leaves); search_passthru.py (0 found); race_probe.py (call processes S C x y: the marker x.y first reaches
+the front at T(C) = 6, 14, 30 for x = SSS, m = 1..3; direct passes hit the size cap near pass 30); bt_reveal.py (timed
+Boehm trees); gen_pass_examples.py (30 kernel-checked pass instances); numeral_products.py (inconclusive probe, now
+with a memory guard); junk_processes.py (junk products of a head run as ReplaceAll processes).
+Incident: one unguarded run of numeral_products.py reached 15.7 GB; I killed my own process (PID 94832, command line
+checked) at about 11:21; nothing else was touched.
+
+### Suggested integration (for the main agent)
+* STATUS: new rows for Theorem PT / PT-all / transfer principle (MACHINE-CHECKED), Lemma PJ (MACHINE-CHECKED), Theorem
+  BC-par (MACHINE-CHECKED), Lemma 10 in every order (MACHINE-CHECKED), Theorem RR (PROVED, a conditional reduction),
+  clock capacity (PROVED + EXPERIMENTALLY SUPPORTED); R43 scope note: 'the clock is only a time shift (Lemma PJ)'.
+* PROOF.md, 'Control flow is order-independent': Proposition CF now extends to infinite head runs (Theorem PT-all,
+  `factorization_mono`). Master Reduction ledger: 'configuration R''_PUP, parallel' -> reduced as in Open 2.
+* code/verify_all.py: add the two Lean files (standalone).

@@ -44,6 +44,13 @@ replays the earlier transfer) is machine-checked. D3 remains open.
   finite half is reduced to Conjecture EM (every infinite leftmost walk is eventually monotone); the same for the
   rightmost path under EM_R.
 
+## The parallel-evaluation agent's result (11:28 EDT)
+No universal construction under ReplaceAll. Machine-checked (lean/AgentParTime.lean, AgentLemma10Any.lean): a
+ReplaceAll run, and every other evaluation order, is the head run re-timed with list elements replaced by reducts
+(Theorems PT, PT-all, transfer principle); waiting elements age and opening is a max-plus join (Lemma PJ); Lemma 10
+holds in every order. Proved as a conditional reduction: Theorem RR (timing races with prescribed polynomial durations
+would make S universal under ReplaceAll). Open: such races for two or more parameters.
+
 ## Experiments and negative results this session
 * E114: a generalised Lemma P with opaque bottoms is a correct sufficient criterion for finite leftmost paths but fails
   to be necessary (5 of 171 resisting terms at 8 leaves); class graphs: the C6 completeness half has one 17-class

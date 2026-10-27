@@ -44,6 +44,8 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 | result | file | meaning |
 |---|---|---|
 | Confluence, Proposition MW(e) | `Confluence.lean` | S-reduction is confluent (normal forms are unique); a decoder that respects reachability cannot read two different halting outcomes of a nondeterministic machine from S's multiway system (true of every confluent system, SK included) |
+| Theorems PT, PT-all, transfer principle, Lemma PJ, BC-par | `AgentParTime.lean` | every evaluation order (ReplaceAll, any order, any multiway path) is the head run re-timed, with list elements replaced by reducts: data placement and the head-run barriers carry over to every order; under ReplaceAll waiting elements age and opening is a max-plus join |
+| Lemma 10 in every order | `AgentLemma10Any.lean` | no junk-free rotation for any reduct, in any order |
 | Proposition CF, head normalisation theorem | `CF.lean`, `Standard.lean` | if any evaluation reaches a head normal form, head reduction does too; and whichever evaluation order reaches a head normal form, it finds the same head and the same number of arguments, with joinable arguments: control flow at Böhm-tree level does not depend on the evaluation order |
 | F5: Böhm trees are invariant under reduction | `BTInv.lean` | a term and every reduct (any evaluation order, any redex choices) have the same Böhm tree to every depth, so every Böhm-tree property is order-independent |
 | **Theorem T** (except decidability) | `TheoremT.lean` | termination is all-or-nothing: a term with a normal form has no infinite evolution in any order (Church's theorem for S) and a finite multiway graph; a term without one has no finite maximal evolution. With Waldmann's theorem (cited) this rules out 'the evolution stops' as a halting signal |
@@ -120,7 +122,9 @@ A universal emulation needs an encoder, an evaluation order and a halting detect
 3. An argument that Wolfram's "non-universal decoder" falls under the covered classes (the definitional piece).
 
 **For "S is universal":** an explicit emulation. Every design pattern tried so far is blocked by a proved barrier or
-failed in bounded searches. The universality agent's current lead is the leftmost-path "descent machine", which has
+failed in bounded searches. The sharpest remaining lead is Theorem RR: under ReplaceAll, race nodes with prescribed
+polynomial timing for every parameter tuple would give universality with a linear-time detector; no such races are
+known. The universality agent's current lead is the leftmost-path "descent machine", which has
 erasure (agent_work_U/).
 
 ## What is not claimed

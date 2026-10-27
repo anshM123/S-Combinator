@@ -1,4 +1,4 @@
-exit 0, 0 errors, 44 theorems checked, axioms used: ['Classical.choice', 'Quot.sound', 'propext']
+exit 0, 0 errors, 47 theorems checked, axioms used: ['Classical.choice', 'Quot.sound', 'propext']
   FH.flag_step: propext, Quot.sound
   FH.finite_half_TC: propext, Classical.choice, Quot.sound
   OM.omega_detect: propext, Classical.choice, Quot.sound
@@ -43,4 +43,7 @@ exit 0, 0 errors, 44 theorems checked, axioms used: ['Classical.choice', 'Quot.s
   DP.tower_letter_depth: propext, Classical.choice, Quot.sound
   DP.EM_of_TP: propext, Classical.choice, Quot.sound
   DP.finite_half_of_J_TP: propext, Classical.choice, Quot.sound
+  DP.no_SS_letter: propext, Classical.choice, Quot.sound
+  DP.tw2_skips: propext, Classical.choice, Quot.sound
+  DP.no_tw3_push: propext, Classical.choice, Quot.sound
 LEAN OK: no errors, no sorry

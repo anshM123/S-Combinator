@@ -1,0 +1,119 @@
+
+/-! ## Theorem BC-par: ReplaceAll reveals every node of the Böhm tree (agent_work_P, 2026-10-27)
+
+`node t p`: the Böhm tree of t has a node at path p (p = list of argument positions; a node exists where some reduct is
+head-normal).  `revealed u p`: along p the term u is already head-normal at every node.
+`replaceAll_reveals`: if the Böhm tree of t has a node at p, then some ReplaceAll iterate passN n t has revealed it.
+(Leftmost-outermost evaluation does not have this property: it never leaves an infinite leftmost subtree.)  So under
+ReplaceAll every Böhm-tree node is observable by a detector after finitely many passes, and the two arguments of a
+head normal form evolve independently and in lockstep (`passN_HN_exact`).
+-/
+
+def node : T → List Nat → Prop
+  | t, [] => ∃ u, RedStar t u ∧ HN u
+  | t, i :: p => ∃ u, RedStar t u ∧ HN u ∧ i < (args u).length ∧ node ((args u).getD i S) p
+
+def revealed : T → List Nat → Prop
+  | u, [] => HN u
+  | u, i :: p => HN u ∧ i < (args u).length ∧ revealed ((args u).getD i S) p
+
+theorem pass_HN_exact : ∀ u : T, HN u → head (pass u) = head u ∧ args (pass u) = (args u).map pass
+  | S, _ => ⟨rfl, rfl⟩
+  | var n, _ => ⟨rfl, rfl⟩
+  | app f a, h => by
+    have hr' : ∀ x y, f ≠ app (app S x) y := by
+      intro x y e
+      subst e
+      rcases h with h | h
+      · exact h rfl
+      · simp [args] at h
+    rw [pass_app f a hr']
+    obtain ⟨e1, e2⟩ := pass_HN_exact f (HN_left h)
+    refine ⟨e1, ?_⟩
+    show args (pass f) ++ [pass a] = (args f ++ [a]).map pass
+    rw [e2, List.map_append]
+    rfl
+
+theorem HN_of_shape {u v : T} (e1 : head v = head u) (e2 : (args v).length = (args u).length) (h : HN u) : HN v := by
+  unfold HN at *
+  rw [e1, e2]
+  exact h
+
+theorem passN_HN_exact (u : T) (h : HN u) : ∀ j : Nat,
+    head (passN j u) = head u ∧ args (passN j u) = (args u).map (passN j)
+  | 0 => by
+    refine ⟨rfl, ?_⟩
+    show args u = (args u).map (passN 0)
+    rw [map_passN_zero]
+  | j + 1 => by
+    obtain ⟨e1, e2⟩ := passN_HN_exact u h j
+    have hj : HN (passN j u) := HN_of_shape e1 (by rw [e2, List.length_map]) h
+    obtain ⟨f1, f2⟩ := pass_HN_exact (passN j u) hj
+    refine ⟨f1.trans e1, ?_⟩
+    show args (pass (passN j u)) = (args u).map (passN (j + 1))
+    rw [f2, e2, List.map_map]
+    rfl
+
+theorem passN_S : ∀ j : Nat, passN j S = S
+  | 0 => rfl
+  | j + 1 => by show pass (passN j S) = S; rw [passN_S j]; rfl
+
+theorem getD_map_passN (j : Nat) : ∀ (L : List T) (i : Nat), (L.map (passN j)).getD i S = passN j (L.getD i S)
+  | [], i => by simp [passN_S]
+  | a :: L, 0 => by simp
+  | a :: L, i + 1 => by simp only [List.map_cons, List.getD_cons_succ]; exact getD_map_passN j L i
+
+theorem pw_getD : ∀ {L L' : List T}, Pw L L' → ∀ i, RedStar (L.getD i S) (L'.getD i S)
+  | _, _, Pw.nil, i => by simp; exact RedStar.refl S
+  | _, _, Pw.cons h _, 0 => by simpa using h
+  | _, _, Pw.cons _ p, i + 1 => by simpa using pw_getD p i
+
+/-- node existence is preserved forward along reductions (confluence + stability of head normal forms) -/
+theorem node_forward : ∀ (p : List Nat) {a a' : T}, RedStar a a' → node a p → node a' p
+  | [], a, a', r, ⟨u, ru, hu⟩ => by
+    obtain ⟨v, uv, a'v⟩ := confluence ru r
+    exact ⟨v, a'v, hn_of_pw hu (hnf_stable hu uv).1 (hnf_stable hu uv).2⟩
+  | i :: p, a, a', r, ⟨u, ru, hu, hi, hn⟩ => by
+    obtain ⟨v, uv, a'v⟩ := confluence ru r
+    obtain ⟨e, pw⟩ := hnf_stable hu uv
+    refine ⟨v, a'v, hn_of_pw hu e pw, by rw [← pw_length pw]; exact hi, ?_⟩
+    exact node_forward p (pw_getD pw i) hn
+
+/-- and backward (a reduct's node is the original's) -/
+theorem node_backward : ∀ (p : List Nat) {a a' : T}, RedStar a a' → node a' p → node a p
+  | [], a, a', r, ⟨u, ru, hu⟩ => ⟨u, r.trans ru, hu⟩
+  | i :: p, a, a', r, ⟨u, ru, hu, hi, hn⟩ => ⟨u, r.trans ru, hu, hi, hn⟩
+
+theorem redstar_passN' (t : T) : ∀ n : Nat, RedStar t (passN n t)
+  | 0 => RedStar.refl t
+  | n + 1 => (redstar_passN' t n).trans (par_redstar (par_pass (passN n t)))
+
+/-- some ReplaceAll iterate is head-normal whenever any reduct is -/
+theorem replaceAll_hn {t u : T} (r : RedStar t u) (hu : HN u) : ∃ n, HN (passN n t) := by
+  obtain ⟨h', hh', nh'⟩ := head_normalization r hu
+  obtain ⟨k, hk⟩ := hstar_count hh'
+  obtain ⟨n, _, hn⟩ := corollaryPT_fast t h' k hk nh'
+  exact ⟨n, hn⟩
+
+/-- **Theorem BC-par.** ReplaceAll reveals every node of the Böhm tree. -/
+theorem replaceAll_reveals : ∀ (p : List Nat) (t : T), node t p → ∃ n, revealed (passN n t) p
+  | [], t, ⟨u, ru, hu⟩ => replaceAll_hn ru hu
+  | i :: p, t, ⟨u, ru, hu, hi, hn⟩ => by
+    obtain ⟨n0, h0⟩ := replaceAll_hn ru hu
+    -- passN n0 t and u are head-normal reducts of t: common reduct, position-wise
+    obtain ⟨v, uv, pv⟩ := confluence ru (redstar_passN' t n0)
+    obtain ⟨eu, pwu⟩ := hnf_stable hu uv
+    obtain ⟨ep, pwp⟩ := hnf_stable h0 pv
+    have hlen : i < (args (passN n0 t)).length := by
+      rw [pw_length pwp, ← pw_length pwu]; exact hi
+    have hnode : node ((args (passN n0 t)).getD i S) p :=
+      node_backward p (pw_getD pwp i) (node_forward p (pw_getD pwu i) hn)
+    obtain ⟨n1, hr⟩ := replaceAll_reveals p _ hnode
+    refine ⟨n0 + n1, ?_⟩
+    rw [passN_add t n0 n1]
+    obtain ⟨e1, e2⟩ := passN_HN_exact (passN n0 t) h0 n1
+    refine ⟨HN_of_shape e1 (by rw [e2, List.length_map]) h0, by rw [e2, List.length_map]; exact hlen, ?_⟩
+    rw [e2, getD_map_passN]
+    exact hr
+
+#print axioms replaceAll_reveals

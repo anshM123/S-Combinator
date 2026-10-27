@@ -29,6 +29,11 @@ request; the prize submission itself still needs the user's approval. The one-pa
   occurrence, which is open but certified exhaustively up to 13 leaves. A universal mechanism would therefore have to re-execute frozen
   values or iterate data-blind calls. Open: R3 in general, D3 ('re-execution is call-like'), the phase decomposition of
   all head runs. (PROOF.md, 'Chain bound in the generic phase model'.)
+* **Parallel-evaluation agent (11:28 EDT):** no universal construction under ReplaceAll. Machine-checked: every
+  evaluation order is the head run re-timed (Theorems PT, PT-all), so the head-run barriers transfer to every order
+  and the choice of order changes only timing and syntax inside elements. The remaining universality lead is precise:
+  Theorem RR — timing races with prescribed polynomial durations would give universality under ReplaceAll with a
+  linear-time detector; no such races are known.
 * **Final agent results (10:12 EDT):** (1) R3 is machine-checked without conditions for every single-wrapper handler
   of ordered data with one occurrence of the predecessor, so the two-transfer chain bound holds for every chain whose
   second transfer is single-wrapper or FH (all observed chains); multi-wrapper R3 is open. (2) The leftmost-path finite

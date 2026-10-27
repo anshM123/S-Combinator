@@ -44,27 +44,28 @@ def steps(t, nodes):
         u = nu
         if size(u) > 300000: return None, None
     return out, ds
-seed, N, nodes = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-random.seed(seed); t0 = time.time()
-deep = 0; shallow = 0; tally = Counter(); bad = []
-for i in range(N):
-    m = mark()
-    t = tree(random.randint(2, 7))
-    if LFl[cls(t)[0]] == 1:
-        out, ds = steps(t, nodes)
-        if out is not None:
-            half = nodes // 2
-            if min(ds[half:]) > min(ds[half // 2: half]) + 2:
-                deep += 1
-                for (kind, K, c) in out[half:]:
-                    key = (kind, K, c if K in (2, 3) else "")
-                    tally[key] += 1
-                    if (kind != "step" or K not in (1, 2) or (K == 2 and c != "S(SS)")) and len(bad) < 10:
-                        bad.append((show(t)[:80], kind, K, c))
-            else:
-                shallow += 1
-    truncate(m); clear_cache(m)
-print("seed", seed, "N", N, "nodes", nodes, "time", round(time.time() - t0, 1))
-print("long flag-1 walks: deep", deep, "bounded-depth", shallow)
-print("(kind, K, c0 at K=2/3) over the second halves of the deep walks:", dict(tally))
-print("deviations from the generalized-Omega prediction:", bad)
+if __name__ == "__main__":
+    seed, N, nodes = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+    random.seed(seed); t0 = time.time()
+    deep = 0; shallow = 0; tally = Counter(); bad = []
+    for i in range(N):
+        m = mark()
+        t = tree(random.randint(2, 7))
+        if LFl[cls(t)[0]] == 1:
+            out, ds = steps(t, nodes)
+            if out is not None:
+                half = nodes // 2
+                if min(ds[half:]) > min(ds[half // 2: half]) + 2:
+                    deep += 1
+                    for (kind, K, c) in out[half:]:
+                        key = (kind, K, c if K in (2, 3) else "")
+                        tally[key] += 1
+                        if (kind != "step" or K not in (1, 2) or (K == 2 and c != "S(SS)")) and len(bad) < 10:
+                            bad.append((show(t)[:80], kind, K, c))
+                else:
+                    shallow += 1
+        truncate(m); clear_cache(m)
+    print("seed", seed, "N", N, "nodes", nodes, "time", round(time.time() - t0, 1))
+    print("long flag-1 walks: deep", deep, "bounded-depth", shallow)
+    print("(kind, K, c0 at K=2/3) over the second halves of the deep walks:", dict(tally))
+    print("deviations from the generalized-Omega prediction:", bad)

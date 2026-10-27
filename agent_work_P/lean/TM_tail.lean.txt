@@ -1,0 +1,22 @@
+
+/-! ## Monotone transfer principle (agent_work_P, 2026-10-27)
+
+Relations between EARLIER and LATER states transfer too: if a relation on data signatures holds between every head-run
+state and every later head-run state of t, it holds between every state u and every later state u' of any run
+t →* u →* u' (any evaluation order).  Example: Lemma 8's 'the number of data elements never decreases' (as long as
+no variable-headed element is opened) is such a relation, so it holds along every evaluation order.
+-/
+
+theorem transfer_monotone {t u u' : T} (R : T × List (Nat → Bool) → T × List (Nat → Bool) → Prop)
+    (hR : ∀ k k' w w', k ≤ k' → HStepN k t w → HStepN k' t w' → R (dsig w) (dsig w'))
+    (h1 : RedStar t u) (h2 : RedStar u u') : R (dsig u) (dsig u') := by
+  obtain ⟨k, w, hw, iw⟩ := factorization h1
+  obtain ⟨k', w', hk, hw', iw'⟩ := factorization_mono k w hw iw h2
+  obtain ⟨e, p⟩ := istar_pw iw
+  obtain ⟨e', p'⟩ := istar_pw iw'
+  have hd : dsig w = dsig u := by simp only [dsig, e, pw_dsig p]
+  have hd' : dsig w' = dsig u' := by simp only [dsig, e', pw_dsig p']
+  rw [← hd, ← hd']
+  exact hR k k' w w' hk hw hw'
+
+#print axioms transfer_monotone

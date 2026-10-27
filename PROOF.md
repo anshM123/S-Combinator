@@ -768,7 +768,7 @@ them separately. This is the definitional piece.
 |---|---|
 | C5′ (MSO of Böhm trees decidable) | open; special cases: Q10 PROVED and MACHINE-CHECKED in Lean (hnf), C6 soundness half PROVED, C8 one half PROVED, path models one half PROVED (Q″); completeness halves certified ≤ 19 / ≤ 16 leaves; the leftmost-half size-change route fails with finite abstractions (FAILED_APPROACHES 29) |
 | window/configuration R″_PUP, leftmost-outermost | open in general. PROVED per term for every certified run: all 152 census counters, 850/850 random endpoints, the loop/nest/call/comb certificates; R″_PUP PROVED for nested loops (Lemma PUP) and the head-unique class (Theorem UR-C, Lean). Attack in progress: the non-universality agent's phase programme (OT, OTD, FH, SL, canonical_innermost in Lean) toward "re-execution is call-like" |
-| configuration R″_PUP, parallel and other orders | open; 86/150 parallel runs certified per term (Theorem LP-par) |
+| configuration R″_PUP, parallel and other orders | open, but reduced (2026-10-27, parallel agent): every order re-times the head run (Theorem PT-all, machine-checked), so for ReplaceAll it splits into the head-run skeleton, the max-plus re-timing (Lemma PJ) and the autonomous runs of list elements; 86/150 parallel runs certified per term (Theorem LP-par) |
 | (D5) definitional argument | open (not a mathematical statement until a detector class is fixed) |
 | facts used by the reduction | F2 (confluence), F3 (Church's theorem for S) and F5 (Böhm trees invariant under reduction) MACHINE-CHECKED (lean/Confluence.lean, lean/CF.lean, lean/TheoremT.lean, lean/BTInv.lean); Theorem T MACHINE-CHECKED except its decidability; Proposition CF MACHINE-CHECKED for head reduction (lean/CF.lean, lean/Standard.lean); MW(a),(b),(e) MACHINE-CHECKED (lean/MW.lean, lean/Confluence.lean); F4 (Waldmann's regularity) and Carton–Thomas are cited |
 | barrier lemmas behind 'no construction' | Lemmas 8, 9 (core), 10, 11, 12, Corollary 8(ii), Theorem J, Barrier lemma, Theorem N* and its layer bound MACHINE-CHECKED (lean/BarrierJ.lean, Lemma10.lean, ReadCost.lean, Barrier.lean, NStar.lean); Theorem O's residual walk and Proposition M are hand proofs |
@@ -2716,6 +2716,36 @@ represent the emulated machine's branches as data inside the evolving terms and 
 multiway system — for reduction-closed properties that is, by (d), a property of the single Gross–Knuth evolution, which
 falls under gap (4) of the gap map (intermediate syntax under a non-leftmost order) unless it is a Böhm-tree property
 (gap (2)). Proposition MW does not decide either gap.
+
+## Every evaluation order re-times the head run (parallel-evaluation agent, 2026-10-27; re-verified by the main agent)
+MACHINE-CHECKED (lean/AgentParTime.lean, lean/AgentLemma10Any.lean; Lean 4.35 core, no sorry, standard axioms):
+* **Theorem PT** (`theoremPT`, `parallel_time_change`, `pass_head_step`): after n ReplaceAll passes the term has the head
+  and spine length of the k-th head reduct w (unique), its spine arguments are position-wise reducts of w's, and k >= n
+  while no earlier pass reached a head normal form.
+* **PT-all and the transfer principle** (`factorization`, `theoremPT_all`, `factorization_mono`, `transfer_principle`,
+  `transfer_monotone`): every reduct of t, in ANY order and on any path of the multiway system, is an internal reduct
+  of a head-run state of t, with the same head, arity and data per spine position, reached monotonically. So every
+  property of (head, data per spine position) that holds along the head run holds in every order. This extends
+  Proposition CF from head-normal-form events to whole (infinite) head runs.
+* **Lemma PJ** (`lemmaPJ`, `passN_ext`): waiting elements age on their own; opening one is a max-plus join with its own
+  clock (its hnf reaches the front 1 + max(0, h - w) passes after opening; leftmost-outermost pays the sum).
+  **Corollary PT-V** (`corollaryPT_data`): data placement is order-independent. **Corollary PT-F**
+  (`corollaryPT_fast`): ReplaceAll reaches a head normal form no later than leftmost-outermost. **Theorem BC-par**
+  (`replaceAll_reveals`, `passN_HN_exact`): ReplaceAll reveals every Böhm-tree node.
+* **Lemma 10 in every order** (`lemma10_any`, `lemma10_replaceAll`): no junk-free rotation for any reduct.
+* Hand (from the above): the transfer table — Lemma 8, Corollary 8(ii), Lemma 9(a), Theorem J at the hnf, Lemma 10,
+  Theorem U* and the Böhm-tree-level barriers hold in every order; the cost lemmas (11, 12, Theorem O) transfer only
+  to re-timed head-step counts. The clock channel acts only as a time shift (a clock opened at age w delivers the
+  spine of P^max(w,h)(W)); normalising clocks saturate, but age-injective clocks exist (5 of the 2,056 terms with at
+  most 9 leaves, horizon 40 passes).
+* **Theorem RR (race reduction) — PROVED as a conditional reduction (MRDP cited):** if a computable family of terms
+  creates, for every parameter tuple y, a recognisable race node S A_y B_y whose two parts have ReplaceAll hnf times
+  c + P(y) and c + Q(y) for prescribed polynomials, then S is universal under ReplaceAll with a linear-time
+  tree-pattern detector (and configuration-level R″_PUP fails for ReplaceAll). OPEN: such race material for two or
+  more parameters; probes found none (agent_work_P/numeral_products.py, junk_processes.py).
+* **Reading.** Choosing ReplaceAll only re-times the leftmost-outermost skeleton and changes syntax inside list
+  elements; control-level universality is the same question in every order. A ReplaceAll emulation would have to
+  work through the detector (timing races), which Theorem RR makes precise.
 
 ## Lazy parallel evaluation (Lemma LZ) and an exact parallel loop (Theorem PL) (main agent, 2026-10-26)
 *Lemma LZ — PROVED (from the definition of a ReplaceAll pass P; implementation code/lazy_par.py checked against direct
