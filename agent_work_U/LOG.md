@@ -895,3 +895,13 @@ every node N_i N_k has R19 class 4.4 = flag 1, contradicting flag invariance.
 * Consequence for the gap: Conjecture SF may be weakened to SF- : every infinite leftmost walk eventually consists of
   computed steps that push exactly one multiplier over the same bottom (tail calls) or push the old stack plus one
   multiplier (Omega-type, any second component).  SF- + FiniteHalfGen.lean => leftmost finite half for flag-0 classes.
+
+## 08:02 EDT — MACHINE-CHECKED: rightmost reload-type steps with ANY second component (lean/FiniteHalfGen.lean, ns RG)
+* lean/FiniteHalfGen.lean now also contains namespace RG (file 3,615 lines; recompiled by path, exit 0, 0 errors, no
+  sorry; axioms propext, Classical.choice, Quot.sound).  RG.right_reload_detect_gen: a rightmost step
+  t.sigma -> sigma.(q.sigma) (t with >= 2 arguments, sigma /= S) forces H(t) = S (S S) q.  RG.finite_half_right_general:
+  a rightmost walk from an R19-flag-0 term never ends in computed nodes (t j).(s j) (s j /= S) whose steps are
+  rightmost tail calls (s (j+1) = s j) or rightmost reload-type steps with ANY second component q
+  (t (j+1) = s j, s (j+1) = q.(s j)).  Same proof pattern as FG: once size (s j) >= 6, top_rtc (a rightmost tail call
+  from q.sigma forces q = S S, via R_strip) and top_rr (H(q.sigma) = S (S S) p forces q = S(SS), p = sigma) leave only
+  q = S S; RR.finite_half_right excludes the canonical case.  So SF_R may be weakened in the same way (SF_R-).

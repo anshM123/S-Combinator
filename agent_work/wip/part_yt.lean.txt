@@ -1,0 +1,161 @@
+
+/-! ## S1 Part 10: LEMMA YT (pair chain), machine-checked.
+    With rank-sorted lists and |P| <= 2, a two-element P-region [U, V] with closed code above and Y-top Yt evolves
+    only by chain steps [X, Z] -> [Z, X.Z] until the run reaches [E_j, E_{j+1}, Yt | R] (E_0 = U, E_1 = V,
+    E_{j+2} = E_j.E_{j+1}); opening E_j there keeps |P| <= 2 only for j <= 3 (S-headed U, V). -/
+
+def chainE (U V : T) : Nat → T
+  | 0 => U
+  | 1 => V
+  | n + 2 => app (chainE U V n) (chainE U V (n + 1))
+
+theorem chainE_rk (U V : T) (hU : rk U = 1) (hV : rk V = 1) : ∀ n, rk (chainE U V n) = 1
+  | 0 => hU
+  | 1 => hV
+  | n + 2 => by
+    simp only [chainE]
+    rw [rk_app, chainE_rk U V hU hV n, chainE_rk U V hU hV (n + 1)]; rfl
+
+/-- the run proceeds by closed-code steps and chain steps until the pair is at the front -/
+theorem yt_chain (L1 : List T) (hS : Seg L1) (T' : Nat) (f b d : T) (RT : List T)
+    (hT : run T' L1 = some (f :: b :: d :: RT)) (hd : rk d = 2)
+    (hbound : ∀ s Ls, s ≤ T' → run s L1 = some Ls → (Preg Ls).length ≤ 2)
+    (U V Yt : T) (R : List T) (hU : rk U = 1) (hV : rk V = 1) :
+    ∀ (n : Nat) (t j : Nat) (K : List T), T' - t = n → t ≤ T' → (∀ k ∈ K, rk k = 0) →
+      run t L1 = some (K ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) →
+      ∃ t' j', t ≤ t' ∧ t' ≤ T' ∧ run t' L1 = some (chainE U V j' :: chainE U V (j' + 1) :: Yt :: R) := by
+  intro n
+  induction n with
+  | zero =>
+    intro t j K hn ht hK hr
+    have htT : t = T' := by omega
+    subst htT
+    rw [hT] at hr
+    injection hr with hr
+    -- at the transfer time the third element has rank 2, so K must be empty
+    match K, hK, hr with
+    | [], _, hr => exact ⟨t, j, Nat.le_refl _, Nat.le_refl _, by rw [hT, hr]; simp⟩
+    | [k1], _, hr =>
+      simp at hr; obtain ⟨_, _, hd', _⟩ := hr
+      rw [hd', chainE_rk U V hU hV] at hd; omega
+    | [k1, k2], _, hr =>
+      simp at hr; obtain ⟨_, _, hd', _⟩ := hr
+      rw [hd', chainE_rk U V hU hV] at hd; omega
+    | k1 :: k2 :: k3 :: K', hK, hr =>
+      simp at hr; obtain ⟨_, _, hd', _⟩ := hr
+      rw [hd', hK k3 (by simp)] at hd; omega
+  | succ n ih =>
+    intro t j K hn ht hK hr
+    match K, hK, hr with
+    | [], _, hr => exact ⟨t, j, Nat.le_refl _, ht, hr⟩
+    | [k1], hK, hr =>
+      -- (CL,P,P): a chain step
+      have htT : t < T' := by omega
+      have hk1S : head k1 = S := head_of_continue L1 t T' k1 _ _ _ hr htT _ hT
+      have hstep : step ([k1] ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) =
+          some (args k1 ++ chainE U V (j + 1) :: chainE U V (j + 2) :: Yt :: R) := by
+        simp [step, hk1S, chainE]
+      have hr' := run_succ_of L1 t _ _ hr hstep
+      obtain ⟨t', j', h1, h2, h3⟩ := ih (t + 1) (j + 1) (args k1) (by omega) (by omega)
+        (fun k hk => by have := rk_args_le k1 k hk; rw [hK k1 (by simp)] at this; omega) hr'
+      exact ⟨t', j', by omega, h2, h3⟩
+    | [k1, k2], hK, hr =>
+      -- (CL,CL,P) would make |P| = 3
+      exfalso
+      have htT : t < T' := by omega
+      have hk1S : head k1 = S := head_of_continue L1 t T' k1 _ _ _ hr htT _ hT
+      have hstep : step ([k1, k2] ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) =
+          some (args k1 ++ chainE U V j :: app k2 (chainE U V j) :: chainE U V (j + 1) :: Yt :: R) := by
+        simp [step, hk1S]
+      have hr' := run_succ_of L1 t _ _ hr hstep
+      have hb := hbound (t + 1) _ (by omega) hr'
+      have hk20 : rk k2 = 0 := hK k2 (by simp)
+      have hk1a : Preg (args k1) = [] := Preg_args_closed k1 (hK k1 (by simp))
+      have hj := chainE_rk U V hU hV j
+      have hj1 := chainE_rk U V hU hV (j + 1)
+      have hk2j : rk (app k2 (chainE U V j)) = 1 := by rw [rk_app, hk20, hj]; rfl
+      rw [Preg_append, hk1a] at hb
+      simp only [Preg_cons, hj, hk2j, hj1, if_true, List.nil_append, List.length_cons] at hb
+      omega
+    | k1 :: k2 :: k3 :: K', hK, hr =>
+      -- (CL,CL,CL): a closed-code step
+      have htT : t < T' := by omega
+      have hk1S : head k1 = S := head_of_continue L1 t T' k1 _ _ _ hr htT _ hT
+      have hstep : step ((k1 :: k2 :: k3 :: K') ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) =
+          some ((args k1 ++ k3 :: app k2 k3 :: K') ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) := by
+        simp [step, hk1S]
+      have hr' := run_succ_of L1 t _ _ hr hstep
+      have hk0 : ∀ k ∈ args k1 ++ k3 :: app k2 k3 :: K', rk k = 0 := by
+        intro k hk
+        simp at hk
+        rcases hk with hk | hk | hk | hk
+        · have := rk_args_le k1 k hk; rw [hK k1 (by simp)] at this; omega
+        · rw [hk]; exact hK k3 (by simp)
+        · rw [hk, rk_app, hK k2 (by simp), hK k3 (by simp)]; rfl
+        · exact hK k (by simp [hk])
+      obtain ⟨t', j', h1, h2, h3⟩ := ih (t + 1) j _ (by omega) (by omega) hk0 hr'
+      exact ⟨t', j', by omega, h2, h3⟩
+
+/-- P-arguments of chain elements: Preg(args E_{j+2}) = Preg(args E_j) ++ [E_{j+1}] -/
+theorem Preg_args_chainE (U V : T) (hU : rk U = 1) (hV : rk V = 1) (j : Nat) :
+    Preg (args (chainE U V (j + 2))) = Preg (args (chainE U V j)) ++ [chainE U V (j + 1)] := by
+  simp only [chainE, args]
+  rw [Preg_append]
+  simp [Preg_cons, chainE_rk U V hU hV (j + 1), Preg]
+
+theorem Preg_args_chainE_len (U V : T) (hU : rk U = 1) (hV : rk V = 1)
+    (hU1 : 1 ≤ (Preg (args U)).length) (hV1 : 1 ≤ (Preg (args V)).length) :
+    ∀ j, j / 2 + 1 ≤ (Preg (args (chainE U V j))).length
+  | 0 => by simpa [chainE] using hU1
+  | 1 => by simpa [chainE] using hV1
+  | j + 2 => by
+    rw [Preg_args_chainE U V hU hV j, List.length_append]
+    have := Preg_args_chainE_len U V hU hV hU1 hV1 j
+    simp; omega
+
+/-- **LEMMA YT (machine-checked).**  If at time t the list is K ++ [U, V, Yt | R] with K closed, U, V S-headed
+    P-terms and Yt of rank 2, then before the proper transfer the run reaches [E_j, E_{j+1}, Yt | R] and, if this is
+    before the transfer time, the chain index satisfies j <= 3. -/
+theorem yt_main (L1 : List T) (hS : Seg L1) (T' : Nat) (f b d : T) (RT : List T)
+    (hT : run T' L1 = some (f :: b :: d :: RT)) (hd : rk d = 2)
+    (hbound : ∀ s Ls, s ≤ T' → run s L1 = some Ls → (Preg Ls).length ≤ 2)
+    (U V Yt : T) (R : List T) (hU : rk U = 1) (hV : rk V = 1) (hUS : head U = S) (hVS : head V = S)
+    (hYt : rk Yt = 2) (t : Nat) (ht : t ≤ T') (K : List T) (hK : ∀ k ∈ K, rk k = 0)
+    (hr : run t L1 = some (K ++ U :: V :: Yt :: R)) :
+    ∃ t' j, t ≤ t' ∧ t' ≤ T' ∧ run t' L1 = some (chainE U V j :: chainE U V (j + 1) :: Yt :: R) ∧
+      (t' < T' → j ≤ 3) := by
+  obtain ⟨t', j, h1, h2, h3⟩ := yt_chain L1 hS T' f b d RT hT hd hbound U V Yt R hU hV (T' - t) t 0 K rfl ht hK
+    (by simpa [chainE] using hr)
+  refine ⟨t', j, h1, h2, h3, ?_⟩
+  intro htT
+  have hU1 : 1 ≤ (Preg (args U)).length := by
+    obtain ⟨s, hs, hs1⟩ := P_has_P_arg U hUS hU
+    unfold Preg; apply List.length_pos_iff_exists_mem.2; exact ⟨s, by simp [hs, hs1]⟩
+  have hV1 : 1 ≤ (Preg (args V)).length := by
+    obtain ⟨s, hs, hs1⟩ := P_has_P_arg V hVS hV
+    unfold Preg; apply List.length_pos_iff_exists_mem.2; exact ⟨s, by simp [hs, hs1]⟩
+  have hlen := Preg_args_chainE_len U V hU hV hU1 hV1 j
+  -- the front E_j is opened at t' (t' < T'), giving P-region Preg(args E_j)
+  have hEj : head (chainE U V j) = S := head_of_continue L1 t' T' _ _ _ _ h3 htT _ hT
+  have hstep : step (chainE U V j :: chainE U V (j + 1) :: Yt :: R) =
+      some (args (chainE U V j) ++ Yt :: app (chainE U V (j + 1)) Yt :: R) := by simp [step, hEj]
+  have hr' := run_succ_of L1 t' _ _ h3 hstep
+  have hb := hbound (t' + 1) _ (by omega) hr'
+  have hSg := seg_run (t' + 1) L1 _ hS hr'
+  have hYtR : ∀ e ∈ Yt :: app (chainE U V (j + 1)) Yt :: R, rk e = 2 := by
+    have hs3 := hSg.1
+    unfold srt at hs3
+    rw [List.pairwise_append] at hs3
+    intro e he
+    simp at he
+    rcases he with he | he | he
+    · rw [he]; exact hYt
+    · rw [he, rk_app, hYt]; have := rk_le2 (chainE U V (j + 1)); omega
+    · have hsrt := (seg_run t' L1 _ hS h3).1
+      have := srt_tail_ge Yt R (srt_tail _ _ (srt_tail _ _ hsrt)) e he
+      rw [hYt] at this; have := rk_le2 e; omega
+  rw [Preg_append, Preg_nil_of (Yt :: app (chainE U V (j + 1)) Yt :: R) (fun e he => by rw [hYtR e he]; omega)] at hb
+  simp at hb
+  omega
+
+#print axioms yt_main

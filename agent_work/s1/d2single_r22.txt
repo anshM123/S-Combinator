@@ -1,0 +1,3 @@
+1130 SS(p(SS))(S(S(pSS))(S(SS)S)) -> D2 S(SS)Sp ('FH', 'single')
+32 SSS(S(Sp)(S(S(S(SS(SS))S)))) -> D2 S(S(S(SS(SS))S))p ('FH', 'multi')
+11 S(SS)(S(S(S(Sp)(SSSS))))(S(SS)) -> D2 SSSS(S(SS)p) ('single', 'alpha')

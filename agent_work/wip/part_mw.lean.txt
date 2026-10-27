@@ -1,0 +1,188 @@
+
+/-! ## S1 Part 11: two wrappers glued in nested pattern alpha (structural reduction of NHALL's hypothesis) -/
+
+def sg2 (h1 h2 : Nat) (e1 e2 : T) : Nat → T := fun n => if n = h1 then e1 else if n = h2 then e2 else var n
+
+theorem asub_sg2_id (h1 h2 : Nat) (e1 e2 : T) :
+    ∀ t : T, occN h1 t = 0 → occN h2 t = 0 → asub (sg2 h1 h2 e1 e2) t = t
+  | S, _, _ => by simp [asub]
+  | var n, ha, hb => by
+    have n1 : n ≠ h1 := by intro e; subst e; simp [occN] at ha
+    have n2 : n ≠ h2 := by intro e; subst e; simp [occN] at hb
+    simp [asub, sg2, n1, n2]
+  | app f x, ha, hb => by
+    simp only [occN] at ha hb
+    simp [asub, asub_sg2_id h1 h2 e1 e2 f (by omega) (by omega), asub_sg2_id h1 h2 e1 e2 x (by omega) (by omega)]
+
+theorem wpre_asub_head (sg : Nat → T) (n : Nat) (hn : ∃ f x, sg n = app f x) :
+    ∀ g : T, head g = var n → wpre (sg n) (asub sg g)
+  | S, h => by simp [head] at h
+  | var m, h => by
+    simp [head] at h; subst h
+    obtain ⟨f, x, hfx⟩ := hn
+    simp [asub, hfx, wpre]
+  | app f x, h => by
+    simp only [asub, wpre]
+    exact Or.inr (wpre_asub_head sg n hn f (by simpa [head] using h))
+
+/-- the two-hole run of a code c started at a glue list c :: v :: e1 :: R0 (one step later the earlier phase is
+    the sg2-image of args c ++ [h1, h2], h1 -> e1, h2 -> v.e1): either c never calls its holes, or the earlier
+    phase reaches the image of a hole-front at some time <= T'. -/
+theorem code_hole_front (c v e1 : T) (h1 h2 : Nat) (h12 : h1 ≠ h2) (hf1 : occN h1 c = 0) (hf2 : occN h2 c = 0)
+    (hcS : head c = S) (L0 : List T) (t T' : Nat) (R0 : List T)
+    (hglue : run t L0 = some (c :: v :: e1 :: R0)) (htT : t < T')
+    (f b d : T) (R : List T) (hT : run T' L0 = some (f :: b :: d :: R)) (hf : head f = var 0) :
+    NHc c h1 h2 ∨ ∃ k g Lk, t + 1 + k ≤ T' ∧
+      run (t + 1 + k) L0 = some ((g :: Lk).map (asub (sg2 h1 h2 e1 (app v e1))) ++ R0) ∧
+      (head g = var h1 ∨ head g = var h2) := by
+  rcases Classical.em (NHc c h1 h2) with hNH | hNH
+  · exact Or.inl hNH
+  · right
+    have hex : ∃ k g L, run k (args c ++ [var h1, var h2]) = some (g :: L) ∧
+        (head g = var h1 ∨ head g = var h2) := by
+      apply Classical.byContradiction
+      intro hno
+      apply hNH
+      intro k g L hk
+      constructor
+      · intro e; exact hno ⟨k, g, L, hk, Or.inl e⟩
+      · intro e; exact hno ⟨k, g, L, hk, Or.inr e⟩
+    obtain ⟨k, g, Lk, hk, hg⟩ := hex
+    have hs1 : sg2 h1 h2 e1 (app v e1) h1 = e1 := by simp [sg2]
+    have hs2 : sg2 h1 h2 e1 (app v e1) h2 = app v e1 := by simp [sg2, Ne.symm h12]
+    have hA2 : (args c ++ [var h1, var h2]).map (asub (sg2 h1 h2 e1 (app v e1))) ++ R0 =
+        args c ++ e1 :: app v e1 :: R0 := by
+      have hargs : (args c).map (asub (sg2 h1 h2 e1 (app v e1))) = args c := by
+        have : (args c).map (asub (sg2 h1 h2 e1 (app v e1))) = (args c).map id := by
+          apply List.map_congr_left
+          intro e he'
+          exact asub_sg2_id h1 h2 _ _ e (occN_args h1 c hf1 e he') (occN_args h2 c hf2 e he')
+        simpa using this
+      simp only [List.map_append, hargs, List.map_cons, List.map_nil, asub, hs1, hs2]
+      simp
+    have ht1 : run (t + 1) L0 = some ((args c ++ [var h1, var h2]).map
+        (asub (sg2 h1 h2 e1 (app v e1))) ++ R0) := by
+      rw [hA2, run_add t 1, hglue, Option.bind_some]
+      simp [run, step, hcS]
+    obtain ⟨_, hearly⟩ := image_stuck _ _ R0 L0 (t + 1) T' (by omega) ht1 f b d R hT hf k (g :: Lk) hk
+    have p2k : run (t + 1 + k) L0 =
+        some ((g :: Lk).map (asub (sg2 h1 h2 e1 (app v e1))) ++ R0) := by
+      rw [run_add (t + 1) k, ht1, Option.bind_some]
+      exact run_append k _ _ R0 (asub_run _ k _ _ hk)
+    exact ⟨k, g, Lk, Nat.le_of_not_lt hearly, p2k, hg⟩
+
+/-- **THEOREM MW-ALPHA2.**  A two-wrapper handler V = v1.(v2.y) (v_i = b_i.c_i, S-headed codes, y-free) whose
+    inner wrapper was glued in pattern alpha ([c2, v2, y]) and whose outer wrapper was glued in pattern alpha onto
+    L2 = v2.y ([c1, v1, L2]), in an earlier phase (ANY run from L0) that later reaches a p-front at T'.  Unless the
+    earlier phase opens an L2-prefixed front after the inner glue (the re-opening case I-L2), the next phase
+    (datum v1'.(v2'.p')) never makes a proper transfer: by the two codes' hole-fronts, either both c-codes never
+    call their holes (NHALL), or the earlier phase lays out args(V) (IGEN). -/
+theorem mw_alpha2 (b1 c1 b2 c2 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : h1 ≠ 0) (hh2 : h2 ≠ 0)
+    (h12 : h1 ≠ h2) (hH : 4 ≤ H)
+    (hb1S : head b1 = S) (hc1S : head c1 = S) (hb2S : head b2 = S) (hc2S : head c2 = S)
+    (hy0 : occ2 b1 = 0) (hy1 : occ2 c1 = 0) (hy2 : occ2 b2 = 0) (hy3 : occ2 c2 = 0)
+    (hf1 : occN h1 c1 = 0) (hf2 : occN h2 c1 = 0) (hf3 : occN h1 c2 = 0) (hf4 : occN h2 c2 = 0)
+    (hV : fresh3 H (app (app b1 c1) (app (app b2 c2) (var 2))))
+    (L0 : List T) (t2 t1 T' : Nat) (R0 R1 : List T)
+    (hg2 : run t2 L0 = some (c2 :: app b2 c2 :: var 2 :: R0))
+    (hg1 : run t1 L0 = some (c1 :: app b1 c1 :: app (app b2 c2) (var 2) :: R1))
+    (h21 : t2 < t1) (h1T : t1 < T') (f b d : T) (R : List T) (hT : run T' L0 = some (f :: b :: d :: R))
+    (hf : head f = var 0)
+    (hNoL2 : ∀ (t : Nat) (g : T) (L : List T), t2 < t → t ≤ T' → run t L0 = some (g :: L) →
+      ¬ wpre (app (app b2 c2) (var 2)) g) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [rcombT ([app b1 c1, app b2 c2].map (sb c)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  have hL2app : ∃ f x, app (app b2 c2) (var 2) = app f x := ⟨_, _, rfl⟩
+  have hVapp : ∃ f x, app (app b1 c1) (app (app b2 c2) (var 2)) = app f x := ⟨_, _, rfl⟩
+  -- inner code c2, started at the inner glue (h1 -> y, h2 -> L2)
+  have hNH2 : NHc c2 h1 h2 := by
+    rcases code_hole_front c2 (app b2 c2) (var 2) h1 h2 h12 hf3 hf4 hc2S L0 t2 T' R0 hg2 (by omega) f b d R hT hf
+      with h | ⟨k, g, Lk, hkT, hrun, hg⟩
+    · exact h
+    · exfalso
+      rcases hg with hg | hg
+      · -- a y-front of the earlier phase before its p-front: impossible
+        have hy : head (asub (sg2 h1 h2 (var 2) (app (app b2 c2) (var 2))) g) = var 2 := by
+          rw [asub_headvar _ h1 g hg]; simp [sg2, head]
+        rcases Nat.lt_or_ge (t2 + 1 + k) T' with hlt | hge
+        · obtain ⟨Ln, hLn, _⟩ := run_prefix T' (t2 + 1 + k + 1) L0 _ hT (by omega)
+          rw [run_add (t2 + 1 + k) 1, hrun, Option.bind_some] at hLn
+          simp only [List.map_cons, List.cons_append, run] at hLn
+          rw [step_head_ne _ _ (by rw [hy]; simp)] at hLn
+          simp at hLn
+        · have : t2 + 1 + k = T' := by omega
+          rw [this, hT] at hrun
+          simp only [List.map_cons, List.cons_append, Option.some.injEq, List.cons.injEq] at hrun
+          rw [hrun.1, hy] at hf; injection hf with e; omega
+      · -- an L2-prefixed front after the inner glue: excluded
+        have hw := wpre_asub_head (sg2 h1 h2 (var 2) (app (app b2 c2) (var 2))) h2 (by simp [sg2, Ne.symm h12])
+          g hg
+        simp only [sg2, Ne.symm h12, if_false, if_true] at hw
+        exact hNoL2 (t2 + 1 + k) _ _ (by omega) hkT hrun hw
+  -- outer code c1, started at the outer glue (h1 -> L2, h2 -> V)
+  rcases code_hole_front c1 (app b1 c1) (app (app b2 c2) (var 2)) h1 h2 h12 hf1 hf2 hc1S L0 t1 T' R1 hg1 h1T
+      f b d R hT hf with hNH1 | ⟨k, g, Lk, hkT, hrun, hg⟩
+  · -- NHALL
+    have hw1 : WOK h1 h2 (app b1 c1) := ⟨b1, c1, rfl, hb1S, hc1S, hy0, hy1, hf1, hf2, hNH1⟩
+    have hw2 : WOK h1 h2 (app b2 c2) := ⟨b2, c2, rfl, hb2S, hc2S, hy2, hy3, hf3, hf4, hNH2⟩
+    exact nhall_main [app b1 c1, app b2 c2] c h1 h2 hc hc2 hh1 hh2 h12 (by simp)
+      (by intro u hu; simp at hu; rcases hu with hu | hu <;> subst hu <;> assumption)
+  · rcases hg with hg | hg
+    · -- c1 calls its first hole: an L2-prefixed front after the inner glue: excluded
+      exfalso
+      have hw := wpre_asub_head (sg2 h1 h2 (app (app b2 c2) (var 2))
+        (app (app b1 c1) (app (app b2 c2) (var 2)))) h1 (by simp [sg2]) g hg
+      simp only [sg2, if_true] at hw
+      exact hNoL2 (t1 + 1 + k) _ _ (by omega) hkT hrun hw
+    · -- c1 calls its second hole: the earlier phase opens V, i.e. lays out args(V): IGEN
+      have hVS : head (app (app b1 c1) (app (app b2 c2) (var 2))) = S := by simp [head, hb1S]
+      have hs2' : sg2 h1 h2 (app (app b2 c2) (var 2)) (app (app b1 c1) (app (app b2 c2) (var 2))) h2 =
+          app (app b1 c1) (app (app b2 c2) (var 2)) := by simp [sg2, Ne.symm h12]
+      have hGS : head (asub (sg2 h1 h2 (app (app b2 c2) (var 2)) (app (app b1 c1) (app (app b2 c2) (var 2)))) g) = S := by
+        rw [asub_headvar _ h2 g hg, hs2']; exact hVS
+      have hTgt : t1 + 1 + k < T' := by
+        rcases Nat.lt_or_ge (t1 + 1 + k) T' with hlt | hge
+        · exact hlt
+        · exfalso
+          have : t1 + 1 + k = T' := by omega
+          rw [this, hT] at hrun
+          simp only [List.map_cons, List.cons_append, Option.some.injEq, List.cons.injEq] at hrun
+          rw [hrun.1, hGS] at hf; simp at hf
+      obtain ⟨Ln, hLn, _⟩ := run_prefix T' (t1 + 1 + k + 1) L0 _ hT (by omega)
+      have hstep : step ((g :: Lk).map (asub (sg2 h1 h2 (app (app b2 c2) (var 2))
+          (app (app b1 c1) (app (app b2 c2) (var 2))))) ++ R1) = some Ln := by
+        rw [run_add (t1 + 1 + k) 1, hrun, Option.bind_some] at hLn
+        simp only [run] at hLn
+        cases hs : step ((g :: Lk).map (asub (sg2 h1 h2 (app (app b2 c2) (var 2))
+            (app (app b1 c1) (app (app b2 c2) (var 2))))) ++ R1) with
+        | none => rw [hs] at hLn; simp at hLn
+        | some L1 => rw [hs] at hLn; simpa using hLn
+      have hargsG := asub_args_var (sg2 h1 h2 (app (app b2 c2) (var 2)) (app (app b1 c1) (app (app b2 c2) (var 2))))
+        h2 (by rw [hs2']; exact hVS) g hg
+      rw [hs2'] at hargsG
+      have hLn_form : ∃ B2, Ln = args (app (app b1 c1) (app (app b2 c2) (var 2))) ++ B2 := by
+        simp only [List.map_cons, List.cons_append] at hstep
+        match hrest : Lk.map (asub (sg2 h1 h2 (app (app b2 c2) (var 2))
+            (app (app b1 c1) (app (app b2 c2) (var 2))))) ++ R1, hstep with
+        | b2' :: d2 :: R2, hstep =>
+          simp only [step, hGS, ite_true, Option.some.injEq] at hstep
+          rw [hargsG] at hstep
+          exact ⟨List.map (asub (sg2 h1 h2 (app (app b2 c2) (var 2)) (app (app b1 c1) (app (app b2 c2) (var 2)))))
+            (args g) ++ d2 :: app b2' d2 :: R2, by rw [← hstep, List.append_assoc]⟩
+        | [], hstep => simp [step] at hstep
+        | [_], hstep => simp [step] at hstep
+      obtain ⟨B2, hB2⟩ := hLn_form
+      rw [hB2] at hLn
+      have hVa : args (app (app b1 c1) (app (app b2 c2) (var 2))) ≠ [] := by simp [args]
+      have hno := igen_main (app (app b1 c1) (app (app b2 c2) (var 2))) c H hc hH hVS hVa hV L0
+        (t1 + 1 + k + 1) T' B2 (by omega) hLn f b d R hT hf
+      have hD3 : asub (sg3 c) (app (app b1 c1) (app (app b2 c2) (var 2))) =
+          rcombT ([app b1 c1, app b2 c2].map (sb c)) (var 0) := by
+        simp [asub, asub_sg3_sb c b1 hy0, asub_sg3_sb c c1 hy1, asub_sg3_sb c b2 hy2, asub_sg3_sb c c2 hy3, sg3,
+          rcombT, sb]
+      intro m f' b' d' R' hm hf'
+      rw [← hD3] at hm
+      exact absurd hf' (hno m f' _ hm)
+
+#print axioms mw_alpha2

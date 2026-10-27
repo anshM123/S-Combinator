@@ -1,0 +1,52 @@
+
+/-! ## S1 Part 14: R3-RC for single-wrapper handlers - right combs over p with closed wrappers -/
+
+theorem ordT_closed : ∀ t : T, rk t = 0 → ordT t
+  | S, _ => trivial
+  | var _, _ => trivial
+  | app f x, h => by
+    have hf : rk f = 0 := by have := rk_app_left f x; omega
+    have hx : rk x = 0 := by have := rk_app_right f x; omega
+    refine ⟨ordT_closed f hf, ordT_closed x hx, ?_⟩
+    intro _ a ha
+    have := rk_args_le f a ha; omega
+
+theorem rcombT_rk_occ (ds : List T) (hds : ∀ d ∈ ds, rk d = 0) :
+    ordT (rcombT ds (var 0)) ∧ occN 0 (rcombT ds (var 0)) = 1 ∧ occN 1 (rcombT ds (var 0)) = 0 ∧
+      occN 2 (rcombT ds (var 0)) = 0 ∧ occN 3 (rcombT ds (var 0)) = 0 ∧ rk (rcombT ds (var 0)) = 1 := by
+  induction ds with
+  | nil => simp [rcombT, ordT, occN, rk]
+  | cons d ds ih =>
+    obtain ⟨ho, h0, h1, h2, h3, hr⟩ := ih (fun d' hd' => hds d' (by simp [hd']))
+    have hd : rk d = 0 := hds d (by simp)
+    have hd' := (rk_eq0 d).1 hd
+    simp only [rcombT, occN]
+    refine ⟨⟨ordT_closed d hd, ho, ?_⟩, by omega, by omega, by omega, by omega, ?_⟩
+    · intro _ a ha; have := rk_args_le d a ha; omega
+    · rw [rk_app, hd, hr]; rfl
+
+/-- **R3-RC (single-wrapper handlers).**  For every S-headed right comb D = d1.(d2.(...(dk.p))) over p whose
+    wrappers d_i are closed (free of p, x, y, r; frozen atoms allowed) - in particular for every datum of a Church
+    chain after its first transfer - if phase 2 transfers a single-wrapper handler (b0.c0).y (b0, c0 S-headed,
+    b0.c0 free of x, y, r) and H1ok(c0) or 'b0 never calls its first hole' holds, then the next phase never makes a
+    proper transfer.  (r3_single2 with ordT and the single occurrence of p derived from the comb shape.) -/
+theorem r3_rc_single (ds : List T) (b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : 4 ≤ h1)
+    (hh2 : 4 ≤ h2) (h12 : h1 ≠ h2) (hH : 4 ≤ H) (hds : ∀ d ∈ ds, rk d = 0)
+    (hDS : head (rcombT ds (var 0)) = S) (hDh1 : occN h1 (rcombT ds (var 0)) = 0)
+    (hDh2 : occN h2 (rcombT ds (var 0)) = 0)
+    (hb0S : head b0 = S) (hc0S : head c0 = S) (hw1 : occN 1 (app b0 c0) = 0) (hw2 : occN 2 (app b0 c0) = 0)
+    (hw3 : occN 3 (app b0 c0) = 0) (hV : fresh3 H (app (app b0 c0) (var 2)))
+    (T' : Nat) (f b : T) (R : List T)
+    (hT : run T' [rcombT ds (var 0), var 1, var 2, var 3] = some (f :: b :: app (app b0 c0) (var 2) :: R))
+    (hf : head f = var 0)
+    (hcond : (∀ (k : Nat) (g : T) (L : List T), run k (args c0 ++ [var h1, var h2]) = some (g :: L) →
+      head g = var h1 → (args g).head? = some (var h2) ∨ (args g = [] ∧ ∃ b' R', L = b' :: var h2 :: R')) ∨
+      (∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var h1, var h2]) = some (g :: L) → head g ≠ var h1)) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  obtain ⟨ho, h0, h1', h2', h3', _⟩ := rcombT_rk_occ ds hds
+  exact r3_single2 (rcombT ds (var 0)) b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS ho h1' h2' h3' (by omega)
+    hDh1 hDh2 hb0S hc0S hw1 hw2 hw3 hV T' f b R hT hf hcond
+
+#print axioms r3_rc_single

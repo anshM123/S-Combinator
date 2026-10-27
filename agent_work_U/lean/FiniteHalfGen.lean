@@ -3393,3 +3393,223 @@ end FG
 
 #print axioms FG.finite_half_Omega_general
 #print axioms FG.finite_half_general_families
+
+/-! ## Rightmost path: reload-type steps with any second component — RG -/
+
+namespace RG
+
+open C
+open C.T
+open TC
+open RC
+
+/-- a rightmost step t.sigma -> sigma.(q.sigma) (sigma /= S) forces H(t) = S (S S) q -/
+theorem right_reload_detect_gen (t σ c q : T) (ht : 2 ≤ (args t).length) (hσ : σ ≠ S)
+    (h : Reach (args (app t σ)) [c, app σ (app q σ)]) : R2 t q := by
+  rw [args_app] at h
+  obtain ⟨b0, hb0⟩ := final_app _ _ _ (by simp; omega) h
+  simp only [app.injEq] at hb0
+  obtain ⟨_, hcq⟩ := hb0
+  rcases OM.cinv2_reach t σ ht _ h with ⟨L1, _, hlen, hEq⟩ | ⟨x, c1, w', P, _, _, _, hlen, hEq⟩ |
+      ⟨x, c', w', b', hx, hH, hP, hEq⟩ | ⟨y, _, hEq⟩
+  · have := congrArg List.length hEq; simp at this; omega
+  · have := congrArg List.length hEq; simp at this; omega
+  · have e2 : app σ (app q σ) = app b' (app c' w') := by
+      have := congrArg (fun l : List T => l.getD 1 S) hEq; simpa using this
+    simp only [app.injEq] at e2
+    obtain ⟨hb', hc', hw'⟩ := e2
+    subst hb'; subst hw'
+    have hxSS : x = SS := by
+      by_cases hx2 : 2 ≤ (args x).length
+      · exfalso
+        rcases final_shape (args x) σ S σ hx2 hP with ⟨hS, _⟩ | hbig
+        · exact hσ hS.symm
+        · exact hσ (OM.size_le_one σ (by simp [size] at hbig; omega))
+      · have hl : (args x ++ [σ]).length ≤ 2 := by simp; omega
+        have e := reach_stuck _ _ hl hP
+        match hax : args x, e with
+        | [x1], e =>
+          simp only [List.cons_append, List.nil_append, List.cons.injEq] at e
+          rw [args_one' x x1 hax, ← e.1]; rfl
+        | [], e => simp at e
+        | _ :: _ :: _, _ => rw [hax] at hx2; simp at hx2
+    subst hxSS
+    cases hH with
+    | first _ _ hrt =>
+      rw [hc']; exact hrt
+    | next x0 c0 w0 _ _ hH0 _ =>
+      exfalso
+      have h1 := OM.wh_size _ _ _ _ _ hH0
+      simp [size] at h1
+      have := size_pos c0
+      omega
+  · simp only [List.cons.injEq] at hEq
+    exfalso
+    rw [← hcq] at hEq
+    exact OM.size_app_ne q σ hEq.1
+
+/-- a rightmost tail call from a top q.sigma (sigma /= S) forces q = S S -/
+theorem top_rtc (q σ t' : T) (hσ : σ ≠ S) (h : R (app q σ) t') : q = SS := by
+  by_cases hq : 2 ≤ (args q).length
+  · exact absurd (R_strip q σ t' hq h).1 hσ
+  · have h' : Reach (args (app q σ)) [S, t'] := h
+    have hl : (args (app q σ)).length ≤ 2 := by rw [args_app]; simp; omega
+    have e := reach_stuck _ _ hl h'
+    rw [args_app] at e
+    match hax : args q, e with
+    | [x], e =>
+      simp only [List.cons_append, List.nil_append, List.cons.injEq] at e
+      rw [args_one' q x hax, ← e.1]; rfl
+    | [], e => simp at e
+    | _ :: _ :: _, _ => rw [hax] at hq; simp at hq
+
+/-- a rightmost reload-type step from a top q.sigma (size sigma >= 4) with second component p forces q = S(SS), p = sigma -/
+theorem top_rr (q σ p : T) (hσ : 4 ≤ size σ) (h : R2 (app q σ) p) : q = OM.SSS1 ∧ p = σ := by
+  have h' : Reach (args (app q σ)) [app S S, p] := h
+  by_cases hq : 2 ≤ (args q).length
+  · exfalso
+    rw [args_app] at h'
+    rcases final_shape (args q) σ (app S S) p hq h' with ⟨hc, _⟩ | hbig
+    · rw [← hc] at hσ; simp [size] at hσ
+    · simp [size] at hbig; omega
+  · have hl : (args (app q σ)).length ≤ 2 := by rw [args_app]; simp; omega
+    have e := reach_stuck _ _ hl h'
+    rw [args_app] at e
+    match hax : args q, e with
+    | [x], e =>
+      simp only [List.cons_append, List.nil_append, List.cons.injEq] at e
+      exact ⟨by rw [args_one' q x hax, ← e.1]; rfl, e.2.1⟩
+    | [], e => simp at e
+    | _ :: _ :: _, _ => rw [hax] at hq; simp at hq
+
+/-- **Theorem (rightmost finite half, general reload scenario).**  A rightmost walk from a term whose R19 class has
+    flag 0 never ends in computed nodes (t j).(s j) (t j with >= 2 arguments, s j /= S) whose steps are rightmost tail
+    calls (s (j+1) = s j) or rightmost reload-type steps with ANY second component q (t (j+1) = s j,
+    s (j+1) = q.(s j)).  Proof: such a step forces H(t j) = S(SS) q; once the stack has size >= 6 only q = S S is
+    possible (top_rtc / top_rr), and RR.finite_half_right excludes the canonical case. -/
+theorem finite_half_right_general (u : Nat → C.T) (hchild : ∀ j, RR.RChildC (u j) (u (j + 1)))
+    (hflag : RR.flagR (u 0) = false) (j0 : Nat) (t s : Nat → C.T)
+    (hform : ∀ j, u (j0 + j) = app (t j) (s j) ∧ 2 ≤ (C.args (t j)).length ∧ s j ≠ S)
+    (hstep : ∀ j, s (j + 1) = s j ∨ (t (j + 1) = s j ∧ ∃ q, s (j + 1) = app q (s j))) : False := by
+  have hreach : ∀ j, ∃ c, C.Reach (C.args (app (t j) (s j))) [c, app (t (j + 1)) (s (j + 1))] := by
+    intro j
+    have hc := hchild (j0 + j)
+    rw [(hform j).1, show j0 + j + 1 = j0 + (j + 1) by omega, (hform (j + 1)).1] at hc
+    rcases hc with ⟨hlen, _, _⟩ | ⟨_, c, hr⟩
+    · exfalso; rw [C.args_app] at hlen; have := (hform j).2.1; simp at hlen; omega
+    · exact ⟨c, hr⟩
+  have hR : ∀ j, s (j + 1) = s j → R (t j) (t (j + 1)) := by
+    intro j hs
+    obtain ⟨c, hr⟩ := hreach j
+    rw [hs] at hr
+    exact RR.right_tail_detect (t j) (s j) c (t (j + 1)) (hform j).2.1 hr
+  have hRR : ∀ j q, t (j + 1) = s j → s (j + 1) = app q (s j) → R2 (t j) q := by
+    intro j q ht hs
+    obtain ⟨c, hr⟩ := hreach j
+    rw [ht, hs] at hr
+    exact right_reload_detect_gen (t j) (s j) c q (hform j).2.1 (hform j).2.2 hr
+  have hs' : ∀ j, s (j + 1) = s j ∨ ∃ q, s (j + 1) = app q (s j) := by
+    intro j
+    rcases hstep j with h | ⟨_, h⟩
+    · exact Or.inl h
+    · exact Or.inr h
+  have hmono := FG.size_mono s hs'
+  have hinf : ∀ N, ∃ j, N ≤ j ∧ s (j + 1) ≠ s j := by
+    intro N
+    refine Classical.byContradiction (fun hno => ?_)
+    have hall : ∀ j, N ≤ j → s (j + 1) = s j := fun j hj =>
+      Classical.byContradiction (fun h => hno ⟨j, hj, h⟩)
+    exact no_R_chain (fun i => t (N + i)) (fun i => by
+      have := hR (N + i) (hall (N + i) (by omega))
+      rw [show N + (i + 1) = N + i + 1 by omega]; exact this)
+  have hrl : ∀ j, s (j + 1) ≠ s j → t (j + 1) = s j ∧ ∃ q, s (j + 1) = app q (s j) := by
+    intro j h
+    rcases hstep j with h1 | h1
+    · exact absurd h1 h
+    · exact h1
+  have hfirst_aux : ∀ (e b : Nat), b ≤ e → s (e + 1) ≠ s e →
+      ∃ j1, b ≤ j1 ∧ s (j1 + 1) ≠ s j1 ∧ ∀ x, b ≤ x → x < j1 → s (x + 1) = s x := by
+    intro e
+    induction e using Nat.strongRecOn with
+    | _ e ih =>
+      intro b hbe he
+      by_cases hmid : ∃ x, b ≤ x ∧ x < e ∧ s (x + 1) ≠ s x
+      · obtain ⟨x, hbx, hxe, hx⟩ := hmid
+        exact ih x hxe b hbx hx
+      · refine ⟨e, hbe, he, fun x hbx hxe => ?_⟩
+        exact Classical.byContradiction (fun h => hmid ⟨x, hbx, hxe, h⟩)
+  have hfirst : ∀ b, ∃ j1, b ≤ j1 ∧ s (j1 + 1) ≠ s j1 ∧ ∀ x, b ≤ x → x < j1 → s (x + 1) = s x := by
+    intro b
+    obtain ⟨e, hbe, he⟩ := hinf b
+    exact hfirst_aux e b hbe he
+  have hconst : ∀ (n b : Nat), (∀ x, b ≤ x → x < b + n → s (x + 1) = s x) → s (b + n) = s b := by
+    intro n
+    induction n with
+    | zero => intro b _; rfl
+    | succ n ih =>
+      intro b hx
+      rw [show b + (n + 1) = b + n + 1 by omega, hx (b + n) (by omega) (by omega)]
+      exact ih b (fun x h1 h2 => hx x h1 (by omega))
+  have hconst' : ∀ b j1, b ≤ j1 → (∀ x, b ≤ x → x < j1 → s (x + 1) = s x) → s j1 = s b := by
+    intro b j1 hb hx
+    have := hconst (j1 - b) b (fun x h1 h2 => hx x h1 (by omega))
+    rwa [show b + (j1 - b) = j1 by omega] at this
+  have hclass : ∀ a q σ, t a = app q σ → 4 ≤ size σ →
+      q = SS ∨ (q = OM.SSS1 ∧ s (a + 1) ≠ s a ∧ t (a + 1) = s a ∧ s (a + 1) = app σ (s a)) := by
+    intro a q σ hta hσ
+    have hσS : σ ≠ S := by intro h; rw [h] at hσ; simp [size] at hσ
+    rcases hstep a with h | ⟨ht, p, hp⟩
+    · left
+      have hr := hR a h
+      rw [hta] at hr
+      exact top_rtc q σ _ hσS hr
+    · right
+      have ho := hRR a p ht hp
+      rw [hta] at ho
+      obtain ⟨hq, hpσ⟩ := top_rr q σ p hσ ho
+      refine ⟨hq, ?_, ht, by rw [hp, hpσ]⟩
+      rw [hp]; exact OM.size_app_ne _ _
+  have hkey : ∀ j, 6 ≤ size (s j) → s (j + 1) ≠ s j → s (j + 1) = app SS (s j) := by
+    intro j hj hne
+    obtain ⟨_, q, hq⟩ := hrl j hne
+    obtain ⟨j1, hj1b, hj1, hj1x⟩ := hfirst (j + 1)
+    have hs1 : s j1 = s (j + 1) := hconst' (j + 1) j1 hj1b hj1x
+    have ht1 : t (j1 + 1) = app q (s j) := by rw [(hrl j1 hj1).1, hs1, hq]
+    rcases hclass (j1 + 1) q (s j) ht1 (by omega) with hc | ⟨_, hne2, _, hs2⟩
+    · rw [hq, hc]
+    · exfalso
+      obtain ⟨j3, hj3b, hj3, hj3x⟩ := hfirst (j1 + 1 + 1)
+      have hs3 : s j3 = s (j1 + 1 + 1) := hconst' _ j3 hj3b hj3x
+      have hsz : 4 ≤ size (s (j1 + 1)) := by
+        have := hmono j (j1 + 1) (by omega); omega
+      have ht3 : t (j3 + 1) = app (s j) (s (j1 + 1)) := by rw [(hrl j3 hj3).1, hs3, hs2]
+      rcases hclass (j3 + 1) (s j) (s (j1 + 1)) ht3 hsz with hc | ⟨hc, _⟩
+      · rw [hc] at hj; simp [SS, size] at hj
+      · rw [hc] at hj; simp [OM.SSS1, SS, size] at hj
+  have hgrow : ∀ n, ∃ J, n ≤ size (s J) := by
+    intro n
+    induction n with
+    | zero => exact ⟨0, Nat.zero_le _⟩
+    | succ n ih =>
+      obtain ⟨J, hJ⟩ := ih
+      obtain ⟨j, hjJ, hj⟩ := hinf J
+      obtain ⟨_, q, hq⟩ := hrl j hj
+      refine ⟨j + 1, ?_⟩
+      have := hmono J j hjJ
+      have := size_pos q
+      rw [hq]; simp only [size]; omega
+  obtain ⟨J, hJ⟩ := hgrow 6
+  exact RR.finite_half_right u hchild hflag (j0 + J) (fun e => t (J + e)) (fun e => s (J + e))
+    (fun e => ⟨by rw [show j0 + J + e = j0 + (J + e) by omega]; exact (hform _).1, (hform _).2.1, (hform _).2.2⟩)
+    (fun e => by
+      simp only [show J + (e + 1) = J + e + 1 by omega]
+      by_cases h : s (J + e + 1) = s (J + e)
+      · exact Or.inl h
+      · right
+        refine ⟨(hrl _ h).1, hkey _ ?_ h⟩
+        have := hmono J (J + e) (by omega); omega)
+
+end RG
+
+#print axioms RG.right_reload_detect_gen
+#print axioms RG.finite_half_right_general

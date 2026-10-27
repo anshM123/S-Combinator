@@ -1520,3 +1520,77 @@ non-universality or R''_PUP.
   S.K.B.C with K, B closed <= 5 leaves, C <= 8 leaves): 4 residual cases, same type).  ALPHA / CLOSEDGLUE cases need
   no condition at all.
   Lemma audit (s1/lemcheck.py 7: 428 runs, 15 single-wrapper transfers): no violation of F, C1, C2, FA, FW, FB, S1.
+* 08:00 COMPUTATIONALLY CERTIFIED (anatomy surveys, scripts in agent_work/s1/):
+  - multi-wrapper handlers of ORDERED single-occurrence data (multi.py 11 / 12 / rand 51 20 3000000; multi.py rc 12
+    for right combs over p): every non-FH multi-wrapper transfer found has n = 2 wrappers and is of one of two types:
+    M1 'both wrappers are P-terms glued in pattern alpha' (<= 12: 100 transfers; random: 553 + 56 + 4 budget) or
+    M2 'inner wrapper a P-term glued by a CLOSED front, outer wrapper closed' (<= 12: 17); random <= 20 adds rare
+    mixed types (inner alpha + outer P-front that 'ran', 13; inner P-front that 'ran' + outer alpha, 8).
+  - CHAIN SECOND TRANSFERS (d2multi.py / d2single.py; D_2 = V_1[y:=p, p:=c1] for every proper transfer V_1 of an
+    S-headed datum D_1 with one occurrence of p): <= 11 leaves: 183 transfers = FH 171 (164 single + 7 multi) +
+    single-wrapper pattern ALPHA 12; NO beta, NO closed-front, NO non-FH multi-wrapper transfer.  Random (D_1 with 1
+    or 2 occurrences, <= 22 leaves, 3,000,000 samples, d2multi.py rand 61 22 3000000): 1,035 single + 34 multi, all
+    34 multi-wrapper ones FH (their innermost wrapper is the bare p: V_1 was a CLEAN handler of a non-ordered D_1).
+    So every observed second transfer of a Church chain is covered by a machine-checked theorem with NO handler
+    condition: FH (OTD/FH1/FHL) or ALPHA (alpha_main, now also inside r3_single / r3_single2).
+* 08:02 MACHINE-CHECKED (agent_work/lean/R3G.lean, 5,378 lines, 'LEAN OK: no errors, no sorry'): **LEMMA YT**
+  (`yt_chain`, `yt_main`; the R3 agent's hand Lemma YT, now in Lean, generic): for a run from a Seg start list
+  that reaches a list whose third element has rank 2 at time T' (|P| <= 2 throughout by ab3_bound), if at time
+  t <= T' the list is K ++ [U, V, Yt | R] with K closed, U, V S-headed P-terms and Yt of rank 2, then the run
+  reaches [E_j, E_{j+1}, Yt | R] at some t' in [t, T'] (E_0 = U, E_1 = V, E_{j+2} = E_j.E_{j+1}: only closed-code
+  steps and chain steps happen in between), and if t' < T' then j <= 3.
+* 08:02 COMPUTATIONALLY CERTIFIED (s1/cover2.py 11, classes = the machine-checked theorems): all 2,621 proper
+  transfers of S-headed ORDERED single-occurrence data <= 11 leaves = FH 1,292 + ALPHA 1,245 + S1+H1ok 60 +
+  NHALL 22 + IGEN 1 + multi-other 1 (PAMF/LN0 class).  No PAH, no CLOSED, no 'S1 FAILS', no open single-wrapper
+  case.  Single-wrapper (2,597): ALL covered by r3_single / r3_single2 / FH with NO handler condition except H1ok
+  in the 60 S1 cases (and H1ok holds in all of them).  Running: 12 leaves, random <= 22, right combs <= 13.
+* 08:08 MACHINE-CHECKED (agent_work/lean/R3G.lean, 5,569 lines, 'LEAN OK: no errors, no sorry'):
+  **THEOREM MW-ALPHA2 (`mw_alpha2`)** - the R3 agent's hand reduction of nested pattern alpha (LOG 06:13), now in
+  Lean, for two wrappers: V = v1.(v2.y), v_i = b_i.c_i (S-headed, y-free, fresh holes), earlier phase = ANY run
+  from L0 passing through the inner alpha glue [c2, v2, y | R0] at t2, the outer alpha glue [c1, v1, v2.y | R1] at
+  t1 > t2, and a p-front at T' > t1.  If the earlier phase never has an L2-prefixed front (L2 = v2.y) in (t2, T']
+  (i.e. NOT case I-L2), then the next phase of V never makes a proper transfer.  Proof (`code_hole_front`, applied
+  to c2 then c1): c2 calling its first hole is a y-call (impossible), its second hole an L2-front (excluded); c1
+  calling its first hole is an L2-front (excluded), its second hole opens V (IGEN); otherwise both c-codes never
+  call their holes and NHALL applies.  So for nested-alpha two-wrapper handlers NHALL's handler-only hypothesis is
+  DERIVED, and the only open case is I-L2 (the earlier phase re-opens the inner level).
+* 08:19 MACHINE-CHECKED (agent_work/lean/R3G.lean, 6,003 lines, 'LEAN OK: no errors, no sorry') - two theorems for
+  the re-opening case I-Ln (the earlier phase re-opens the INNERMOST level, i.e. reaches args(vn.y) ++ B2 before its
+  p-front), ANY number of wrappers V = v1.(...(vn.y)), vn = bn.cn, bn S-headed y-free:
+  **THEOREM IL-ATOM (`il_atom`)**: if cn is an atom other than y (the live p or a frozen atom), the next phase has
+  NO p'-front at all.  **THEOREM IL-NH (`il_nh`)**: if cn is S-headed, y-free and never calls its holes (NHc,
+  handler-only), the next phase has NO p'-front at all.  Proofs: before its first innermost-level opening the next
+  phase is guarded (guarded_phase: no p'-front); from that opening on it follows bn's two-hole run (corr_atoms /
+  the `key` correspondence) with k1 -> cn', k2 -> p'; a k2-front would map to a y-front of the earlier phase at the
+  re-opening (image_stuck: impossible before the transfer); a k1-front is stuck (IL-ATOM) or runs cn', which never
+  reaches a p'-front (paf_post, IL-NH).  Unlike PAMF no bottom condition is needed.
+  Note: an inner wrapper glued by a CLOSED front always produces I-Ln (closedglue argument: the closed front's
+  two-hole run must call its second hole, which re-opens vn.y).
+  Coverage (s1/cover4.py 12, all 8,586 transfers of ordered single-occurrence data <= 12 leaves): FH 4,198, ALPHA
+  4,078, S1+H1ok 193, MWA2 100, IL-ATOM 8, IGEN 6, other 3 (the 3 'other' are I-L2 with NH(c2): now IL-NH).
+* 08:23 il_atom generalised (R3G.lean re-checked, 'LEAN OK: no errors, no sorry'): the innermost c-code only needs
+  to be ATOM-HEADED (head not y), e.g. p.S.  COMPUTATIONALLY CERTIFIED COVERAGE (s1/cover6.py 12; every class is a
+  machine-checked theorem whose remaining hypotheses are checked per case): ALL 8,586 proper transfers of S-headed
+  ORDERED single-occurrence data <= 12 leaves are covered:
+    no handler condition: FH 4,198 (OTD/FH1/FHL), ALPHA 4,078 (r3_single), MWA2 100 (mw_alpha2), IL-ATOM 9 (il_atom),
+    IGEN 6 (igen_main);
+    handler-only condition (checked, holds): S1+H1ok 193 (r3_single: H1ok of c0), IL-NH 2 (il_nh: NHc of c_n).
+  (Earlier pkill of my own cover5.py runs - superseded by cover6.py; no other process touched.)
+* 08:31 MACHINE-CHECKED (agent_work/lean/R3G.lean, 6,274 lines, 'LEAN OK: no errors, no sorry'):
+  **`il_gen`** (IL-NH with 'NHc(cn) OR bn never calls its first hole') and **R3-RC SINGLE (`r3_rc_single`)**: for every
+  S-headed right comb rcombT ds p over p with CLOSED wrappers ds (frozen atoms allowed) - i.e. every datum of a
+  Church chain after its first transfer - every single-wrapper proper transfer (b0.c0).y (b0, c0 S-headed, b0.c0
+  free of x, y, r) satisfying 'H1ok(c0) OR b0 never calls its first hole' is followed by a next phase without a
+  proper transfer (ordT and the single p are derived from the comb shape: ordT_closed, rcombT_rk_occ).
+  COMPUTATIONALLY CERTIFIED (s1/cover6.py rand 121 22 3000000, random ordered single-occurrence data 4-22 leaves):
+  53,459 transfers = FH 26,950 + ALPHA 24,922 + S1+H1ok 924 + MWA2 594 + IL-ATOM 20 + IL-NH 13 + IGEN 11 +
+  NHALL 24 (one family: inner alpha, outer P-front that 'ran' - handler-only NHALL) + 1 UNCOVERED (n = 3 wrappers:
+  inner alpha, middle closed atom-headed, outer alpha; SS(S(SS))(S(S(S(SS)S)(SS(SSS)(Sp)))), next phase REEXEC).
+* 08:32 COMPUTATIONALLY CERTIFIED: (a) s1/cover6.py 13 13 (ALL S-headed ordered data with ONE p and EXACTLY 13
+  leaves): 19,730 proper transfers = FH 9,520 + ALPHA 9,422 + S1+H1ok 395 + MWA2 296 + IL-ATOM 38 + IGEN 28 +
+  IL-NH 18 + NHALL 12 + S1+NK1 1 - EVERY transfer is covered by a machine-checked theorem (conditions used: H1ok 395,
+  NK1 1, NHc 30; all hold).  With the <= 12 run: 28,316 transfers of ordered single-occurrence data <= 13 leaves,
+  0 uncovered.  (Budget caveat as before: 'no proper transfer' of a next phase is checked by the theorems' classes,
+  the next-phase outcome column of cover6 is the simulated outcome within 3,000 steps.)
+  (b) s1/lemcheck.py 8 (1,429 runs, 54 single-wrapper transfers, 2 beta-P glues) and 7: no violation of the
+  invariants F, C1, C2, FA, FW, FB or of (S1) - the lemmas of the hand proof hold on every list.
