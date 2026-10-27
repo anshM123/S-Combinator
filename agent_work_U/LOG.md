@@ -250,3 +250,19 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   This is the complete classification of single-datum descent-machine rounds (it subsumes W1): the leftmost path can
   erase the datum, keep it, add ONE closed wrap, or copy it by the comb's Fibonacci swap of (x, W.x) — nothing else.
   (Agrees with copycat.py: all 29 multi-copy shapes <= 11 leaves are such Fibonacci words.)
+* MACHINE-CHECKED (04:20 EDT): agent_work_U/lean/W2F.lean (232 lines, Lean 4 core, no sorry; axioms propext,
+  Quot.sound [+ Classical.choice for the survivor theorem]).  W2+ (sharpens W2): from C ++ [x, y] (C closed) every
+  reachable list is C' ++ [fib2 k, fib2 (k+1)] (C' closed) or holds >= 3 data elements, where fib2 0 = x, fib2 1 = y,
+  fib2 (k+2) = (fib2 k)(fib2 (k+1)); hence every DM survivor of a two-datum round is a Fibonacci word over (x, y)
+  (`w2f_survivor`).  COMPUTATIONALLY CERTIFIED match (copycat2.py 10 3000): the data-holding survivors for closed
+  C <= 10 leaves are exactly F_0..F_9 over (x, y), each produced only by the comb C = S^(k)(S).
+* SUMMARY THEOREM (combining W1F, W2F and the main agent's Corollary 8(i)) — PROVED / MACHINE-CHECKED: a
+  descent-machine round with closed code and opaque data ends (survives to the next leftmost-path node) only if it
+  has <= 2 data elements, and then its survivor is
+     1 datum x : closed, x, W.x, or a Fibonacci word F_k(x, W.x) (W closed);
+     2 data x,y: a Fibonacci word F_k(x, y).
+  The leftmost Boehm path therefore has exactly three generic operations on data — erase, ONE closed wrap, and the
+  Fibonacci swap of the comb — between data executions.  A universal leftmost-path emulation would have to come
+  entirely from what executed data do with Fibonacci-recombined arguments (each execution again satisfies the same
+  classification for its own captured data), i.e. from re-execution — the regime the main agent conjectures to be
+  call-like.

@@ -9,6 +9,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | result | file | meaning |
 |---|---|---|
 | **Theorem Q10** (BEKW Question 10) | `Q10.lean` | head reduction of an S-term terminates iff its class in the 35-element model M35 is in F. This answers Question 10 of Barendregt–Endrullis–Klop–Waldmann ("Dance of the starlings") and gives an independent machine-checked proof that head normalisation of S-terms is decidable in linear time |
+| Lemma 4, hnf congruence | `Lemma4.lean` | all terms without a head normal form are interchangeable in every context; terms with the same M35 class have a head normal form in exactly the same contexts |
 | Theorem A | `TheoremA_M35.lean` | M35 class outside F ⇒ no head normal form; the model's S-identity is checked by the Lean kernel over all 42,875 class triples |
 | **Theorem P2** | `P2_Parity.lean` | the Böhm tree of S·S^j·(SSS)·(SS) is finite iff j is even or j = 1: S-terms can count modulo 2 |
 | Proposition Q | `PropQ.lean` | every term whose class in the 39-element productivity model is in F_P is productive (no ⊥ anywhere in its Böhm tree): one half of Conjecture C6, the conjectured answer to BEKW Question 5 |

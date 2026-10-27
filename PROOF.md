@@ -33,7 +33,10 @@ Let `(M,·)` be a magma with `s ∈ M` such that `s·x·y·z = x·z·(y·z)` for
 *Proof.* One step: the redex evaluates to `s[x][y][z] = [x][z]([y][z])`, and `·` is a function, so
 replacing a subterm by one with the same value preserves the value of the whole. Induct. ∎
 
-## Lemma 4 (all head-unstable terms are one syntactic class) — PROVED (sketch to be written in full)
+## Lemma 4 (all head-unstable terms are one syntactic class) — PROVED and MACHINE-CHECKED (lean/Lemma4.lean, 2026-10-27)
+*Lean:* `lemma4`, as a corollary of Theorem Q10 (`hnf_congr`: terms with the same M35 class have an hnf in exactly the
+same contexts; `bot_unique`: every term without an hnf has the class 33, kernel-checked as the only class outside F).
+The lockstep sketch below is no longer needed.
 If t, t' both have no hnf then for every one-hole context C: `C[t]` has an hnf ⟺ `C[t']` has an hnf.
 *Proof sketch.* Run the head machine on `C[t]` and `C[t']` in lockstep. Steps only open the *top* list
 entry; an entry equal to t (or t') is never inspected until it is opened. If an occurrence of t is ever
