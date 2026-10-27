@@ -1,0 +1,3 @@
+symbolic rules D1, D2, D3: OK (exactly one redex in every intermediate term)
+14 leaves: 87/87 forever-descending terms enter the K-cycle (then Theorem DK)
+87/87 PROVED by Theorem DK; latest entry at step 5

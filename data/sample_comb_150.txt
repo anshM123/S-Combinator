@@ -1,0 +1,2 @@
+sample 150: proved by the call prover 59, additionally by the comb prover 22, neither 69
+comb prover verdicts: {'PROVED': 22, 'block lemma fails': 9, 'no long block runs': 3, 'front not constant at block starts': 85, 'second element not a layer': 6, 'layer not constant': 18, 'driver not derived': 5, 'cycle starts not combs over one base': 2}

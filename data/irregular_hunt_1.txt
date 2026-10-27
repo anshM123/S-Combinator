@@ -1,0 +1,31 @@
+generation 0: best normalised LZ 0.2815  median 0.1457
+generation 1: best normalised LZ 0.2815  median 0.2493
+generation 2: best normalised LZ 0.2822  median 0.2815
+generation 3: best normalised LZ 0.2822  median 0.2815
+generation 4: best normalised LZ 0.2822  median 0.2815
+generation 5: best normalised LZ 0.2822  median 0.2822
+generation 6: best normalised LZ 0.2822  median 0.2822
+generation 7: best normalised LZ 0.2822  median 0.2822
+generation 8: best normalised LZ 0.2822  median 0.2822
+generation 9: best normalised LZ 0.2822  median 0.2822
+generation 10: best normalised LZ 0.2822  median 0.2822
+generation 11: best normalised LZ 0.2822  median 0.2822
+generation 12: best normalised LZ 0.2822  median 0.2822
+generation 13: best normalised LZ 0.2822  median 0.2822
+generation 14: best normalised LZ 0.2858  median 0.2822
+top runs:
+  0.2858  SSSSS(S(S(SS))S(SSSSSSS))S(SS(SS(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(S(SS)(S(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(S(S(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(SSS(S(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(SS(S(SS)))
+  0.2822  SSSSS(S(SSSSSSS))SS
+  0.2822  SSSSS(S(SSSSSSS))S(SSS(SS(SS)S(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(SS(SS(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(S(SSS))
+  0.2822  SSSSS(S(SSSSSSS))S(S(SS)(SSS(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(SSS(SS(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(S(SS)(S(SS)S))
+  0.2822  SSSSS(S(SSSSSSS))S(S(SS)(SSS(SSS)))
+  0.2822  SSSSS(S(SSSSSSS))S(S(S(SS(SS)))(SSS(SS)))
+  0.2822  SSSSS(S(SSSSSSS))S(SSS(S(S(SSS))))

@@ -1,0 +1,5 @@
+iter 0: classes 2 contexts 2 counterexamples 19 oracle calls 1344 (0s)
+iter 1: classes 4 contexts 10 counterexamples 27 oracle calls 2284 (0s)
+iter 2: classes 10 contexts 17 counterexamples 111 oracle calls 4599 (0s)
+iter 3: classes 13 contexts 19 counterexamples 61 oracle calls 6969 (0s)
+iter 4: classes 18 contexts 23 counterexamples 11 oracle calls 12073 (0s)

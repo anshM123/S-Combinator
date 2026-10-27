@@ -1,0 +1,13 @@
+base 4	op 2	gaps [9, 23, 37, 51]	freq [590, 147, 37, 8]	SSS(SS)S(SSSS)S(S(SSS)S(S(SS)(SS))(SSS))
+base 2	op 4	gaps [14, 21, 28, 35, 42, 49]	freq [208, 104, 52, 26, 13, 7]	SS(SSS(SS))(S(SS)S)(S(SS)(S(SS)))
+base 4	op 2	gaps [9, 23, 37, 51]	freq [590, 147, 37, 8]	SSS(S(SS)S)(SSSS)(S(S(SS)S)SS(S(SS))S)
+base 4	op 2	gaps [9, 21, 33, 45]	freq [628, 157, 39, 10]	S(SSS(SS)S)(S(SSS(S(SS))(SS)(S(SS))))(SS(SS))
+base 2	op 3	gaps [8, 16, 24, 32, 40, 48]	freq [502, 251, 125, 62, 32, 16]	S(SS)(SSS(SS))S(SSS(SS))
+base 2	op 5	gaps [18, 20, 22, 24, 26, 28]	freq [156, 78, 39, 19, 10, 4]	SS(SSS)(SS)(SS(S(SSS)))(S(S(SS))S)(SS)(SSSS)
+base 2	op 4	gaps [27, 34, 41, 48, 55, 62]	freq [125, 62, 31, 16, 8, 4]	S(SS)(SSS)(S(S(SS)S))(S(SS)(S(SS)))
+base 2	op 5	gaps [13, 15, 17, 19, 21, 23]	freq [139, 69, 35, 17, 9, 5]	SSS(SSS(S(SS)S(S(S(S(SS))))S(SS)S(SS)))S
+base 2	op 5	gaps [21, 24, 27, 30, 33, 36]	freq [139, 70, 34, 17, 9, 5]	S(S(SS))(SS(SS)(SS))(S(S(SS))S)(SSSS(S(SS)(SS)))
+base 4	op 2	gaps [9, 23, 37, 51]	freq [590, 147, 37, 8]	S(SS)(S(SS)(S(SS))S)(SSSS)(SS(SS)(S(SS))(S(SS)))
+base 6	op 3	gaps [33, 49, 65, 81]	freq [36, 7, 8, 1]	SS(SS)(S(S(S(SS)))(SS(S(S(SSS)(SSS(SS)S)))))(SS(SS))
+base 2	op 2	gaps [21, 29, 37, 45, 53, 61]	freq [218, 109, 54, 27, 14, 6]	S(SS)S(S(SS)S)(SS(SS))(SSS)
+summary: {'none': 1488, 'base 4': 4, 'base 2': 7, 'base 6': 1} (tries 3439)

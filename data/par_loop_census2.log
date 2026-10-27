@@ -1,0 +1,85 @@
+comb_prover.py	SS(SSS)S(SS)SSS: parallel run PROVED  (B = 04022, 1 loop(s) per cycle, window 4, cycle length 5·n + 15, n >= 4, 2 macro(s), first cycle (6957, 51), cross-check 103/103)
+loop_prover.py	S(S(S(SS))S)(SSS)(SS): parallel run timeout
+comb_prover.py	SS(S(SS))(SS)SS(S(SS)): parallel run PROVED  (B = 20402, 1 loop(s) per cycle, window 3, cycle length 5·n + 15, n >= 4, 2 macro(s), first cycle (6945, 51), cross-check 103/103)
+comb_prover.py	SSS(S(SS)(SS)S)SS: parallel run PROVED  (B = 40220, 1 loop(s) per cycle, window 3, cycle length 5·n + 15, n >= 4, 2 macro(s), first cycle (6945, 51), cross-check 103/103)
+comb_prover.py	S(S(S(SS))(SS)(SS)S)SS: parallel run PROVED  (B = 40220, 2 loop(s) per cycle, window 3, cycle length 5·n + 25, n >= 4, 2 macro(s), first cycle (7346, 50), cross-check 102/102)
+comb_prover.py	S(SSS)(SSS)(SS(SS))S: parallel run PROVED  (B = 20402, 1 loop(s) per cycle, window 3, cycle length 5·n + 13, n >= 2, 3 macro(s), first cycle (6794, 52), cross-check 103/103)
+loop_prover.py	SSSS(S(SS(SS)S))SS: parallel run PROVED  (B = 2031, 2 loop(s) per cycle, window 3, cycle length 8·n + 7, n >= 3, 2 macro(s), first cycle (7188, 42), cross-check 81/81)
+loop_prover.py	S(S(S(S(SS(SS)))))S(SS)S: parallel run timeout
+loop_prover.py	S(S(SS)SS)S(SS): parallel run timeout
+loop_prover.py	S(S(S(S(SSS)(SSS))))SS: parallel run PROVED  (B = 41103110, 1 loop(s) per cycle, window 3, cycle length 8·n + 4, n >= 3, 1 macro(s), first cycle (6740, 41), cross-check 82/82)
+comb_prover.py	SS(SSSS)(SSS)(SSS): parallel run PROVED  (B = 02204, 1 loop(s) per cycle, window 4, cycle length 5·n + 3, n >= 3, 1 macro(s), first cycle (6797, 52), cross-check 103/103)
+loop_prover.py	S(S(SS))S(SSS)(SS)S: parallel run timeout
+loop_prover.py	S(S(S(SS(SS)))S)SS(SS): parallel run cycle lemma fails (no comb pattern)
+loop_prover.py	S(S(SSSS)SS)SS: parallel run PROVED  (B = 04012, 1 loop(s) per cycle, window 4, cycle length 5·n + 9, n >= 4, 1 macro(s), first cycle (6877, 51), cross-check 103/103)
+loop_prover.py	SSS(S(S(SS)))(SS)SSS: parallel run timeout
+comb_prover.py	S(S(SSS))(SS)(SSS): parallel run PROVED  (B = 22040, 1 loop(s) per cycle, window 3, cycle length 5·n + 13, n >= 3, 3 macro(s), first cycle (6794, 52), cross-check 103/103)
+loop_prover.py	S(SSSS)(SS)(SS(S(SSSS)(SS)))S: parallel run timeout
+loop_prover.py	S(S(SS)(S(SS)))SSS: parallel run PROVED  (B = 12040, 1 loop(s) per cycle, window 3, cycle length 5·n + 9, n >= 4, 1 macro(s), first cycle (6867, 51), cross-check 103/103)
+loop_prover.py	S(S(S(S(S(SS))S))S)SSS: parallel run timeout
+loop_prover.py	SS(SS)(SSS(SS))(S(SS)): parallel run timeout
+loop_prover.py	SS(SS)(SS(SS))S(SS)S: parallel run PROVED  (B = 032022, 1 loop(s) per cycle, window 4, cycle length 6·n + 28, n >= 6, 2 macro(s), first cycle (7282, 46), cross-check 93/93)
+comb_prover.py	SSSS(S(S(S(SS)S)S))S: parallel run PROVED  (B = 1204112031, 1 loop(s) per cycle, window 3, cycle length 10·n + 5, n >= 1, 1 macro(s), first cycle (6910, 37), cross-check 73/73)
+loop_prover.py	S(S(SS))SS(SSS)(S(SS)): parallel run PROVED  (B = 11041103, 1 loop(s) per cycle, window 4, cycle length 8·n + 13, n >= 2, 1 macro(s), first cycle (7120, 41), cross-check 81/81)
+loop_prover.py	SSS(SSSS(SS))(S(SS)): parallel run timeout
+loop_prover.py	S(S(SS)S(SS))S(SS)(SS): parallel run PROVED  (B = 104201, 1 loop(s) per cycle, window 4, cycle length 6·n + 10, n >= 4, 1 macro(s), first cycle (6966, 47), cross-check 94/94)
+loop_prover.py	SSS(S(S(SS)))(SS)S: parallel run timeout
+loop_prover.py	S(SSS(SS)S(SS))(SS)S: parallel run PROVED  (B = 01204, 1 loop(s) per cycle, window 4, cycle length 5·n + 9, n >= 4, 1 macro(s), first cycle (6867, 51), cross-check 103/103)
+comb_prover.py	S(S(SSS)SSS)(SS)S: parallel run PROVED  (B = 02204, 1 loop(s) per cycle, window 4, cycle length 5·n + 12, n >= 4, 1 macro(s), first cycle (7033, 51), cross-check 102/102)
+comb_prover.py	S(S(SS)S)SS(SSSSS): parallel run PROVED  (B = 20402, 1 loop(s) per cycle, window 3, cycle length 5·n + 8, n >= 8, 2 macro(s), first cycle (7052, 53), cross-check 102/102)
+loop_prover.py	S(SSS(S(SS(SS))))S(SS): parallel run timeout
+comb_prover.py	S(SSS(SSS))(SSS)SS: parallel run PROVED  (B = 20402, 1 loop(s) per cycle, window 3, cycle length 5·n + 14, n >= 4, 2 macro(s), first cycle (6862, 51), cross-check 103/103)
+loop_prover.py	S(S(SS(S(SSS))))(SS)SS: parallel run PROVED  (B = 1203, 2 loop(s) per cycle, window 3, cycle length 8·n + 7, n >= 3, 2 macro(s), first cycle (7193, 42), cross-check 81/81)
+loop_prover.py	S(S(S(SS))S(SS))(SS)(SS): parallel run timeout
+comb_prover.py	SS(SS)SS(SS(SS))SS: parallel run PROVED  (B = 40220, 2 loop(s) per cycle, window 3, cycle length 5·n + 20, n >= 4, 2 macro(s), first cycle (7280, 51), cross-check 102/102)
+loop_prover.py	S(S(SSS)S)S(S(SS))SS: parallel run PROVED  (B = 11041103, 1 loop(s) per cycle, window 4, cycle length 8·n + 4, n >= 3, 1 macro(s), first cycle (6740, 41), cross-check 82/82)
+loop_prover.py	S(SSS(S(SS))S)(SSS)S: parallel run timeout
+comb_prover.py	S(SSS)S(SSSS(SS)): parallel run PROVED  (B = 330221030, 1 loop(s) per cycle, window 3, cycle length 9·n + 25, n >= 6, 2 macro(s), first cycle (6980, 38), cross-check 77/77)
+loop_prover.py	SSS(S(SS(SS)SS))SS: parallel run cycle lemma fails (token unfolded too often)
+loop_prover.py	S(S(SS(S(SS)))S)S(SSS): parallel run PROVED  (B = 2031, 2 loop(s) per cycle, window 3, cycle length 8·n + 17, n >= 3, 2 macro(s), first cycle (7269, 41), cross-check 81/81)
+loop_prover.py	S(S(S(SS))SS)S(SSS)S: parallel run PROVED  (B = 2031, 2 loop(s) per cycle, window 3, cycle length 8·n + 17, n >= 3, 2 macro(s), first cycle (7277, 41), cross-check 81/81)
+comb_prover.py	S(S(S(SSS))(SSS))(SS)S: parallel run PROVED  (B = 04022, 1 loop(s) per cycle, window 4, cycle length 5·n + 14, n >= 4, 2 macro(s), first cycle (6860, 51), cross-check 103/103)
+loop_prover.py	SS(SS)(S(SS)S)SSSS: parallel run cycle lemma fails (token unfolded too often)
+loop_prover.py	SS(SS)S(S(SS))S(SS)S: parallel run timeout
+loop_prover.py	S(S(SS(SS)SS))(SS)SS: parallel run PROVED  (B = 2031, 2 loop(s) per cycle, window 3, cycle length 8·n + 7, n >= 3, 2 macro(s), first cycle (7184, 42), cross-check 81/81)
+loop_prover.py	S(S(S(S(S(SS))SS)))SS: parallel run timeout
+loop_prover.py	S(S(SS)(S(SSSS))S)SS: parallel run timeout
+comb_prover.py	SS(SS)S(S(S(SS)))S(SS): parallel run cycle lemma fails (no comb pattern)
+comb_prover.py	S(SS(SS)(SS)S)(SSS)S: parallel run PROVED  (B = 22040, 1 loop(s) per cycle, window 3, cycle length 5·n + 14, n >= 4, 2 macro(s), first cycle (6872, 51), cross-check 103/103)
+loop_prover.py	S(SS)(S(S(SS)))(S(SS)(SS))(S(SS)(SS)(S(SS)(S(S(SS)))(S(SS)(SS)))): parallel run timeout
+comb_prover.py	SS(SSS)(S(SS)(SS(SSS)))(SS(SSS)(SS(SSS)(S(SS)(SS(SSS))))): parallel run PROVED  (B = 030330221, 2 loop(s) per cycle, window 4, cycle length 9·n + 34, n >= 6, 2 macro(s), first cycle (7320, 38), cross-check 76/76)
+loop_prover.py	SS(SSS(SS))(S(SS))SS: parallel run cycle lemma fails (token unfolded too deep (left comb?))
+loop_prover.py	S(S(SS))S(SSS)(SS): parallel run timeout
+loop_prover.py	S(S(S(SS(SS))))(SS)SSS: parallel run PROVED  (B = 3120, 2 loop(s) per cycle, window 3, cycle length 8·n + 17, n >= 3, 2 macro(s), first cycle (7281, 41), cross-check 81/81)
+loop_prover.py	SS(S(SS))(S(SS))(SS)SS: parallel run timeout
+loop_prover.py	SSS(SS)(S(SS)SS)(SS): parallel run cycle lemma fails (no comb pattern)
+loop_prover.py	S(SS(SSS))S(S(S(SS)))S: parallel run PROVED  (B = 10411, 2 loop(s) per cycle, window 4, cycle length 10·n + 25, n >= 2, 2 macro(s), first cycle (7215, 36), cross-check 73/73)
+loop_prover.py	SSS(S(SS)(SS))(SS)SS: parallel run timeout
+loop_prover.py	SSSSS(S(SSS))(SS)S: parallel run timeout
+loop_prover.py	S(S(S(S(SS))))S(SSS)SS: parallel run PROVED  (B = 0312, 3 loop(s) per cycle, window 4, cycle length 12·n + 27, n >= 2, 3 macro(s), first cycle (7249, 33), cross-check 66/66)
+loop_prover.py	S(S(S(SS)S)(S(SS)))(SS)S: parallel run cycle lemma fails (no comb pattern)
+loop_prover.py	S(SSSS)(SS)(SS(SS)(S(SSSS)(SS))): parallel run timeout
+loop_prover.py	S(SSS)(SS)(S(SS))SSS: parallel run cycle lemma fails (no comb pattern)
+loop_prover.py	S(S(SS(SS))(S(SS)S))SS: parallel run cycle lemma fails (no comb pattern)
+loop_prover.py	SSS(S(SS))(SS)SS: parallel run timeout
+loop_prover.py	SS(SS)(SS)(SSS)(S(SS)): parallel run PROVED  (B = 11031104, 1 loop(s) per cycle, window 4, cycle length 8·n + 4, n >= 3, 1 macro(s), first cycle (7064, 42), cross-check 81/81)
+loop_prover.py	S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS))))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS))))))))))): parallel run PROVED  (B = 041111051111, 1 loop(s) per cycle, window 4, cycle length 12·n + 36, n >= 2, 2 macro(s), first cycle (7146, 33), cross-check 66/66)
+loop_prover.py	S(SSSSS)S(S(SS)(SS)): parallel run PROVED  (B = 022102024, 1 loop(s) per cycle, window 4, cycle length 9·n + 11, n >= 8, 1 macro(s), first cycle (7127, 39), cross-check 76/76)
+comb_prover.py	S(S(SSSSS))(SSS)S: parallel run PROVED  (B = 20402, 1 loop(s) per cycle, window 3, cycle length 5·n + 14, n >= 4, 2 macro(s), first cycle (6867, 51), cross-check 103/103)
+comb_prover.py	S(S(SSS))(S(S(S(SS))))S: parallel run PROVED  (B = 1102402221, 1 loop(s) per cycle, window 4, cycle length 10·n + 35, n >= 7, 2 macro(s), first cycle (7255, 36), cross-check 72/72)
+comb_prover.py	SSS(S(SS)(SS)S)S: parallel run PROVED  (B = 40220, 1 loop(s) per cycle, window 3, cycle length 5·n + 15, n >= 4, 2 macro(s), first cycle (6945, 51), cross-check 103/103)
+loop_prover.py	S(S(S(SS(S(SS)))SS))SS: parallel run PROVED  (B = 110420, 1 loop(s) per cycle, window 4, cycle length 6·n + 10, n >= 4, 1 macro(s), first cycle (6972, 47), cross-check 94/94)
+loop_prover.py	S(SSS)(SS)S(S(SS))(SS): parallel run PROVED  (B = 03110411, 1 loop(s) per cycle, window 4, cycle length 8·n + 4, n >= 3, 1 macro(s), first cycle (7064, 42), cross-check 81/81)
+loop_prover.py	S(S(S(SS)))(SS(S(S(S(SS)))))(SS)(SS(S(S(S(SS)))(SS(S(S(S(SS)))))(SS))): parallel run timeout
+loop_prover.py	S(S(S(S(SS))(SS)S))SS: parallel run timeout
+loop_prover.py	SSSS(SS)S(S(SS)SS): parallel run timeout
+loop_prover.py	S(SS)S(S(S(SS)S)SS)S: parallel run timeout
+loop_prover.py	S(S(S(SSSS))S)S(SS): parallel run timeout
+loop_prover.py	SSS(SS(SS))(S(S(SS))S): parallel run cycle lemma fails (token unfolded too deep (left comb?))
+loop_prover.py	S(SS)(SS)(SS)SS(S(SS)): parallel run timeout
+comb_prover.py	SSS(SSSS)(S(SSSS)): parallel run PROVED  (B = 04022, 1 loop(s) per cycle, window 4, cycle length 5·n + 14, n >= 4, 2 macro(s), first cycle (6857, 51), cross-check 103/103)
+loop_prover.py	SSSS(S(S(SS)))(SS)(SS(SSSS(S(S(SS)))(SS))): parallel run timeout
+loop_prover.py	S(S(S(S(S(SS)))(SS)))S(SS): parallel run timeout
+loop_prover.py	S(S(SS)(S(SS)(SS)S))SS: parallel run timeout
+comb_prover.py	S(S(S(S(S(SS)))))SSS(SS): parallel run PROVED  (B = 22040, 1 loop(s) per cycle, window 3, cycle length 5·n + 14, n >= 4, 2 macro(s), first cycle (6857, 51), cross-check 103/103)
+loop_prover.py	S(SS)(SSS)(SS(SS))SS: parallel run PROVED  (B = 0312, 2 loop(s) per cycle, window 4, cycle length 8·n + 13, n >= 2, 2 macro(s), first cycle (7114, 41), cross-check 81/81)

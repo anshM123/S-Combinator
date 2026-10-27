@@ -1,0 +1,2 @@
+# n=7 range [0,132) cap=300 nonproductive-class=2 certified=2 anomalies=0 notfound=0 maxdepth=1 at SSS(SS)SS
+# hist: 0 2

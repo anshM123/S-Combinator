@@ -1,0 +1,60 @@
+(10, 'descends (no normal form within budget)') 908
+(10, 'hnf') 3941
+(10, 'root keeps contracting') 13
+(11, 'descends (no normal form within budget)') 3941
+(11, 'hnf') 12815
+(11, 'root keeps contracting') 40
+root keeps contracting (term, normalisations that did work):
+   10 S(SSS)S(S(SSS)S) 0
+   10 S(SSS)(SS)(SS(SS)) 62
+   10 S(SSS)(SS)(SSSS) 63
+   10 SSS(SS(SS))(SSS) 61
+   10 SSS(SSSS)(SSS) 62
+   10 S(SS)(SSS)S(SSS) 62
+   10 S(S(SSS))(S(SSS))S 0
+   10 SS(S(SS))(S(SSS))S 1
+   10 SSS(SS)(S(SSS))S 1
+   10 S(SS)SS(S(SSS))S 1
+   10 S(S(SS)(SSS))(SS)S 62
+   10 S(S(SSS))(SS)(SS)S 62
+   10 SS(S(SSS))(SS)SS 63
+   11 S(SSS)S(S(S(SSS)S)) 0
+   11 S(SS(SS))S(S(SSS)S) 0
+   11 S(SSSS)S(S(SSS)S) 1
+   11 SSS(SS(SS))(SS(SS)) 61
+   11 SSS(SS(SS))(SSSS) 62
+   11 SSS(SSSS)(SS(SS)) 62
+   11 SSS(SSSS)(SSSS) 63
+   11 S(SS)(SSS)S(SS(SS)) 62
+   11 S(SS)(SSS)S(SSSS) 63
+   11 S(S(S(S(SSS))))(SS)(SS) 122
+   11 S(S(S(SS(SS))))(SS)(SS) 123
+   11 S(S(S(SSSS)))(SS)(SS) 124
+   11 S(S(SS(S(SS))))(SS)(SS) 121
+   11 S(S(SSS))(SS)(SS)(SS) 62
+   11 S(S(S(SSS))(SS))S(SS) 62
+   11 SSS(S(SSS)(SSS))S 61
+   11 SSS(SS(SS)(SSS))S 63
+   11 SSS(SSSS(SSS))S 63
+   11 SSS(S(SSS)(SS)S)S 63
+   11 S(S(SS))S(SS(S(SS)))S 32
+   11 S(SSS)S(S(SSS)S)S 0
+   11 S(S(SS(SS)))(S(SSS))S 0
+   11 S(S(SSSS))(S(SSS))S 1
+   11 SS(S(SSS))(S(SSS))S 1
+   11 S(SS)(S(SS))(S(SSS))S 1
+   11 S(SSS)(SS)(SS(SS))S 62
+   11 S(SSS)(SS)(SSSS)S 63
+   11 S(S(SS)(SSS))(SSS)S 63
+   11 SSS(SS(SS))(SSS)S 61
+   11 SSS(SSSS)(SSS)S 62
+   11 S(SS)(SSS)S(SSS)S 62
+   11 S(S(S(S(SSS))(SS)))SS 62
+   11 S(SS)(S(SSS)(SS))SS 63
+   11 S(S(SSS))(S(SSS))SS 0
+   11 SS(S(SS))(S(SSS))SS 1
+   11 SSS(SS)(S(SSS))SS 1
+   11 S(SS)SS(S(SSS))SS 1
+   11 S(S(SS)(SSS))(SS)SS 62
+   11 S(S(SSS))(SS)(SS)SS 62
+   11 SS(S(SSS))(SS)SSS 63

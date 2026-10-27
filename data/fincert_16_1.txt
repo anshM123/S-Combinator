@@ -1,0 +1,1 @@
+# n=16 range [969485,1938970) finite-class=961881 certified=961881 anomalies=0 cycles=0 too-deep=0 maxdepth=30

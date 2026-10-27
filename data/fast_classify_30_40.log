@@ -1,0 +1,16 @@
+  100: {'bounded/linear': 97, 'radix 2': 1, 'single counter': 1, 'OTHER': 1}
+  200: {'bounded/linear': 197, 'radix 2': 1, 'single counter': 1, 'OTHER': 1}
+  300: {'bounded/linear': 294, 'radix 2': 3, 'single counter': 2, 'OTHER': 1}
+  400: {'bounded/linear': 394, 'radix 2': 3, 'single counter': 2, 'OTHER': 1}
+  500: {'bounded/linear': 492, 'radix 2': 5, 'single counter': 2, 'OTHER': 1}
+  600: {'bounded/linear': 590, 'radix 2': 5, 'single counter': 4, 'OTHER': 1}
+  700: {'bounded/linear': 689, 'radix 2': 6, 'single counter': 4, 'OTHER': 1}
+  800: {'bounded/linear': 789, 'radix 2': 6, 'single counter': 4, 'OTHER': 1}
+  900: {'bounded/linear': 889, 'radix 2': 6, 'single counter': 4, 'OTHER': 1}
+  1000: {'bounded/linear': 988, 'radix 2': 6, 'single counter': 5, 'OTHER': 1}
+  1100: {'bounded/linear': 1084, 'radix 2': 7, 'single counter': 8, 'OTHER': 1}
+  1200: {'bounded/linear': 1182, 'radix 2': 8, 'single counter': 8, 'OTHER': 2}
+  1300: {'bounded/linear': 1280, 'radix 2': 9, 'single counter': 9, 'OTHER': 2}
+  1400: {'bounded/linear': 1376, 'radix 2': 9, 'single counter': 13, 'OTHER': 2}
+  1500: {'bounded/linear': 1473, 'radix 2': 9, 'single counter': 16, 'OTHER': 2}
+{'bounded/linear': 1473, 'radix 2': 9, 'single counter': 16, 'OTHER': 2}

@@ -1,0 +1,5 @@
+auto_prover.py	SSS(S(S(SS)(SS))(SS))S: parallel run PROVED  (B = 4, 1 loop(s) per cycle, window 3, cycle length 2·n + 151, n >= 0, 2 macro(s), first cycle (7219, 10), cross-check 161/161, anchor 0·n + 3)
+auto_prover.py	S(SSSS)(SS)(S(SSSS)): parallel run PROVED  (B = 2, 2 loop(s) per cycle, window 3, cycle length 2·n + 4, n >= 3, 2 macro(s), first cycle (6962, 82), cross-check 162/162, anchor 0·n + 1)
+auto_prover.py	S(SSSS)(SS)S(SSS): parallel run PROVED  (B = 4, 1 loop(s) per cycle, window 3, cycle length 2·n + 151, n >= 0, 2 macro(s), first cycle (7223, 10), cross-check 161/161, anchor 0·n + 3)
+auto_prover.py	SSS(SSS)(SS(S(SS)))S: parallel run PROVED  (B = 2, 2 loop(s) per cycle, window 3, cycle length 2·n + 5, n >= 4, 2 macro(s), first cycle (6881, 81), cross-check 163/163, anchor 0·n + 2)
+auto_prover.py	S(S(SS)(SS))(SS)S(SSS): parallel run PROVED  (B = 4, 1 loop(s) per cycle, window 3, cycle length 2·n + 151, n >= 0, 2 macro(s), first cycle (7217, 10), cross-check 161/161, anchor 0·n + 3)

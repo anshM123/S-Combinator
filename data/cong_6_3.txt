@@ -1,0 +1,25 @@
+# Nr=6 Nc=3 contexts=29 reps=65 classes=11 budget=400
+class 0 HN=1 count 31 ctxHN 29 rep S
+class 1 HN=1 count 9 ctxHN 27 rep S(S(SSS))
+class 2 HN=1 count 3 ctxHN 28 rep S(S(SS)S)
+class 3 HN=1 count 2 ctxHN 27 rep S(SSS)S
+class 4 HN=1 count 3 ctxHN 25 rep S(S(S(SSS)))
+class 5 HN=1 count 1 ctxHN 26 rep S(S(SSS)S)
+class 6 HN=1 count 4 ctxHN 28 rep S(SS)(SSS)
+class 7 HN=1 count 4 ctxHN 25 rep SSS(S(SS))
+class 8 HN=1 count 2 ctxHN 24 rep SSS(SSS)
+class 9 HN=1 count 4 ctxHN 23 rep S(S(SSS))S
+class 10 HN=1 count 2 ctxHN 26 rep S(SS(SS))S
+# product table (rows a, cols b: class of rep(a) rep(b); -1 = new class); new=101
+0 4 1 5 -1 -1 4 -1 -1 -1 5 
+9 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+9 9 9 9 9 9 9 9 9 9 9 
+6 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+8 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+# well-definedness check: tested 64 products, inconsistent 25

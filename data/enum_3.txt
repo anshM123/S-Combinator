@@ -1,0 +1,3 @@
+0 1 0 3 1 0 3 S(SS)
+1 1 0 3 1 0 3 SSS
+# n=3 range [0,2) hnf=2 nohnf=0 nf=2 nonf=0

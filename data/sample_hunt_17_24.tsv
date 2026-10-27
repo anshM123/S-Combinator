@@ -1,0 +1,200 @@
+S(SS)S(S(S(SS(SS(SS))SS))S)(S(SS(SSS)S))	loop_prover.py	loop_prover.py: PROVED  (B = 023, 10 loop(s) per cycle, window 4, cycle length 30·n + 144, n >= 1, 11 macro(s), firs
+S(S(SSS))(S(S(S(S(SS(S(S(SS)S)))S))))(SS(SS)SS)	loop_prover.py	loop_prover.py: PROVED  (B = 0005, 1 loop(s) per cycle, window 6, cycle length 4·n + 10, n >= 0, 1 macro(s), first c
+S(S(SS)S)(SS(SS))(S(S(SS(SS)(SS)(SS))))SSSSS	loop_prover.py	loop_prover.py: PROVED  (B = 30, 8 loop(s) per cycle, window 3, cycle length 4·n + 44, n >= 2, 2 macro(s), first cyc
+SS(SS)(SS(S(SSS)S)S)(SS(SS)(SS(SS)(SS(S(SSS)S)S)))	loop_prover.py	loop_prover.py: PROVED  (B = 03, 1 loop(s) per cycle, window 4, cycle length 2·n + 1, n >= 4, 1 macro(s), first cycl
+S(S(SS))SSSS(S(SSSS)SS)	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 3·n + 47, n >= 4, 6 macro(s), first cycl
+S(S(S(SSS)(SS)(S(S(SSSSS)(SSSS)))))SS	loop_prover.py	loop_prover.py: PROVED  (B = 40030, 1 loop(s) per cycle, window 3, cycle length 5·n + 12, n >= 1, 1 macro(s), first 
+S(S(SS))(S(S(SS(SS)SS))S)S(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 30, 2 loop(s) per cycle, window 3, cycle length 2·n + 29, n >= 1, 1 macro(s), first cyc
+S(SSSS(SS(SSS)))S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 031, 2 loop(s) per cycle, window 4, cycle length 6·n + 33, n >= 1, 2 macro(s), first cy
+SSS(SSS)(S(S(S(SS)S)(SSS)))(S(S(SS)(SS)))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 8 loop(s) per cycle, window 3, cycle length 2·n + 38, n >= 2, 3 macro(s), first cycl
+S(SS)(S(SSS(SSSS)SSS)(SS)(SS))(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 3 loop(s) per cycle, window 3, cycle length 1·n + 13, n >= 2, 2 macro(s), first cycl
+SSS(S(SS))(SS(SSS)(S(SS)(SS)(SS(SSS))S))S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 14 loop(s) per cycle, window 3, cycle length 3·n + 71, n >= 4, 3 macro(s), first cyc
+S(S(S(SS)))(S(SS)(SSS)(SS)S)SS(S(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 15 loop(s) per cycle, window 3, cycle length 4·n + 85, n >= 4, 6 macro(s), first cyc
+SSS(S(S(SS)S))(SS)(S(S(S(SS)))(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 30, 2 loop(s) per cycle, window 3, cycle length 4·n + 11, n >= 1, 2 macro(s), first cyc
+SS(S(S(S(SS)(SS))S))(S(SS)SSS)SSSS	loop_prover.py	loop_prover.py: PROVED  (B = 4112031120, 1 loop(s) per cycle, window 3, cycle length 10·n + 5, n >= 1, 1 macro(s), f
+SS(S(SS)(SSS))(S(SSS)(SS)(SS)(S(SSS(SS))))SS	loop_prover.py	loop_prover.py: PROVED  (B = 03, 4 loop(s) per cycle, window 4, cycle length 4·n + 52, n >= 1, 2 macro(s), first cyc
+S(S(SS))(S(SSS(S(SS)))(SS))SS(S(SS(SS)))	loop_prover.py	loop_prover.py: PROVED  (B = 023, 1 loop(s) per cycle, window 4, cycle length 3·n + 34, n >= 1, 2 macro(s), first cy
+S(SS(S(S(SS))(S(SS))(S(S(SS))))(SS)S)(S(SS)SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 02110410211051, 1 loop(s) per cycle, window 4, cycle length 14·n + 29, n >= 1, 1 macro(
+SS(SS)(SS)S(S(SS(S(S(SS(S(S(S(SS)S))))))SS))(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 0340002400, 1 loop(s) per cycle, window 4, cycle length 10·n + 20, n >= 1, 1 macro(s), 
+SS(S(SS))(SS)(SS(SS(S(SS))(SS)))(S(SS))(SS(S(SS))(SS)(S(SS))(SS(S(SS))(SS)(SS(SS(S(SS))(SS)))(S(SS))))	loop_prover.py	loop_prover.py: PROVED  (B = 0110502, 1 loop(s) per cycle, window 5, cycle length 7·n + 12, n >= 2, 1 macro(s), firs
+S(S(S(S(SS(S(S(SS)))S))S(SS)SS))(SSS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 03, 2 loop(s) per cycle, window 4, cycle length 2·n + 13, n >= 1, 1 macro(s), first cyc
+S(S(SS(SS)(SS(SS))(S(S(SS)))S)S)SS	loop_prover.py	loop_prover.py: PROVED  (B = 03, 2 loop(s) per cycle, window 4, cycle length 4·n + 30, n >= 1, 2 macro(s), first cyc
+S(S(SS(S(SS))SS)(SS)S)(SS)(S(S(SS)(SS)))SS	loop_prover.py	loop_prover.py: PROVED  (B = 22, 4 loop(s) per cycle, window 3, cycle length 8·n + 98, n >= 2, 6 macro(s), first cyc
+SSS(S(S(SSS)))S(SS(SS(S(S(SS))SS)(S(S(SSS)))))	auto_prover.py	loop_prover.py: no growing loop cycle | comb_prover.py: no long block runs | auto_prover.py: PROVED
+SSS(S(S(S(SS)SS)S)S)(SS(SS))(S(SS)(SS)(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 30, 5 loop(s) per cycle, window 3, cycle length 4·n + 22, n >= 3, 2 macro(s), first cyc
+S(S(S(S(S(S(S(S(SS))))))(SS)S(SS))S)S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 3120, 3 loop(s) per cycle, window 3, cycle length 12·n + 26, n >= 1, 3 macro(s), first 
+SSS(S(SSSS(SS)(SSS))S)(SS(SSS)S)	loop_prover.py	loop_prover.py: PROVED  (B = 23003300, 1 loop(s) per cycle, window 3, cycle length 8·n + 22, n >= 1, 1 macro(s), fir
+S(SS)(S(SS(S(S(SS(SS)))S)))S(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 10211051021104, 1 loop(s) per cycle, window 4, cycle length 14·n + 27, n >= 1, 1 macro(
+S(S(S(S(SS)SS)(S(SS))))SS(S(SS)S)S	loop_prover.py	loop_prover.py: PROVED  (B = 2030210204102040, 1 loop(s) per cycle, window 3, cycle length 16·n + 17, n >= 1, 1 macr
+S(SS(S(SSS)))S(SSS(S(S(SS(SS)))S))	loop_prover.py	loop_prover.py: PROVED  (B = 023, 4 loop(s) per cycle, window 4, cycle length 12·n + 35, n >= 2, 4 macro(s), first c
+S(S(SS(SSS))SS)(S(S(S(SS)S))(S(SS))S)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 2, 16 loop(s) per cycle, window 3, cycle length 3·n + 74, n >= 3, 5 macro(s), first cyc
+S(SSSS)SSS(SS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 40120, 1 loop(s) per cycle, window 3, cycle length 5·n + 10, n >= 1, 1 macro(s), first 
+S(S(S(SS)(SS(S(S(S(S(SSSS)))S)(SS)))))(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 2031, 3 loop(s) per cycle, window 3, cycle length 12·n + 26, n >= 1, 3 macro(s), first 
+S(SSS)S(S(SS(S(SS))(S(SSSSS))S)(SS(SSS)))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 1·n + 20, n >= 3, 2 macro(s), first cycl
+SS(SS)(S(S(SS(S(S(S(SS))S)))))(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 2, 11 loop(s) per cycle, window 3, cycle length 4·n + 36, n >= 2, 5 macro(s), first cyc
+SSS(SS(S(SS))SSSS(SSSS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 00230033, 1 loop(s) per cycle, window 5, cycle length 8·n + 18, n >= 1, 1 macro(s), fir
+S(SS)(SSSS)(S(S(SS)S)(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 004, 2 loop(s) per cycle, window 5, cycle length 6·n + 14, n >= 1, 2 macro(s), first cy
+S(SS(SS(S(SSS)S))S(SS))(SS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 400, 2 loop(s) per cycle, window 3, cycle length 6·n + 15, n >= 1, 2 macro(s), first cy
+SSS(S(S(S(SS(SSS))(SS))))(S(S(SS))(SSS(S(S(S(SS(SSS))(SS))))))	loop_prover.py	loop_prover.py: PROVED  (B = 031122041122, 1 loop(s) per cycle, window 4, cycle length 12·n + 29, n >= 1, 1 macro(s)
+S(S(SS))(S(SS(SS(SS)))(SSS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 33002300, 1 loop(s) per cycle, window 3, cycle length 8·n + 35, n >= 1, 1 macro(s), fir
+S(SS)(S(S(S(SS))))(S(S(SS))SS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 31300, 2 loop(s) per cycle, window 3, cycle length 10·n + 58, n >= 1, 2 macro(s), first
+S(S(S(S(S(SS))))(S(SS)S))S(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 02110410211051, 1 loop(s) per cycle, window 4, cycle length 14·n + 31, n >= 1, 1 macro(
+S(SSS(SSS(S(SS)))S(SS)SSS)S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 112301104110411031104, 1 loop(s) per cycle, window 3, cycle length 21·n + 46, n >= 0, 1
+SSS(S(S(SS)(S(SS(SS))(SS))SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 220320, 1 loop(s) per cycle, window 3, cycle length 6·n + 21, n >= 1, 1 macro(s), first
+S(S(SS)SS)(SS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 22, 4 loop(s) per cycle, window 3, cycle length 8·n + 98, n >= 2, 6 macro(s), first cyc
+S(S(S(S(S(SSSS))S))(SSS))S(S(S(SS)S)S)S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 2·n + 20, n >= 3, 4 macro(s), first cycl
+SS(SS)(S(S(SS)))(S(S(SS))(SS(SS(SS))(S(S(SS)))))(S(S(SS))(SS(SS(SS))(S(S(SS))))(SS(SS)(S(S(SS)))(S(S(SS))(SS(SS(SS))(S(S(SS)))))))	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 6·n + 36, n >= 0, 3 macro(s), first cyc
+S(SS(S(SS))(S(SS)))S(SS(S(SSS))S)S(S(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 30031, 2 loop(s) per cycle, window 3, cycle length 10·n + 25, n >= 1, 2 macro(s), first
+S(S(S(S(SS)S)S))SSSS	loop_prover.py	loop_prover.py: PROVED  (B = 021041, 1 loop(s) per cycle, window 4, cycle length 6·n + 14, n >= 1, 1 macro(s), first
+S(S(SSS)S(S(SS(SS)SS)))(SSS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 003140, 2 loop(s) per cycle, window 5, cycle length 12·n + 30, n >= 1, 2 macro(s), firs
+SSS(S(S(S(S(SSS(S(S(SS)(SS))(SS(S(SS))))))S))S)S	loop_prover.py	loop_prover.py: PROVED  (B = 104102, 1 loop(s) per cycle, window 4, cycle length 6·n + 10, n >= 1, 1 macro(s), first
+S(SSS)S(S(S(SS)(SSS(SSS)(SS)))S)	loop_prover.py	loop_prover.py: PROVED  (B = 2022040, 1 loop(s) per cycle, window 3, cycle length 7·n + 30, n >= 1, 1 macro(s), firs
+SS(SS)(S(S(SS(SSS)))S)(SS)(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 2·n + 24, n >= 1, 1 macro(s), first cyc
+S(S(SS(S(SSS)S)S)SSS)(SS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 0220402, 1 loop(s) per cycle, window 4, cycle length 7·n + 20, n >= 1, 1 macro(s), firs
+S(SS)(S(S(SSS(S(SSS)))SS))SS(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 9 loop(s) per cycle, window 3, cycle length 3·n + 26, n >= 3, 5 macro(s), first cycl
+S(SSS(SSS)(S(SS)S))S(SS)(S(SS(SS))(S(SS)))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 9 loop(s) per cycle, window 3, cycle length 3·n + 40, n >= 3, 3 macro(s), first cycl
+S(S(SS))SSSSSS(S(SS(SSS)(SS)S))S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 3·n + 47, n >= 4, 6 macro(s), first cycl
+S(SS)S(S(S(SS)S))(S(S(SS)S)(S(SS)S(S(S(SS)S))))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 3·n + 22, n >= 4, 4 macro(s), first cycl
+S(SS(S(SSSSS)))S(S(S(S(SS)SSS)))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 2·n + 26, n >= 3, 3 macro(s), first cycl
+S(S(S(SS(SS(S(S(S(SS)))(S(SS)S))))))(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 3120, 3 loop(s) per cycle, window 3, cycle length 12·n + 31, n >= 1, 3 macro(s), first 
+SS(SS)SS(S(SS(S(S(S(SSSS(S(S(SS))))))S))S)SS	loop_prover.py	loop_prover.py: PROVED  (B = 310, 2 loop(s) per cycle, window 3, cycle length 6·n + 14, n >= 1, 2 macro(s), first cy
+S(SS(SS)(SS))SS(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 0402022, 1 loop(s) per cycle, window 4, cycle length 7·n + 20, n >= 1, 1 macro(s), firs
+SS(S(SS)SS)(S(SS(S(SSS(SS)))))S(SS)S	auto_prover.py	loop_prover.py: no growing loop cycle | comb_prover.py: no long block runs | auto_prover.py: PROVED
+S(SS)(SSSS)(S(SS))S(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 00313, 2 loop(s) per cycle, window 5, cycle length 10·n + 75, n >= 1, 2 macro(s), first
+S(SS)S(S(S(SS(S(SS)S)(S(SS))SSS)S)S)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 2·n + 29, n >= 2, 3 macro(s), first cycl
+SS(S(SS)(SS)S)S(SSS)(S(SSS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 022032, 1 loop(s) per cycle, window 4, cycle length 6·n + 13, n >= 1, 1 macro(s), first
+S(S(SS)SS)(S(S(SS)S))(S(S(S(SS)SS)(S(S(SS)S))))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 17 loop(s) per cycle, window 3, cycle length 5·n + 87, n >= 3, 7 macro(s), first cyc
+S(S(S(SS)S)S)S(SS(S(SSSSSSS))S)	loop_prover.py	loop_prover.py: PROVED  (B = 31300, 2 loop(s) per cycle, window 3, cycle length 10·n + 25, n >= 1, 2 macro(s), first
+S(S(S(S(S(S(SS)S(SS)(S(SS)))SSS)SS)(SS)))SS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 15 loop(s) per cycle, window 3, cycle length 5·n + 71, n >= 2, 7 macro(s), first cyc
+S(SSS(SS(SSS)))(S(SS(S(S(S(SS)SS)S)S)))(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 30, 2 loop(s) per cycle, window 3, cycle length 4·n + 9, n >= 1, 2 macro(s), first cycl
+S(S(S(S(S(SS))(SS(S(SS))))))(S(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 2·n + 20, n >= 2, 4 macro(s), first cycl
+S(S(SS)S(S(S(SS))(SS)(S(SS(SS))))(SS))SSS	loop_prover.py	loop_prover.py: PROVED  (B = 30, 1 loop(s) per cycle, window 3, cycle length 2·n + 8, n >= 1, 1 macro(s), first cycl
+S(S(S(S(S(S(SS)S)SS(S(SS(SS))(SS))S))))(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 04020302, 1 loop(s) per cycle, window 4, cycle length 8·n + 11, n >= 1, 1 macro(s), fir
+S(SSS)(SSS(SS))(SSS)S(S(S(SS))(S(SS))S)	loop_prover.py	loop_prover.py: PROVED  (B = 221030321030, 1 loop(s) per cycle, window 3, cycle length 12·n + 43, n >= 1, 1 macro(s)
+S(S(SSS))(S(SS))SS(SS(SS)(SSS))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 10 loop(s) per cycle, window 3, cycle length 5·n + 51, n >= 4, 7 macro(s), first cyc
+S(S(SS(S(SS)SS)))S(S(S(SS(SS))S))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 1·n + 17, n >= 2, 2 macro(s), first cycl
+S(SSS)S(S(SS)S(S(SS(SS(SSS))SS)))	loop_prover.py	loop_prover.py: PROVED  (B = 314000, 2 loop(s) per cycle, window 3, cycle length 12·n + 43, n >= 1, 2 macro(s), firs
+S(S(S(S(S(SS))))S(S(SS)SS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 102310102105102310102104, 1 loop(s) per cycle, window 4, cycle length 24·n + 71, n >= 1
+SSSS(SS)(S(S(S(SS)S))(SS))S(S(SS)SS)	loop_prover.py	loop_prover.py: PROVED  (B = 220320, 1 loop(s) per cycle, window 3, cycle length 6·n + 7, n >= 1, 1 macro(s), first 
+S(SSS)S(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 15 loop(s) per cycle, window 3, cycle length 5·n + 86, n >= 2, 7 macro(s), first cyc
+S(S(S(S(S(S(SS))SSS))))(S(SSSS)S)S	loop_prover.py	loop_prover.py: PROVED  (B = 233000104010210410233000104010210510, 1 loop(s) per cycle, window 3, cycle length 36·n 
+SS(SS)(SS)S(SS(SSSS(SS)S))SS	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 4·n + 12, n >= 1, 2 macro(s), first cyc
+S(S(S(S(SSS))(SS))S(SSS))SS(S(S(SS)))S	loop_prover.py	loop_prover.py: PROVED  (B = 032022, 1 loop(s) per cycle, window 4, cycle length 6·n + 10, n >= 1, 1 macro(s), first
+S(SS(SS(SSS)S))S(S(S(S(SS(SSS)))))S	loop_prover.py	loop_prover.py: PROVED  (B = 041112, 2 loop(s) per cycle, window 4, cycle length 12·n + 39, n >= 1, 2 macro(s), firs
+S(SS)(S(S(SS)))(S(SS))SS(S(SS)S)S(S(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 22, 4 loop(s) per cycle, window 3, cycle length 8·n + 98, n >= 2, 5 macro(s), first cyc
+SSS(SS)(SS(SS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 400, 2 loop(s) per cycle, window 3, cycle length 6·n + 12, n >= 1, 2 macro(s), first cy
+S(S(SSS))(S(S(S(SS))))(S(S(SS))SS)	loop_prover.py	loop_prover.py: PROVED  (B = 30, 1 loop(s) per cycle, window 3, cycle length 2·n + 14, n >= 1, 1 macro(s), first cyc
+S(S(SS(SS))(SS)(SSS))(SS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 202203, 1 loop(s) per cycle, window 3, cycle length 6·n + 17, n >= 0, 1 macro(s), first
+SSS(SS)S(SS(SSS(SS(SS))(SS(SSS))))	loop_prover.py	loop_prover.py: PROVED  (B = 03, 1 loop(s) per cycle, window 4, cycle length 2·n + 3, n >= 2, 1 macro(s), first cycl
+SSS(SS)(SS)SS(SS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 004, 2 loop(s) per cycle, window 5, cycle length 6·n + 20, n >= 0, 2 macro(s), first cy
+S(SSS)(S(SS)(SS)S)(S(SS)(SS))(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 2022040, 1 loop(s) per cycle, window 3, cycle length 7·n + 13, n >= 1, 1 macro(s), firs
+SSSSSSS(SS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 15 loop(s) per cycle, window 3, cycle length 5·n + 72, n >= 4, 7 macro(s), first cyc
+SSS(S(SS(S(S(SS)S))))(S(SSSSS)(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 0220402, 1 loop(s) per cycle, window 4, cycle length 7·n + 22, n >= 1, 1 macro(s), firs
+S(SS)(S(SS)(SS)(S(S(SS(SS)S))))(SS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 4020220, 1 loop(s) per cycle, window 3, cycle length 7·n + 26, n >= 1, 1 macro(s), firs
+S(S(S(SS(SS)(SS)))S)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 4·n + 21, n >= 1, 2 macro(s), first cyc
+S(S(SSSSS(SS))(S(S(SS(SS))))S)(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 023, 4 loop(s) per cycle, window 4, cycle length 12·n + 42, n >= 1, 6 macro(s), first c
+S(S(S(S(SS)(SS)(S(SS)))))S(SSSS)	loop_prover.py	loop_prover.py: PROVED  (B = 03, 5 loop(s) per cycle, window 4, cycle length 4·n + 30, n >= 1, 2 macro(s), first cyc
+S(SS)S(S(SS)SS(SSS))(S(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 022103032103, 1 loop(s) per cycle, window 4, cycle length 12·n + 36, n >= 1, 1 macro(s)
+S(S(S(SS)S)(S(SSS(SS)S)SS)SS)(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 2·n + 22, n >= 3, 4 macro(s), first cycl
+S(S(S(S(S(S(S(SS)))(S(SS))))SSSS))SSSSS	loop_prover.py	loop_prover.py: PROVED  (B = 1050201, 1 loop(s) per cycle, window 4, cycle length 7·n + 8, n >= 2, 1 macro(s), first
+S(S(S(S(S(SS)S)SS))SS)S(S(SSSSS)S)	loop_prover.py	loop_prover.py: PROVED  (B = 03, 1 loop(s) per cycle, window 4, cycle length 2·n + 7, n >= 2, 1 macro(s), first cycl
+S(S(SS)S)(SS)(SSSS(SS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 30, 2 loop(s) per cycle, window 3, cycle length 4·n + 12, n >= 2, 2 macro(s), first cyc
+S(S(SS(SS(SSS)S)(S(SS)(SS))))(SS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 6·n + 17, n >= 2, 3 macro(s), first cyc
+SSS(S(SS))(SSSS(SSS))(SS)(SSS(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 30, 2 loop(s) per cycle, window 3, cycle length 4·n + 15, n >= 1, 2 macro(s), first cyc
+SSS(SS(S(SS)))S(S(S(S(S(SSSSS)S))))	loop_prover.py	loop_prover.py: PROVED  (B = 000411124, 1 loop(s) per cycle, window 6, cycle length 9·n + 20, n >= 1, 1 macro(s), fi
+S(SSSS(S(S(SS)))(SS)S)(SSSS)S	loop_prover.py	loop_prover.py: PROVED  (B = 04020, 1 loop(s) per cycle, window 4, cycle length 5·n + 13, n >= 1, 1 macro(s), first 
+S(SSSS(SS)(SS)(SS)(S(SS)))SSS	loop_prover.py	loop_prover.py: PROVED  (B = 03030303, 4 loop(s) per cycle, window 4, cycle length 32·n + 76, n >= 1, 5 macro(s), fi
+S(SS(SS(SS(SS)))(S(SS)))SS	loop_prover.py	loop_prover.py: PROVED  (B = 30031, 2 loop(s) per cycle, window 3, cycle length 10·n + 54, n >= 1, 2 macro(s), first
+S(S(SS)(SS)S)SS(SS(S(S(SS)))(SS)S)	loop_prover.py	loop_prover.py: PROVED  (B = 031021041, 1 loop(s) per cycle, window 4, cycle length 9·n + 24, n >= 0, 1 macro(s), fi
+S(SS)S(S(S(SS)(SS(SSS)SS))SS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 04020302, 1 loop(s) per cycle, window 4, cycle length 8·n + 62, n >= 1, 1 macro(s), fir
+S(SS(SSS))S(S(S(S(SS))(S(SS)))S)	loop_prover.py	loop_prover.py: PROVED  (B = 2110410311221105103112, 1 loop(s) per cycle, window 3, cycle length 22·n + 32, n >= 1, 
+SSSS(SSS)(S(SS(SS))SS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 1040102104320010401021033200, 1 loop(s) per cycle, window 4, cycle length 28·n + 72, n 
+S(SSS(SS)(SS))(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 004, 2 loop(s) per cycle, window 5, cycle length 6·n + 20, n >= 0, 2 macro(s), first cy
+SS(S(SS(S(SS(S(SS))))))SS(SS)(SS(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 02040203, 1 loop(s) per cycle, window 4, cycle length 8·n + 16, n >= 1, 1 macro(s), fir
+S(SS(S(SSS(S(SS)S))S)SS)(SS)(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 2·n + 22, n >= 3, 4 macro(s), first cycl
+S(SS)(SS)(S(SS))(SSS)S	loop_prover.py	loop_prover.py: PROVED  (B = 10303, 1 loop(s) per cycle, window 4, cycle length 5·n + 12, n >= 1, 2 macro(s), first 
+S(SS(S(S(S(S(SSS))))(SS)S))S(SS)S(S(SS)S)	loop_prover.py	loop_prover.py: PROVED  (B = 0312, 3 loop(s) per cycle, window 4, cycle length 12·n + 26, n >= 1, 3 macro(s), first 
+S(S(SS(SS)S))S(SS(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 4·n + 18, n >= 2, 2 macro(s), first cyc
+SSS(S(S(S(SS)SSS)SS))(S(SS(SS)))(SS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 2·n + 22, n >= 3, 4 macro(s), first cycl
+SS(SS(SS))(SS)S(SS(S(SS))S)	loop_prover.py	loop_prover.py: PROVED  (B = 400, 2 loop(s) per cycle, window 3, cycle length 6·n + 12, n >= 1, 2 macro(s), first cy
+S(SS)S(S(S(S(S(SSSSS)))S)S)(SS(SS))	auto_prover.py	loop_prover.py: no growing loop cycle | comb_prover.py: no long block runs | auto_prover.py: PROVED
+S(SS)(SSS)S(SS)(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 220320, 1 loop(s) per cycle, window 3, cycle length 6·n + 17, n >= 1, 1 macro(s), first
+S(SSSS)S(S(SSS)(SSS)S)	loop_prover.py	loop_prover.py: PROVED  (B = 0303, 1 loop(s) per cycle, window 4, cycle length 4·n + 23, n >= 1, 2 macro(s), first c
+SSS(S(S(SS(S(SS(SSS)S)))))(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 2040203030, 1 loop(s) per cycle, window 3, cycle length 10·n + 15, n >= 1, 1 macro(s), 
+S(SS(S(S(SS(S(SSS))S))S))(S(SS))(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 31104110, 1 loop(s) per cycle, window 3, cycle length 8·n + 4, n >= 2, 1 macro(s), firs
+SSSS(S(SS)(SS))SS(SS)(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 004, 2 loop(s) per cycle, window 5, cycle length 6·n + 20, n >= 0, 2 macro(s), first cy
+S(SSS)S(SSS)(S(SS)SSS)S	loop_prover.py	loop_prover.py: PROVED  (B = 022032, 1 loop(s) per cycle, window 4, cycle length 6·n + 13, n >= 1, 1 macro(s), first
+S(SS)(SS)S(SS(S(SS)S))S	loop_prover.py	loop_prover.py: PROVED  (B = 30, 2 loop(s) per cycle, window 3, cycle length 4·n + 11, n >= 1, 2 macro(s), first cyc
+S(S(S(S(SS(SS))S)))S(SS(S(SS))(S(S(S(S(SS(SS))S)))S))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 3 loop(s) per cycle, window 3, cycle length 1·n + 9, n >= 2, 2 macro(s), first cycle
+S(SSSS)(SS)(SS(SS)(S(SSSS)(SS)))	loop_prover.py	loop_prover.py: PROVED  (B = 02030204, 1 loop(s) per cycle, window 4, cycle length 8·n + 14, n >= 0, 1 macro(s), fir
+SSSS(S(SS)(SS)(S(SS)SS(S(SS))(SS)))S	loop_prover.py	loop_prover.py: PROVED  (B = 02040203, 1 loop(s) per cycle, window 4, cycle length 8·n + 15, n >= 1, 1 macro(s), fir
+S(S(SS)S)SS(S(S(SS))S)SS	loop_prover.py	loop_prover.py: PROVED  (B = 22, 4 loop(s) per cycle, window 3, cycle length 4·n + 35, n >= 2, 3 macro(s), first cyc
+S(S(SS)S(S(SS)(SSS))S)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 9 loop(s) per cycle, window 3, cycle length 3·n + 38, n >= 3, 4 macro(s), first cycl
+S(S(S(SS)(SS)))S(SSS(S(SSSS)))S	loop_prover.py	loop_prover.py: PROVED  (B = 03130, 2 loop(s) per cycle, window 4, cycle length 10·n + 39, n >= 1, 2 macro(s), first
+S(SS)S(SS)(S(SSS)S(SS))(S(S(SS)(SS)(SSSS))S)	loop_prover.py	loop_prover.py: PROVED  (B = 031021041, 1 loop(s) per cycle, window 4, cycle length 9·n + 22, n >= 0, 1 macro(s), fi
+S(S(S(S(SS))SSSSS))S(S(SSS(SS)))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 3·n + 47, n >= 4, 6 macro(s), first cycl
+S(SSS)(SS(S(S(SS))))(S(SS)(S(SSS)(SS(S(S(SS))))))	loop_prover.py	loop_prover.py: PROVED  (B = 30, 1 loop(s) per cycle, window 3, cycle length 2·n + 6, n >= 1, 1 macro(s), first cycl
+SSSSSS(S(SS)S)SS(SS)(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 103, 3 loop(s) per cycle, window 4, cycle length 9·n + 28, n >= 0, 3 macro(s), first cy
+SS(S(S(SS(SS))))(S(S(SS))(S(SS)))S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 6 loop(s) per cycle, window 3, cycle length 2·n + 38, n >= 2, 4 macro(s), first cycl
+S(SSS(SS)S(SS))(SS)(SS)(SS)(SS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 01204, 1 loop(s) per cycle, window 4, cycle length 5·n + 10, n >= 1, 1 macro(s), first 
+S(S(SS(S(S(S(SS)))S)(SS)(S(SS)SS)S))(SS)(SS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 41010210410, 1 loop(s) per cycle, window 3, cycle length 11·n + 16, n >= 1, 1 macro(s),
+S(S(S(SS))(S(S(S(S(S(SS)(SS(SS)S)))S)))S)SSS	unproved	loop_prover.py: no growing loop cycle | comb_prover.py: no long block runs | auto_prover.py: no level family
+S(S(S(S(SS)(SS)(SS)S(S(S(SS))(SS)(SS)))))SS	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 6·n + 26, n >= 1, 3 macro(s), first cyc
+S(SSS)SSS(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 0402022, 1 loop(s) per cycle, window 4, cycle length 7·n + 20, n >= 1, 1 macro(s), firs
+SSS(S(S(SS)))(SS(SS))S	loop_prover.py	loop_prover.py: PROVED  (B = 30, 2 loop(s) per cycle, window 3, cycle length 4·n + 20, n >= 1, 2 macro(s), first cyc
+SS(SS)(S(S(SS))S)SS(S(S(SS))(SS))(SSS)S	loop_prover.py	loop_prover.py: PROVED  (B = 040031, 1 loop(s) per cycle, window 4, cycle length 6·n + 13, n >= 0, 1 macro(s), first
+S(S(S(S(SS))(SS)(SS(SS))))S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 03, 3 loop(s) per cycle, window 4, cycle length 6·n + 27, n >= 1, 3 macro(s), first cyc
+S(SSS)(S(S(S(S(S(SS)))))(SS))SSS	loop_prover.py	loop_prover.py: PROVED  (B = 0312, 3 loop(s) per cycle, window 4, cycle length 12·n + 26, n >= 1, 3 macro(s), first 
+S(S(SS)(S(SS)S)(SS)S(S(SS)SS)S)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 02300330, 1 loop(s) per cycle, window 4, cycle length 8·n + 14, n >= 1, 1 macro(s), fir
+SSS(SS)(SSS(S(SS)))(SS(S(S(SS))))SS	loop_prover.py	loop_prover.py: PROVED  (B = 03110411, 1 loop(s) per cycle, window 4, cycle length 8·n + 16, n >= 2, 1 macro(s), fir
+S(S(S(SS(SS)S)S))(S(S(SS)))SSSSS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 2·n + 17, n >= 6, 2 macro(s), first cycl
+S(SS(SS))(S(SS)S)S(S(S(S(SS(SSS)S))S))	loop_prover.py	loop_prover.py: PROVED  (B = 230, 7 loop(s) per cycle, window 3, cycle length 21·n + 99, n >= 1, 8 macro(s), first c
+S(S(SS)S)SS(SS(S(S(SS))))SSSS(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 30, 4 loop(s) per cycle, window 3, cycle length 8·n + 21, n >= 2, 4 macro(s), first cyc
+SSS(SS)(S(S(S(SS(S(SS))))S(SS)(SS))S)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 20402030, 1 loop(s) per cycle, window 3, cycle length 8·n + 19, n >= 1, 1 macro(s), fir
+S(S(S(SSS)S))(SSSS(SS)(SSSS))S	loop_prover.py	loop_prover.py: PROVED  (B = 400, 2 loop(s) per cycle, window 3, cycle length 6·n + 12, n >= 1, 2 macro(s), first cy
+SS(SSSS)S(S(SSSS)(S(SS)))S	loop_prover.py	loop_prover.py: PROVED  (B = 031, 1 loop(s) per cycle, window 4, cycle length 3·n + 20, n >= 1, 1 macro(s), first cy
+S(SS)SS(SSSS(SS))(SS)SSS(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 03, 2 loop(s) per cycle, window 4, cycle length 2·n + 14, n >= 3, 1 macro(s), first cyc
+S(SS(S(SS)S)S(SS))(S(SS)(S(S(SS))))S	loop_prover.py	loop_prover.py: PROVED  (B = 004, 2 loop(s) per cycle, window 5, cycle length 6·n + 20, n >= 0, 2 macro(s), first cy
+S(S(S(SS))SS(SSS))(SS)(SS(SS)S(SS(S(S(S(SS))SS(SSS))))(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 220320, 1 loop(s) per cycle, window 3, cycle length 6·n + 13, n >= 1, 1 macro(s), first
+S(SSSSS)(SSSS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 400, 2 loop(s) per cycle, window 3, cycle length 6·n + 15, n >= 1, 2 macro(s), first cy
+S(SS(S(SS(SS(SSSS(S(S(SSS)S))))))(SSSS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 03130, 2 loop(s) per cycle, window 4, cycle length 10·n + 25, n >= 1, 2 macro(s), first
+S(S(SS)(SS(S(S(SS)(SS)SSS))S)SSS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 004, 2 loop(s) per cycle, window 5, cycle length 6·n + 15, n >= 1, 2 macro(s), first cy
+SS(SSS)(SS(SS)(S(SS)S)S)(SS)(S(SS(SS))SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 031, 3 loop(s) per cycle, window 4, cycle length 9·n + 54, n >= 1, 3 macro(s), first cy
+S(SS)SS(SS)(SS(SS)(S(S(SS)))S)(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 203202, 1 loop(s) per cycle, window 3, cycle length 6·n + 12, n >= 1, 1 macro(s), first
+S(S(SS)S)S(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 032022, 1 loop(s) per cycle, window 4, cycle length 6·n + 7, n >= 1, 1 macro(s), first 
+S(S(SS(S(SS)S)(S(SS)))S)(SS(SSS)S)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 40203020, 1 loop(s) per cycle, window 3, cycle length 8·n + 15, n >= 1, 1 macro(s), fir
+S(S(SS(SS)(SS)))(SS)(SS(S(SS(SS))(SS(SS))))	loop_prover.py	loop_prover.py: PROVED  (B = 03, 1 loop(s) per cycle, window 4, cycle length 2·n + 2, n >= 2, 1 macro(s), first cycl
+S(S(SSS)S(SS(SS)))S(SS)(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 032022, 1 loop(s) per cycle, window 4, cycle length 6·n + 11, n >= 1, 1 macro(s), first
+SSS(S(S(S(S(S(SS)(S(SS)SS)))S)))(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 22, 6 loop(s) per cycle, window 3, cycle length 12·n + 125, n >= 3, 9 macro(s), first c
+S(S(SS))(SSS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 00313, 2 loop(s) per cycle, window 5, cycle length 10·n + 18, n >= 1, 2 macro(s), first
+S(S(SS(SS(SSS))SS)S(S(SS))S)(SSS)S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 2, 7 loop(s) per cycle, window 3, cycle length 2·n + 42, n >= 4, 2 macro(s), first cycl
+SS(SS(SS)(SSS(SS)(SS)))(SS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 30, 1 loop(s) per cycle, window 3, cycle length 2·n + 7, n >= 2, 1 macro(s), first cycl
+S(S(SSSSS))(S(S(S(SSS))SS))S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 031021041, 1 loop(s) per cycle, window 4, cycle length 9·n + 37, n >= 0, 1 macro(s), fi
+S(S(SS(SS(SSSS))S(SS(SS(SS)))SS(SSS)))SS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 1·n + 14, n >= 2, 2 macro(s), first cycl
+SSS(S(S(SSS)S))(S(S(SS(S(SS))S(SS)S)S))S	loop_prover.py	loop_prover.py: PROVED  (B = 30031, 2 loop(s) per cycle, window 3, cycle length 10·n + 85, n >= 1, 2 macro(s), first
+S(SS)S(SSS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 9 loop(s) per cycle, window 3, cycle length 3·n + 26, n >= 3, 5 macro(s), first cycl
+SSS(S(SS(SS)S))SS(S(SSSS)S)SSSS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 8 loop(s) per cycle, window 3, cycle length 4·n + 41, n >= 4, 7 macro(s), first cycl
+SS(SS)(SS)S(SS)SS(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 0220402, 1 loop(s) per cycle, window 4, cycle length 7·n + 20, n >= 1, 1 macro(s), firs
+S(S(S(SS)(SS)S(SS))(S(SS)SS))S(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 2022040, 1 loop(s) per cycle, window 3, cycle length 7·n + 13, n >= 1, 1 macro(s), firs
+SSS(S(S(SSSSSS)))(SS)SS	loop_prover.py	loop_prover.py: PROVED  (B = 2040203030, 1 loop(s) per cycle, window 3, cycle length 10·n + 18, n >= 1, 1 macro(s), 
+S(SSS)(S(SS)(SS(S(SS))))(S(SSS(SSSS)))S	loop_prover.py	loop_prover.py: PROVED  (B = 30033002, 1 loop(s) per cycle, window 3, cycle length 8·n + 17, n >= 1, 1 macro(s), fir
+SSS(S(SSS))(S(SS(S(S(SS)))S)(S(SS)S))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 9 loop(s) per cycle, window 3, cycle length 3·n + 49, n >= 2, 4 macro(s), first cycl
+S(SS(S(SS(SS)))(SS)SSS)S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 220320, 1 loop(s) per cycle, window 3, cycle length 6·n + 21, n >= 1, 1 macro(s), first
+S(SSS)(S(S(SSSS)))S(SS)(S(SSS))S	loop_prover.py	loop_prover.py: PROVED  (B = 03031, 1 loop(s) per cycle, window 4, cycle length 5·n + 23, n >= 0, 1 macro(s), first 
+SS(S(S(SS)))(SS(SS(SS))(S(S(SS))))(SS(SS(SS))(S(S(SS)))(SS(S(S(SS)))(SS(SS(SS))(S(S(SS))))))	loop_prover.py	loop_prover.py: PROVED  (B = 03, 2 loop(s) per cycle, window 4, cycle length 4·n + 30, n >= 1, 2 macro(s), first cyc
+SSS(SS(SS))(S(SS(S(SSSS))S)S)SSSS	loop_prover.py	loop_prover.py: PROVED  (B = 2, 4 loop(s) per cycle, window 3, cycle length 2·n + 18, n >= 2, 2 macro(s), first cycl
+S(SSS)(SS)S(S(SSSS)SS)SSS	loop_prover.py	loop_prover.py: PROVED  (B = 040102103330001040102104330001, 1 loop(s) per cycle, window 4, cycle length 30·n + 77, 
+S(SS(SS))SS(S(SS)SSSS)(SSS)	loop_prover.py	loop_prover.py: PROVED  (B = 220320, 1 loop(s) per cycle, window 3, cycle length 6·n + 7, n >= 1, 1 macro(s), first 
+S(SS(SS))(S(S(SSS)S)S(SS))S(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 031021041, 1 loop(s) per cycle, window 4, cycle length 9·n + 12, n >= 0, 1 macro(s), fi
+SS(SS)S(SS)S(S(SS(SS)S(SS)S))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 15 loop(s) per cycle, window 3, cycle length 5·n + 102, n >= 2, 6 macro(s), first cy
+S(S(SS))(S(SS(S(SS))))SSS	loop_prover.py	loop_prover.py: PROVED  (B = 2310, 2 loop(s) per cycle, window 3, cycle length 8·n + 19, n >= 1, 3 macro(s), first c
+S(S(S(S(S(SS)(S(SS)S))S)(SS)SS))S(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 031, 3 loop(s) per cycle, window 4, cycle length 9·n + 34, n >= 1, 3 macro(s), first cy
+SS(S(SS)S)(S(SS(SSS))S(S(SS)))S	loop_prover.py	loop_prover.py: PROVED  (B = 2, 7 loop(s) per cycle, window 3, cycle length 2·n + 42, n >= 4, 2 macro(s), first cycl
+SS(S(S(S(SS)S)(S(SS)(SSS))SS))(SS)(SS)S	loop_prover.py	loop_prover.py: PROVED  (B = 00230033, 1 loop(s) per cycle, window 5, cycle length 8·n + 17, n >= 1, 1 macro(s), fir
+S(SS(SSS))(SS)(S(SS(SSS))(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 4020220, 1 loop(s) per cycle, window 3, cycle length 7·n + 16, n >= 1, 1 macro(s), firs
+S(SS)(S(SS(S(SSS(SS)S))))S(S(SS))	loop_prover.py	loop_prover.py: PROVED  (B = 2, 14 loop(s) per cycle, window 3, cycle length 6·n + 86, n >= 4, 7 macro(s), first cyc
+S(SS)S(S(S(S(SS(S(SS)S)S)(S(SS))))S)SS	loop_prover.py	loop_prover.py: PROVED  (B = 1023, 3 loop(s) per cycle, window 4, cycle length 12·n + 94, n >= 3, 4 macro(s), first 
+S(S(S(S(S(S(SS)S)S)S)))(S(SS))(S(SS)S)	loop_prover.py	loop_prover.py: PROVED  (B = 22, 4 loop(s) per cycle, window 3, cycle length 8·n + 118, n >= 2, 5 macro(s), first cy
+S(S(S(S(SS)(S(S(S(S(SS))))SS))(SS)SS))SS	loop_prover.py	loop_prover.py: PROVED  (B = 00330023, 1 loop(s) per cycle, window 5, cycle length 8·n + 17, n >= 1, 1 macro(s), fir
+S(S(S(S(SS))SS))SS(SSS(S(SS(S(SS))))(SS))(SS)	loop_prover.py	loop_prover.py: PROVED  (B = 0110502, 1 loop(s) per cycle, window 5, cycle length 7·n + 12, n >= 2, 1 macro(s), firs
+S(SS)(S(SS(S(SS))S))S(SS(SS)SSS)(SSS)S	loop_prover.py	loop_prover.py: PROVED  (B = 500002500003, 1 loop(s) per cycle, window 3, cycle length 12·n + 1, n >= 1, 1 macro(s),

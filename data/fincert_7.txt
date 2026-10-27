@@ -1,0 +1,1 @@
+# n=7 range [0,132) finite-class=132 certified=132 anomalies=0 cycles=0 too-deep=0 maxdepth=6

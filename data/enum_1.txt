@@ -1,0 +1,2 @@
+0 1 0 1 1 0 1 S
+# n=1 range [0,1) hnf=1 nohnf=0 nf=1 nonf=0

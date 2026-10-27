@@ -1,0 +1,36 @@
+== 3_12
+../data/unique_redex_3_12.txt: 15 terms — 15 PROVED by UR-Phi
+../data/unique_redex_3_12.txt: 15 terms, 2250 rounds; round machine = concrete run for 2250/2250
+  type-1 steps per Phi-round (m): {0: 13, 1: 887}
+15 orbits; transitions: T0 13/13, T1 452/452, T2 435/435
+eventual regime: type A 15, type II 0, type A without fixed base 0, other 0
+== 13
+../data/unique_redex_13.txt: 26 terms — 26 PROVED by UR-Phi
+../data/unique_redex_13.txt: 26 terms, 3900 rounds; round machine = concrete run for 3900/3900
+  type-1 steps per Phi-round (m): {0: 22, 1: 1534}
+26 orbits; transitions: T0 22/22, T1 784/784, T2 754/754
+eventual regime: type A 26, type II 0, type A without fixed base 0, other 0
+== 14
+../data/unique_redex_14.txt: 68 terms — 66 PROVED by UR-Phi, 2 PROVED by UR-Phi-II
+../data/unique_redex_14.txt: 68 terms, 10200 rounds; round machine = concrete run for 10200/10200
+  type-1 steps per Phi-round (m): {0: 57, 1: 3899, 2: 120}
+68 orbits; transitions: T0 57/57, T1 1989/1989, T2 2034/2034
+eventual regime: type A 66, type II 2, type A without fixed base 0, other 0
+== 15
+../data/unique_redex_15.txt: 181 terms — 179 PROVED by UR-Phi, 2 PROVED by UR-Phi-II
+../data/unique_redex_15.txt: 181 terms, 27150 rounds; round machine = concrete run for 27150/27150
+  type-1 steps per Phi-round (m): {0: 155, 1: 10565, 2: 120}
+181 orbits; transitions: T0 155/155, T1 5394/5394, T2 5311/5311
+eventual regime: type A 179, type II 2, type A without fixed base 0, other 0
+== 16
+../data/unique_redex_16.txt: 481 terms — 470 PROVED by UR-Phi, 11 PROVED by UR-Phi-II
+../data/unique_redex_16.txt: 481 terms, 72150 rounds; round machine = concrete run for 72150/72150
+  type-1 steps per Phi-round (m): {0: 401, 1: 27756, 2: 660}
+481 orbits; transitions: T0 401/401, T1 14169/14169, T2 14290/14290
+eventual regime: type A 470, type II 11, type A without fixed base 0, other 0
+== 17
+../data/unique_redex_17.txt: 1316 terms — 1290 PROVED by UR-Phi, 26 PROVED by UR-Phi-II
+../data/unique_redex_17.txt: 1316 terms, 197400 rounds; round machine = concrete run for 197400/197400
+  type-1 steps per Phi-round (m): {0: 1109, 1: 76173, 2: 1556}
+1316 orbits; transitions: T0 1109/1109, T1 38881/38881, T2 38970/38970
+eventual regime: type A 1290, type II 26, type A without fixed base 0, other 0

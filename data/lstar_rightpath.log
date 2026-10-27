@@ -1,0 +1,9 @@
+iter 0: classes 1 contexts 1 counterexamples 3 oracle calls 5954 unknown 0 (0s)
+iter 1: classes 2 contexts 4 counterexamples 8 oracle calls 9905 unknown 0 (1s)
+iter 2: classes 3 contexts 10 counterexamples 12 oracle calls 13966 unknown 0 (3s)
+iter 3: classes 6 contexts 15 counterexamples 21 oracle calls 18452 unknown 0 (5s)
+iter 4: classes 8 contexts 19 counterexamples 3 oracle calls 23214 unknown 0 (8s)
+iter 5: classes 12 contexts 22 counterexamples 7 oracle calls 29225 unknown 0 (11s)
+iter 6: classes 15 contexts 26 counterexamples 3 oracle calls 35969 unknown 0 (13s)
+iter 7: classes 19 contexts 28 counterexamples 0 oracle calls 44146 unknown 0 (15s)
+final: classes 19, contexts 28, S-identity violations 0 of 6859

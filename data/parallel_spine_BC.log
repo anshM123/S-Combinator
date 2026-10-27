@@ -1,0 +1,5 @@
+  pass 0: spine 4, DAG nodes 8, 0s
+  pass 50: spine 21, DAG nodes 5399, 0s
+  pass 100: spine 47, DAG nodes 331729, 0s
+  pass 150: spine 72, DAG nodes 13147052, 18s
+SSS(SS)S(SS(SS)): 161 spine lengths saved; last 20: [67, 67, 68, 68, 69, 70, 71, 71, 70, 70, 72, 71, 73, 74, 75, 76, 76, 75, 75, 77]

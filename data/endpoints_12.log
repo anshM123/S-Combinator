@@ -1,0 +1,12 @@
+n <= 1: 1 terms, 0 distinct endpoints
+n <= 2: 2 terms, 0 distinct endpoints
+n <= 3: 4 terms, 0 distinct endpoints
+n <= 4: 9 terms, 0 distinct endpoints
+n <= 5: 23 terms, 0 distinct endpoints
+n <= 6: 65 terms, 0 distinct endpoints
+n <= 7: 197 terms, 1 distinct endpoints
+n <= 8: 626 terms, 25 distinct endpoints
+n <= 9: 2056 terms, 195 distinct endpoints
+n <= 10: 6918 terms, 1041 distinct endpoints
+n <= 11: 23714 terms, 4558 distinct endpoints
+n <= 12: 82500 terms, 18326 distinct endpoints

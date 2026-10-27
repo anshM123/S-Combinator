@@ -1,0 +1,69 @@
+S(S(S(SS))S)(SSS)(SS)	no level family	block lemma fails
+S(S(SS)SS)(S(SS)S)SS	no level family	no long block runs
+SSSS(S(SS(SS)S))SS	resume pattern not computable	layer not constant
+S(S(S(S(SS(SS)))))S(SS)S	no scheme	front not constant at block starts
+S(S(SS)SS)S(SS)	no level family	front not constant at block starts
+S(S(S(S(SSS)(SSS))))SS	no level family	driver not derived
+SSSS(SS(SS)(SS))(SS)	no level family	layer not constant
+S(S(SS))S(SSS)(SS)S	no level family	front not constant at block starts
+S(S(S(SS(SS)))S)SS(SS)	no level family	layer not constant
+S(S(S(SSS)))S(SS)S	no level family	front not constant at block starts
+S(S(SSSS)SS)SS	no level family	front not constant at block starts
+SSS(S(S(SS)))(SS)SSS	no level family	front not constant at block starts
+S(SSSS)(SS)(SS(S(SSSS)(SS)))S	no level family	front not constant at block starts
+S(S(SS)(S(SS)))SSS	no level family	block lemma fails
+S(S(S(S(S(SS))S))S)SSS	no level family	driver not derived
+SS(SS)(SSS(SS))(S(SS))	no level family	front not constant at block starts
+SS(SS)(SS(SS))S(SS)S	no level family	front not constant at block starts
+S(S(SS))SS(SSS)(S(SS))	no level family	front not constant at block starts
+SSS(SSSS(SS))(S(SS))	no level family	front not constant at block starts
+S(S(SS)S(SS))S(SS)(SS)	no level family	layer not constant
+SSS(S(S(SS)))(SS)S	no level family	front not constant at block starts
+S(SSS(SS)S(SS))(SS)S	no level family	front not constant at block starts
+S(SSS(S(SS(SS))))S(SS)	no level family	front not constant at block starts
+S(S(SS(S(SSS))))(SS)SS	resume pattern not computable	front not constant at block starts
+S(S(S(SS))S(SS))(SS)(SS)	no level family	front not constant at block starts
+S(S(SSS)S)S(S(SS))SS	no level family	driver not derived
+S(SSS(S(SS))S)(SSS)S	timeout	front not constant at block starts
+SSS(S(SS(SS)SS))SS	timeout	front not constant at block starts
+S(S(SS(S(SS)))S)S(SSS)	no level family	second element not a layer
+S(S(S(SS))SS)S(SSS)S	no level family	second element not a layer
+SS(SS)(S(SS)S)SSSS	resume pattern not computable	layer not constant
+SS(SS)S(S(SS))S(SS)S	timeout	front not constant at block starts
+S(S(SS(SS)SS))(SS)SS	resume pattern not computable	second element not a layer
+S(S(S(S(S(SS))SS)))SS	no level family	front not constant at block starts
+S(S(SS(S(S(SSS)))))SSS	no level family	front not constant at block starts
+S(S(SS)(S(SSSS))S)SS	no level family	front not constant at block starts
+S(SS)(S(S(SS)))(S(SS)(SS))(S(SS)(SS)(S(SS)(S(S(SS)))(S(SS)(SS))))	no level family	front not constant at block starts
+SS(SSS(SS))(S(SS))SS	timeout	front not constant at block starts
+S(S(SS))S(SSS)(SS)	no level family	front not constant at block starts
+S(S(S(SS(SS))))(SS)SSS	resume pattern not computable	front not constant at block starts
+SS(S(SS))(S(SS))(SS)SS	no level family	front not constant at block starts
+SSS(SS)(S(SS)SS)(SS)	resume pattern not computable	cycle starts not combs over one base
+S(SS(SSS))S(S(S(SS)))S	no level family	layer not constant
+SSS(S(SS)(SS))(SS)SS	no level family	block lemma fails
+SSSSS(S(SSS))(SS)S	no level family	front not constant at block starts
+SS(SS)(SS)(SS)(S(S(SS)))	no level family	front not constant at block starts
+S(S(S(S(SS))))S(SSS)SS	resume pattern not computable	front not constant at block starts
+S(S(S(SS)S)(S(SS)))(SS)S	no scheme	front not constant at block starts
+S(SSSS)(SS)(SS(SS)(S(SSSS)(SS)))	no level family	front not constant at block starts
+S(SSS)(SS)(S(SS))SSS	no level family	cycle starts not combs over one base
+S(S(SS(SS))(S(SS)S))SS	resume pattern not computable	front not constant at block starts
+SSS(S(SS))(SS)SS	no level family	front not constant at block starts
+SS(SS)(SS)(SSS)(S(SS))	no level family	layer not constant
+S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS))))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))))))	no level family	front not constant at block starts
+S(SSSSS)S(S(SS)(SS))	no level family	front not constant at block starts
+S(S(S(SS(S(SS)))SS))SS	no level family	layer not constant
+S(SSS)(SS)S(S(SS))(SS)	no level family	driver not derived
+S(S(S(SS)))(SS(S(S(S(SS)))))(SS)(SS(S(S(S(SS)))(SS(S(S(S(SS)))))(SS)))	no level family	block lemma fails
+S(S(S(S(SS))(SS)S))SS	no level family	front not constant at block starts
+SSSS(SS)S(S(SS)SS)	no level family	front not constant at block starts
+S(SS)S(S(S(SS)S)SS)S	no level family	front not constant at block starts
+S(S(S(SSSS))S)S(SS)	no level family	driver not derived
+SSS(SS(SS))(S(S(SS))S)	resume pattern not computable	front not constant at block starts
+S(SS)(SS)(SS)SS(S(SS))	no level family	block lemma fails
+S(S(S(S(S(SSS))))S)SSS	no level family	front not constant at block starts
+SSSS(S(S(SS)))(SS)(SS(SSSS(S(S(SS)))(SS)))	no level family	block lemma fails
+S(S(S(S(S(SS)))(SS)))S(SS)	no level family	front not constant at block starts
+S(S(SS)(S(SS)(SS)S))SS	no level family	block lemma fails
+S(SS)(SSS)(SS(SS))SS	resume pattern not computable	layer not constant

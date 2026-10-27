@@ -1,0 +1,12 @@
+# third-party papers (copyright) and private drafts
+literature/
+OUTREACH_DRAFTS.md
+# build artifacts (sources are in code/*.c)
+*.exe
+*.o
+*.obj
+__pycache__/
+*.pyc
+# raw data files over 50 MB (regenerable)
+data/race_bt.txt
+data/race.txt

@@ -1,0 +1,15 @@
+0 1 0 5 1 0 5 S(S(S(SS)))
+1 1 0 5 1 0 5 S(S(SSS))
+2 1 0 5 1 0 5 S(SS(SS))
+3 1 0 5 1 0 5 S(S(SS)S)
+4 1 0 5 1 1 5 S(SSSS)
+5 1 0 5 1 0 5 SS(S(SS))
+6 1 0 5 1 0 5 SS(SSS)
+7 1 0 5 1 0 5 S(SS)(SS)
+8 1 1 6 1 1 6 SSS(SS)
+9 1 0 5 1 0 5 S(S(SS))S
+10 1 0 5 1 0 5 S(SSS)S
+11 1 1 5 1 1 5 SS(SS)S
+12 1 2 6 1 2 6 S(SS)SS
+13 1 2 5 1 2 5 SSSSS
+# n=5 range [0,14) hnf=14 nohnf=0 nf=14 nonf=0

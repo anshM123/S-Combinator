@@ -1,0 +1,1 @@
+# n=17 range [4419710,6629565) cap=120 agreeProductive=13367 agreeBottom=2196488 modelP_oracleBot=0 modelBot_oracleP=0 unknown=0

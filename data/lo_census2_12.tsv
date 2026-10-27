@@ -1,0 +1,154 @@
+terms: {'normalises': 44583, 'bottom': 36977, 'deep': 940} | distinct hnf-free endpoints: 18326
+binary counter	S(S(S(S(S(SS))))S)(S(S(S(S(S(S(SS))))S)))(S(S(S(S(S(S(SS))))S))(S(S(S(S(S(SS))))S)(S(S(S(S(S(S(SS))))S)))))	from SSS(S(S(S(SS))))S
+OTHER	SSS(S(S(SSS)))S	from SSS(S(S(SSS)))S
+binary counter	SSS(SS)S(SS(SS))	from SSS(SS)S(SS(SS))
+binary counter	S(SS)SSS(SS(SS))	from S(SS)SSS(SS(SS))
+binary counter	SSS(S(S(SS(SS))))S	from SSS(S(S(SS(SS))))S
+binary counter	SSS(S(S(SSSS)))S	from SSS(S(S(SSSS)))S
+binary counter	S(S(S(SS)))(S(S(S(S(SS)))))S(S(S(S(S(SS)))(S(S(S(S(SS)))))S))(S(S(S(S(SS)))(S(S(S(S(SS)))))S)(S(S(S(SS)))(S(S(S(S(SS)))))S(S(S(S(S(SS)))(S(S(S(S(SS)))))S))))	from S(SS)S(S(S(S(SS))))S
+binary counter	S(SS)S(S(S(SSS)))S	from S(SS)S(S(S(SSS)))S
+binary counter	SSS(S(S(S(SS))))SS	from SSS(S(S(S(SS))))SS
+OTHER	SSS(S(S(SSS)))SS	from SSS(S(S(SSS)))SS
+binary counter	S(S(S(SSS)))S(S(S(S(S(SSS)))S))	from S(SS)S(S(S(S(SSS)))S)
+binary counter	SS(SS)(S(S(SS))S)(S(SS(SS)(S(S(SS))S)))	from SS(SS)(SS)(S(S(SS))S)
+binary counter	SSS(S(SS)S)(SS(SS))	from SSS(S(SS)S)(SS(SS))
+binary counter	S(SS)(S(SS))S(SS(SS))	from S(SS)(S(SS))S(SS(SS))
+OTHER	SSS(S(SS))S(SS(SS))	from SSS(S(SS))S(SS(SS))
+binary counter	SSS(S(S(S(SS))))S(SS)	from SSS(S(S(S(SS))))S(SS)
+OTHER	SSS(S(S(SSS)))S(SS)	from SSS(S(S(SSS)))S(SS)
+binary counter	SSS(S(S(S(S(SSS)))))S	from SSS(S(S(S(S(SSS)))))S
+OTHER	SSS(S(S(SS(SSS))))S	from SSS(S(S(SS(SSS))))S
+OTHER	SSS(S(S(SS(SS)S)))S	from SSS(S(S(SS(SS)S)))S
+binary counter	SSS(S(SS(S(S(SS)))))S	from SSS(S(SS(S(S(SS)))))S
+binary counter	SSS(S(SS(S(SSS))))S	from SSS(S(SS(S(SSS))))S
+binary counter	S(SS)S(S(S(SS(SS))))S	from S(SS)S(S(S(SS(SS))))S
+binary counter	S(SS)S(S(S(SSSS)))S	from S(SS)S(S(S(SSSS)))S
+OTHER	SS(SSS)(S(S(SSS)))S	from SS(SSS)(S(S(SSS)))S
+binary counter	S(S(SS))S(S(S(S(SS))))S	from S(S(SS))S(S(S(S(SS))))S
+binary counter	S(S(SS))S(S(S(SSS)))S	from S(S(SS))S(S(S(SSS)))S
+OTHER	SS(SS)S(S(S(SSS)))S	from SS(SS)S(S(S(SSS)))S
+OTHER	SSSSS(S(S(SSS)))S	from SSSSS(S(S(SSS)))S
+binary counter	SSS(SS)S(SS(SS))S	from SSS(SS)S(SS(SS))S
+binary counter	S(SS)SSS(SS(SS))S	from S(SS)SSS(SS(SS))S
+binary counter	S(SSS(S(S(S(SS)))))SS	from S(SSS(S(S(S(SS)))))SS
+OTHER	S(SSS(S(S(SSS))))SS	from S(SSS(S(S(SSS))))SS
+binary counter	SSS(S(S(SS(SS))))SS	from SSS(S(S(SS(SS))))SS
+binary counter	SSS(S(S(SSSS)))SS	from SSS(S(S(SSSS)))SS
+binary counter	S(SS)S(S(S(S(SS))))SS	from S(SS)S(S(S(S(SS))))SS
+binary counter	S(SS)S(S(S(SSS)))SS	from S(SS)S(S(S(SSS)))SS
+binary counter	SSS(S(S(S(SS))))SSS	from SSS(S(S(S(SS))))SSS
+OTHER	SSS(S(S(SSS)))SSS	from SSS(S(S(SSS)))SSS
+binary counter	S(S(S(SS(SS))))S(S(S(S(S(SS(SS))))S))	from S(SS)S(S(S(S(SS(SS))))S)
+binary counter	S(S(S(SSSS)))S(S(S(S(S(SSSS)))S))	from S(SS)S(S(S(S(SSSS)))S)
+binary counter	S(S(S(SSS)))S(S(SS)(S(S(S(SSS)))S))	from SSS(SS)(S(S(S(SSS)))S)
+binary counter	S(SSS)S(S(S(S(S(SS))))S)	from S(SSS)S(S(S(S(S(SS))))S)
+binary counter	S(SSS)S(S(S(S(SSS)))S)	from S(SSS)S(S(S(S(SSS)))S)
+binary counter	SSSS(S(S(SS))S)(S(SSSS(S(S(SS))S)))	from S(SS)(SSSS)(S(S(SS))S)
+OTHER	S(S(SS)S)(SS)(S(S(SS))S)	from S(S(SS)S)(SS)(S(S(SS))S)
+binary counter	S(SS)(SS)(SS)(S(S(SS))S)	from S(SS)(SS)(SS)(S(S(SS))S)
+OTHER	SSS(S(SS))S(SSS(SS))	from SSS(S(SS))S(SSS(SS))
+binary counter	S(SSS(SS)S)S(SS(SS))	from S(SSS(SS)S)S(SS(SS))
+binary counter	S(S(SS)SSS)S(SS(SS))	from S(S(SS)SSS)S(SS(SS))
+binary counter	SS(SSS)(SS)S(SS(SS))	from SS(SSS)(SS)S(SS(SS))
+binary counter	SS(SS)S(SS)S(SS(SS))	from SS(SS)S(SS)S(SS(SS))
+binary counter	SSSSS(SS)S(SS(SS))	from SSSSS(SS)S(SS(SS))
+binary counter	S(SS(SS))SSS(SS(SS))	from S(SS(SS))SSS(SS(SS))
+binary counter	S(SSSS)SSS(SS(SS))	from S(SSSS)SSS(SS(SS))
+binary counter	SSS(S(S(S(SS))))S(S(SS))	from SSS(S(S(S(SS))))S(S(SS))
+OTHER	SSS(S(S(SSS)))S(S(SS))	from SSS(S(S(SSS)))S(S(SS))
+OTHER	SSS(S(S(SSS)))S(SSS)	from SSS(S(S(SSS)))S(SSS)
+binary counter	SSS(SS)S(SS(SS))(SS)	from SSS(SS)S(SS(SS))(SS)
+binary counter	S(SS)SSS(SS(SS))(SS)	from S(SS)SSS(SS(SS))(SS)
+binary counter	S(S(SSS(SS)S))(SS)(SS)	from S(S(SSS(SS)S))(SS)(SS)
+binary counter	S(S(S(SS)SSS))(SS)(SS)	from S(S(S(SS)SSS))(SS)(SS)
+binary counter	SSS(S(S(SS(SS))))S(SS)	from SSS(S(S(SS(SS))))S(SS)
+binary counter	SSS(S(S(SSSS)))S(SS)	from SSS(S(S(SSSS)))S(SS)
+binary counter	S(SS)S(S(S(S(SS))))S(SS)	from S(SS)S(S(S(S(SS))))S(SS)
+binary counter	S(SS)S(S(S(SSS)))S(SS)	from S(SS)S(S(S(SSS)))S(SS)
+binary counter	SSS(S(S(S(SS))))SS(SS)	from SSS(S(S(S(SS))))SS(SS)
+OTHER	SSS(S(S(SSS)))SS(SS)	from SSS(S(S(SSS)))SS(SS)
+binary counter	SSS(S(S(S(S(SS(SS))))))S	from SSS(S(S(S(S(SS(SS))))))S
+binary counter	SSS(S(S(S(S(SSSS)))))S	from SSS(S(S(S(S(SSSS)))))S
+binary counter	SSS(S(S(S(S(SSS)S))))S	from SSS(S(S(S(S(SSS)S))))S
+binary counter	SSS(S(S(SS(S(S(SS))))))S	from SSS(S(S(SS(S(S(SS))))))S
+binary counter	SSS(S(S(SS(S(SSS)))))S	from SSS(S(S(SS(S(SSS)))))S
+binary counter	SSS(S(S(SS(SS(SS)))))S	from SSS(S(S(SS(SS(SS)))))S
+OTHER	SSS(S(S(SS(S(SS)S))))S	from SSS(S(S(SS(S(SS)S))))S
+binary counter	SSS(S(S(SS(SSSS))))S	from SSS(S(S(SS(SSSS))))S
+binary counter	SSS(S(S(S(SS)(SSS))))S	from SSS(S(S(S(SS)(SSS))))S
+OTHER	SSS(S(S(SS(S(SS))S)))S	from SSS(S(S(SS(S(SS))S)))S
+binary counter	SSS(S(S(SS(SSS)S)))S	from SSS(S(S(SS(SSS)S)))S
+binary counter	SSS(S(S(SSSSSS)))S	from SSS(S(S(SSSSSS)))S
+binary counter	SSS(S(SS(S(SS(SS)))))S	from SSS(S(SS(S(SS(SS)))))S
+OTHER	SSS(S(S(SS)(S(SSS))))S	from SSS(S(S(SS)(S(SSS))))S
+OTHER	SSS(S(S(SS)(SS)(SS)))S	from SSS(S(S(SS)(SS)(SS)))S
+OTHER	SSS(SSS(S(S(SSS))))S	from SSS(SSS(S(S(SSS))))S
+binary counter	S(SS)S(S(S(S(S(SSS)))))S	from S(SS)S(S(S(S(S(SSS)))))S
+binary counter	S(SS)S(S(S(SS(S(SS)))))S	from S(SS)S(S(S(SS(S(SS)))))S
+binary counter	S(SS)S(S(S(SS(SSS))))S	from S(SS)S(S(S(SS(SSS))))S
+binary counter	S(SS)S(S(S(SS(SS)S)))S	from S(SS)S(S(S(SS(SS)S)))S
+OTHER	S(SS)S(S(S(SSS)(SS)))S	from S(SS)S(S(S(SSS)(SS)))S
+OTHER	S(SS)S(S(S(S(SSS))S))S	from S(SS)S(S(S(S(SSS))S))S
+OTHER	S(SS)S(S(S(SS(SS))S))S	from S(SS)S(S(S(SS(SS))S))S
+nested counter	S(SS)S(S(S(SSSS)S))S	from S(SS)S(S(S(SSSS)S))S
+binary counter	S(SS)S(S(S(S(S(SS))))S)S	from S(SS)S(S(S(S(S(SS))))S)S
+binary counter	S(SS)S(S(S(S(SSS)))S)S	from S(SS)S(S(S(S(SSS)))S)S
+binary counter	S(S(SSS))(S(S(S(S(SS)))))S	from S(S(SSS))(S(S(S(S(SS)))))S
+binary counter	S(S(SSS))(S(S(S(SSS))))S	from S(S(SSS))(S(S(S(SSS))))S
+binary counter	SS(SSS)(S(S(SS(SS))))S	from SS(SSS)(S(S(SS(SS))))S
+binary counter	SS(SSS)(S(S(SSSS)))S	from SS(SSS)(S(S(SSSS)))S
+binary counter	S(S(SS))S(S(S(SS(SS))))S	from S(S(SS))S(S(S(SS(SS))))S
+binary counter	S(S(SS))S(S(S(SSSS)))S	from S(S(SS))S(S(S(SSSS)))S
+binary counter	SS(SS)S(S(S(SS(SS))))S	from SS(SS)S(S(S(SS(SS))))S
+binary counter	SS(SS)S(S(S(SSSS)))S	from SS(SS)S(S(S(SSSS)))S
+binary counter	SSSSS(S(S(SS(SS))))S	from SSSSS(S(S(SS(SS))))S
+binary counter	SSSSS(S(S(SSSS)))S	from SSSSS(S(S(SSSS)))S
+binary counter	SS(S(SS)S)(S(S(SSS)))S	from SS(S(SS)S)(S(S(SSS)))S
+OTHER	S(SS)(SSS)(S(S(SSS)))S	from S(SS)(SSS)(S(S(SSS)))S
+OTHER	SS(SS)(SS)(S(S(SS))S)S	from SS(SS)(SS)(S(S(SS))S)S
+OTHER	SSSS(SS)(S(S(SS))S)S	from SSSS(SS)(S(S(SS))S)S
+binary counter	S(S(S(SS)))S(S(S(S(SS))))S	from S(S(S(SS)))S(S(S(S(SS))))S
+binary counter	S(S(S(SS)))S(S(S(SSS)))S	from S(S(S(SS)))S(S(S(SSS)))S
+binary counter	SS(S(SS))S(S(S(SSS)))S	from SS(S(SS))S(S(S(SSS)))S
+OTHER	S(SSS)SS(S(S(SS))S)S	from S(SSS)SS(S(S(SS))S)S
+binary counter	SSS(S(SS)S)(SS(SS))S	from SSS(S(SS)S)(SS(SS))S
+binary counter	S(SS)(S(SS))S(SS(SS))S	from S(SS)(S(SS))S(SS(SS))S
+OTHER	SSS(S(SS))S(SS(SS))S	from SSS(S(SS))S(SS(SS))S
+OTHER	S(SSS(S(S(SSS))))(SS)S	from S(SSS(S(S(SSS))))(SS)S
+binary counter	SSS(S(S(S(SS))))S(SS)S	from SSS(S(S(S(SS))))S(SS)S
+OTHER	SSS(S(S(SSS)))S(SS)S	from SSS(S(S(SSS)))S(SS)S
+binary counter	S(SSS(S(S(SS(SS)))))SS	from S(SSS(S(S(SS(SS)))))SS
+binary counter	S(SSS(S(S(SSSS))))SS	from S(SSS(S(S(SSSS))))SS
+binary counter	S(S(SS)S(S(S(S(SS)))))SS	from S(S(SS)S(S(S(S(SS)))))SS
+binary counter	S(S(SS)S(S(S(SSS))))SS	from S(S(SS)S(S(S(SSS))))SS
+binary counter	S(SSS(S(S(S(SS))))S)SS	from S(SSS(S(S(S(SS))))S)SS
+OTHER	S(SSS(S(S(SSS)))S)SS	from S(SSS(S(S(SSS)))S)SS
+binary counter	SSS(S(S(S(S(SSS)))))SS	from SSS(S(S(S(S(SSS)))))SS
+OTHER	SSS(S(S(SS(SSS))))SS	from SSS(S(S(SS(SSS))))SS
+OTHER	SSS(S(S(SS(SS)S)))SS	from SSS(S(S(SS(SS)S)))SS
+binary counter	SSS(S(SS(S(S(SS)))))SS	from SSS(S(SS(S(S(SS)))))SS
+binary counter	SSS(S(SS(S(SSS))))SS	from SSS(S(SS(S(SSS))))SS
+binary counter	S(S(SS))(S(S(S(S(SS)))))SS	from S(S(SS))(S(S(S(S(SS)))))SS
+binary counter	S(S(SS))(S(S(S(SSS))))SS	from S(S(SS))(S(S(S(SSS))))SS
+binary counter	S(SS)S(S(S(SS(SS))))SS	from S(SS)S(S(S(SS(SS))))SS
+binary counter	S(SS)S(S(S(SSSS)))SS	from S(SS)S(S(S(SSSS)))SS
+binary counter	SS(SSS)(S(S(S(SS))))SS	from SS(SSS)(S(S(S(SS))))SS
+OTHER	SS(SSS)(S(S(SSS)))SS	from SS(SSS)(S(S(SSS)))SS
+binary counter	S(S(SS))S(S(S(S(SS))))SS	from S(S(SS))S(S(S(S(SS))))SS
+binary counter	S(S(SS))S(S(S(SSS)))SS	from S(S(SS))S(S(S(SSS)))SS
+binary counter	SS(SS)S(S(S(S(SS))))SS	from SS(SS)S(S(S(S(SS))))SS
+OTHER	SS(SS)S(S(S(SSS)))SS	from SS(SS)S(S(S(SSS)))SS
+binary counter	SSSSS(S(S(S(SS))))SS	from SSSSS(S(S(S(SS))))SS
+OTHER	SSSSS(S(S(SSS)))SS	from SSSSS(S(S(SSS)))SS
+OTHER	S(S(SSS)S)(S(S(SS)))SS	from S(S(SSS)S)(S(S(SS)))SS
+binary counter	SSS(SS)S(SS(SS))SS	from SSS(SS)S(SS(SS))SS
+binary counter	S(SS)SSS(SS(SS))SS	from S(SS)SSS(SS(SS))SS
+binary counter	S(SSS(S(S(S(SS)))))SSS	from S(SSS(S(S(S(SS)))))SSS
+OTHER	S(SSS(S(S(SSS))))SSS	from S(SSS(S(S(SSS))))SSS
+binary counter	SSS(S(S(SS(SS))))SSS	from SSS(S(S(SS(SS))))SSS
+binary counter	SSS(S(S(SSSS)))SSS	from SSS(S(S(SSSS)))SSS
+binary counter	S(SS)S(S(S(S(SS))))SSS	from S(SS)S(S(S(S(SS))))SSS
+binary counter	S(SS)S(S(S(SSS)))SSS	from S(SS)S(S(S(SSS)))SSS
+binary counter	SSS(S(S(S(SS))))SSSS	from SSS(S(S(S(SS))))SSSS
+OTHER	SSS(S(S(SSS)))SSSS	from SSS(S(S(SSS)))SSSS
+endpoint classes: {'single counter': 3321, 'bounded/linear': 14853, 'binary counter': 111, 'OTHER': 40, 'nested counter': 1}

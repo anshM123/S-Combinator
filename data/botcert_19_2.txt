@@ -1,0 +1,2 @@
+# n=19 range [79606450,119409675) cap=300 nonproductive-class=35377585 certified=35377585 anomalies=0 notfound=0 maxdepth=15 at S(S(S(S(S(S(S(S(S(S(SSS(S(SS))(SS))))))))))S)
+# hist: 0 17896541 9086774 4400081 2212972 1030932 435216 177398 74678 35041 17526 7365 2407 568 84 2

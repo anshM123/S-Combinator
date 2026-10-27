@@ -1,0 +1,2 @@
+base 3	op 2	gaps [6, 9, 12, 15, 18, 21]	freq [171, 57, 19, 6, 1, 2]	S(SS)SS(SS(SS)(SS))(S(S(SS)S)(SS(SSS(SS))))
+summary: {'none': 39, 'base 3': 1} (tries 89)

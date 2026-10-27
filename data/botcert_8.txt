@@ -1,0 +1,21 @@
+NOT-FOUND(finite-tree) rank 174 term S(SS)(S(S(S(SS))))
+NOT-FOUND(finite-tree) rank 175 term S(SS)(S(S(SSS)))
+NOT-FOUND(finite-tree) rank 176 term S(SS)(S(SS(SS)))
+NOT-FOUND(finite-tree) rank 177 term S(SS)(S(S(SS)S))
+NOT-FOUND(finite-tree) rank 178 term S(SS)(S(SSSS))
+NOT-FOUND(finite-tree) rank 179 term S(SS)(SS(S(SS)))
+NOT-FOUND(finite-tree) rank 181 term S(SS)(S(SS)(SS))
+NOT-FOUND(finite-tree) rank 182 term S(SS)(SSS(SS))
+NOT-FOUND(finite-tree) rank 183 term S(SS)(S(S(SS))S)
+NOT-FOUND(finite-tree) rank 186 term S(SS)(S(SS)SS)
+NOT-FOUND(finite-tree) rank 269 term SS(S(S(SS)))(SS)
+NOT-FOUND(finite-tree) rank 271 term SS(SS(SS))(SS)
+NOT-FOUND(finite-tree) rank 273 term SS(SSSS)(SS)
+NOT-FOUND(finite-tree) rank 289 term SS(SSS)S(SS)
+NOT-FOUND(finite-tree) rank 294 term SS(SS)SS(SS)
+NOT-FOUND(finite-tree) rank 296 term SSSSSS(SS)
+NOT-FOUND(finite-tree) rank 393 term S(SS(SSS))SS
+NOT-FOUND(finite-tree) rank 398 term S(SS(SS)S)SS
+NOT-FOUND(finite-tree) rank 400 term S(SSSSS)SS
+# n=8 range [0,429) cap=300 nonproductive-class=60 certified=41 anomalies=0 notfound=19 maxdepth=5 at SSS(S(SS))(SS)
+# hist: 15 10 9 3 3 1

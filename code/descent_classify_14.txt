@@ -1,0 +1,1 @@
+14 leaves: forever-descending (>= N/2 descents in 2000 steps): 87; K-family steady state: 87; other: 0

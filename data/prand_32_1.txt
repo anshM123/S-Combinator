@@ -1,0 +1,1 @@
+# n=32 samples=10000 bottomP=9845 certified=9845 maxdepth=13 | productiveP=155 clean=155 (truncated 0, min explored depth -1) refutations=0 anomalies=0

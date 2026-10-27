@@ -1,0 +1,65 @@
+auto_prover.py	S(S(SS)SS)(S(SS)S)SS: parallel run no growing loop cycle
+auto_prover.py	S(S(S(SSS(SS))(SS)))SS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(SSS)(SSS)S(SSSS): parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(SS)S(SSS)(SSS)S: parallel run timeout
+auto_prover.py	SS(S(SS))S(SS)SS: parallel run timeout
+auto_prover.py	S(S(S(SS(SS))S))(SSS)S: parallel run timeout
+auto_prover.py	SSSS(SS(SS)(SS))(SS): parallel run timeout
+auto_prover.py	S(S(S(SS)S))SSSS: parallel run cycle lemma fails (token unfolded too deep (left comb?))
+auto_prover.py	S(S(S(SSS)))S(SS)S: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(S(SS)S)(SS)(SSSS)S: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	SSS(SS)SSS(SS(SS)): parallel run timeout
+auto_prover.py	SS(S(SSS))(SSSS)SS: parallel run timeout
+auto_prover.py	SSS(SSSS)SSSSS: parallel run timeout
+auto_prover.py	S(SS(S(SS))S)(SS)(SSS): parallel run timeout
+auto_prover.py	S(S(SS)SS(SSSS))SS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	SSS(SS)(SSSS)SS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	SSS(S(S(SS)(SS))(SS))S: parallel run PROVED  (B = 4, 1 loop(s) per cycle, window 3, cycle length 2·n + 151, n >= 0, 2 macro(s), first cycle (7219, 10), cross-check 161/161)
+auto_prover.py	SSS(S(S(SS))S)(SSSS): parallel run no growing loop cycle
+auto_prover.py	S(SS)(S(SS)(SSS))S(SS): parallel run timeout
+auto_prover.py	S(SSSS)(SS)(S(SSSS)): parallel run PROVED  (B = 2, 2 loop(s) per cycle, window 3, cycle length 2·n + 4, n >= 3, 2 macro(s), first cycle (6962, 82), cross-check 162/162)
+auto_prover.py	S(S(S(SS)))S(S(S(SS)S))S: parallel run timeout
+auto_prover.py	S(S(S(SS))(SS))(S(SSS))S: parallel run timeout
+auto_prover.py	S(S(S(SSS)))(S(SSS))S: parallel run timeout
+auto_prover.py	SSS(SS)S(S(S(S(SS))S)): parallel run cycle lemma fails (token unfolded too deep (left comb?))
+auto_prover.py	S(S(SS(S(S(SSS)))))SSS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(S(SS)(SSS)S)(S(SS))S: parallel run timeout
+auto_prover.py	S(S(SS))SS(S(SSSS))S: parallel run timeout
+auto_prover.py	S(S(SS)S)(S(SS(SS)))SS: parallel run timeout
+auto_prover.py	S(S(SS)SSS)SSS: parallel run timeout
+auto_prover.py	S(S(S(SSS)))S(SSSS): parallel run timeout
+auto_prover.py	SSSSS(S(SS)S)(SSS): parallel run timeout
+auto_prover.py	SSS(SSS)(SS)(SSSS): parallel run timeout
+auto_prover.py	SSS(SS(SS)S)SSSS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(SS(S(SS)S))(SS)(SSS): parallel run timeout
+auto_prover.py	S(S(SS)SSS)S(SSS)S: parallel run timeout
+auto_prover.py	S(SS)S(S(SS(SS)S)S)S: parallel run cycle lemma fails (token unfolded too deep (left comb?))
+auto_prover.py	SSS(SS)(S(S(SS))SS)S: parallel run timeout
+auto_prover.py	S(S(S(SS))S(S(SS)S))SS: parallel run timeout
+auto_prover.py	S(SS)(S(SS)SS)SSSS: parallel run cycle lemma fails (token unfolded too deep (left comb?))
+auto_prover.py	S(S(SS)S)SSSS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(SSS(SS(SS)))SSS: parallel run timeout
+auto_prover.py	S(SS(SS)S)SS(SS)SS: parallel run timeout
+auto_prover.py	S(S(SSS)(SS))S(S(SS)S): parallel run timeout
+auto_prover.py	S(SSSS)(SS)S(SSS): parallel run PROVED  (B = 4, 1 loop(s) per cycle, window 3, cycle length 2·n + 151, n >= 0, 2 macro(s), first cycle (7223, 10), cross-check 161/161)
+auto_prover.py	SSS(S(S(SS))(SSS))SS: parallel run timeout
+auto_prover.py	SSS(SSS)(SS(S(SS)))S: parallel run PROVED  (B = 2, 2 loop(s) per cycle, window 3, cycle length 2·n + 5, n >= 4, 2 macro(s), first cycle (6881, 81), cross-check 163/163)
+auto_prover.py	S(SS(SS))SSSSSSS: parallel run cycle lemma fails (token unfolded too deep (left comb?))
+auto_prover.py	SS(SS)(SS)(SS)(S(S(SS))): parallel run timeout
+auto_prover.py	S(SSS(S(SS)SS))(SS)S: parallel run timeout
+auto_prover.py	S(SSS)(S(SS(SS))S)SS: parallel run timeout
+auto_prover.py	S(SS)SS(S(S(S(S(SS)))))S: parallel run no growing loop cycle
+auto_prover.py	SSSS(S(SS)(SS(SS)))S: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(SS(SSSS))(SS)SSS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	SSS(S(SSS)(SSSS))S: parallel run timeout
+auto_prover.py	S(SSS)(SS)(SS)SSSS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	SS(S(SS))S(SS)SSSS: parallel run timeout
+auto_prover.py	SSS(SS)(SS)SS(SSS): parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(S(SSS)S)S(S(S(S(SSS)S)S)): parallel run timeout
+auto_prover.py	S(SS)(S(SS(SS)))S(SS): parallel run timeout
+auto_prover.py	S(SS)S(SSS)S(SS): parallel run timeout
+auto_prover.py	S(S(SS)(SS))(SS)S(SSS): parallel run PROVED  (B = 4, 1 loop(s) per cycle, window 3, cycle length 2·n + 151, n >= 0, 2 macro(s), first cycle (7217, 10), cross-check 161/161)
+auto_prover.py	S(SS)(S(SSS))S(SS)(SS): parallel run timeout
+auto_prover.py	S(SS(SS))S(SSSSSS): parallel run timeout
+auto_prover.py	S(S(S(S(S(SSS))))S)SSS: parallel run cycle lemma fails (token unfolded too often)
+auto_prover.py	S(S(S(S(SS)S)S)SS)SS: parallel run cycle lemma fails (token unfolded too often)

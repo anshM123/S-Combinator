@@ -1,0 +1,1 @@
+# n=4 range [0,5) cap=400 agreeProductive=5 agreeBottom=0 modelP_oracleBot=0 modelBot_oracleP=0 unknown=0

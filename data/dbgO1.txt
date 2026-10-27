@@ -1,0 +1,11 @@
+NOT-FOUND(finite-tree) rank 56 term S(SS)(S(S(SS)))
+NOT-FOUND(finite-tree) rank 57 term S(SS)(S(SSS))
+NOT-FOUND(finite-tree) rank 59 term S(SS)(S(SS)S)
+NOT-FOUND(finite-tree) rank 81 term SS(S(SS))(SS)
+NOT-FOUND(finite-tree) rank 82 term SS(SSS)(SS)
+NOT-FOUND(finite-tree) rank 87 term SS(SS)S(SS)
+NOT-FOUND(finite-tree) rank 89 term SSSSS(SS)
+NOT-FOUND(finite-tree) rank 120 term S(SS(SS))SS
+NOT-FOUND(finite-tree) rank 122 term S(SSSS)SS
+# n=7 range [0,132) cap=300 nonproductive-class=11 certified=2 anomalies=0 notfound=9 maxdepth=1 at SSS(SS)SS
+# hist: 0 2

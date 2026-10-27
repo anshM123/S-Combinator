@@ -1,0 +1,3 @@
+OTHER	S(S(SS)(S(SS))S)(SS)(SSS(SS))(SS(SS)(S(S(SS(S(SS))S(SS))(S(S(SS))))))
+OTHER	S(SSS)(SS)(SS)(SSS(S(SS(S(SS))(S(SS))))S)(SS(S(SSS)S))(S(SS)SS(SS)S)
+summary: {'bounded/linear': 1473, 'radix 2': 9, 'single counter': 16, 'OTHER': 2} (tries 2272)

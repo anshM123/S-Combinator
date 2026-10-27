@@ -1,0 +1,22 @@
+generation 0: best normalised LZ 0.3165  median 0.1450
+generation 1: best normalised LZ 0.3386  median 0.2229
+generation 2: best normalised LZ 0.3629  median 0.2943
+generation 3: best normalised LZ 0.3765  median 0.3165
+generation 4: best normalised LZ 0.4136  median 0.3522
+generation 5: best normalised LZ 0.4136  median 0.3086
+top runs:
+  0.4136  S(SS)(S(SS)(S(SS)S))(S(S(SS))(SS(SS)(SS)S))(S(SS(SS(SSS)S))(S(SS)(SSS)(S(SS)S)))
+  0.3765  S(SSSS)(S(SSS(SSS))(S(SS)S))(S(SSS(SS))(S(SS)(SSS)(S(SS)S)))
+  0.3765  S(SSSS)(S(SSS(SSS))(SS(SS)S))(S(SSS(SS))(S(SS)(SSS)(S(SS)S)))
+  0.3729  S(SSS(SS(SS)S))(S(SSS(SSS))(S(SS)S))(S(SS(SS))(S(SS)(SSS)(S(SS)S)))
+  0.3729  S(SSS(SS(SS)S))(S(S(S(SS))))(S(SS(SS))(S(SS)(SSS)(S(SS)S)))
+  0.3729  S(SSS(SS(SS)S))(S(S(S(SS))))(S(SS(S(SSS)))(S(SS)(SSS)(S(SS)S)))
+  0.3629  S(SSSS)(S(SS(SSS))(S(SS)(S(SS)S)))(S(SS(SSS))(S(SS)(SSS)(S(SS)S)))
+  0.3629  S(SSSS)(S(SS(SSS))(S(SS)(S(S(SSS)SS)S)))(S(SS(SSS))(S(SS)(SSS)(S(SS)S)))
+  0.3622  S(SS)(S(SS)(S(SS)S))(S(S(SS))(S(SS)S))(S(SS(SS(SSS)S))(S(SS)(SSS)(S(SS)S)))
+  0.3622  SS(SSSS)(S(SS(SSS))(S(SS)(S(SS)S)))(S(SS(SSS))(S(SS)(SSS)(S(SS)S)))
+  0.3615  S(SS)(S(SS)(S(SS)S))(S(S(SS))S)(S(SS(SS(SSS)S))(S(SS)(SSS)(S(SS)S)))
+  0.3615  S(S(S(SS)S)S)(S(SS(SSS))(S(SS)(S(S(SSS)SS)S)))(S(SS(SSS))(S(SS)(SSS)(S(SS)S)))
+  0.3608  SS(S(SS)(S(SS)S))(S(S(SS))(S(SS)S))(S(SS(SS(SSS)S))(S(SS)(SSS)(S(SS)S)))
+  0.3572  S(SSSS)(S(SSS(SSS))(S(SS)S))(S(SS(SS))(S(SS)(SSS)(S(SS)S)))
+  0.3515  S(SSS(SS(SS)S))(S(SSS(SSS))(S(SS)S))(S(SS)(SS(SS))(S(SS)(SSS)(S(SS)S)))

@@ -1,0 +1,6 @@
+0 1 0 4 1 0 4 S(S(SS))
+1 1 0 4 1 0 4 S(SSS)
+2 1 0 4 1 0 4 SS(SS)
+3 1 0 4 1 0 4 S(SS)S
+4 1 1 4 1 1 4 SSSS
+# n=4 range [0,5) hnf=5 nohnf=0 nf=5 nonf=0

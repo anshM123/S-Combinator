@@ -1,0 +1,14 @@
+hnf-free sample: {'bounded/linear': 1317, 'one affine counter': 149, 'one affine counter (gaps)': 21, 'OTHER': 13}
+   OTHER: S(SS(SS)(SSS(S(SS))(SS)))S(SS)
+   OTHER: SSS(S(SS))(SS)(SS)(S(S(SS)S(S(SS)(S(SS))))S)
+   OTHER: SS(S(SS))(S(S(SS)S))(SSS(SS)(SS))
+   OTHER: SSS(SSS(SS)S(SS(SS)))(S(S(SS)(SS))S)
+   OTHER: SSSSSS(S(SS))(SS)(SS)S(SS)
+   OTHER: SS(SSS)(SSS(S(SS))(S(SS)(SS)))(SS)S
+   OTHER: S(SS)(SSS(S(SS)S)(SS(SS)))S(SS(SSSS))
+   OTHER: S(SS(SSS))(SSS(SS)S(SS(SS)))(SS)(SS)
+   OTHER: SSS(S(SS)(SS(SS(S(SS)))))S(S(SS)S(SS))
+   OTHER: S(S(SS))(S(S(SS)))(S(S(SS)))(SSS(S(SS))(SS)(SS))
+   OTHER: S(SS)(SSS)(S(SS)(S(SS))(SS(S(SS))(SS)))(SS)
+   OTHER: SS(SS)SS(SS(SSS)(SS)S)(SS(SS))
+   OTHER: S(SSS)(S(SS))(SS)(SS)(SS(SS))

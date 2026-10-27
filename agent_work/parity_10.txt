@@ -1,0 +1,13 @@
+distinct outcome patterns: 11
+31358 ('J', 'J', 'J', 'J', 'J', 'J', 'J', 'J')
+16957 ('budget', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget')
+9514 ('K', 'K', 'K', 'K', 'K', 'K', 'K', 'K')
+5759 ('J', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget')
+1645 ('K', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget')
+362 ('J', 'J', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget')
+238 ('K', 'J', 'J', 'J', 'J', 'J', 'J', 'J')
+136 ('K', 'K', 'budget', 'budget', 'budget', 'budget', 'budget', 'budget')
+116 ('J', 'K', 'K', 'K', 'K', 'K', 'K', 'K')
+103 ('budget', 'J', 'J', 'J', 'J', 'J', 'J', 'J')
+8 ('budget', 'K', 'K', 'K', 'K', 'K', 'K', 'K')
+INTERESTING (>=2 changes): 0

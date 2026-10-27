@@ -1,0 +1,22 @@
+n=3 F-terms 2: max opens of one leaf occ {0: 2}; of one app occ {0: 2}
+   examples (leaf,app)->term: {(0, 0): 'S(SS)'}
+n=4 F-terms 5: max opens of one leaf occ {0: 4, 1: 1}; of one app occ {0: 5}
+   examples (leaf,app)->term: {(0, 0): 'S(S(SS))', (1, 0): 'SSSS'}
+n=5 F-terms 14: max opens of one leaf occ {0: 10, 1: 4}; of one app occ {0: 13, 1: 1}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(SS)))', (1, 0): 'SSS(SS)', (1, 1): 'S(SS)SS'}
+n=6 F-terms 42: max opens of one leaf occ {0: 28, 1: 14}; of one app occ {0: 36, 1: 6}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(SS))))', (1, 0): 'SSS(S(SS))', (1, 1): 'S(SS)S(SS)'}
+n=7 F-terms 132: max opens of one leaf occ {0: 84, 1: 44, 2: 3, 3: 1}; of one app occ {0: 106, 1: 25, 2: 1}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(S(SS)))))', (1, 0): 'SSS(S(S(SS)))', (1, 1): 'S(SS)S(S(SS))', (2, 1): 'S(S(SS))SSS', (2, 2): 'SSS(SS)SS', (3, 1): 'S(SS)SSSS'}
+n=8 F-terms 414: max opens of one leaf occ {0: 264, 1: 135, 2: 12, 3: 3}; of one app occ {0: 328, 1: 82, 2: 4}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(S(S(SS))))))', (1, 0): 'SSS(S(S(S(SS))))', (1, 1): 'S(SS)S(S(S(SS)))', (2, 1): 'S(S(SS))SS(SS)', (2, 2): 'SSS(SS)S(SS)', (3, 1): 'S(SS)SSS(SS)'}
+n=9 F-terms 1294: max opens of one leaf occ {0: 858, 1: 387, 2: 40, 3: 8, 4: 1}; of one app occ {0: 1054, 1: 234, 2: 6}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(S(S(S(SS)))))))', (1, 0): 'SSS(S(S(S(S(SS)))))', (1, 1): 'S(SS)S(S(S(S(SS))))', (2, 1): 'S(S(SS))SS(S(SS))', (2, 2): 'SSS(SS)S(S(SS))', (3, 1): 'S(SS)SSS(S(SS))', (3, 2): 'S(SS)(SSS)SSS', (4, 1): 'S(SSS)SSSSS'}
+n=10 F-terms 4121: max opens of one leaf occ {0: 2860, 1: 1159, 2: 82, 3: 19, 4: 1}; of one app occ {0: 3485, 1: 625, 2: 11}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(S(S(S(S(SS))))))))', (1, 0): 'SSS(S(S(S(S(S(SS))))))', (1, 1): 'S(SS)S(S(S(S(S(SS)))))', (2, 1): 'S(S(SS))SS(S(S(SS)))', (2, 2): 'SSS(SS)S(S(S(SS)))', (3, 1): 'S(SS)SSS(S(S(SS)))', (3, 2): 'S(SS)(SS(SS))SSS', (4, 1): 'S(S(S(S(SS))S)S)SS'}
+n=11 F-terms 13596: max opens of one leaf occ {0: 9724, 1: 3637, 2: 204, 3: 31}; of one app occ {0: 11779, 1: 1799, 2: 18}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(S(S(S(S(S(SS)))))))))', (1, 0): 'SSS(S(S(S(S(S(S(SS)))))))', (1, 1): 'S(SS)S(S(S(S(S(S(SS))))))', (2, 1): 'S(S(SS))SS(S(S(S(SS))))', (2, 2): 'SSS(SS)S(S(S(S(SS))))', (3, 1): 'S(SS)SSS(S(S(S(SS))))', (3, 2): 'S(SS)(SS(S(SS)))SSS'}
+n=12 F-terms 46056: max opens of one leaf occ {0: 33592, 1: 11846, 2: 561, 3: 57}; of one app occ {0: 40509, 1: 5505, 2: 42}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(S(S(S(S(S(S(SS))))))))))', (1, 0): 'SSS(S(S(S(S(S(S(S(SS))))))))', (1, 1): 'S(SS)S(S(S(S(S(S(S(SS)))))))', (2, 1): 'S(S(SS))SS(S(S(S(S(SS)))))', (2, 2): 'SSS(SS)S(S(S(S(S(SS)))))', (3, 1): 'S(SS)SSS(S(S(S(S(SS)))))', (3, 2): 'S(SS)(SS(S(S(SS))))SSS'}
+n=13 F-terms 159040: max opens of one leaf occ {0: 117572, 1: 39683, 2: 1652, 3: 133}; of one app occ {0: 141285, 1: 17643, 2: 112}
+   examples (leaf,app)->term: {(0, 0): 'S(S(S(S(S(S(S(S(S(S(S(SS)))))))))))', (1, 0): 'SSS(S(S(S(S(S(S(S(S(SS)))))))))', (1, 1): 'S(SS)S(S(S(S(S(S(S(S(SS))))))))', (2, 1): 'S(S(SS))SS(S(S(S(S(S(SS))))))', (2, 2): 'SSS(SS)S(S(S(S(S(S(SS))))))', (3, 1): 'S(SS)SSS(S(S(S(S(S(SS))))))', (3, 2): 'S(SS)(SS(S(S(S(SS)))))SSS'}

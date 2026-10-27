@@ -1,0 +1,17 @@
+terms: {'normalises': 44583, 'bottom': 36977, 'deep': 940} | distinct hnf-free endpoints: 18326
+endpoint head runs: {'one affine counter': 3411, 'bounded/linear': 14734, 'OTHER': 70, 'one affine counter (gaps)': 111}
+   OTHER: ('SSS(SS)S(SS(SS))', 'from', 'SSS(SS)S(SS(SS))')
+   OTHER: ('S(SS)SSS(SS(SS))', 'from', 'S(SS)SSS(SS(SS))')
+   OTHER: ('S(S(SS))(SS)(SS)(S(S(SS))(SS)(SS(S(S(SS))(SS)))(SS))', 'from', 'SSS(S(SS))(SS)(SS)')
+   OTHER: ('SS(S(SS))(SS)(SS)(SS(S(SS))(SS)(SS(SS(S(SS))(SS)))(SS))', 'from', 'S(SS)S(SS)(SS)(SS)')
+   OTHER: ('SSS(S(SS)S)(SS(SS))', 'from', 'SSS(S(SS)S)(SS(SS))')
+   OTHER: ('S(SS)(S(SS))S(SS(SS))', 'from', 'S(SS)(S(SS))S(SS(SS))')
+   OTHER: ('S(SS)(SS)(SS)(S(SS)(SS)(SS(S(SS)(SS)))(SS))', 'from', 'S(S(SS))(S(SS))(SS)(SS)')
+   OTHER: ('S(SSS)(S(SS))(SS)(SS)', 'from', 'S(SSS)(S(SS))(SS)(SS)')
+   OTHER: ('SSS(SS)S(SS(SS))S', 'from', 'SSS(SS)S(SS(SS))S')
+   OTHER: ('S(SS)SSS(SS(SS))S', 'from', 'S(SS)SSS(SS(SS))S')
+   OTHER: ('SSS(S(SS))(SS)(SS)S', 'from', 'SSS(S(SS))(SS)(SS)S')
+   OTHER: ('S(SS)S(SS)(SS)(SS)S', 'from', 'S(SS)S(SS)(SS)(SS)S')
+   OTHER: ('S(S(SS))SS(SS)(SS)S', 'from', 'S(S(SS))SS(SS)(SS)S')
+   OTHER: ('S(S(S(SS))S)SS(SS)S', 'from', 'S(S(S(SS))S)SS(SS)S')
+   OTHER: ('S(S(S(S(SS))S)S)SSS', 'from', 'S(S(S(S(SS))S)S)SSS')

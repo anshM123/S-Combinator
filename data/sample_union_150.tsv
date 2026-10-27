@@ -1,0 +1,150 @@
+SS(SSS)S(SS)SSS	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 6, E = C_(n+2), driver 18 steps, j >= 1, first cycle (13441, 56), cross-check 41/
+S(S(S(SS))S)(SSS)(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: block lemma fails | loop_prover.py: PROVED  (B = 1040102104, 1 loop(s) per cycle, window 4, cycle length 10·n + 22, n >= 1, 2 macro(s), first cycl
+SS(S(SS))(SS)SS(S(SS))	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 4, E = C_(n+2), driver 13 steps, j >= 1, first cycle (13397, 65), cross-check 47/47
+SSS(S(SS)(SS)S)SS	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 4, E = C_(n+2), driver 13 steps, j >= 1, first cycle (13395, 65), cross-check 47/47
+S(S(SS)SS)(S(SS)S)SS	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SSS(SS))(SS)))SS	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS))(SS)(SS)S)SS	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 10, E = C_(n+2), driver 37 steps, j >= 1, first cycle (13417, 53), cross-check 41
+S(SSS)(SSS)(SS(SS))S	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 5, E = C_(n+2), driver 10 steps, j >= 1, first cycle (13539, 66), cross-check 47/47
+S(SSS)(SSS)S(SSSS)	auto_prover.py	auto_prover.py: PROVED
+S(SS)S(SSS)(SSS)S	auto_prover.py	auto_prover.py: PROVED
+SSSS(S(SS(SS)S))SS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 00313, 2 loop(s) per cycle, window 5, cycle length 10·n + 25, n >= 1, 2 macro(s), first cycle (72
+SS(S(SS))S(SS)SS	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS(SS))S))(SSS)S	auto_prover.py	auto_prover.py: PROVED
+S(S(S(S(SS(SS)))))S(SS)S	loop_prover.py	auto_prover.py: no scheme | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 03103031, 1 loop(s) per cycle, window 4, cycle length 8·n + 17, n >= 0, 1 macro(s), first cycle (
+S(S(SS)SS)S(SS)	loop_prover.py	auto_prover.py: no scheme | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 03031, 2 loop(s) per cycle, window 4, cycle length 10·n + 30, n >= 0, 2 macro(s), first cycle (74
+S(S(S(S(SSS)(SSS))))SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: driver not derived | loop_prover.py: PROVED  (B = 10411031, 1 loop(s) per cycle, window 4, cycle length 8·n + 13, n >= 2, 1 macro(s), first cycle (
+SSSS(SS(SS)(SS))(SS)	auto_prover.py	auto_prover.py: PROVED
+SS(SSSS)(SSS)(SSS)	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 4, E = C_(n+2), driver 17 steps, j >= 1, first cycle (13609, 65), cross-check 47/47
+S(S(SS))S(SSS)(SS)S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0402022, 1 loop(s) per cycle, window 4, cycle length 7·n + 13, n >= 1, 1 macro(s), first cycle (6
+S(S(S(SS(SS)))S)SS(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 01102040203104, 1 loop(s) per cycle, window 5, cycle length 14·n + 19, n >= 1, 1 macro(s), first 
+S(S(S(SS)S))SSSS	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SSS)))S(SS)S	auto_prover.py	auto_prover.py: PROVED
+S(S(SSSS)SS)SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 04012, 1 loop(s) per cycle, window 4, cycle length 5·n + 10, n >= 1, 1 macro(s), first cycle (693
+SSS(S(S(SS)))(SS)SSS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 20040, 1 loop(s) per cycle, window 4, cycle length 5·n + 12, n >= 1, 1 macro(s), first cycle (700
+S(S(SSS))(SS)(SSS)	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 6, E = C_(n+2), driver 10 steps, j >= 1, first cycle (13540, 66), cross-check 47/47
+S(S(SS)S)(SS)(SSSS)S	auto_prover.py	auto_prover.py: PROVED
+SSS(SS)SSS(SS(SS))	auto_prover.py	auto_prover.py: PROVED
+S(SSSS)(SS)(SS(S(SSSS)(SS)))S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 02040203, 1 loop(s) per cycle, window 4, cycle length 8·n + 12, n >= 1, 1 macro(s), first cycle (
+S(S(SS)(S(SS)))SSS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: block lemma fails | loop_prover.py: PROVED  (B = 12040, 1 loop(s) per cycle, window 3, cycle length 5·n + 10, n >= 1, 1 macro(s), first cycle (692
+S(S(S(S(S(SS))S))S)SSS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: driver not derived | loop_prover.py: PROVED  (B = 210410, 1 loop(s) per cycle, window 3, cycle length 6·n + 8, n >= 2, 1 macro(s), first cycle (687
+SS(SS)(SSS(SS))(S(SS))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 031021041, 2 loop(s) per cycle, window 4, cycle length 18·n + 47, n >= 0, 3 macro(s), first cycle
+SS(SS)(SS(SS))S(SS)S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0220402, 1 loop(s) per cycle, window 4, cycle length 7·n + 27, n >= 1, 1 macro(s), first cycle (7
+SS(S(SSS))(SSSS)SS	auto_prover.py	auto_prover.py: PROVED
+SSS(SSSS)SSSSS	auto_prover.py	auto_prover.py: PROVED
+S(SS(S(SS))S)(SS)(SSS)	auto_prover.py	auto_prover.py: PROVED
+SSSS(S(S(S(SS)S)S))S	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 113003113004, |λ| = 13, E = C_(n+2), driver 6 steps, j >= 1, first cycle (13893, 48), cross-check
+S(S(SS))SS(SSS)(S(SS))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 11031104, 1 loop(s) per cycle, window 4, cycle length 8·n + 16, n >= 2, 1 macro(s), first cycle (
+SSS(SSSS(SS))(S(SS))	loop_prover.py	auto_prover.py: no scheme | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 310, 1 loop(s) per cycle, window 3, cycle length 3·n + 13, n >= 1, 1 macro(s), first cycle (7325,
+S(S(SS)SS(SSSS))SS	auto_prover.py	auto_prover.py: PROVED
+S(S(SS)S(SS))S(SS)(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 1050201, 1 loop(s) per cycle, window 4, cycle length 7·n + 12, n >= 2, 1 macro(s), first cycle (6
+SSS(S(S(SS)))(SS)S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 20040, 1 loop(s) per cycle, window 4, cycle length 5·n + 12, n >= 1, 1 macro(s), first cycle (700
+S(SSS(SS)S(SS))(SS)S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 01204, 1 loop(s) per cycle, window 4, cycle length 5·n + 10, n >= 1, 1 macro(s), first cycle (692
+S(S(SSS)SSS)(SS)S	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 4, E = C_(n+2), driver 13 steps, j >= 1, first cycle (13373, 65), cross-check 47/47
+S(S(SS)S)SS(SSSSS)	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 8, E = C_(n+2), driver 36 steps, j >= 1, first cycle (13641, 62), cross-check 46/46
+S(SSS(S(SS(SS))))S(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0204020303, 1 loop(s) per cycle, window 4, cycle length 10·n + 16, n >= 1, 1 macro(s), first cycl
+SSS(SS)(SSSS)SS	auto_prover.py	auto_prover.py: PROVED
+SSS(S(S(SS)(SS))(SS))S	auto_prover.py	auto_prover.py: PROVED
+S(SSS(SSS))(SSS)SS	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 5, E = C_(n+2), driver 14 steps, j >= 1, first cycle (13598, 57), cross-check 40/
+S(S(SS(S(SSS))))(SS)SS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 1203, 2 loop(s) per cycle, window 3, cycle length 8·n + 18, n >= 1, 2 macro(s), first cycle (7317
+SSS(S(S(SS))S)(SSSS)	auto_prover.py	auto_prover.py: PROVED
+S(SS)(S(SS)(SSS))S(SS)	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS))S(SS))(SS)(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 02030204, 1 loop(s) per cycle, window 4, cycle length 8·n + 16, n >= 1, 1 macro(s), first cycle (
+SS(SS)SS(SS(SS))SS	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 8, E = C_(n+2), driver 28 steps, j >= 1, first cycle (13687, 55), cross-check 40/
+S(S(SSS)S)S(S(SS))SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: driver not derived | loop_prover.py: PROVED  (B = 10311041, 1 loop(s) per cycle, window 4, cycle length 8·n + 4, n >= 2, 1 macro(s), first cycle (6
+S(SSS(S(SS))S)(SSS)S	loop_prover.py	auto_prover.py: timeout | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 2, 7 loop(s) per cycle, window 3, cycle length 2·n + 22, n >= 5, 4 macro(s), first cycle (7756, 7
+S(SSS)S(SSSS(SS))	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 4001030240010303, |λ| = 7, E = C_(n+2), driver 26 steps, j >= 1, first cycle (13566, 40), cross-c
+SSS(S(SS(SS)SS))SS	loop_prover.py	auto_prover.py: timeout | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 023, 7 loop(s) per cycle, window 4, cycle length 21·n + 99, n >= 1, 8 macro(s), first cycle (8198
+S(S(SS(S(SS)))S)S(SSS)	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: second element not a layer | loop_prover.py: PROVED  (B = 3120, 2 loop(s) per cycle, window 3, cycle length 8·n + 36, n >= 1, 2 macro(s), first cycle (7388
+S(S(S(SS))SS)S(SSS)S	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: second element not a layer | loop_prover.py: PROVED  (B = 3120, 2 loop(s) per cycle, window 3, cycle length 8·n + 36, n >= 1, 2 macro(s), first cycle (7396
+S(S(S(SSS))(SSS))(SS)S	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 5, E = C_(n+2), driver 14 steps, j >= 1, first cycle (13594, 57), cross-check 40/
+S(SSSS)(SS)(S(SSSS))	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS)))S(S(S(SS)S))S	auto_prover.py	auto_prover.py: PROVED
+SS(SS)(S(SS)S)SSSS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 310, 3 loop(s) per cycle, window 3, cycle length 9·n + 28, n >= 1, 3 macro(s), first cycle (7410,
+S(S(S(SS))(SS))(S(SSS))S	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SSS)))(S(SSS))S	auto_prover.py	auto_prover.py: PROVED
+SS(SS)S(S(SS))S(SS)S	loop_prover.py	auto_prover.py: timeout | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 2, 7 loop(s) per cycle, window 3, cycle length 2·n + 44, n >= 4, 2 macro(s), first cycle (8850, 7
+S(S(SS(SS)SS))(SS)SS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: second element not a layer | loop_prover.py: PROVED  (B = 2031, 2 loop(s) per cycle, window 3, cycle length 8·n + 40, n >= 1, 2 macro(s), first cycle (7562
+S(S(S(S(S(SS))SS)))SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 021041, 1 loop(s) per cycle, window 4, cycle length 6·n + 14, n >= 1, 1 macro(s), first cycle (71
+SSS(SS)S(S(S(S(SS))S))	auto_prover.py	auto_prover.py: PROVED
+S(S(SS(S(S(SSS)))))SSS	auto_prover.py	auto_prover.py: PROVED
+S(S(SS)(SSS)S)(S(SS))S	auto_prover.py	auto_prover.py: PROVED
+S(S(SS))SS(S(SSSS))S	auto_prover.py	auto_prover.py: PROVED
+S(S(SS)S)(S(SS(SS)))SS	auto_prover.py	auto_prover.py: PROVED
+S(S(SS)SSS)SSS	auto_prover.py	auto_prover.py: PROVED
+S(S(SS)(S(SSSS))S)SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 021041, 1 loop(s) per cycle, window 4, cycle length 6·n + 16, n >= 2, 1 macro(s), first cycle (72
+S(S(S(SSS)))S(SSSS)	auto_prover.py	auto_prover.py: PROVED
+SS(SS)S(S(S(SS)))S(SS)	comb_prover.py	auto_prover.py: no scheme | comb_prover.py: PROVED  (B = 12111023, |λ| = 8, E = C_(n+2), driver 35 steps, j >= 1, first cycle (13557, 54), cross-check 40/
+S(SS(SS)(SS)S)(SSS)S	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 5, E = C_(n+2), driver 14 steps, j >= 1, first cycle (13613, 57), cross-check 40/
+S(SS)(S(S(SS)))(S(SS)(SS))(S(SS)(SS)(S(SS)(S(S(SS)))(S(SS)(SS))))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 204020, 1 loop(s) per cycle, window 3, cycle length 6·n + 13, n >= 1, 1 macro(s), first cycle (71
+SS(SSS)(S(SS)(SS(SSS)))(SS(SSS)(SS(SSS)(S(SS)(SS(SSS)))))	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 210302210303, |λ| = 9, E = C_(n+2), driver 34 steps, j >= 1, first cycle (13455, 45), cross-check
+SS(SSS(SS))(S(SS))SS	loop_prover.py	auto_prover.py: timeout | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 2, 15 loop(s) per cycle, window 3, cycle length 5·n + 86, n >= 2, 7 macro(s), first cycle (9119, 
+SSSSS(S(SS)S)(SSS)	auto_prover.py	auto_prover.py: PROVED
+S(S(SS))S(SSS)(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0402022, 1 loop(s) per cycle, window 4, cycle length 7·n + 13, n >= 1, 1 macro(s), first cycle (6
+SSS(SSS)(SS)(SSSS)	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS(SS))))(SS)SSS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0312, 2 loop(s) per cycle, window 4, cycle length 8·n + 22, n >= 1, 2 macro(s), first cycle (7488
+SSS(SS(SS)S)SSSS	auto_prover.py	auto_prover.py: PROVED
+S(SS(S(SS)S))(SS)(SSS)	auto_prover.py	auto_prover.py: PROVED
+S(S(SS)SSS)S(SSS)S	auto_prover.py	auto_prover.py: PROVED
+SS(S(SS))(S(SS))(SS)SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 02040203, 1 loop(s) per cycle, window 4, cycle length 8·n + 12, n >= 1, 1 macro(s), first cycle (
+S(SS)S(S(SS(SS)S)S)S	auto_prover.py	auto_prover.py: PROVED
+SSS(SS)(S(S(SS))SS)S	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS))S(S(SS)S))SS	auto_prover.py	auto_prover.py: PROVED
+SSS(SS)(S(SS)SS)(SS)	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: cycle starts not combs over one base | loop_prover.py: PROVED  (B = 310, 2 loop(s) per cycle, window 3, cycle length 6·n + 20, n >= 1, 2 macro(s), first cycle (7432,
+S(SS)(S(SS)SS)SSSS	auto_prover.py	auto_prover.py: PROVED
+S(S(SS)S)SSSS	auto_prover.py	auto_prover.py: PROVED
+S(SS(SSS))S(S(S(SS)))S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 10411, 2 loop(s) per cycle, window 4, cycle length 10·n + 25, n >= 2, 2 macro(s), first cycle (72
+SSS(S(SS)(SS))(SS)SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: block lemma fails | loop_prover.py: PROVED  (B = 202040, 1 loop(s) per cycle, window 3, cycle length 6·n + 10, n >= 1, 1 macro(s), first cycle (69
+S(SSS(SS(SS)))SSS	auto_prover.py	auto_prover.py: PROVED
+S(SS(SS)S)SS(SS)SS	auto_prover.py	auto_prover.py: PROVED
+S(S(SSS)(SS))S(S(SS)S)	auto_prover.py	auto_prover.py: PROVED
+SSSSS(S(SSS))(SS)S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0220402, 1 loop(s) per cycle, window 4, cycle length 7·n + 13, n >= 1, 1 macro(s), first cycle (6
+S(SSSS)(SS)S(SSS)	auto_prover.py	auto_prover.py: PROVED
+SSS(S(S(SS))(SSS))SS	auto_prover.py	auto_prover.py: PROVED
+SSS(SSS)(SS(S(SS)))S	auto_prover.py	auto_prover.py: PROVED
+S(SS(SS))SSSSSSS	auto_prover.py	auto_prover.py: PROVED
+SS(SS)(SS)(SS)(S(S(SS)))	auto_prover.py	auto_prover.py: PROVED
+S(S(S(S(SS))))S(SSS)SS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0312, 3 loop(s) per cycle, window 4, cycle length 12·n + 26, n >= 1, 3 macro(s), first cycle (721
+S(SSS(S(SS)SS))(SS)S	auto_prover.py	auto_prover.py: PROVED
+S(SSS)(S(SS(SS))S)SS	auto_prover.py	auto_prover.py: PROVED
+S(SS)SS(S(S(S(S(SS)))))S	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS)S)(S(SS)))(SS)S	loop_prover.py	auto_prover.py: no scheme | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 023, 2 loop(s) per cycle, window 4, cycle length 6·n + 82, n >= 1, 3 macro(s), first cycle (8978,
+SSSS(S(SS)(SS(SS)))S	auto_prover.py	auto_prover.py: PROVED
+S(SSSS)(SS)(SS(SS)(S(SSSS)(SS)))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 02030204, 1 loop(s) per cycle, window 4, cycle length 8·n + 14, n >= 0, 1 macro(s), first cycle (
+S(SSS)(SS)(S(SS))SSS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: cycle starts not combs over one base | loop_prover.py: PROVED  (B = 13003, 2 loop(s) per cycle, window 3, cycle length 10·n + 71, n >= 0, 2 macro(s), first cycle (81
+S(SS(SSSS))(SS)SSS	auto_prover.py	auto_prover.py: PROVED
+SSS(S(SSS)(SSSS))S	auto_prover.py	auto_prover.py: PROVED
+S(S(SS(SS))(S(SS)S))SS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 031, 3 loop(s) per cycle, window 4, cycle length 9·n + 22, n >= 1, 3 macro(s), first cycle (7210,
+SSS(S(SS))(SS)SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 20040, 1 loop(s) per cycle, window 4, cycle length 5·n + 9, n >= 1, 1 macro(s), first cycle (6847
+SS(SS)(SS)(SSS)(S(SS))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 41103110, 1 loop(s) per cycle, window 3, cycle length 8·n + 22, n >= 2, 1 macro(s), first cycle (
+S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS))))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))(S(S(S(S(SS))))(S(SS)(S(S(S(SS))))(S(S(S(S(SS)))))))))))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 041111051111, 1 loop(s) per cycle, window 4, cycle length 12·n + 38, n >= 1, 2 macro(s), first cy
+S(SSS)(SS)(SS)SSSS	auto_prover.py	auto_prover.py: PROVED
+S(SSSSS)S(S(SS)(SS))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 102030402022, 1 loop(s) per cycle, window 4, cycle length 12·n + 14, n >= 1, 1 macro(s), first cy
+S(S(SSSSS))(SSS)S	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 5, E = C_(n+2), driver 14 steps, j >= 1, first cycle (13606, 57), cross-check 40/
+SS(S(SS))S(SS)SSSS	auto_prover.py	auto_prover.py: PROVED
+SSS(SS)(SS)SS(SSS)	auto_prover.py	auto_prover.py: PROVED
+S(S(SSS)S)S(S(S(S(SSS)S)S))	auto_prover.py	auto_prover.py: PROVED
+S(SS)(S(SS(SS)))S(SS)	auto_prover.py	auto_prover.py: PROVED
+S(S(SSS))(S(S(S(SS))))S	comb_prover.py	auto_prover.py: no scheme | comb_prover.py: PROVED  (B = 21110222111023, |λ| = 7, E = C_(n+2), driver 29 steps, j >= 1, first cycle (13935, 43), cross-che
+SSS(S(SS)(SS)S)S	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 202203, |λ| = 4, E = C_(n+2), driver 13 steps, j >= 1, first cycle (13395, 65), cross-check 47/47
+S(S(S(SS(S(SS)))SS))SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 1050201, 1 loop(s) per cycle, window 4, cycle length 7·n + 12, n >= 2, 1 macro(s), first cycle (6
+S(SS)S(SSS)S(SS)	auto_prover.py	auto_prover.py: PROVED
+S(SSS)(SS)S(S(SS))(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: driver not derived | loop_prover.py: PROVED  (B = 10311041, 1 loop(s) per cycle, window 4, cycle length 8·n + 22, n >= 2, 1 macro(s), first cycle (
+S(S(SS)(SS))(SS)S(SSS)	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SS)))(SS(S(S(S(SS)))))(SS)(SS(S(S(S(SS)))(SS(S(S(S(SS)))))(SS)))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: block lemma fails | loop_prover.py: PROVED  (B = 204020, 1 loop(s) per cycle, window 3, cycle length 6·n + 17, n >= 1, 1 macro(s), first cycle (73
+S(S(S(S(SS))(SS)S))SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 0220402, 1 loop(s) per cycle, window 4, cycle length 7·n + 13, n >= 1, 1 macro(s), first cycle (6
+SSSS(SS)S(S(SS)SS)	loop_prover.py	auto_prover.py: no scheme | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 10102105, 2 loop(s) per cycle, window 5, cycle length 16·n + 46, n >= 0, 2 macro(s), first cycle 
+S(SS)S(S(S(SS)S)SS)S	loop_prover.py	auto_prover.py: no level family | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 03020402, 1 loop(s) per cycle, window 4, cycle length 8·n + 39, n >= 1, 1 macro(s), first cycle (
+S(SS)(S(SSS))S(SS)(SS)	auto_prover.py	auto_prover.py: PROVED
+S(S(S(SSSS))S)S(SS)	loop_prover.py	auto_prover.py: no level family | comb_prover.py: driver not derived | loop_prover.py: PROVED  (B = 210410, 1 loop(s) per cycle, window 3, cycle length 6·n + 8, n >= 2, 1 macro(s), first cycle (688
+SSS(SS(SS))(S(S(SS))S)	loop_prover.py	auto_prover.py: timeout | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 1102303, 3 loop(s) per cycle, window 4, cycle length 21·n + 42, n >= 0, 3 macro(s), first cycle (
+S(SS(SS))S(SSSSSS)	auto_prover.py	auto_prover.py: PROVED
+S(SS)(SS)(SS)SS(S(SS))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: block lemma fails | loop_prover.py: PROVED  (B = 04110311, 2 loop(s) per cycle, window 4, cycle length 8·n + 63, n >= 2, 1 macro(s), first cycle (
+S(S(S(S(S(SSS))))S)SSS	auto_prover.py	auto_prover.py: PROVED
+SSS(SSSS)(S(SSSS))	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 5, E = C_(n+2), driver 14 steps, j >= 1, first cycle (13591, 57), cross-check 40/
+SSSS(S(S(SS)))(SS)(SS(SSSS(S(S(SS)))(SS)))	loop_prover.py	auto_prover.py: no level family | comb_prover.py: block lemma fails | loop_prover.py: PROVED  (B = 202040, 1 loop(s) per cycle, window 3, cycle length 6·n + 14, n >= 1, 1 macro(s), first cycle (71
+S(S(S(S(S(SS)))(SS)))S(SS)	loop_prover.py	auto_prover.py: no scheme | comb_prover.py: front not constant at block starts | loop_prover.py: PROVED  (B = 03031, 1 loop(s) per cycle, window 4, cycle length 5·n + 10, n >= 1, 1 macro(s), first cycle (690
+S(S(SS)(S(SS)(SS)S))SS	loop_prover.py	auto_prover.py: no level family | comb_prover.py: block lemma fails | loop_prover.py: PROVED  (B = 031021041, 1 loop(s) per cycle, window 4, cycle length 9·n + 24, n >= 0, 1 macro(s), first cycle 
+S(S(S(S(S(SS)))))SSS(SS)	comb_prover.py	auto_prover.py: no level family | comb_prover.py: PROVED  (B = 30023003, |λ| = 7, E = C_(n+2), driver 17 steps, j >= 1, first cycle (13761, 57), cross-check 40/
+S(SS)(SSS)(SS(SS))SS	loop_prover.py	auto_prover.py: resume pattern not computable | comb_prover.py: layer not constant | loop_prover.py: PROVED  (B = 00313, 2 loop(s) per cycle, window 5, cycle length 10·n + 18, n >= 1, 2 macro(s), first cycle (73
+S(S(S(S(SS)S)S)SS)SS	auto_prover.py	auto_prover.py: PROVED

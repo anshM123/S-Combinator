@@ -1,0 +1,51 @@
+# Nr=8 Nc=5 contexts=351 reps=626 classes=24 budget=200
+class 0 HN=1 count 458 ctxHN 351 rep S
+class 1 HN=1 count 1 ctxHN 347 rep S(SS)
+class 2 HN=1 count 12 ctxHN 350 rep SSS
+class 3 HN=1 count 1 ctxHN 344 rep S(S(SS))
+class 4 HN=1 count 12 ctxHN 346 rep S(SSS)
+class 5 HN=1 count 20 ctxHN 348 rep SS(SS)
+class 6 HN=1 count 6 ctxHN 347 rep S(SS)S
+class 7 HN=1 count 11 ctxHN 349 rep S(S(S(SS)))
+class 8 HN=1 count 6 ctxHN 350 rep S(S(SS)S)
+class 9 HN=1 count 2 ctxHN 348 rep SS(S(SS))
+class 10 HN=1 count 23 ctxHN 345 rep S(SS)(SS)
+class 11 HN=1 count 11 ctxHN 336 rep S(S(SS))S
+class 12 HN=1 count 5 ctxHN 345 rep S(SS(S(SS)))
+class 13 HN=1 count 6 ctxHN 333 rep S(S(S(SS))S)
+class 14 HN=1 count 6 ctxHN 328 rep SSS(S(SS))
+class 15 HN=1 count 21 ctxHN 335 rep S(SS)S(SS)
+class 16 HN=1 count 11 ctxHN 349 rep S(SS(SS))S
+class 17 HN=1 count 1 ctxHN 350 rep S(SS)(S(S(SS)))
+class 18 HN=1 count 1 ctxHN 316 rep S(S(SS))(S(SS))
+class 19 HN=1 count 1 ctxHN 317 rep S(SSS)(S(SS))
+class 20 HN=1 count 5 ctxHN 303 rep S(S(S(SS))S)S
+class 21 HN=1 count 1 ctxHN 325 rep S(S(S(SS)))(S(SS))
+class 22 HN=1 count 1 ctxHN 347 rep SS(S(SS))(S(SS))
+class 23 HN=0 count 4 ctxHN 235 rep SSS(S(SS))(SS)
+# product table (rows a, cols b: class of rep(a) rep(b); -1 = new class); new=5
+0 3 4 7 0 0 8 7 0 12 0 13 0 0 0 0 8 0 0 0 0 0 0 -1 
+6 10 0 17 0 0 0 0 0 0 10 0 0 0 14 15 0 17 -1 15 20 21 22 23 
+5 14 0 15 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 23 
+11 18 15 14 0 0 0 15 0 15 22 0 0 0 14 15 0 17 21 15 20 21 22 23 
+0 19 15 15 0 11 0 15 0 19 0 0 0 0 15 15 0 0 15 15 20 15 0 23 
+2 15 15 15 0 0 20 15 0 15 0 0 0 0 0 0 20 0 0 0 0 0 0 23 
+10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 23 
+0 21 15 -1 0 0 0 15 0 15 0 0 0 0 0 0 0 0 0 0 20 0 0 23 
+0 0 0 0 0 0 20 0 0 0 0 0 0 0 0 0 20 0 0 0 20 0 0 23 
+6 22 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 23 
+0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 23 0 0 23 23 23 
+15 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 23 
+11 -1 15 15 0 0 0 15 0 15 0 0 0 0 15 15 0 0 15 15 20 15 0 23 
+20 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 23 
+0 23 0 0 0 0 0 0 0 0 23 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 23 0 0 0 0 0 0 0 0 0 0 0 0 23 
+0 23 0 0 0 0 0 0 0 0 23 0 0 0 0 0 0 0 23 0 0 0 0 0 
+20 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+23 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 23 0 0 0 0 0 0 0 0 23 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 23 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+# well-definedness check: tested 625 products, inconsistent 101
