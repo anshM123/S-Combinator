@@ -995,3 +995,97 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
   two barriers that never disappear, so the bottom is never read before an h1-/h2-front; an h1-front is a phase-2
   CALL, an h2-front is excluded by (II); so F is p-headed and phase 3 re-executes.  This would remove BOTH replay
   guards of pa_main (re-creation of w.y is harmless in the abstract formulation; a (w.y)-prefixed front is case I).
+* 04:41 r3/classify.py, r3/fc0.py (COMPUTATIONALLY CERTIFIED, exhaustive right combs <= 11 leaves, 1,083 real
+  proper position-3 transfers): new classes — FH/FHL 421; I-gen ('phase 2's list starts with args(V) at some time
+  before its transfer', GCL applies) 5 (4 of the 5 old OPEN pattern-beta-other cases + 1 multi); single-wrapper
+  pattern alpha 605, pattern beta with c0 = S.a1 32, pattern beta other 1 (S(S(SS))S(S(SS)(S(Sp)))); multi-wrapper
+  M-IIa 18, M-I-Ln 1.  KEY OBSERVATION: define F(g) := the first atom-headed front of the run of args(g) ++ [h1, h2]
+  (h1, h2 fresh atoms; while no h1-/h2-front occurs, h1- and h2-headed elements are two barriers, so the list never
+  gets short and nothing below them is ever read).  For all 642 single-wrapper non-FH handlers <= 11 leaves
+  (w = b0.c0): F(c0) = p in 638; F(c0) = h1 in 4, all of class I-gen.  If F(c0) is not h1/h2, the replay needs NO
+  phase-2 hypothesis at all: after the V-run's first c0-prefixed opening args(c0) ++ [e1, e2 | B'] the run is the
+  image of the abstract run under the ATOM substitution (h1 -> e1, h2 -> e2, p -> c), so it reaches c (REEXEC)
+  before any p'-front.  Pattern alpha implies (F(c0) not in {h1, h2}) or I-gen, because phase 2 runs c0 at the glue
+  on (y, w.y): an h1-front would be a phase-2 CALL, an h2-front opens w.y, i.e. I-gen.
+* 04:42 (r3/fc0.py t 7 4 9, targeted family, 3,686 single-wrapper real transfers) F(c0) = p in 2,343 non-FH cases;
+  F(c0) = h2 in 4 (pattern alpha, the 4 old 'guard failures', all I-gen); F(c0) = h1 in 108 (104 with b0 = S,
+  all I-gen; 4 with b0 != S, NOT I-gen, e.g. S(S(SS))(SS)(S(S(SS))(S(Sp)))).  In those 4 the V-run never reaches a
+  c0-prefixed front: w = SS.c0, args(b0) = [S], so [S, c0, y, ...] -> [y, c0.y, g1, ...] is a y-front (phase 3:
+  non-proper p'-front with the bare y at position 3).  Refinement: the V-run of w = b0.c0 is the barrier phase of
+  b0's code; its abstract outcome is F(b0) (k1 = c0, k2 = y): F(b0) = h2 is an x2-front (non-proper, bi_x2),
+  F(b0) = h1 is the x1-front, after which F(c0) decides.  So R3 can fail for a single wrapper only if
+  F(b0) = h1 AND F(c0) in {h1, h2} AND not I-gen: no such real case exists (<= 11: 0 of 836; targeted: 0 of 3,686).
+* 04:48 (r3/mw.py 11 and t 7 4 9; r3/beta.py 11) Multi-wrapper non-FH handlers: in the V-run the innermost level
+  Ln = vn.y is never opened in 10/20 (<= 11) and 259/592 (targeted) cases (guarded phase: no y-front at all); when
+  it is opened, the V-run continues as a single-wrapper V-run of vn = b0.c0 with bottom B; B[0] is the bare y
+  (phase-3 frame) in all non-I-gen cases, a proper comb only in I-Ln cases (phase 2 itself opens an Ln-prefixed
+  element).  Pattern beta (single wrapper): F(a1) = p in all cases (forced: phase 2 runs a1 at the glue on
+  (y, w.y)); the V-run opens an a1-prefixed element in 22 of 37 cases (<= 11), and then the glue-time alignment
+  applies; otherwise F(c0) = p or (b0 = S, F(c0) = h1: the V-run's first c0-opening has e1 = the bare bottom
+  atom, so it CALLs).  Plan: (1) Lean: general correspondence (pure atom substitution + run_append + a two-hole
+  barrier lemma; no replay guards), Theorem PAF (single wrapper, F(c0) not h1/h2 => no proper phase-3 transfer,
+  hypothesis on the handler only), I-gen theorem, pattern alpha => (F(c0) ok or I-gen).  (2) keep analysing
+  pattern beta and multi-wrapper.
+* 04:53 MACHINE-CHECKED (in progress file agent_work/wip/R3A.lean = PA.lean + new sections; compiles, no sorry;
+  axioms propext, Classical.choice, Quot.sound): asub_step / asub_run (a head run commutes with ANY atom
+  substitution - no guard), nHB_run / nHB_stop (two 'hole' atoms are two barriers: a run from a list with >= 2
+  hole-headed elements can only stop at an atom-headed front), run_first_none, and **THEOREM PAF (`paf_main`)**:
+  for a single wrapper w = b0.c0 (b0, c0 S-headed, y-free; b0 = S allowed), if the abstract run of
+  args(c0) ++ [h1, h2] (h1, h2 fresh atoms) never reaches an h1- or h2-headed front, then the next phase's datum
+  w[p:=c].p' never makes a proper transfer.  The hypothesis is a property of the HANDLER ALONE (no replay guard,
+  no phase-2 hypothesis); `paf_post` is the guard-free replacement of post_replay.
+* 04:58 MACHINE-CHECKED (wip/R3A.lean, compiles, no sorry): **`gcl`** (general correspondence lemma: one abstract
+  list A, two atom substitutions s2 / s3 with one bottom empty; if s3 maps atoms to atom-headed terms and maps to
+  a var 0-headed term only atoms that s2 maps to a term headed by a different atom, and the s2-run later reaches a
+  p-front list with >= 3 elements, then the s3-run never reaches a var 0-headed front) and **THEOREM IGEN
+  (`igen_main`)**: if a run (phase 2, from ANY list L0) reaches args(V) ++ B2 at time t and a p-front list with >= 3
+  elements at a time T' >= t, then the next datum V[y:=p', p:=c] (V S-headed, any number of wrappers) never
+  reaches a p'-headed front at all.  Proof: 4 cases on |B2| (holes H, H+1, H+2 for the bottom), each an instance
+  of gcl.  This covers the old 'guard failures' (phase 2 re-opens w.y) and the I-gen class of r3/classify.py.
+* 05:00 MACHINE-CHECKED: new file agent_work/lean/R3A.lean (= PA.lean lines 1-1574 verbatim + new sections; Lean 4.35
+  core, no sorry; axioms propext, Classical.choice, Quot.sound): paf_main, gcl, igen_main and **THEOREM ALPHA
+  (`alpha_main`)**: if the earlier phase (ANY run from a list L0) passes through the glue list [c0, w, y] ++ R0 of
+  a single wrapper w = b0.c0 (b0, c0 S-headed, y-free; fresh hole atoms) and later reaches a p-front list with
+  >= 3 elements, then in the next phase (datum w[p:=c].p') every p'-headed front has a y-free element or the bare
+  y at position 3.  NO replay guard and NO other hypothesis on the phase-2 run: either c0's abstract run never
+  calls its two arguments (PAF), or it calls the first (impossible: that is a y-front, a CALL, of the earlier
+  phase) or the second (then the earlier phase opens a copy of w.y, i.e. lays out args(w.y), and IGEN gives no
+  p'-front at all).  This removes all hypotheses of pa_main except the pattern-alpha glue itself, which is a
+  structural fact (creation lemma).  Remaining for single wrappers: pattern beta (glue [a1, w, y], a1 != c0).
+* 05:04 (r3/beta2.py 11 and t 7 4 9) Pattern beta anatomy.  The glue front a1 always has F(a1) = p unless phase 2
+  re-opens w.y (forced by the glue, same argument as ALPHA).  In the beta1 sub-case (w released from a front
+  a = (S.a1).w, |args a| = 2) the ABSTRACT run of c0 opens an a1-prefixed element in 33/33 (<= 11) and 178/185
+  (targeted) non-I-gen cases, which forces F(c0) = p and PAF applies; the 7 others: 3 I-gen, 4 with F(b0) = h2
+  (the V-run never reaches a c0-prefixed front).  beta2 (|args a| = 3, w and y both spine arguments of a): all 105
+  cases are I-gen.  Mechanism seen in examples: (S.a1).w is BUILT BY c0's OWN CODE run on w (c0 = S(SS).(S.a1)
+  glues S.a1 onto its first argument), so the glue is a sub-run of an execution of c0.  The negative controls of
+  phase 4 (general phase-3 shapes that do transfer, e.g. w = S(S(S(SS)(SS)p))) are exactly b0 = S with F(c0) = h2:
+  c0 calls its second argument; for a real handler this would make phase 2 call y as soon as it executes c0 on
+  (y, w.y) or opens w.y (both lead to an h2-front headed by y).  Not yet a proof for pattern beta.
+* 05:10 COMPUTATIONALLY CERTIFIED (r3/cover.py; classes = hypotheses of the R3-agent theorems, checked per case;
+  PAX and PAM-F not yet formalised): exhaustive right combs <= 11 leaves: 1,083/1,083 covered (FH 421, YD 2,
+  IGEN 4, ALPHA 605, PAF 33, PAM-F 18); all S-headed ordered data <= 11 leaves (r3/cover.py o 11): 2,621/2,621
+  (FH 1,292, YD 2, IGEN 8, ALPHA 1,245, PAF 52, PAM-F 22); targeted family K <= 7, wrappers <= 4, tail <= 9
+  (r3/cover.py t 7 4 9): 5,059/5,086 (FH 1,616, YD 53, IGEN 110, ALPHA 2,588, PAF 178, PAX 4, PAM-F 510), OPEN 27
+  (all multi-wrapper, e.g. S(S(S(S(SS))S))(S(SS(SS)(Sp)))).  ALPHA and IGEN carry NO per-case hypothesis; PAF,
+  PAX, PAM-F carry a hypothesis on the HANDLER only.  Phase 3 never proper in all cases (sanity).
+* 05:12 MACHINE-CHECKED (wip/R3B.lean = R3A.lean + part 7; compiles, no sorry): **`pax_main`** (single wrapper: if
+  the next phase never reaches a c0'-prefixed front, every p'-front is non-proper) and **`pamf_main`** (PAM with the
+  replay hypothesis replaced by the handler-only F(c0) condition via paf_post, and the bottom condition relaxed to
+  'B0ok or b0 = S': with b0 = S the first Ln'-opening is followed directly by the c0'-opening, `core_bareS`).
+  Refined targeted coverage (r3/cover.py t 7 4 9): open 19 (all multi-wrapper); of these 4 never open Ln' in the
+  next phase (guarded phase forever: no p'-front at all; class LN0 added).
+* 05:14 **REFUTED: Conjecture R3 as stated (for ALL S-headed ordered y-free data).**  Counterexample (checked by direct
+  run, r3/trace23.py; ordered in the sense of phase2_general.ordered; 11 leaves, TWO occurrences of p):
+    D = S(Sp)(S(S(S(SS)(SS)p))):  [D, x, y, r] -> [Sp, w, y, xy, r] -> [p, y, w.y, xy, r]   (w = S(S(S(SS)(SS)p)))
+  a proper position-3 transfer, innermost-dirty (w contains p) as INNER.lean says; the next datum is
+  w[p:=c].p' = S(S(S(SS)(SS)c))p' and its run reaches, after 7 steps,
+    [p'y, c(p'y), c(SSc)(p'y), y(p'y), xy, r]
+  a p'-front with the PROPER comb c(SSc).(p'.y) at position 3.  (Phase 4's datum c(SSc).(c'.p'') is frozen-headed,
+  so this chain has exactly 2 proper transfers: the bound '<= 2' survives, the bound '<= 1 from an ordered start'
+  is FALSE for ordered data with two occurrences of p.)  Mechanism: the pattern-beta glue [Sp, w, y] hands over an
+  ARBITRARY w; with w = S.c0 and F(c0) = h2 (c0 calls its second argument) the next phase calls p' with a proper
+  comb - exactly the negative-control shapes of phase 4.  The exhaustive census (chain_len.py) covered 1-hole
+  contexts only (ONE occurrence of p); the right-comb data that the '<= 2' bound needs also have one occurrence.
+  Consequence for the task: the correct target is R3 for right-comb data (enough for '<= 2') and possibly for
+  single-occurrence ordered data (needed for '<= 1 from an ordered start').  Checking both next.

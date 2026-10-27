@@ -1,0 +1,20 @@
+('ALPHA', 'S', "p'-front nonproper") 413
+('ALPHA', 'S', 'reexec') 832
+('FH', 'M', 'budget') 3
+('FH', 'M', 'call') 74
+('FH', 'M', 'reexec') 233
+('FH', 'S', 'reexec') 982
+('IGEN', 'S', 'call') 8
+('PAF', 'S', "p'-front nonproper") 15
+('PAF', 'S', 'reexec') 37
+('PAM-F', 'M', "p'-front nonproper") 4
+('PAM-F', 'M', 'reexec') 18
+('YD', 'M', 'reexec') 2
+total 2621 open 0
+example ALPHA ['SS(SS)(Sp)', 'SSSS(Sp)', 'SSS(S(SS)p)']
+example FH ['SSS(Sp)', 'S(SS)Sp', 'SSS(S(pS))']
+example IGEN ['S(SS)S(SS(S(Sp)))', 'S(SS)S(SS(S(S(pS))))', 'S(S(SS))S(SS(S(Sp)))']
+example PAF ['SSS(S(SS))(S(Sp))', 'S(S(SS))(SS)(S(Sp))', 'S(SS)S(SS)(S(Sp))']
+example PAM-F ['SSS(S(SS(SS)(Sp)))', 'SSS(S(SSSS(Sp)))', 'S(SS)S(SS(SS)(Sp))']
+example YD ['S(S(S(S(SS))S))(S(SS)p)', 'S(S(S(SSS)S))(S(SS)p)']
+EXIT 0

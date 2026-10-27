@@ -11,6 +11,28 @@ the clock; '~' marks times reconstructed from `date` outputs.  From now on every
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
+## SUMMARY (refreshed 05:07 EDT by `date`; supersedes the INTERIM block below for the leftmost-path work)
+**Universality: no construction (unchanged).  Since 04:03 working on the coordinator's suggestion: the leftmost-path
+finite half for the joint classes (14,28), (14,26).  The finite half is NOT proved; new rigorous results below.**
+1. MACHINE-CHECKED lean/TheoremV.lean (1,231 lines, no sorry): **Theorem V** — for closed W0 and a variable x, the
+   leftmost walk of W0.x cannot go on forever while keeping x and never executing it (x-headed node or stuck round).
+   Closed reading: an infinite leftmost path always consumes (executes) or drops its last argument — the precise
+   form of 'the reload cycle N_i N_k S needs its fuel S'.  Ingredients: lean/Strip.lean (stripping theorem:
+   `final_shape`, `no_R_chain`, `no_R2_chain`), lean/StripV.lean (k = 1 round lemma `k1_round`, `no_k1_walk`),
+   W1+ (lean/W1F.lean), Lemma 8 / Cor. 8(ii) (main agent's BarrierJ.lean via lean/W2.lean).
+2. PROVED (elementary): **large-push lemma** — with o(S) = 0, o(q.v) = omega^o(q) (+) o(v) (right-spine ordinal),
+   every leftmost step decreases o except an 'o-large push' (a pushed multiplier q_i with o(q_i) >= o(q1)); an
+   infinite leftmost path has infinitely many.  So the finite half <=> component walks have finitely many o-large
+   pushes.  CERTIFIED census: <= 2 per walk (all component terms <= 10 leaves; 3,000 random 14-30 leaves), mostly
+   peels (stack copies); the quadratic family t_k of Prop. S has exactly one size-large push for every k <= 9.
+3. PROVED (elementary): **Scenario A** (bounded stack depth infinitely often) forces the multiplier above the frozen
+   fuel to trace an infinite RIGHTMOST Böhm path (q -> snd H(q)); left open: Scenario B (unbounded stack, Omega
+   type) and C (infinitely many jumps), and A itself needs the rightmost-path finite half (R19's open half).
+4. Counterexample hunts (EXPERIMENTALLY SUPPORTED, none found beyond the 16-leaf census): reload-assembling trees
+   (121,955 terms, <= 35 leaves), self-applications X X, X X S, S X X, X(SX), X S X for all X with 10-12 leaves,
+   gadget-alphabet trees (<= 4 letters, 5 running), random component terms; every non-ending walk is in an L36
+   flag-1 class.
+
 ## INTERIM 04:00 (refreshed 03:53 EDT by `date`; first version written ~02:38)
 **Status: no universal construction; no partial win (no non-PUP run).  Labels as in the entries below.**
 Main results (files in agent_work_U/; Lean files compile with ~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean):
@@ -346,3 +368,123 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   u.v has an hnf only if u's path ends at the leaf S, and then u.v and the 'tau-node' S tau_0 ... tau_r (tau = tail
   when u's path reaches S) have the same leftmost child.  Consequences: u in P (infinite path) => u.v = bottom (this
   is L36's row 9 = all 14); P(u.v) <=> P(tau-node) when u's path ends at S.
+* PROVED (elementary, 04:42 EDT `date`; agent_work_U/stackview.py, chainsrc.py, ordpush.py) — **multiplier-stack view and
+  the large-push lemma.**  Write every node of the leftmost path through its right spine, u = q1 (q2 (... (qd S))), and put
+  o(S) = 0, o(q.v) = omega^o(q) (+) o(v) (natural sum; o(u) < epsilon_0).  For u = q1.v: (i) q1 = S: child v (pop);
+  (ii) q1 = S p: child p, a subterm of q1 (jump); (iii) q1 with >= 2 spine args: the child is
+  c = q_{k-1}(...(q_0 v)) (Lemma 7(iii) / the Q10 tail chain: q_0 = second component of H(q1); a peel p = S x pushes
+  the current stack, a refill pushes the second component of H(p w)).  So o(child) < o(u) unless (iii) pushes some q_i
+  with o(q_i) >= o(q1) — an **o-large push**.  Since o is well-founded, **every infinite leftmost path has infinitely
+  many o-large pushes** (same with sizes |q| and the Dershowitz–Manna multiset order: 'large pushes').  This replaces
+  'new' steps (composite children) by a much rarer event as the thing a termination proof must control.
+* COMPUTATIONALLY CERTIFIED (04:30–04:42 EDT, `date`): over ALL component terms <= 11 leaves (11,946; largepush.py 11) the
+  number of size-large pushes per walk is 0 (11,528), 1 (377), 2 (38), 3 (3, all ending in bottom); over all component
+  terms <= 10 leaves (3,377; ordpush.py 10) the number of o-large pushes is 0 (3,332), 1 (40), 2 (5); sources of
+  o-large pushes: 67 peels (the pushed multiplier is a copy of the stack), 1 computed q_0.  The quadratic family t_k of
+  Proposition S (path length k^2 + 3k + 3) has exactly ONE size-large push for every k = 0..9: its long paths are pure
+  multiset descent.  The reload cycle has one large push per reload (source: computed q_0 = N_k (SS N_k)); the Omega
+  walk S(S(SS))(S(SS))(S(S(SS))(S(SS))) has one per reload too (source: peel).
+  => Reformulation (PROVED equivalent): the finite half for the component <=> component walks have finitely many
+  o-large pushes.  EXPERIMENTALLY SUPPORTED: at most 2 (o) / 3 (size) per walk.
+* EXPERIMENTALLY SUPPORTED (04:54 EDT, `date`; selfapp_hunt.py, selfapp_out.txt; rand_ord.py, rand_ord_1.txt; long_hunt2.py,
+  long_hunt2_4.txt): no counterexample to the finite half beyond the 16-leaf census.  (i) Self-applications X X, X X S,
+  S X X, X (S X), X S X for EVERY closed X with 10, 11, 12 leaves (5 x 76,444 terms, up to 25 leaves; leftmost walks
+  <= 300 nodes): every walk that does not end within 300 nodes is in an L36 flag-1 class (14 terms, all Omega-type),
+  and no flag-1 walk ends at S.  (ii) 3,000 random component terms with 14-30 leaves: at most 2 o-large pushes per
+  walk, no walk longer than 300 nodes.  (iii) all trees of <= 4 letters over 8 gadget letters (S, SS, SSS, S(SS), B,
+  M = S(S(SS))(S(SS)), SS(SS), S(SSS)): no flag-0 walk runs 400 nodes; at most 4 size-large pushes, and every walk
+  with >= 3 of them ends in a diverging round.
+* MACHINE-CHECKED (04:58 EDT, `date`): agent_work_U/lean/Strip.lean (402 lines, Lean 4 core, no sorry; axioms propext,
+  Classical.choice, Quot.sound) — **stripping theorem** for closed S-terms.  `final_shape`: if L has >= 2 elements
+  and the head run of L ++ [z] reaches a head normal form [c, d], then either c = z, the run of L alone reaches
+  [S, y] and d = y.z (the bottom z was never wrapped), or c is strictly larger than z.  `no_R_chain`: there is no
+  infinite sequence P0, P1, ... with H(P_j) = S S P_(j+1).  `no_R2_chain`: there is no infinite sequence
+  W0, W1, ... with H(W_j) = S (S S) W_(j+1).  (Proof: such a chain strips its common last argument S resp. S S and
+  becomes a chain of strictly smaller terms.)  COMPUTATIONALLY CERTIFIED cross-check (rchain_check.py 12): over all
+  closed terms <= 12 leaves the R-chains have length <= floor((n-1)/2) and the stripping step holds in 2,983/2,983
+  instances.
+* PROVED (paper, from machine-checked parts; 04:58 EDT) — **Theorem V (opaque fuel cannot drive an infinite leftmost path).**
+  Let W be closed and x a variable.  Along the leftmost walk of W.x, within finitely many nodes one of the following
+  happens: the walk reaches the leaf S or a node without hnf, x is dropped (the node becomes closed), or x is
+  executed (an x-headed node, or a round whose front is x-headed).  Proof: while x is kept, every node is W_j.x with
+  W_j closed: by W1+ (lean/W1F.lean) a round from args(W_j) ++ [x] that ends has a closed survivor (x dropped) or a
+  Fibonacci survivor fib W' k; k = 0 and even k give x-headed nodes; odd k >= 3 give a node whose list is
+  args(W') ++ [x, F_2, F_4, ..., F_(k-1)] with >= 2 data, all x-headed, so by Corollary 8(ii) (lean/BarrierJ.lean,
+  copied in lean/W2.lean) its round ends with a closed or x-headed survivor; nodes W_j.x with <= 1 argument in W_j
+  give child x or a closed child.  So x is kept forever only through k = 1 rounds W_j.x -> W_(j+1).x, and a k = 1
+  round forces H(W_j) = S (S S) W_(j+1) (the bottom is wrapped exactly once, by q = snd H(W_j); the remaining prefix
+  args(p) ++ [x], p = fst H(W_j), must reach [S, b] without touching the bottom, which (bottom = x) is possible only
+  in zero steps: args p = [S], p = S S).  no_R2_chain excludes an infinite such sequence.  [The k = 1 step is argued
+  on paper; it is the atom analogue of final_shape and is not yet formalised.]  EXPERIMENTALLY SUPPORTED cross-check
+  (opaque_walk.py 10): over all closed W <= 10 leaves, no walk of W.x keeps x unexecuted for 300 nodes.
+  Meaning: the reload cycle's fuel S is essential — a leftmost-path computation driven by closed code above an
+  untouched datum always halts, drops the datum or executes it (fuel must be consumed as S is in N_i N_k S).
+* PROVED (elementary, 04:58 EDT) — **Scenario-A structure.**  If an infinite leftmost walk has bounded stack depth infinitely
+  often (liminf of the right-spine depth d* < infinity), then from some node on the bottom part Z of the stack is
+  frozen, no jumps occur, and at the return times (depth d*) the multiplier directly above Z follows
+  q -> snd H(q): the chain from q.Z pushes q_0 = snd H(q) directly on Z, computed from q alone.  Hence **the
+  multiplier above the frozen fuel traces an infinite RIGHTMOST Böhm path** (reload: N_i N_k -> N_(i-1) N_k -> ... ->
+  B N_k -> N_k N_(k+1) -> ...).  So the leftmost finite half in Scenario A reduces to the rightmost-path finite half
+  (R19's open half) plus the excursions; Scenario B (unbounded stack: the Omega walk) and Scenario C (infinitely
+  many jumps) remain.
+* MACHINE-CHECKED (05:03 EDT, `date`): agent_work_U/lean/StripV.lean (772 lines, Lean 4 core, no sorry, no warnings;
+  axioms propext, Classical.choice, Quot.sound).  Namespace C = Strip.lean verbatim; namespace V = terms with
+  variables and STUCK atom-headed fronts (W1F semantics), with the embedding emb of closed terms
+  (`step_emb`, `reach_emb_inv`).  `V.k1_round`: if a closed list L (>= 2 elements) followed by a variable x reaches
+  the hnf [w.x, d] with w closed, then L alone reaches [S S, w] (H(S L) = S (S S) w) — the k = 1 step of Theorem V,
+  previously on paper.  `V.no_k1_walk`: there is no infinite sequence of closed W_j (>= 2 arguments) such that the
+  head run of W_j.x reaches an hnf with first component W_(j+1).x.  Theorem V is now: machine-checked core
+  (W1F + BarrierJ Cor. 8(ii) + StripV), with only the case split over the Fibonacci index k (k = 0, even k, odd
+  k >= 3, short nodes) on paper (LOG entry 'Theorem V' above).
+* MACHINE-CHECKED (05:07 EDT, `date`): **Theorem V, fully formalised** — agent_work_U/lean/TheoremV.lean (1,231 lines, Lean 4
+  core, no sorry; `#print axioms V.theorem_V`: propext, Classical.choice, Quot.sound).  Statement `V.theorem_V`: for a
+  closed S-term W0 and a variable x there is no infinite sequence u 0 = W0.x, u 1, u 2, ... with Child (u i) (u (i+1))
+  for all i (Child: the first argument of a node with <= 2 arguments, or the first component of the head normal form
+  reached by the head run of a node with >= 3 arguments, atom-headed fronts STUCK), every u i containing x and no u i
+  headed by x.  The file contains Strip.lean (namespace C), the k = 1 round lemma, W1+ (copied from W1F.lean), the main
+  agent's Lemma 8 / Corollary 8(ii) (copied from W2.lean / BarrierJ.lean) and the walk-level case analysis `v_step`
+  (k = 0, even k, odd k >= 3 via Cor. 8(ii), short nodes).  Closed-term reading (substitution x := f, paper): along
+  the leftmost path of a closed W0.f, within finitely many nodes the path ends, the occurrence f is dropped, or a
+  residual of f is executed.  So an infinite leftmost path always consumes its last argument — as the reload cycle
+  consumes the fuel S at every round.
+* EXPERIMENTALLY SUPPORTED (05:08 EDT, `date`; long_hunt2.py 5 -> long_hunt2_5.txt; rand_ord.py 2 -> rand_ord_2.txt):
+  (i) all 458,752 trees of exactly 5 gadget letters (S, SS, SSS, S(SS), B, M, SS(SS), S(SSS); up to 40 leaves):
+  of the 248,370 flag-0 terms with an hnf, 173,960 walks end at S and 74,410 hit the round budget (probably bottom);
+  NONE runs 400 nodes; size-large pushes per walk <= 4 (12 terms).  (ii) 6,000 random component terms with 25-60
+  leaves: <= 2 o-large pushes per walk, no walk reaches 300 nodes.  No counterexample to the finite half.
+* MACHINE-CHECKED (05:11 EDT, `date`): agent_work_U/lean/LargePush.lean (613 lines, Lean 4 core, no sorry; axioms propext,
+  Classical.choice, Quot.sound) — **large-push lemma** (size version).  `LP.chain_ms` (Lemma 7(iii) in multiplier
+  form): if q has >= 2 arguments and the head run of q.v reaches [c, d], then the right-spine multipliers of c are
+  ps ++ (those of v) for some list ps (the child is q_(k-1)(...(q_0 v))).  `LP.large_push_lemma`: there is no infinite
+  leftmost walk of closed S-terms in which no step is a large push (LargePush u c: u = q.v and some multiplier pushed
+  on v is at least as large as q).  Measure: the stack of multiplier sizes in the multiset order (`LP.SStep`,
+  well-founded by `LP.acc_all`).  So: **an infinite leftmost path has infinitely many large pushes**, and the finite
+  half for any set of terms is equivalent to 'every walk from it has finitely many large pushes' (census: <= 3 per
+  component walk up to 11 leaves, <= 4 over the 5-letter gadget trees).
+* COMPUTATIONALLY CERTIFIED (05:14 EDT, `date`; lp_positions.py 11): in the leftmost walks of all component terms <= 11
+  leaves, size-large pushes occur at computed-step index 0 (371), 1 (75), 2 (10), 3 (3), 4 (3) and nowhere later;
+  consecutive large pushes are 1-3 computed steps apart; 453 of 462 happen at component nodes.  So in this range the
+  walk spends its 'duplication capacity' at the start and then descends in the multiset order — unlike the reload
+  cycle, which performs one large push per reload forever.
+
+## 05:15 EDT — Finite-half report (self-contained, for the main agent)
+Target (coordinator 04:03): every term in the joint classes (14,28), (14,26) has a finite leftmost Böhm path.
+**Status: NOT proved.  No counterexample found.  Four rigorous structural results that any proof can use:**
+(a) MACHINE-CHECKED lean/LargePush.lean — large-push lemma: infinite leftmost path => infinitely many large pushes
+    (a computed step from q.v whose pushed multipliers include one at least as large as q).  Equivalently the finite
+    half for a set of terms <=> finitely many large pushes along each of their walks.  The main agent's obstacle
+    ('new' steps mix decreasing and growing slots) disappears for every step except large pushes, which are rare:
+    census <= 3 per component walk (<= 11 leaves), all within the first 5 computed steps; ordinal refinement
+    o(q.v) = omega^o(q) (+) o(v): <= 2 o-large pushes, mostly peels (stack copies).
+(b) MACHINE-CHECKED lean/TheoremV.lean — Theorem V: closed code above an untouched datum cannot drive an infinite
+    leftmost path (the last argument must be executed or dropped); the reload cycle executes its fuel S every round.
+(c) MACHINE-CHECKED lean/Strip.lean — stripping theorem (no infinite H(P_j) = S S P_(j+1) or
+    H(W_j) = S (S S) W_(j+1)); also: a fuel-S TAIL-CALL walk q_j.S -> q_(j+1).S (one push per step) is exactly a
+    sequence with H(q_j) = S p_j q_(j+1) and (p_j = S S or H(p_j) = S S y) — the reload cycle is one; whether such
+    sequences can start in the component is the class-dependent core of Scenario A.
+(d) PROVED (elementary) — Scenario A (bounded stack depth infinitely often) => the multiplier above the frozen fuel
+    traces an infinite rightmost Böhm path (q -> snd H(q)).
+Remaining for a proof: control large pushes from component nodes (Scenario A via a rightmost-path argument;
+Scenario B = unbounded stack, Omega-type self-application via peels; Scenario C = infinitely many jumps).
+Evidence files: reload_hunt2_out.txt, long_hunt2_4.txt, long_hunt2_5.txt, selfapp_out.txt, rand_ord_1.txt,
+rand_ord_2.txt; scripts in agent_work_U/*.py (classes.py, chainsrc.py, ordpush.py, largepush.py, lp_positions.py).

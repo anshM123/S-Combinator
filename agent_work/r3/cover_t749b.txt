@@ -1,0 +1,28 @@
+('ALPHA', 'S', "p'-front nonproper") 1158
+('ALPHA', 'S', 'reexec') 1430
+('FH', 'M', 'call') 2
+('FH', 'M', 'reexec') 806
+('FH', 'S', 'reexec') 808
+('IGEN', 'M', 'call') 2
+('IGEN', 'S', 'call') 108
+('PAF', 'S', "p'-front nonproper") 48
+('PAF', 'S', 'reexec') 130
+('PAM-F', 'M', "p'-front nonproper") 58
+('PAM-F', 'M', 'reexec') 452
+("PAM-F'", 'M', 'reexec') 8
+('PAX', 'S', "p'-front nonproper") 4
+('YD', 'M', 'call') 15
+('YD', 'M', 'reexec') 38
+('open', 'M', 'call') 3
+('open', 'M', 'reexec') 16
+total 5086 open 19
+example ALPHA ['SS(SS)(Sp)', 'SSSS(Sp)', 'SS(S(SS))(Sp)']
+example FH ['SSS(Sp)', 'SSS(SS)(Sp)', 'S(SS)SS(Sp)']
+example IGEN ['S(SS)S(SS(S(Sp)))', 'S(S(SS))S(SS(S(Sp)))', 'S(SS)(S(SS)S)(SS(S(Sp)))']
+example PAF ['S(S(S(SS)))S(S(SS)p)', 'SSS(S(SS))(S(Sp))', 'S(S(SS))(SS)(S(Sp))']
+example PAM-F ['S(SS)S(SS(SS)(Sp))', 'S(SS)(S(SS)S)(SS(SS)(Sp))', 'S(SS)S(SSSS(Sp))']
+example PAM-F' ['S(S(S(S(SS))S))(S(SS(SS)(Sp)))', 'S(S(S(SSS)S))(S(SS(SS)(Sp)))', 'S(S(S(S(SS))S))(S(SSSS(Sp)))']
+example PAX ['S(S(SS))(SS)(S(S(SS))(S(Sp)))', 'S(S(S(SS)))(SS)(S(S(SS))(S(Sp)))', 'S(S(SS))(SS)(S(S(SS))(S(S(SS)p)))']
+example YD ['S(S(S(S(SS))S))(S(SS)p)', 'S(S(S(SSS)S))(S(SS)p)', 'S(S(S(S(SS))S))(S(SS)(Sp))']
+example open ['SS(S(SS))(S(S(S(SS))(S(SS)p)))', 'SS(SS(S(SS)))(S(S(S(SS))(S(SS)p)))', 'SS(S(SS))(S(S(SSS)(S(SS)p)))']
+EXIT 0

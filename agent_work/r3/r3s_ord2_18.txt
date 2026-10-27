@@ -1,0 +1,8 @@
+  ... and phase 4 front-y 1
+  ... and phase 4 reexec 1
+R3 VIOLATIONS 2
+data 407670
+proper transfers 38666
+violation: D = S(Sp)(S(S(SSS(SS(pS)))))  V = S(S(SSS(SS(pS))))y  V3 = S(SS(c1S))(py)
+violation: D = S(Sp)(S(S(S(SSS)p)))  V = S(S(S(SSS)p))y  V3 = c1(py)
+EXIT 0

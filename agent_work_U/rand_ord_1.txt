@@ -1,0 +1,7 @@
+tried 8026 component 3000 [((0, 'bot'), 1274), ((0, 'leaf'), 1655), ((1, 'bot'), 27), ((1, 'leaf'), 37), ((2, 'bot'), 4), ((2, 'leaf'), 3)] 61 s
+(2, 'bot', 'S(SS(SS)(SSS)(S(SS)))(SSS(S(SS)))')
+(2, 'bot', 'SSS(S(SS))(S(S(SS))(S(SSS)(S(SS))(S(SSS)(SS)(SS))(SS)))')
+(2, 'bot', 'SSS(S(SS))(SS(SSS)(S(SS)))')
+(2, 'leaf', 'S(S(SS))S(S(S(SS))(S(S(SS)(SSS))S))')
+(2, 'leaf', 'SS(SSS)(S(SS))(SS(S(SS(SSS)S)))')
+(2, 'leaf', 'SSS(SSS(S(S(SS))(SS)(SSS(S(SS)))))')

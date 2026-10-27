@@ -1,0 +1,7 @@
+tried 24311 component 6000 [((0, 'bot'), 3922), ((0, 'leaf'), 1984), ((1, 'bot'), 59), ((1, 'leaf'), 28), ((2, 'leaf'), 7)] 186 s
+(2, 'leaf', 'S(S(SS))S(S(S(SS))(SS(SS)(S(SS(SS)(SS(SS))S))(S(SS)(S(SS))(S(SS)(SS)S)(S(SSS(SS))(SS(SS))(SSS(SS))))))')
+(2, 'leaf', 'S(SSS(SS(SS)(S(S(SS)))(SS)))(SS(SS(SS)(SSS))(S(SS)(S(S(SS(SS)))))(SSS(SS(SSSS))(S(S(SS)S))))')
+(2, 'leaf', 'SS(SS(SS))(S(SS))(SS(S(SS(S(SS))(SSS(SS)SS)(S(SS)SS))(SSSS)))')
+(2, 'leaf', 'SS(SS(SSS(SSS))(SSS(S(SS(S(SS))))))(S(S(SS))(SS)(SS(SS)(S(SS))))')
+(2, 'leaf', 'SS(SSS)(S(SS))(SS(S(SS)(SS(S(SS)(SSS)(SS))S)(SS)(S(SS)S(SS(S(SS)(SS))(SS(SSS))))))')
+(2, 'leaf', 'SSS(S(SS(S(S(SS)))(S(S(SS))S(S(S(SS))S)))(S(SSS)(S(SS))(S(SS)(SS(SS)(SS(SS)(SS))(S(SS))))))')

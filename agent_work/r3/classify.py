@@ -53,6 +53,8 @@ def classify(D, budget=1500):
     o3 = phase3(V)[0]
     if any(lp_reaches(w) for w in ws): return ("FH", multi, o3)
     if any(pre(L[-1], V) for L in hist): return ("I-V", multi, o3)
+    aV, _ = hm.spine(V); k = len(aV)
+    if any(len(L) >= k and list(reversed(L[-k:])) == aV for L in hist): return ("I-gen", multi, o3)
     vn = ws[-1]; Ln = hm.app(vn, Y)
     if multi == "M" and any(pre(L[-1], Ln) for L in hist): return ("M-I-Ln", multi, o3)
     gl = [t for t, L in enumerate(hist) if len(L) >= 3 and L[-2] == vn and L[-3] == Y]

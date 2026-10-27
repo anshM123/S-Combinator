@@ -1,0 +1,8 @@
+('-', 'args(a)=2', 'c0 run never opens a1', 'F(c0)=h1', 'F(b0)=h2') 4 ['S(S(SS))(SS)(S(S(SS))(S(Sp)))', 'S(S(S(SS)))(SS)(S(S(SS))(S(Sp)))']
+('-', 'args(a)=2', 'c0 run opens a1', 'F(c0)=p', 'F(b0)=S') 15 ['S(S(SS))S(S(S(SS)p))', 'S(S(SS))S(S(SS)(S(Sp)))']
+('-', 'args(a)=2', 'c0 run opens a1', 'F(c0)=p', 'F(b0)=h1') 96 ['S(SS)S(SS)(S(Sp))', 'S(S(SS))SS(S(Sp))']
+('-', 'args(a)=2', 'c0 run opens a1', 'F(c0)=p', 'F(b0)=h2') 48 ['SSS(S(SS))(S(Sp))', 'S(S(SS))(SS)(S(Sp))']
+('-', 'args(a)=2', 'c0 run opens a1', 'F(c0)=p', 'F(b0)=p') 19 ['S(S(S(SS)))S(S(SS)p)', 'S(S(S(SS)))S(S(SS)(Sp))']
+('Igen', 'args(a)=2', 'c0 run never opens a1', 'F(c0)=h1', 'F(b0)=S') 3 ['S(SS)S(SS(S(SS)(S(Sp))))', 'S(S(SS))S(SS(S(SS)(S(Sp))))']
+('Igen', 'args(a)=3', 'c0 run never opens a1', 'F(c0)=h1', 'F(b0)=S') 101 ['S(SS)S(SS(S(Sp)))', 'S(S(SS))S(SS(S(Sp)))']
+EXIT 0

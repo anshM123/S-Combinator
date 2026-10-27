@@ -1,0 +1,11 @@
+('FH',) 808 ['SSS(Sp)', 'SSS(SS)(Sp)']
+('b0 other', 'alpha', '-', 'c0 opened', 'F(c0)=p', "p'-front nonproper") 1158 ['SS(SS)(Sp)', 'SSSS(Sp)']
+('b0 other', 'alpha', '-', 'c0 opened', 'F(c0)=p', 'reexec') 1007 ['SS(S(SS))(Sp)', 'SS(SSS)(Sp)']
+('b0 other', 'alpha', 'Igen', 'c0 opened', 'F(c0)=h2', 'call') 4 ['SS(S(SS))(S(S(S(SS))(SSSp)))', 'SS(SS(S(SS)))(S(S(S(SS))(SSSp)))']
+('b0 other', 'beta', '-', 'c0 opened', 'F(c0)=h1', "p'-front nonproper") 4 ['S(S(SS))(SS)(S(S(SS))(S(Sp)))', 'S(S(S(SS)))(SS)(S(S(SS))(S(Sp)))']
+('b0 other', 'beta', '-', 'c0 opened', 'F(c0)=p', "p'-front nonproper") 48 ['SSS(S(SS))(S(Sp))', 'S(S(SS))(SS)(S(Sp))']
+('b0 other', 'beta', '-', 'c0 opened', 'F(c0)=p', 'reexec') 115 ['S(S(S(SS)))S(S(SS)p)', 'S(SS)S(SS)(S(Sp))']
+('b0=S', 'alpha', '-', 'c0 opened', 'F(c0)=p', 'reexec') 423 ['SSS(S(SS)p)', 'S(SS)(SSS)(S(SS)p)']
+('b0=S', 'beta', '-', 'c0 opened', 'F(c0)=p', 'reexec') 15 ['S(S(SS))S(S(S(SS)p))', 'S(S(SS))S(S(SS)(S(Sp)))']
+('b0=S', 'beta', 'Igen', 'c0 opened', 'F(c0)=h1', 'call') 104 ['S(SS)S(SS(S(Sp)))', 'S(S(SS))S(SS(S(Sp)))']
+EXIT 0
