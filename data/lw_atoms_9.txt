@@ -1,0 +1,9 @@
+7 leaves: (14, 26)->a: 12, (14, 26)->b: 7, (14, 28)->a: 14
+     e.g. ((14, 26), 'a'): S(S(S(S(SSS))))  (5 steps)
+     e.g. ((14, 26), 'b'): S(SSS(SSS))  (4 steps)
+     e.g. ((14, 28), 'a'): SSS(S(SSS))  (8 steps)
+8 leaves: (14, 26)->a: 35, (14, 26)->b: 52, (14, 28)->a: 79, (14, 28)->big: 5
+     e.g. ((14, 26), 'a'): S(S(S(S(SS(SS)))))  (5 steps)
+     e.g. ((14, 26), 'b'): S(S(S(S(S(SSS)))))  (6 steps)
+     e.g. ((14, 28), 'a'): SSS(S(S(SSS)))  (5 steps)
+     e.g. ((14, 28), 'big'): SSS(SS)S(SS)  (2013 steps)

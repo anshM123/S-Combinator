@@ -1931,7 +1931,7 @@ so the heads of D alternate between Z and X and stay atom-headed. A proof for ev
 element above A (it too can change, to b·E with b arbitrary) — not done. (Superseded: the barrier lemma below proves that A is never popped by any body.)
 
 ## Barrier lemma and what it gives for loops (main agent, 2026-10-26)
-*Barrier lemma — PROVED.* Let P be any S-term and x, y opaque. In the generic head run of [P, x, y | r] (the run stops as
+*Barrier lemma — PROVED and MACHINE-CHECKED (lean/Barrier.lean, 2026-10-27: `barrier_run`, the general form — if the part above a tape r holds at least two atom-headed elements, every reachable list is L″ ++ r with at least two such elements in L″ — and `barrier_lemma` for [P, x, y] ++ r; standard axioms).* Let P be any S-term and x, y opaque. In the generic head run of [P, x, y | r] (the run stops as
 soon as an element whose head is opaque is at the front), no element of the tape r is popped before the run stops.
 *Proof.* After the first step the list is ch(P) ++ [y, x·y] ++ r; y and x·y have opaque heads ('barriers'). In a later
 step [a, b, c] (a not a barrier, else the run has stopped): if b is a barrier, b·c is a barrier (same head); if c is a
