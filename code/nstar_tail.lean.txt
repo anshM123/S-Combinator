@@ -1,0 +1,275 @@
+
+/-! ## Theorem N* (potential bound for counters, all layer shapes) — list form
+
+  Atoms x = var 0 and y = var 1. For an occurrence of x, its potential counts the nodes u·v on its root path that are
+  LD-nodes (x in v, u atom-free, y not in v) or SUPP-nodes (x in u, v atom-free); `potT` is the maximum over the
+  occurrences of x. In a list, an occurrence in element e_i also counts the atom-free elements below e_i (the spine
+  nodes of S e_1 ... e_m above it with an atom-free argument). `potL` is the maximum over the list. -/
+
+namespace T
+
+/-- contains x = var 0 -/
+def hx : T → Bool
+  | S => false
+  | var n => n == 0
+  | app f a => hx f || hx a
+
+/-- contains y = var 1 -/
+def hy : T → Bool
+  | S => false
+  | var n => n == 1
+  | app f a => hy f || hy a
+
+end T
+
+def b2n (b : Bool) : Nat := if b then 1 else 0
+
+/-- maximal LD + SUPP count over the occurrences of x -/
+def potT : T → Nat
+  | S => 0
+  | var _ => 0
+  | app u v => max (if hx v then potT v + b2n (nv u && !hy v) else 0) (if hx u then potT u + b2n (nv v) else 0)
+
+/-- number of atom-free elements -/
+def ncl : List T → Nat
+  | [] => 0
+  | e :: R => b2n (nv e) + ncl R
+
+/-- list potential with k extra atom-free elements below the list -/
+def potLo : List T → Nat → Nat
+  | [], _ => 0
+  | e :: R, k => max (if hx e then potT e + ncl R + k else 0) (potLo R k)
+
+def potL (L : List T) : Nat := potLo L 0
+
+theorem ncl_append : ∀ (A B : List T), ncl (A ++ B) = ncl A + ncl B
+  | [], B => by simp [ncl]
+  | e :: A, B => by simp [ncl, ncl_append A B]; omega
+
+theorem potLo_append : ∀ (A B : List T) (k : Nat), potLo (A ++ B) k = max (potLo A (ncl B + k)) (potLo B k)
+  | [], B, k => by simp [potLo]
+  | e :: A, B, k => by
+    simp only [List.cons_append, potLo]
+    rw [potLo_append A B k, ncl_append]
+    split <;> omega
+
+theorem potLo_mono : ∀ (L : List T) (k k' : Nat), k ≤ k' → potLo L k ≤ potLo L k'
+  | [], _, _, _ => by simp [potLo]
+  | e :: R, k, k', h => by
+    have := potLo_mono R k k' h
+    simp only [potLo]
+    split <;> omega
+
+theorem hx_args : ∀ (t e : T), e ∈ args t → hx e = true → hx t = true
+  | S, e, h, _ => by simp [args] at h
+  | var _, e, h, _ => by simp [args] at h
+  | app f v, e, h, he => by
+    simp only [args, List.mem_append, List.mem_singleton] at h
+    simp only [hx, Bool.or_eq_true]
+    rcases h with h | rfl
+    · exact Or.inl (hx_args f e h he)
+    · exact Or.inr he
+
+theorem potLo_nox : ∀ (L : List T) (k : Nat), (∀ e ∈ L, hx e = false) → potLo L k = 0
+  | [], _, _ => by simp [potLo]
+  | e :: R, k, h => by
+    simp only [potLo]
+    rw [h e (by simp), potLo_nox R k (fun f hf => h f (by simp [hf]))]
+    simp
+
+/-- spine lemma: splitting a term into its spine arguments does not raise the potential -/
+theorem spine_le : ∀ (t : T) (k : Nat), potLo (args t) k ≤ potT t + k
+  | S, k => by simp [args, potLo]
+  | var _, k => by simp [args, potLo]
+  | app f v, k => by
+    simp only [args]
+    rw [potLo_append]
+    simp only [potLo, ncl]
+    have ih := spine_le f (b2n (nv v) + 0 + k)
+    simp only [potT]
+    cases hfx : hx f
+    · have z : potLo (args f) (b2n (nv v) + 0 + k) = 0 := by
+        apply potLo_nox; intro e he
+        cases hex : hx e
+        · rfl
+        · have := hx_args f e he hex; rw [hfx] at this; exact absurd this (by decide)
+      rw [z]
+      split <;> simp <;> omega
+    · simp only [ite_true]
+      split <;> omega
+
+theorem nv_app (b c : T) : nv (app b c) = (nv b && nv c) := rfl
+
+theorem nv_hy (t : T) (h : nv t = true) : hy t = false := by
+  induction t with
+  | S => rfl
+  | var n => simp [nv] at h
+  | app f v ihf ihv =>
+    simp only [nv, Bool.and_eq_true] at h
+    simp [hy, ihf h.1, ihv h.2]
+
+theorem nv_hx (t : T) (h : nv t = true) : hx t = false := by
+  induction t with
+  | S => rfl
+  | var n => simp [nv] at h
+  | app f v ihf ihv =>
+    simp only [nv, Bool.and_eq_true] at h
+    simp [hx, ihf h.1, ihv h.2]
+
+/-- **N* step.** One head step does not raise the list potential, unless it is a write whose c contains x but not y. -/
+theorem nstar_step (a b c : T) (R : List T) (ha : head a = S)
+    (hW : ¬ (nv b = true ∧ hx c = true ∧ hy c = false)) :
+    potL (args a ++ c :: app b c :: R) ≤ potL (a :: b :: c :: R) := by
+  unfold potL
+  rw [potLo_append]
+  have hsp := spine_le a (ncl (c :: app b c :: R) + 0)
+  have hz : hx a = false → potLo (args a) (ncl (c :: app b c :: R) + 0) = 0 := fun h =>
+    potLo_nox _ _ (fun e he => by
+      cases hex : hx e
+      · rfl
+      · have := hx_args a e he hex; rw [h] at this; exact absurd this (by decide))
+  have i1 := nv_hx b
+  have i2 := nv_hx c
+  generalize potLo (args a) (ncl (c :: app b c :: R) + 0) = P at hsp hz ⊢
+  simp only [potLo, ncl, nv_app, potT, hx] at hsp hz ⊢
+  rcases Bool.eq_false_or_eq_true (hx a) with e1 | e1 <;>
+  rcases Bool.eq_false_or_eq_true (hx b) with e2 | e2 <;>
+  rcases Bool.eq_false_or_eq_true (hx c) with e3 | e3 <;>
+  rcases Bool.eq_false_or_eq_true (hy c) with e4 | e4 <;>
+  rcases Bool.eq_false_or_eq_true (nv b) with e5 | e5 <;>
+  rcases Bool.eq_false_or_eq_true (nv c) with e6 | e6 <;>
+  simp_all [b2n] <;> omega
+
+theorem hy_args_of : ∀ (a : T), head a = S → hy a = true → ∃ e ∈ args a, hy e = true
+  | S, _, h => by simp [hy] at h
+  | var n, ha, _ => by simp [head] at ha
+  | app f v, ha, h => by
+    simp only [hy, Bool.or_eq_true] at h
+    simp only [head] at ha
+    rcases h with h | h
+    · obtain ⟨e, he, hye⟩ := hy_args_of f ha h
+      exact ⟨e, List.mem_append.2 (Or.inl he), hye⟩
+    · exact ⟨v, List.mem_append.2 (Or.inr (List.mem_singleton.2 rfl)), h⟩
+
+/-- y is never lost: a step keeps some element containing y -/
+theorem hy_step (a b c : T) (R : List T) (ha : head a = S) (h : ∃ e ∈ a :: b :: c :: R, hy e = true) :
+    ∃ e ∈ args a ++ c :: app b c :: R, hy e = true := by
+  obtain ⟨e, he, hye⟩ := h
+  simp only [List.mem_cons] at he
+  rcases he with rfl | rfl | rfl | he
+  · obtain ⟨e', he', h'⟩ := hy_args_of e ha hye
+    exact ⟨e', by simp [he'], h'⟩
+  · exact ⟨app e c, by simp, by simp [hy, hye]⟩
+  · exact ⟨e, by simp, hye⟩
+  · exact ⟨e, by simp [he], hye⟩
+
+theorem hy_run : ∀ (n : Nat) (L L' : List T), run n L = some L' → (∃ e ∈ L, hy e = true) → ∃ e ∈ L', hy e = true
+  | 0, L, L', h, hy0 => by simp [run] at h; subst h; exact hy0
+  | n + 1, L, L', h, hy0 => by
+    simp only [run] at h
+    cases hs : step L with
+    | none => rw [hs] at h; simp at h
+    | some L1 =>
+      rw [hs] at h
+      apply hy_run n L1 L' h
+      match L, hs, hy0 with
+      | a :: b :: c :: R, hs, hy0 =>
+        simp only [step] at hs
+        split at hs
+        · rename_i ha
+          simp only [Option.some.injEq] at hs
+          subst hs
+          exact hy_step a b c R ha hy0
+        · simp at hs
+
+theorem run_split : ∀ (k : Nat) (L0 L : List T), run (k + 1) L0 = some L →
+    ∃ L1, run k L0 = some L1 ∧ step L1 = some L
+  | 0, L0, L, h => by
+    simp only [run] at h
+    cases hs : step L0 with
+    | none => rw [hs] at h; simp at h
+    | some L2 => rw [hs] at h; simp only [run] at h; exact ⟨L0, rfl, by rw [hs, h]⟩
+  | k + 1, L0, L, h => by
+    simp only [run] at h
+    cases hs : step L0 with
+    | none => rw [hs] at h; simp at h
+    | some L2 =>
+      rw [hs] at h
+      obtain ⟨L1, h1, h2⟩ := run_split k L2 L h
+      exact ⟨L1, by simp only [run, hs]; exact h1, h2⟩
+
+theorem dcount_zero_nv : ∀ (R : List T), dcount R = 0 → ∀ f ∈ R, nv f = true
+  | [], _, f, hf => by simp at hf
+  | g :: R', hd, f, hf => by
+    simp only [dcount] at hd
+    have hg : nv g = true := by
+      cases hng : nv g
+      · simp [hng] at hd
+      · rfl
+    have hR' : dcount R' = 0 := by simp [hg] at hd; exact hd
+    rcases List.mem_cons.1 hf with rfl | hf
+    · exact hg
+    · exact dcount_zero_nv R' hR' f hf
+
+/-- **Theorem N* (one head run).** In a head run that reaches a head normal form and contains y, the list potential
+    never increases. -/
+theorem nstar_run (L0 LN : List T) (N : Nat) (hN : run N L0 = some LN) (hlen : LN.length ≤ 2)
+    (hy0 : ∃ e ∈ L0, hy e = true) : ∀ k, k ≤ N → ∀ L, run k L0 = some L → potL L ≤ potL L0 := by
+  intro k
+  induction k with
+  | zero => intro _ L h; simp [run] at h; subst h; exact Nat.le_refl _
+  | succ k ih =>
+    intro hk L h
+    obtain ⟨L1, h1, h2⟩ := run_split k L0 L h
+    have prev := ih (by omega) L1 h1
+    have hyL := hy_run k L0 L1 h1 hy0
+    match L1, h1, h2, hyL with
+    | a :: b :: c :: R, h1, h2, hyL =>
+      simp only [step] at h2
+      split at h2
+      · rename_i ha
+        simp only [Option.some.injEq] at h2
+        subst h2
+        have hW : ¬ (nv b = true ∧ hx c = true ∧ hy c = false) := by
+          rintro ⟨hb, hxc, hyc⟩
+          have hc : nv c = false := by
+            cases hnc : nv c
+            · rfl
+            · rw [nv_hx c hnc] at hxc; exact absurd hxc (by decide)
+          have G := theoremJ_global L0 LN N k hN hlen a b c R h1 (by omega) ha hb hc
+          obtain ⟨e, he, hye⟩ := hyL
+          rcases List.mem_cons.1 he with rfl | he
+          · rw [nv_hy e G.1] at hye; exact absurd hye (by decide)
+          rcases List.mem_cons.1 he with rfl | he
+          · rw [nv_hy e hb] at hye; exact absurd hye (by decide)
+          rcases List.mem_cons.1 he with rfl | he
+          · rw [hyc] at hye; exact absurd hye (by decide)
+          rw [nv_hy e (dcount_zero_nv R G.2 e he)] at hye
+          exact absurd hye (by decide)
+        exact Nat.le_trans (nstar_step a b c R ha hW) prev
+      · simp at h2
+
+/-- **Theorem N* (Böhm-tree step).** The next node (a component e of the head normal form) has list potential at most the
+    potential of the final list. -/
+theorem nstar_node (LN : List T) (e : T) (he : e ∈ LN) : potL (args e) ≤ potL LN := by
+  unfold potL
+  have h1 := spine_le e 0
+  induction LN with
+  | nil => simp at he
+  | cons g R ih =>
+    simp only [potLo]
+    simp only [List.mem_cons] at he
+    rcases he with rfl | he
+    · cases hxe : hx e
+      · have z : potLo (args e) 0 = 0 := by
+          apply potLo_nox; intro f hf
+          cases hxf : hx f
+          · rfl
+          · have := hx_args e f hf hxf; rw [hxe] at this; exact absurd this (by decide)
+        rw [z]; exact Nat.zero_le _
+      · simp only [ite_true]; omega
+    · have := ih he; omega
+
+#print axioms nstar_step
+#print axioms nstar_run
+#print axioms nstar_node

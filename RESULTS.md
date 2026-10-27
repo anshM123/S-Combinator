@@ -14,6 +14,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | Proposition Q | `PropQ.lean` | every term whose class in the 39-element productivity model is in F_P is productive (no ⊥ anywhere in its Böhm tree): one half of Conjecture C6, the conjectured answer to BEKW Question 5 |
 | Proposition Q″ | `PathModels.lean` | the "infinite" verdicts of the leftmost-path (36 classes) and rightmost-path (19 classes) models are correct |
 | Lemmas 8, 9 (core), Corollary 8(ii), Theorem J | `BarrierJ.lean` | data conservation; no write into data while two data are live; data stay in control; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
+| Theorem N* (list form) | `NStar.lean` | potential bound for counters: along a Böhm-tree path that never reads the cores, the layers that can still be added above one counter are bounded by a potential that never increases — the core of Theorem O (no bounded-cost two-counter simulation) |
 | Lemma 10 | `Lemma10.lean` | no junk-free rotation: with two data, the bottom one can be brought in front of the other only together with a second copy of itself |
 | Proposition MW(a),(b) | `MW.lean` | in every evolution order the multiway graph of an S-term is acyclic, and every infinite evolution visits terms of unbounded size, so it never settles into finitely many forms |
 | Confluence, Proposition MW(e) | `Confluence.lean` | S-reduction is confluent (normal forms are unique); a decoder that respects reachability cannot read two different halting outcomes of a nondeterministic machine from S's multiway system (true of every confluent system, SK included) |
@@ -25,7 +26,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
 
 ## Proved by hand (with computer-certified finite facts)
-* Theorem O: no bounded-cost two-counter simulation (independently audited).
+* Theorem O: no bounded-cost two-counter simulation (independently audited); its potential half, Theorem N*, is machine-checked above.
 * Proposition M: with opaque data, code cannot append like a tag system in one uniform pass (the barrier lemmas it
   rests on — Lemmas 8, 9, 10, Theorem J and the Barrier lemma — are machine-checked above).
 * Theorem NM: morphic regularity of head runs is false (square runs), while the weaker R″_PUP holds for every certified run.

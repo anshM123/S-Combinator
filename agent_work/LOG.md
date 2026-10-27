@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 02:45 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 03:25 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -22,13 +22,19 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        datum's own levels or have only such P-arguments) and Lemma AB (|P| >= 3 is absorbing) ... DONE,
        machine-checked [agent_work/lean/MSLS.lean (strict + generous), lean/MSL.lean, lean/AB.lean].
        (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN in general
-       (computationally certified: exhaustive <= 11 leaves, 115k + 367k targeted data, 70k random).
-       DONE parts: Lemma YD (machine-checked [lean/YD.lean]: bare y glued down early => no proper transfer; bare-S
-       outer wrapper); REPLAY relation (machine-checked [lean/REPLAY.lean]: a phase-2 transfer reached from the
-       self-application list args w ++ [w, y, x.y, r] is replayed as a REEXEC of phase 3); FH (p-headed wrapper);
-       CANON (single-wrapper handler => at most one more transfer phase); Corollary AB-c (hand: >= 3 C-elements =>
-       no p'-front); case (i) (hand: last C-element disposed onto P').  OPEN: case (ii) (sigma_C path) for live
-       handlers; a replay relation covering all real phase-2 outputs.
+       (computationally certified: exhaustive <= 11 leaves, 115k + 367k + 298k targeted data, 70k random).
+       DONE parts (machine-checked): YD [lean/YD.lean] (bare y glued down early; bare-S outer wrapper); FH, CANON
+       (p-headed wrapper; single-wrapper handler => at most one more transfer phase); REPLAY [lean/REPLAY.lean]:
+       general replay maps rho (runs commute with 'replace w by tw, substitute atoms'), run_append, and the
+       corollaries replay_reexec / replay_glue / replay_beta (a phase-2 transfer reached from the glue-time top
+       part is replayed as a REEXEC of phase 3) covering 95 of the 100 real single-wrapper cases with w = S.c0.
+       DONE parts (hand): creation lemma (the innermost wrapper is glued the step after it appears, with one
+       element above it); Theorem FS (single-level phase 3: W = S.a => sigma_C at once and no buffer ever;
+       |args W| >= 2 => a buffer when two elements remain above p'); Lemmas Sigma2, Gamma, CB; Corollary AB-c.
+       REFUTED: (B1) 'a buffer blocks all later proper transfers' (general shapes; explicit counterexample).
+       OPEN: case (b) of FS for real outputs (b0 != S: 626 cases <= 11, includes completed buffer cycles), 5
+       uncovered w = S.c0 cases, live multi-wrapper handlers (66 cases <= 11); in all of them a GENERAL REPLAY
+       ALIGNMENT between phase 2 after the glue step and phase 3 is the missing ingredient.
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
@@ -651,3 +657,29 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   pattern beta.  In case (b) after the first buffer the run either dies (a second buffer or an insertion makes
   |P'| = 3, Lemma AB) or performs a 'buffer cycle' that returns to a configuration of type (a) with an extra
   p'-headed comb (p'.B).y in the Y-region; (B1) is therefore NOT a consequence of the counting alone.
+* MACHINE-CHECKED (agent_work/lean/REPLAY.lean, now 420 lines; no sorry): GENERAL replay maps rho w tw sg (replace
+  w by any term tw, substitute every atom n by sg n): `replay_run_gen` (runs commute with rho under the same
+  guards); `rho_headvar` (an atom-headed front var n maps to a front headed by head(sg n)).  New corollary
+  **`replay_beta`**: if the innermost single wrapper is w = S.(S.a1) (a1 free of y) and the run of the glue-time top
+  part [a1, w, y] reaches a p-headed front after k guarded steps (the phase-2 TRANSFER), then phase 3 (datum
+  w[p:=c].q) reaches after k + 2 steps (opening, then the sigma_C step [S.a1', q, y] -> [a1', y, q.y]) the psi-image
+  of that top part, psi = (w -> y, y -> q.y, p -> c), whose front is c-headed: REEXEC.
+  COMPUTATIONALLY CERTIFIED (replay_cover.py 11): of the 100 real single-wrapper transfers with w = S.c0 (<= 11
+  leaves), 88 have glue-time top [c0, w, y] (replay_glue applies, guards hold), 7 have w = S.(S.a1) with top
+  [a1, w, y] (replay_beta applies, guards hold), 5 have other glue-time tops (not covered by a stated corollary).
+  So case (a) of Theorem FS is machine-checked-modulo-guards for 95 of 100 real cases; the remaining 5 and case (b)
+  (via the open lemma B1) are what is left of single-wrapper D2(b).
+* REFUTED (B1 for general phase-3 shapes).  'Once a buffer has been created no proper transfer follows' is FALSE
+  for general single-level phase-3-shaped data.  Counterexample (constructed from the cycle analysis, checked by
+  direct run): W = S(SS)(S(S(S(SS)(SS)c))), D3 = W.p':
+  [SS, a2, p', y, xy, r] -> [S, p', a2.p', ...]  (buffer B = a2.p', a2 = S(S(A.c)), A = S(SS)(SS))
+  -> [B, p'.B, y, ...] -> [S(A.c), p', y, (p'.B).y, ...]  (buffer opened: back to a sigma_C configuration)
+  -> [A.c, y, p'.y, ...] -> ... -> [p'.y, c.(p'.y), (c.(SS c)).(p'.y), ...]: a p'-front with a PROPER comb at
+  position 3.  Hand analysis (logged above, Theorem FS and the cycle analysis): after the first buffer the run
+  survives only through the 'S.S cycle' (first buffer made by a front with args = [S], then [S, p', B] ->
+  [B, p'.B, y] -> B opened), which returns to a configuration of type (a) with the C-material args(a2) and an extra
+  comb (p'.B).y in the Y-region; from there everything depends on the type-(a) dynamics.  So case (b) of Theorem FS
+  is NOT settled by counting; for real phase-2 outputs it needs the phase-2 structure (as the replay does for case
+  (a)).  The earlier reduction 'single-wrapper D2(b) <= B1' is therefore void; what remains for single-wrapper
+  handlers is: case (b) (b0 != S, 626 real cases <= 11 leaves, all certified non-proper) and 5 uncovered case-(a)
+  cases.  (bufq.py statistics on random shapes are still running; the constructed counterexample already settles B1.)
