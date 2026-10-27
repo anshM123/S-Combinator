@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 02:00 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 02:30 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -23,13 +23,43 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        [agent_work/lean/MSL.lean, lean/AB.lean]; hand proofs in this LOG.
        (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN (computationally
        certified: exhaustive <= 11 leaves right combs, 70k random) [chain3.py, phase2_general.py]; hand proof of
-       case (i) only (C-region disposed onto P'); case (ii) (sigma_C path) open.  Needs the c-shapes of good wrappers.
+       case (i) only (C-region disposed onto P'); case (ii) (sigma_C path) open.  Partial (hand): Lemma YD, Corollary
+       AB-c, FH and CANON dispose of p-headed / bare-S outer wrappers, of >= 3 released C-elements, and bound the
+       chain after any single-wrapper handler (one more transfer phase at most).  Mechanism: replay relation
+       (phase 3 replays phase 2 under w -> p', p -> c; exact for 38/836 single-wrapper cases) — general replay OPEN.
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
 F. Decoders reading unbounded parts of terms (not windows) ............................. OPEN (not covered by UB).
 Bottom line: NOT SOLVED.  No step above that is OPEN is close to a complete proof; D1 narrows the possible
 universal mechanisms (they must re-execute frozen values), it does not exclude them.
+
+# INTERIM 04:00 (non-universality agent; written 2026-10-27 02:30 EDT)
+Bottom line: NOT SOLVED.  No complete proof of non-universality exists; nothing below claims one.
+New since the coordinator's 'go for the money' message (all in agent_work/; labels as in the entries below):
+1. MACHINE-CHECKED  Lemma AB (absorbing P-count): once >= 3 elements contain the live atom (and no x, y, r), there
+   are >= 3 for ever and no such element is ever glued onto an input-containing element.  [lean/AB.lean]
+2. MACHINE-CHECKED  Theorem MSL (multi-level SL): for every phase-2 datum K.(d2.(...(dk.p))) (closed wrappers,
+   frozen atoms allowed) every P-element glued onto a Y-element is level-prefixed or has only level-prefixed
+   P-arguments ('good'); hereditary form for all reachable lists.  [lean/MSL.lean: msl_glue, msl_main]
+   Consequence: every P-wrapper of a proper phase-2 handler is good.  This is the 'extend SL's invariant to
+   several levels' option of the Phase-4 request.  (It also holds verbatim in phase 3, so by itself it does not stop
+   a Church chain.)
+3. PROVED (hand)  Lemma YD (bare y glued down before any y-node other than x.y exists => no proper transfer);
+   Corollary AB-c (in phase 3, >= 3 C-elements => no p'-front and no call ever); together with FH these dispose of
+   the outer-wrapper classes 'bare S' and 'p-headed' and of all phase-3 data that release >= 3 C-elements.
+4. MACHINE-CHECKED modulo renaming (CANON + FH)  a single-wrapper phase-2 handler (77% of real cases <= 11 leaves)
+   makes phase 3 single-level, so at most one more transfer phase follows.
+5. COMPUTATIONALLY CERTIFIED  'phase 3 is never a proper transfer' on 115,442 further phase-2 data (K <= 7 leaves,
+   tails with wrappers <= 4 leaves; 5,086 proper phase-2 transfers) and the exhaustive <= 11 range.
+6. EXPERIMENTALLY SUPPORTED  the mechanism: (a) good general phase-3 shapes transfer only when the wrapper is a
+   c-comb; (b) the REPLAY RELATION: phase 3 replays phase 2 under theta = (w -> p', p -> c), turning phase 2's
+   transfer into a REEXEC; exact replay covers 38/836 single-wrapper cases; a general replay is OPEN.
+Still OPEN for item D of the map: D2(b) 'phase 3 never proper' in general (needs a general replay or a C-material
+invariant; case (ii) = sigma_C path); D3 're-execution is call-like'; and items A, C, E, F (untouched by this agent).
+Files: lean/AB.lean, lean/MSL.lean (new, compile with Lean 4.35 core, no sorry); msl_inv.py, target3.py,
+inner_forms.py, outer_forms.py, goodhits.py, goodhits2.py, target_hits.py, p3events.py, p3events2.py, p3trace*.py,
+replay_check.py, replay2.py, replay3.py (scripts; results quoted in the LOG entries of 2026-10-27 01:35-02:30).
 
 # agent_work LOG (construction agent)
 
@@ -477,3 +507,62 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   MSL alone does not stop a Church chain; what is still OPEN is that phase 3 cannot make a proper transfer, which
   must use the specific c-shapes w[p:=c] of good phase-2 wrappers w (the negative controls show that general
   phase-3-shaped data DO transfer).
+* (bookkeeping) case_split.py 2 80000 14 also hit its 30-minute timeout without output; superseded by the
+  event statistics below.
+* COMPUTATIONALLY CERTIFIED (target3.py 7 4 9, beyond the exhaustive range): D2 = K.T with K closed S-term <= 7
+  leaves and T a right comb over p with wrappers <= 4 leaves (T <= 9 leaves): 115,442 phase-2 runs, 5,086 proper
+  transfers at position 3; their phase-3 runs: 3,688 REEXEC, 1,268 p'-fronts with position 3 NOT proper, 115 call y,
+  15 call x; **no proper phase-3 transfer**.
+* EXPERIMENTALLY SUPPORTED (p3events.py ex 10 / t 6 4 8; 352 + 962 phase-3 runs from real phase-2 outputs): the
+  events used by the general-shape counterexamples DO occur in real phase 3 — sigma_C (C-front opened while the
+  only P'-element is glued onto the bare y: 41 / 318 runs), the bare y glued down from the Y-top (26 / 166), C onto
+  Y (12 / 140) — yet every p'-front has the bare y (44 / 235) or a P'-element (15 / 13) at position 3.  So no
+  single forbidden event explains 'phase 3 is never proper'; a proof must track the C-material through these
+  steps.  Typical real run: opening the c-level releases the BARE c (args(d_k.c) ends in c), which is glued onto
+  the Y-top (c.y) and resurfaces as a REEXEC front (p3trace.py 10 4).
+* EXPERIMENTALLY SUPPORTED (goodhits.py 11 300000 13): among 48,973 random phase-3-shaped single-level data W.p'
+  whose phase-2 preimage w = W[c:=p] is GOOD (generous Lv), 22 make a proper position-3 transfer; in all 19
+  distinct hits w is itself a right comb over p with closed wrappers (e.g. w = S(S(S(SS)(SS)p))), so strict
+  goodness would need w = L_j, a datum level glued onto y as the innermost wrapper.  target_hits.py 8 2 (D2 =
+  K.T and K.(d.T), T = each hit's w, K <= 8, d <= 2 leaves; 35,682 runs): only 5 proper phase-2 transfers, none with
+  innermost wrapper T, no proper phase-3 transfer.  Mechanism in the hits: sigma_C, then the bare y is glued down
+  onto p'.y under a C-front, then the bare c (from the c-level) is glued onto p'.y: stuck at [p'.y, s, c.(p'.y)].
+* COMPUTATIONALLY CERTIFIED (inner_forms.py ex 11 / t 6 4 8): innermost wrapper w of every real proper position-3
+  phase-2 transfer, against the datum's own levels (strict): PH (p-headed; 110 / 100), LEV (w = L_j exactly; only
+  with >= 2 wrappers: 53 / 6), LPU1 (w = L_j.u, ONE extra argument; 112 / 121), SLP (not LP, all P-args strictly LP;
+  667 / 735); never LPU with >= 2 extra arguments, never OTHER.  Phase 3: REEXEC, CALL or non-proper p'-front.
+* PROVED (Lemma YD, y glued down early; hand proof, general).  In a generic phase run the only y-node (subterm d.y
+  with y the right child) initially is x.y; new y-nodes arise only by gluing an element onto the BARE-y element.
+  If the bare y is glued down (y at position 2) while x.y is the only y-node, the bare y never reappears as a list
+  element (y is never a spine argument of an S-headed subterm afterwards) and every y-node has d = x, so no proper
+  y-comb (y once, no x, r) ever exists: NO proper transfer in that phase.  Corollary: a datum S.U with U S-headed
+  (bare S as outer wrapper) never transfers properly ([U, y, x.y] glues y onto x.y at step 2).  This disposes of
+  the outer wrapper class 'S' of multi-wrapper handlers (outer_forms.py: 64 cases <= 11 leaves).
+* PROVED (Corollary AB-c; hand proof, via Lemma AB with the frozen c as the live atom and p', x, y, r as inputs).
+  For phase-3 data D3 = V[y:=p', p:=c] from ordered phase-2 runs, every S-headed subterm of D3 has its spine args
+  ordered (free of c,p',x,y,r)* (C)* (containing p',x,y or r)*, so the phase-3 lists are CL* C* I* and Lemma AB
+  applies to (C, I): once the C-region has >= 3 elements it keeps >= 3 for ever, hence the front is never an
+  I-element: NO p'-front and NO call ever; the phase ends in REEXEC or diverges.  (Lean: AB.lean applies after
+  merging p' with x by an atom renaming; the renaming lemma is not formalised.)  E.g. LPU1 / SLP innermost wrappers
+  whose phase-3 image releases >= 3 C-arguments at once.
+* MACHINE-CHECKED modulo renaming (CANON.lean + OTD.lean, frozen atoms allowed): **if the phase-2 handler has a
+  single wrapper (V = w.y; 836 of 1,083 real cases <= 11 leaves), then D3 = w[p:=c].p' is single-level, so every
+  proper phase-3 transfer (if any) has a p'-headed innermost wrapper and phase 4 can never transfer (FH).**  So a
+  Church chain through a single-wrapper handler has at most one more transfer phase.
+* EXPERIMENTALLY SUPPORTED (goodhits2.py 21 400000 15 0.2; 72,652 random GOOD single-level phase-3 shapes W.p'):
+  proper position-3 transfers occur ONLY when W is a c-comb (W = w[p:=c] with w a right comb over p with closed
+  wrappers): 11 of 21,702 combs, 0 of 50,950 non-combs (LP with 2-3 C-args, SLP with 1-3 C-args).
+* EXPERIMENTALLY SUPPORTED — THE REPLAY RELATION (replay2.py 11, p3trace2.py 11).  For a single-wrapper handler
+  V = w.y, phase 3 is (by pure renaming) the generic run of w.q with q = p' live and p = c frozen.  Let
+  theta = (replace every occurrence of w by p', then p by c).  If the phase-2 run passes through the list
+  args(w) ++ [w, y, x.y, r] (38 of 836 single-wrapper cases <= 11 leaves), then phase 3 is EXACTLY the theta-image
+  of phase 2 from that point (each step commutes with theta while no front is w-prefixed and no step re-creates w),
+  so phase 2's transfer (p-front) is replayed as a REEXEC (c-front) of phase 3: observed in all 38 cases.  The
+  same duality explains the c-comb counterexamples: with W = S(S(A.c)), phase 3 runs [A.c, y, p'.y] ->
+  args(A) ++ [c, p'.y, y.(p'.y)], and phase 2 with w = S(S(A.p)) runs [A.p, S.L, y] -> args(A) ++ [p, y, (S.L).y]
+  (here the map is p -> c, y -> p'.y); the same A-dynamics brings p (phase 2: TRANSFER) or c (phase 3: REEXEC) to
+  the front first, or the other element first (phase 2: no transfer with this w; phase 3: the counterexample's
+  p'-front).  So 'phase 2 transfers with w' and 'phase 3 transfers' are mutually exclusive along a replay.
+  OPEN: a replay relation covering ALL real phase-2 outputs (the exact theta-alignment covers 38/836; other cases
+  align only on the top part of the lists, with input maps such as y -> p'.y); this is exactly what a proof of
+  'phase 3 is never proper' needs.

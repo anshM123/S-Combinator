@@ -36,6 +36,7 @@ def mark():
 def truncate(m):
     for i in range(m, len(L)):
         TAB.pop((L[i], R[i]), None)
+        _sz.pop(i, None)
     del L[m:]; del R[m:]
 
 _atoms = {}
