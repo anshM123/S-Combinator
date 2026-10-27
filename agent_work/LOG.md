@@ -633,3 +633,21 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   handlers.  Also (hand): before any buffer, a proper transfer's innermost wrapper vn (p'-headed by CANON) can only
   be glued onto y by a sigma_C step, after which the P'-region stays empty for ever (SL's 'hy': S-headed Y-elements
   release no P'-arguments), so the p'-front is a p'-headed Y-element.
+* PROVED (Theorem FS, first-step dichotomy for single-level phase 3; hand proof, general shapes).  Let
+  D3 = W.p' (W S-headed, containing the frozen c, no p', x, y, r; ordered in the c- and p'-views), run from
+  args(W) ++ [p', y, x.y, r].  Facts used: c-material is never destroyed (a c-headed front is stuck); before p' is
+  touched the C-region can only lose material by gluing its bottom onto p'; the number of elements above p' drops
+  by at most 1 per step; SL (p'-view, frozen atoms allowed) gives 'hy', so once the P'-region is empty it stays
+  empty.  Then exactly one of:
+  (a) |args W| = 1, W = S.a (a a C-term): the first step is sigma_C, [a, p', y, x.y, r] -> args(a) ++ [y, p'.y,
+      x.y, r]; the P'-region is empty from then on, so no buffer ever exists, and any p'-front is a p'-headed
+      Y-element;
+  (b) |args W| >= 2: p' is untouched until exactly two elements lie above it, and at that step a C-element is
+      glued onto p' (a buffer) — unless the phase ends first.
+  Moreover (CB): a buffer whose C-part is c-headed blocks every later proper transfer (it stays a non-p'-headed
+  P'-element for ever, and the glue step of the transfer's p'-headed innermost wrapper would need it as the front).
+  For real phase-2 outputs: (a) is exactly the single-wrapper class w = S.c0 (handled by the replay when the glue
+  is pattern alpha), (b) is the class b0 != S; so single-wrapper D2(b) reduces to (B1) for case (b) and to
+  pattern beta.  In case (b) after the first buffer the run either dies (a second buffer or an insertion makes
+  |P'| = 3, Lemma AB) or performs a 'buffer cycle' that returns to a configuration of type (a) with an extra
+  p'-headed comb (p'.B).y in the Y-region; (B1) is therefore NOT a consequence of the counting alone.

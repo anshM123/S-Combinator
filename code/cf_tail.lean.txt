@@ -1,0 +1,94 @@
+
+/-! ## Head-normal forms are stable; control is order-independent -/
+
+def args : T → List T
+  | S => []
+  | var _ => []
+  | app f x => args f ++ [x]
+
+def head : T → T
+  | S => S
+  | var n => var n
+  | app f _ => head f
+
+/-- head-normal: head is a variable, or S with at most two arguments -/
+def HN (t : T) : Prop := head t ≠ S ∨ (args t).length ≤ 2
+
+/-- position-wise reduction of argument lists -/
+inductive Pw : List T → List T → Prop
+  | nil : Pw [] []
+  | cons {a a' : T} {l l' : List T} : RedStar a a' → Pw l l' → Pw (a :: l) (a' :: l')
+
+theorem pw_refl : ∀ l : List T, Pw l l
+  | [] => Pw.nil
+  | a :: l => Pw.cons (RedStar.refl a) (pw_refl l)
+
+theorem pw_trans : ∀ {l1 l2 l3 : List T}, Pw l1 l2 → Pw l2 l3 → Pw l1 l3
+  | _, _, _, Pw.nil, Pw.nil => Pw.nil
+  | _, _, _, Pw.cons h1 p1, Pw.cons h2 p2 => Pw.cons (h1.trans h2) (pw_trans p1 p2)
+
+theorem pw_append : ∀ {l1 l1' l2 l2' : List T}, Pw l1 l1' → Pw l2 l2' → Pw (l1 ++ l2) (l1' ++ l2')
+  | _, _, _, _, Pw.nil, p => p
+  | _, _, _, _, Pw.cons h p1, p2 => Pw.cons h (pw_append p1 p2)
+
+theorem pw_length : ∀ {l l' : List T}, Pw l l' → l.length = l'.length
+  | _, _, Pw.nil => rfl
+  | _, _, Pw.cons _ p => by simp [pw_length p]
+
+theorem HN_left {f a : T} (h : HN (app f a)) : HN f := by
+  unfold HN at *
+  simp only [head, args, List.length_append, List.length_singleton] at h
+  rcases h with h | h
+  · exact Or.inl h
+  · exact Or.inr (by omega)
+
+/-- one step from a head-normal term keeps the head and reduces one argument -/
+theorem hn_step {t u : T} (hn : HN t) (h : Red t u) : head u = head t ∧ Pw (args t) (args u) := by
+  induction h with
+  | redex x y z =>
+    unfold HN at hn
+    simp [head, args] at hn
+  | @left f f' a h ih =>
+    have ⟨e, p⟩ := ih (HN_left hn)
+    refine ⟨by simp only [head]; exact e, ?_⟩
+    simp only [args]
+    exact pw_append p (pw_refl [a])
+  | @right f a a' h _ =>
+    refine ⟨rfl, ?_⟩
+    simp only [args]
+    exact pw_append (pw_refl (args f)) (Pw.cons (RedStar.single h) Pw.nil)
+
+theorem hn_of_pw {t u : T} (hn : HN t) (e : head u = head t) (p : Pw (args t) (args u)) : HN u := by
+  unfold HN at *
+  rw [e, ← pw_length p]
+  exact hn
+
+/-- **Stability.** Reducing a head-normal term keeps its head and arity and reduces its arguments position-wise. -/
+theorem hnf_stable {t u : T} (hn : HN t) (h : RedStar t u) : head u = head t ∧ Pw (args t) (args u) := by
+  induction h with
+  | refl => exact ⟨rfl, pw_refl _⟩
+  | tail _ h ih =>
+    obtain ⟨e, p⟩ := ih
+    obtain ⟨e2, p2⟩ := hn_step (hn_of_pw hn e p) h
+    exact ⟨e2.trans e, pw_trans p p2⟩
+
+/-- pairwise joinable argument lists -/
+inductive Jw : List T → List T → Prop
+  | nil : Jw [] []
+  | cons {a b : T} {l m : List T} : (∃ v, RedStar a v ∧ RedStar b v) → Jw l m → Jw (a :: l) (b :: m)
+
+theorem jw_of_pw : ∀ {l1 l2 m : List T}, Pw l1 m → Pw l2 m → Jw l1 l2
+  | _, _, _, Pw.nil, Pw.nil => Jw.nil
+  | _, _, _, Pw.cons h1 p1, Pw.cons h2 p2 => Jw.cons ⟨_, h1, h2⟩ (jw_of_pw p1 p2)
+
+/-- **Proposition CF (order-independent part).** Any two head-normal reducts of t, reached by any evaluation orders, have
+    the same head, the same number of arguments and pairwise joinable arguments. -/
+theorem cf_control {t h1 h2 : T} (r1 : RedStar t h1) (r2 : RedStar t h2) (n1 : HN h1) (n2 : HN h2) :
+    head h1 = head h2 ∧ (args h1).length = (args h2).length ∧ Jw (args h1) (args h2) := by
+  obtain ⟨v, v1, v2⟩ := confluence r1 r2
+  obtain ⟨e1, p1⟩ := hnf_stable n1 v1
+  obtain ⟨e2, p2⟩ := hnf_stable n2 v2
+  exact ⟨e1.symm.trans e2, (pw_length p1).trans (pw_length p2).symm, jw_of_pw p1 p2⟩
+
+#print axioms confluence
+#print axioms cf_control
