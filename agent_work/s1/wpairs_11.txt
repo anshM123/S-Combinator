@@ -1,0 +1,8 @@
+1627 SSS(Sp) pair[c0,w]/y
+59 S(S(SS))S(S(Sp)) pair[c0,w]/y open(P?|w|0 after)/next=P?,y pair[P?,w]/y
+16 S(S(S(SS)))S(Sp) pair[c0,w]/y open(b0|w|0 after)/next=P?,y pair[b0,w]/y
+5 S(SS)S(SS(S(Sp))) pair[c0,w]/y open(P?|w|1 after) pair[P?,w]/y open(P?|w|1 after) pair[P?,w]/y
+2 S(S(SS))S(SS(S(Sp))) pair[c0,w]/y open(P?|w|0 after)/next=P?,y pair[P?,w]/y open(P?|w|1 after) pair[P?,w]/y
+1 S(SS)S(SS(SS(S(Sp)))) pair[c0,w]/y open(P?|w|1 after) pair[P?,w]/y open(P?|w|1 after) pair[P?,w]/y open(P?|w|1 after) pair[P?,w]/y
+1 S(S(SS))S(S(SS)(S(Sp))) pair[c0,w]/y open(P?|w|0 after)/next=P?,y pair[P?,w]/y open(P?|w|0 after)/next=P?,y pair[P?,w]/y
+1 S(S(S(SS)))(S(SS))(S(Sp)) pair[c0,w]/y open(b0|w|0 after)/next=P?,y pair[b0,w]/y open(P?|w|0 after)/next=P?,y pair[P?,w]/y
