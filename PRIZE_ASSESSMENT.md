@@ -2,6 +2,24 @@
 
 _2026-10-25. Status labels as in PROOF.md. Nothing here has been released or submitted._
 
+## Update 2026-10-27, early morning (machine-checked core; three workers) — read first
+**Still not solved; nothing submitted.** The repository is public on GitHub (anshM123/S-Combinator) at the user's
+request; the prize submission itself still needs the user's approval. The one-page summary is `RESULTS.md`.
+* **Machine-checked in Lean 4 (no `sorry`, standard axioms; all in `code/verify_all.py`):** Theorem Q10 (BEKW Question 10:
+  M35 decides head normalisation), Theorem A, Theorem P2 (Böhm-tree finiteness counts mod 2), Proposition Q (soundness
+  half of C6 = BEKW Question 5), Proposition Q″ (the 'infinite' halves of the path models), Lemma P and Theorem LP1, the
+  barrier lemmas (Lemmas 8, 9, 10, Corollary 8(ii), Theorem J, Barrier lemma), Proposition MW, Theorems UR-R/UR-C, and
+  the agents' obstruction theorems (OT, RC, OC, OTD, FH, SL, AB, MSL, YD, replay lemma, W1).
+* **What MW(b) settles about the rules.** Every infinite evolution, in every order, visits terms of unbounded size, so
+  "only a finite number of distinct forms" is false for every infinite evolution. A disproof therefore has to take the
+  "essentially finite" or "jump-ahead" route: exact symbolic descriptions (R″_PUP) of all runs.
+* **Still open, both directions.** Disproof: C5′ (MSO properties of Böhm trees; even the completeness half of C6 and the
+  finite halves of the path models are open, and E114 shows they have no class-level or simple size proof), R″_PUP for all
+  runs and orders, and the definitional step. Proof: no construction; every design tried meets a machine-checked barrier.
+* **Work in progress (3 workers until 16:30 EDT):** the non-universality agent's phase programme (open step: phase 3 of
+  multi-level data cannot transfer properly), the universality agent's descent machine (open: harmless stale bundles),
+  and the main agent's verification and formalisation.
+
 ## Update 2026-10-26, evening (UR-C in Lean; a scope correction) — read first
 **Still not solved; nothing submitted or published.**
 * **Theorem UR-C is machine-checked** in Lean 4 (lean/URCore.lean: `ur_classification`, `ur_counter`; no sorry,
