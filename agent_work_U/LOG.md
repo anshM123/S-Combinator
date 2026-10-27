@@ -127,3 +127,36 @@ below another without touching it).
   element c the DATUM; nothing is erased (the DM erases d, the RM keeps both).  After a write [SS, w, c] the next
   state is c.(w.c): the OLD datum is executed with the NEW datum as argument (data-dependent control for free).
   The emitted normal forms form an output stream (Boehm-level, so a universal RM would refute C5).
+
+## 03:10 EDT  Lemma W1 (one closed wrap per DM round) — PROVED (elementary; agrees with survcat.py output)
+*Statement.* Let C be a list of closed terms and D an opaque datum (an atom).  Run the DM from C ++ [D] until its first
+descent, assuming no D-headed front occurs.  Then the survivor contains D, and if it contains D exactly once it is D or
+c.D with c CLOSED.  (A multi-symbol push c1.(c2.D) is impossible in one round; the only other survivors contain >= 2
+copies of D.)
+*Proof.* (1) D is the bottom element and the bottom changes only by a wrap [a, X, B] -> ch(a) ++ [B, X.B] (B = bottom at
+position 3), so the bottom always contains D; a round ends by [S, b, c] -> [c, b.c] with c the bottom (list length 3),
+or by reaching a 2-list [U, bottom] whose first element U is the element directly above the bottom; the survivor is
+the bottom or that U.  (2) Let U be the element directly above the bottom.  After the first wrap, U is the copy of the
+old bottom, so U contains D.  U changes only when it is at position 3 (it is copied up and b.U, containing D, takes
+its place), at position 2 (U absorbs the bottom; the bottom's copy, containing D, takes its place) or at position 1
+(the round ends).  Elements created by a step land at positions <= |ch(a)|+2 above the touched elements and never
+between U and the bottom.  So U contains D from the first wrap on, and every later wrap of the bottom uses a
+D-containing wrapper: a second wrap gives >= 2 copies of D.  (3) Likewise U itself can receive at most one closed
+wrap: after [a, b, U, bottom] -> ch(a) ++ [U, b.U, bottom] the copy of U sits directly above b.U, so the next
+change of the element above the bottom uses a D-containing wrapper.  Hence a single-copy survivor is D, c.D or c.D'
+with D' = D, c closed.  ∎
+*Consequence.* With one datum and no copies the DM is a pushdown process with at most one push/pop/top-rewrite per
+round (the 'controller' is the top symbol), i.e. a deterministic pushdown automaton; anything beyond needs copies of
+the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, forces data execution).
+* Corollary of W1 (PROVED): in the copy-free single-datum DM the closed-wrap depth over the base never increases
+  (each round consumes the top symbol — executing the datum — or replaces the controller by one closed symbol), so
+  a copy-free single-datum leftmost Boehm path is a finite automaton reading its stack top-down.  Growth needs a
+  second copy of the datum (re-execution / order-2 behaviour, e.g. the Zachos copy-and-count-down round).
+* COMPUTATIONALLY CERTIFIED (bounded, negative): probe2.py 11 3000 — no closed sigma <= 11 leaves turns sigma.x into
+  x (c1 x) (c2 x) with exactly two arguments (two independent closed continuations each holding x once); 248 shapes
+  exist only with >= 3 arguments, where the selectors S / SS no longer select.  So the leftmost path cannot branch on
+  the top symbol while keeping the controller in BOTH branches in this range; the available probe x (c x) keeps the
+  controller only in the 'select second' branch (S(S(SS))c . D => D (c D) => c.D if top(D) = SS, D_rest if top(D) = S).
+  twostack2.py 7 30000 5 6 3 3000: 30,000 random two-stack configurations (symbols <= 5, controllers <= 6 leaves,
+  stack depth <= 3): every survivor with both clean stacks is a pop of the active stack; no push, no change of the
+  passive stack (15 changed cases, all pops).

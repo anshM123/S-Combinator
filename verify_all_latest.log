@@ -65,3 +65,11 @@ PASS  Lean 4: Theorem A (M35 class not in F => no head normal form); S-identity 
 PASS  Lean 4: Theorem P2 (Böhm-tree finiteness of S S^j (SSS)(SS) iff j even or j = 1) machine-checked  (11s)
 PASS  Lean 4: Theorem Q10 (BEKW Question 10: head reduction terminates iff the M35 class is in F) machine-checked  (108s)
 PASS  Lean 4: Proposition Q-double-prime (leftmost/rightmost path models: flag 1 => path infinite) machine-checked  (252s)
+PASS  Lean 4: Lemma P (descent lemma) and Theorem LP1 (outside D2 the leftmost path ends at S) machine-checked  (112s)
+PASS  Lean 4: Proposition Q (P39 class in F_P => productive; soundness half of C6) machine-checked  (454s)
+PASS  E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)  (0s)
+PASS  Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle  (6s)
+PASS  Proposition MW(a): (size, -leaf depth) strictly increases at every S-step  (0s)
+PASS  Clock channel: frozen under LO, time-dependent under parallel  (8s)
+
+73/73 checks passed

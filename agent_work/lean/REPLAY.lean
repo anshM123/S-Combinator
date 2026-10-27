@@ -234,3 +234,60 @@ theorem replay_reexec (w : T) (q c : Nat) (hw : head w = S) (k : Nat) (a' : T) (
 
 #print axioms replay_run
 #print axioms replay_reexec
+
+/-! ### prefix replay: the part of the list below the active top is never touched -/
+
+theorem run_append : ∀ (k : Nat) (T1 T2 B : List T), run k T1 = some T2 → run k (T1 ++ B) = some (T2 ++ B)
+  | 0, T1, T2, B, h => by simp [run] at h; subst h; simp [run]
+  | k + 1, T1, T2, B, h => by
+    match T1, h with
+    | a :: b :: d :: R, h =>
+      simp only [run] at h
+      by_cases hS : head a = S
+      · have hs : step (a :: b :: d :: R) = some (args a ++ d :: app b d :: R) := by simp [step, hS]
+        rw [hs] at h; simp only at h
+        have hs2 : step (a :: b :: d :: R ++ B) = some (args a ++ d :: app b d :: (R ++ B)) := by
+          simp [step, hS]
+        simp only [run]
+        rw [hs2]
+        have := run_append k _ T2 B h
+        simpa using this
+      · have hs : step (a :: b :: d :: R) = none := by simp [step, hS]
+        rw [hs] at h; simp at h
+    | [], h => simp [run, step] at h
+    | [_], h => simp [run, step] at h
+    | [_, _], h => simp [run, step] at h
+
+/-- **Corollary (replay at the glue step).**  Let the innermost single wrapper be w = S.c0, glued onto y in a step
+    [c0, w, y] ++ R0 (pattern alpha of the creation lemma).  If the run of the top part [c0, w, y] reaches after k
+    guarded steps a p-headed front (by `run_append` this is exactly what the phase-2 run does above R0: the
+    TRANSFER), then the phase-3 datum w[p:=c].q reaches after k + 1 steps the th-image of that top part above
+    [x.y, r], with a c-headed front (REEXEC). -/
+theorem replay_glue (c0 : T) (q c : Nat) (k : Nat) (a' : T) (rest : List T)
+    (hrun : run k [c0, app S c0, var 2] = some (a' :: rest))
+    (hok : runOK (app S c0) k [c0, app S c0, var 2])
+    (hp : head a' = var 0) :
+    run (k + 1) [app (sb c (app S c0)) (var q), var 1, var 2, var 3] =
+        some ((a' :: rest).map (th (app S c0) q c) ++ [app (var 1) (var 2), var 3]) ∧
+      head (th (app S c0) q c a') = var c := by
+  have hw : head (app S c0) = S := by simp [head]
+  have hna : ¬ wpre (app S c0) a' := wpre_head (app S c0) hw 0 a' hp
+  refine ⟨?_, th_head0 (app S c0) q c a' hna hp⟩
+  have himg : [c0, app S c0, var 2].map (th (app S c0) q c) = [sb c c0, var q, var 2] := by
+    have h1 : th (app S c0) q c c0 = sb c c0 := th_small _ q c c0 (by simp [size]; omega)
+    have h2 : th (app S c0) q c (app S c0) = var q := th_self _ q c
+    have h3 : th (app S c0) q c (var 2) = var 2 := by
+      have : var 2 ≠ app S c0 := by intro h; cases h
+      simp [th, this]
+    simp [h1, h2, h3]
+  have hstep : step [app (sb c (app S c0)) (var q), var 1, var 2, var 3] =
+      some [sb c c0, var q, var 2, app (var 1) (var 2), var 3] := by
+    simp [step, head, sb, args]
+  have h1 := replay_run (app S c0) q c k _ _ hok hrun
+  rw [himg] at h1
+  have h2 := run_append k _ _ [app (var 1) (var 2), var 3] h1
+  simp only [run]
+  rw [hstep]
+  simpa using h2
+
+#print axioms replay_glue

@@ -2533,6 +2533,9 @@ Not proved: which terms descend; whether the fixed-depth case always reduces to 
 ## The multiway graph of an S-term: potential, acyclicity, directedness (Proposition MW) (main agent, 2026-10-26)
 For a term t let |t| be its number of leaves and D(t) the sum of the depths of its leaves.
 *Proposition MW — PROVED (parts (a)–(c) and (e) elementary; (d) uses the cited cofinality theorem).*
+*MACHINE-CHECKED (lean/MW.lean, 2026-10-27): (a) `red_potential` and (b) `acyclic`, `unbounded`, for one-redex steps
+anywhere in the term (so for every evolution order and every choice of redexes; a parallel step is a finite sequence of
+such steps). `unbounded`: for every infinite evolution s and every N some s n has more than N leaves. Standard axioms.*
 (a) *Potential.* If t → u contracts a redex S x y z anywhere in t, then |u| = |t| + |z| − 1, and if z = S then
 D(u) = D(t) − |x|. So (|t|, −D(t)) increases strictly (lexicographically) along every step, in every evolution order.
 *Proof.* The context is unchanged, so compare B = ((S x) y) z with A = (x z)(y z) at the redex depth d. Leaves:

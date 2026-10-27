@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 02:30 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 02:45 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -18,15 +18,17 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        SL (single-level data: P-elements glued onto Y are predecessor-headed) [lean/SL.lean]; canonical chain bound
        (single-level transfer => next phase cannot iterate without re-execution) [lean/CANON.lean].
        Scope: generic (opaque) data, Church-style phases; these do NOT by themselves prove R''_PUP for any new class.
-   D2. Multi-level data.  (a) Theorem MSL (multi-level SL: P-elements glued onto Y are level-prefixed or have only
-       level-prefixed P-arguments) and Lemma AB (|P| >= 3 is absorbing) ............ DONE, machine-checked
-       [agent_work/lean/MSL.lean, lean/AB.lean]; hand proofs in this LOG.
-       (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN (computationally
-       certified: exhaustive <= 11 leaves right combs, 70k random) [chain3.py, phase2_general.py]; hand proof of
-       case (i) only (C-region disposed onto P'); case (ii) (sigma_C path) open.  Partial (hand): Lemma YD, Corollary
-       AB-c, FH and CANON dispose of p-headed / bare-S outer wrappers, of >= 3 released C-elements, and bound the
-       chain after any single-wrapper handler (one more transfer phase at most).  Mechanism: replay relation
-       (phase 3 replays phase 2 under w -> p', p -> c; exact for 38/836 single-wrapper cases) — general replay OPEN.
+   D2. Multi-level data.  (a) Theorem MSL in STRICT form (P-elements glued onto Y are prefixed by one of the
+       datum's own levels or have only such P-arguments) and Lemma AB (|P| >= 3 is absorbing) ... DONE,
+       machine-checked [agent_work/lean/MSLS.lean (strict + generous), lean/MSL.lean, lean/AB.lean].
+       (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN in general
+       (computationally certified: exhaustive <= 11 leaves, 115k + 367k targeted data, 70k random).
+       DONE parts: Lemma YD (machine-checked [lean/YD.lean]: bare y glued down early => no proper transfer; bare-S
+       outer wrapper); REPLAY relation (machine-checked [lean/REPLAY.lean]: a phase-2 transfer reached from the
+       self-application list args w ++ [w, y, x.y, r] is replayed as a REEXEC of phase 3); FH (p-headed wrapper);
+       CANON (single-wrapper handler => at most one more transfer phase); Corollary AB-c (hand: >= 3 C-elements =>
+       no p'-front); case (i) (hand: last C-element disposed onto P').  OPEN: case (ii) (sigma_C path) for live
+       handlers; a replay relation covering all real phase-2 outputs.
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
@@ -592,3 +594,25 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   p-headed or level-prefixed P-arguments) and is strictly stronger than the generous form (`msl_glue_gen`, = MSL.lean),
   which also counts invented combs such as (S.S).L2 as levels.  The strict form matters: the general-shape phase-3
   counterexamples (goodhits*.py) all have generous-comb wrappers that are not datum levels.
+* COMPUTATIONALLY CERTIFIED (target3.py 8 4 9 and 9 3 8; larger targeted families): (a) K <= 8 leaves x tails with
+  wrappers <= 4 leaves (tail <= 9): 366,836 phase-2 runs, 13,041 proper position-3 transfers, phase 3: 9,371
+  REEXEC, 3,212 non-proper p'-fronts, 458 calls, NO proper transfer; (b) K <= 9 leaves x tails with wrappers <= 3
+  leaves (tail <= 8): 298,120 runs, 8,317 proper phase-2 transfers, phase 3: 7,318 REEXEC, 730 non-proper p'-fronts,
+  269 calls, NO proper transfer.  Phase-2 data here have up to 18 leaves.
+* PROVED (Creation lemma for the innermost wrapper; hand proof, general).  In a generic phase run, let the
+  innermost wrapper vn of a proper handler be glued onto the bare y in the step [a, vn, y] ++ R0.  The element
+  directly below vn is fixed from vn's creation until vn is at position <= 3; at position 3 a step [a1, a2, vn]
+  inserts a2.vn directly below vn, after which y can never again be directly below vn.  The number of elements
+  above vn changes by |args(front)| - 1 >= -1 per step and must be exactly 1 at the glue without ever being 2, so it
+  is 1 from vn's creation on and the glue is the very next step.  Hence vn appeared one step before the glue with
+  exactly one element above it: (alpha) created by [S, b0, c0, y] ++ R0 -> [c0, vn = b0.c0, y] ++ R0, or (beta)
+  released as the second argument of an opened front with y directly below.  COMPUTATIONALLY CERTIFIED (wcreate.py
+  11, all 836 single-wrapper real transfers): alpha 790 (b0 = S: 88), beta 46, nothing else.
+* MACHINE-CHECKED (agent_work/lean/REPLAY.lean, now 300 lines; no sorry): `run_append` (the part of a list below
+  the active top is never touched: run k T = some T' => run k (T ++ B) = some (T' ++ B)) and **`replay_glue`**:
+  for a single wrapper w = S.c0 glued in pattern alpha, if the run of the top part [c0, w, y] reaches a p-headed
+  front after k guarded steps (by run_append this is exactly the phase-2 TRANSFER above R0), then the phase-3 datum
+  w[p:=c].q reaches after k+1 steps the th-image of that top part above [x.y, r], whose front is c-headed: REEXEC.
+  COMPUTATIONALLY CERTIFIED (prefix_replay.py 11): for all 100 real single-wrapper transfers with w = S.c0
+  (<= 11 leaves) the guards hold; 96 are pattern alpha and replay to a REEXEC exactly as the theorem says; 4 are
+  pattern beta (not covered by replay_glue).
