@@ -918,3 +918,12 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
   copy of vn.y released from an opened element; in phase 2 a copy of vn.y is then opened, which starts a nested
   'phase-3-like' run of b0 on (c0, y) — a general proof would need an induction over such nestings).
   Chain bound = INNER.lean (steps 1-2, unconditional) + Conjecture R3 (step 3).
+* MACHINE-CHECKED (agent_work/lean/PA.lean; no sorry): **`reexec_replays_transfer`** — under the hypotheses of
+  post_replay, the next phase reaches after exactly k steps the image of phase 2's TRANSFER list under
+  rho = (w.y -> e2, y -> e1, p -> c), followed by the untouched bottom, with a c-headed front.  So the frozen
+  predecessor is re-executed on the images of exactly the arguments with which the live predecessor was
+  activated at the transfer: the precise, machine-checked content of 're-execution replays the earlier
+  activation'.  (What the frozen value then does is outside the generic phase model: D3 stays open.)
+* REFINEMENT (EXPERIMENTALLY SUPPORTED, guardfail.py): in a guard failure (phase 2 opens a copy of w.y after the
+  glue), the replay holds up to that step and phase 3's front there is the image e2-prefixed element; in the
+  observed cases e2 = y, so phase 3 stops with a call of y exactly where phase 2 re-ran w's code.

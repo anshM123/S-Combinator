@@ -1329,6 +1329,29 @@ theorem pam_main (b0 c0 : T) (c : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hb0S : he
       exact post_replay _ c0 c hc hc0S hy1 hsz hwy2 hwyh k a' rest hrun hok hp
     exact pa_core_g (sb c b0) (sb c c0) _ hBok hc0' hy0' hy1' hpost (m - m1 - 1) f b d R hrest hf
 
+
+/-- **Re-execution replays the transfer (machine-checked form).**  Under the hypotheses of `post_replay`, the run from
+    args(g[p:=c]) ++ [e1, e2, ...] reaches, after exactly k steps, the image under rho = (w.y -> e2, y -> e1, p -> c)
+    of phase 2's transfer list a' :: rest, followed by the untouched bottom; its front is headed by the frozen c.
+    So the frozen predecessor is re-executed on the images of exactly the arguments with which the live predecessor
+    was activated at the transfer. -/
+theorem reexec_replays_transfer (wy g : T) (c : Nat) (hgS : head g = S) (hgy : occ2 g = 0)
+    (hsz : size g < size wy) (hwy2 : var 2 ≠ wy) (hwyh : head wy ≠ var 0)
+    (k : Nat) (a' : T) (rest : List T)
+    (hrun : run k (args g ++ [var 2, wy]) = some (a' :: rest))
+    (hok : runOK wy k (args g ++ [var 2, wy])) (hp : head a' = var 0) (e1 e2 : T) (B' : List T) :
+    run k (args (sb c g) ++ e1 :: e2 :: B') = some ((a' :: rest).map (rho wy e2 (sgE c e1)) ++ B') ∧
+      head (rho wy e2 (sgE c e1) a') = var c := by
+  have himg := pa_image_gen wy g e1 e2 c hgS hgy hsz hwy2
+  have hM0 : args (sb c g) ++ e1 :: e2 :: B' = (args g ++ [var 2, wy]).map (rho wy e2 (sgE c e1)) ++ B' := by
+    rw [himg]; simp
+  rw [hM0]
+  refine ⟨run_append k _ _ B' (replay_run_gen wy e2 (sgE c e1) k _ _ hok hrun), ?_⟩
+  have hna' : ¬ wpre wy a' := by
+    intro hw; have := wpre_headeq _ a' hw; rw [hp] at this; exact hwyh this.symm
+  rw [rho_headvar _ _ _ 0 a' hna' hp]; simp [sgE, head]
+
 #print axioms pa_main
 #print axioms pb_main
 #print axioms pam_main
+#print axioms reexec_replays_transfer

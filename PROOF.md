@@ -372,6 +372,8 @@ sizes); every decrement either cascades (iterator) or is completed at a Böhm-tr
 
 ## Proposition G (pushdown discipline of fork-decrements) — PROVED (for the representation of Prop. F and any
 representation where a decrement is completed at a Böhm-tree fork)
+*MACHINE-CHECKED core (lean/PropG.lean, 2026-10-27; axiom propext): `gen_run` — every element of every list reachable
+from args C, in particular every component of a head normal form of C, is built by application from subterms of C.*
 If a node is a closed counter term C and its decrement is the fork `C →* S C' (Z C')` (or similar), the
 continuation along the path is a component of hnf(C), hence a term built only from subterms of C and
 S-applications: the post-decrement configuration is a function of C alone. Information created after C was
