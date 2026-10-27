@@ -18,6 +18,7 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 | Lemma 4, hnf congruence | `Lemma4.lean` | all terms without a head normal form are interchangeable in every context; terms with the same M35 class have a head normal form in exactly the same contexts |
 | Proposition Q | `PropQ.lean` | every term whose class in the 39-element productivity model is in F_P is productive (no ⊥ anywhere in its Böhm tree): one half of Conjecture C6, the conjectured answer to BEKW Question 5 |
 | Proposition Q″ | `PathModels.lean` | the "infinite" verdicts of the leftmost-path (36 classes) and rightmost-path (19 classes) models are correct |
+| Lemmas 5, 6 | `Lemma56.lean` | Fibonacci peeling (S N_j q v reaches S F_(j+1) F_(j+2) in j + 1 steps) and the iterator lemma: the exact runs behind nest and wrapper counters |
 | Lemma P, Theorem LP1 | `LP1.lean` | if S·t·A·B has a head normal form, t's leftmost Böhm-tree path ends at S; hence every term whose M35 class is in F outside the five two-argument-dead classes D2 has a finite leftmost path ending at S |
 | Theorem C | `TheoremC.lean` | the Böhm tree of the 18-leaf term K·W_1 has infinitely many distinct finite subtrees (sizes 11 + 2r for every r >= 1): Böhm trees of S-terms are not regular in general, so a decision method for their MSO properties (C5′) must go beyond regular trees |
 | **Theorem P2** | `P2_Parity.lean` | the Böhm tree of S·S^j·(SSS)·(SS) is finite iff j is even or j = 1: S-terms can count modulo 2 |

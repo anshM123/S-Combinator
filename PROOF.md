@@ -261,7 +261,7 @@ class is eventually constant ρ ∈ F, and either
    component), with refills charged to strictly-higher-rank nested calls.
 
 ---------------------------------------------------------------------------------------------------
-## Lemma 5 (Fibonacci peeling) — PROVED
+## Lemma 5 (Fibonacci peeling) — PROVED and MACHINE-CHECKED (lean/Lemma56.lean, 2026-10-27: `peel` (general base) and `peel_nest`)
 Nests: `N_0 = S`, `N_{j+1} = S N_j`. For all S-terms q, v and all j ≥ 0:
 `S N_j q v  →^{j+1}  S F_{j+1} F_{j+2}` (head steps), where `F_0 = q, F_1 = v, F_{i+2} = F_i F_{i+1}`.
 More generally, for any base z: `S (S^{(j)} z) q v →^{j} S z F_j F_{j+1}` with `S^{(j)} z` = j-fold `S(…(S z))`.
@@ -296,7 +296,7 @@ Interpretation: a self-incrementing unary counter; round r has r+2 nodes and emi
 W_{r+1} sideways at each decrement — the "BT-spine computation with garbage emission" mechanism.
 
 ---------------------------------------------------------------------------------------------------
-## Lemma 6 (iterator lemma) — PROVED
+## Lemma 6 (iterator lemma) — PROVED and MACHINE-CHECKED (lean/Lemma56.lean, 2026-10-27: `iter_step` (a) and `w_step` (b))
 Wrappers: `V_0 = B`, `V_{m+1} = S U V_m`, i.e. `V_m = (S U)^m B` (m-fold application of `S U`); W-family: U = S.
  (a) `V_m x →¹ U x (V_{m-1} x)`, hence `V_m x ↠ (U x)^{(m)}(B x)` (m-fold nested application of `U x`).
  (b) `W_k c →¹ S c (W_{k-1} c)` (k ≥ 1): every applied W-wrapper is a right comb with identical teeth c

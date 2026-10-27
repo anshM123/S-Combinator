@@ -847,3 +847,33 @@ Earlier (still compiling): OC.lean (oc1, only S is transparent), OT.lean (ot_mai
 FH: fh_main / fh_rcomb), SL.lean (sl_main), CANON.lean (canonical_innermost).
 Hand-proved, not formalised: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB, Lemma AB-c's hypothesis for
 phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start; PROOF.md barrier lemma).
+* COMPUTATIONALLY CERTIFIED (coverage_ord.py 11): the replay theorems are not specific to right combs.  For ALL
+  S-headed ordered data D = G[p] (G a 1-hole context with <= 11 leaves; by OT every proper transfer from them is
+  dirty): 2,621 proper position-3 transfers, 2,612 covered by machine-checked theorems with per-case-certified
+  hypotheses (FH 797, FHL 495, YD 2, PA 1,245, PB 51, PAM 22), 9 open (pattern beta with c0 != S.a1, e.g.
+  S(SS)S(SS(S(Sp)))); the next phase makes a proper transfer in NONE of the 2,621 (<= 9: 254/254, <= 10: 804/804).
+  Reading: after any dirty transfer whose innermost wrapper was glued in pattern alpha (or beta with c0 = S.a1) and
+  whose phase reached the predecessor through the code c0 that did the gluing, the next phase cannot transfer — it
+  re-executes the frozen predecessor where the previous phase reached the live one.  Since OT makes every proper
+  transfer from ordered data dirty, Church chains from ordered sources stop after ONE proper transfer in this whole
+  range (modulo the 9 open cases, which also stop).
+* COMPUTATIONALLY CERTIFIED — CHURCH-CHAIN LENGTH CENSUS (chain_len.py 11; every S-headed datum D = G[p], G any
+  1-hole context with <= 11 leaves, ordered or not: 227,239 data; chains followed through proper position-3
+  transfers D_{j+1} = V_j[y := p, p := c_j] with fresh frozen atoms): chain length 0: 216,864; 1: 10,192 (2,621 of
+  them from ordered data); 2: 183, ALL from non-ordered first data; length >= 3: NONE.  Every handler after the
+  first is innermost-dirty (OTD) in all cases.  (The '1,024 later data not ordered' flag of the script uses the
+  stricter notion of phase2_general.py, in which frozen atoms count as non-closed; in OTD's sense — closed = free of
+  p, x, y, r — every later datum, a right comb over the new predecessor with frozen-only wrappers, is ordered.)
+* PROVED (structure of the chain bound; assembling machine-checked parts, hypotheses per case):
+  (1) every datum after the first transfer, D_{j+1} = V_j[y := p', p := c_j], is a right comb over p' whose
+      wrappers are free of p', x, y, r, hence ordered in OTD's sense (immediate);
+  (2) from an ordered datum every proper transfer is innermost-dirty (OTD + the OT corollary; machine-checked for
+      single-level data in CANON.lean, by hand for general ordered data);
+  (3) after an innermost-dirty transfer satisfying the hypotheses of PA / PB / PAM (or covered by FH / FHL / YD),
+      the next phase makes no proper transfer (machine-checked).
+  Hence: a Church chain makes at most TWO proper transfers (the first datum may be non-ordered and hand over a
+  clean handler; the second transfer is dirty; the third phase re-executes or calls), and at most ONE if the first
+  datum is ordered — for every chain whose dirty transfers satisfy the per-case hypotheses (all but 9 of the 2,621
+  ordered-data transfers <= 11 leaves, all but 5 of the 1,083 right-comb transfers <= 11 leaves, 99.7-99.8% of
+  random larger data; the uncovered ones also stop, by simulation).  This is the strongest form of the D2
+  programme reached today: within the generic phase model, Church-style iteration of transfers is bounded by 2.

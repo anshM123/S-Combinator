@@ -319,3 +319,7 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   S F_j F_(j+1) over (x, y).  Every other M x y either becomes variable-headed or has no hnf.
   COMPUTATIONALLY CERTIFIED cross-check (shnf_check.py 12 2000): of all 82,500 closed terms <= 12 leaves exactly 12 have
   M x y reaching an S-headed hnf — S and S(comb j), j = 0..10 — and there is no counterexample.
+* EXPERIMENTALLY SUPPORTED (dmlong.py 12 30000 300, 04:01 EDT): all 12-leaf terms whose leftmost path has >= 300 rounds
+  (5 terms, 3 distinct profiles) are linear reload counters (round lengths 5/6 or 3/4; survivor sizes count down by 2
+  or 3 and reload one step higher) — no nested (square) leftmost paths in this range, consistent with W2/W2R (no
+  second independent counter on the leftmost path).

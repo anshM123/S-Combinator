@@ -48,6 +48,8 @@ def classify(D2):
     if any(hm.head(w) == P or hm.head(w) in FROZSET for w in ws): kind = "FH"
     elif any(lp_reaches_p(w) for w in ws): kind = "FHL"
     elif ws[0] == 0: kind = "YD"
+    elif ws[-1] <= 0:
+        kind = None
     else:
         vn = ws[-1]; b0, c0 = hm.L[vn], hm.R[vn]
         gl = [t for t, L in enumerate(hist) if len(L) >= 3 and L[-2] == vn and L[-3] == Y]

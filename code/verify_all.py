@@ -221,6 +221,8 @@ CHECKS = [
   ["lean_check.py", "../lean/AgentFHL.lean"], ['LEAN OK: no errors, no sorry', 'fhl_main: propext, Classical.choice, Quot.sound'], 1500),
  ('Lean 4 (universality agent): comb rigidity for any two data; M x y has an S-headed hnf only for M = S or S(comb j)',
   ["lean_check.py", "../lean/AgentWR.lean"], ['LEAN OK: no errors, no sorry', 'rigid_pair: propext, Classical.choice, Quot.sound', 'shnf_two_vars: propext, Classical.choice, Quot.sound'], 1500),
+ ("Lean 4: Lemma 5 (Fibonacci peeling) and Lemma 6 (iterator lemma) machine-checked",
+  ["lean_check.py", "../lean/Lemma56.lean"], [r"LEAN OK: no errors, no sorry", r"peel_nest: propext, Quot.sound"], 600),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",
