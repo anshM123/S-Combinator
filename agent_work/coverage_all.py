@@ -15,10 +15,12 @@ def pre(t, w):
         if t == w: return True
         if t <= 0: return False
         t = hm.L[t]
+FROZSET = set(c3.FROZ)
 def lp_reaches_p(t):
+    """leftmost first-argument path reaches p or a frozen atom (FHL's hypothesis after p := c)"""
     while True:
         h = hm.head(t)
-        if h == P: return True
+        if h == P or h in FROZSET: return True
         if h != 0: return False
         args, _ = hm.spine(t)
         if not args: return False
@@ -43,7 +45,7 @@ def classify(D2):
     ws = []; t = V
     while t != Y: ws.append(hm.L[t]); t = hm.R[t]
     kind = None
-    if any(hm.head(w) == P for w in ws): kind = "FH"
+    if any(hm.head(w) == P or hm.head(w) in FROZSET for w in ws): kind = "FH"
     elif any(lp_reaches_p(w) for w in ws): kind = "FHL"
     elif ws[0] == 0: kind = "YD"
     else:

@@ -810,3 +810,40 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   16, (p', p'-headed term) 15, (p', y) 13.  So 're-execution replays the earlier activation' holds exactly (Lean:
   replay_glue / replay_cycle / post_replay compute the re-execution list), but the replayed handler e2 is not
   uniformly trivial; what the frozen value does next is outside the generic phase model.  D3 stays OPEN.
+* COMPUTATIONALLY CERTIFIED (coverage_rand.py; random phase-2 data K.(d2.(...(dk.p))), K <= 9-10 leaves, 1-3
+  wrappers <= 6-7 leaves, older frozen atom c2 sprinkled into wrappers with probability 0.10-0.15): the combined
+  machine-checked coverage (FH / FHL now also counting wrappers headed by, or with leftmost path reaching, an OLDER
+  frozen atom — both lemmas are stated for any frozen atom) is 3,181 of 3,187 and 2,108 of 2,114 real proper
+  transfers (99.8% / 99.7%); the open ones are again of pattern-beta-other or guard-failure type, and none of them
+  is followed by a proper transfer.
+
+## THEOREM INDEX (non-universality agent, 2026-10-27; all files in agent_work/lean/, Lean 4.35 core, no sorry)
+Encoding: generic head runs of lists [a,b,c|R] => args(a) ++ [c, b.c | R]; atoms var 0 = live predecessor p (p' in
+the next phase), var 1..3 = inputs x, y, r, var n >= 4 frozen; `closed` = free of var 0..3.
+* AB.lean      ab_run / ab_no_glue: with >= 3 P-elements (contain var 0, no var 1..3), the P-count stays >= 3 and no
+               P-element is ever glued onto a Y-element.
+* ABC.lean     run_ren (atom renamings commute with runs); abc_no_input_front: if the c-view (c := var 0, p' := var 1)
+               satisfies AB's hypothesis, no front is ever headed by p', x, y or r (only re-execution can end it).
+* MSL.lean     msl_glue / msl_main: from args K ++ [l, y, x.y, r] (K closed, l a right comb over p with closed
+               wrappers) every P-element glued onto Y is level-prefixed or has only level-prefixed P-arguments
+               (generous levels).
+* MSLS.lean    the same for an arbitrary level structure `LevS`; msl_glue_strict / msl_main_strict: levels = the
+               right suffixes of the datum's own level l.
+* YD.lean      yd_main: from a YDI list (no bare y, no S-headed subterm with spine argument y, every d.y has d = x)
+               no proper y-comb ever exists; yd_bareS: a datum S.U (U S-headed, y-free) never yields one.
+* FH1.lean     fh1_main: a level d.l whose wrapper d has a frozen-headed first spine argument blocks every p-front.
+* FHL.lean     fhl_main: the same when the leftmost first-argument path of d reaches a frozen-headed term.
+* REPLAY.lean  replay_run_gen: runs commute with rho = (replace a term w by tw; atoms by terms) while no front is
+               w-prefixed and w is never re-created; run_append (the bottom of a list is never touched);
+               replay_reexec / replay_glue / replay_beta / replay_cycle: concrete alignments in which a phase-2
+               transfer is replayed as a re-execution of the next phase.
+* PA.lean      pa_main (PATTERN ALPHA, single wrapper), pb_main (pattern beta, c0 = S.a1), pam_main (MULTI-WRAPPER,
+               innermost wrapper in pattern alpha): the next phase never has a p'-front with a proper y-comb at
+               position 3, given that phase 2's continuation from the glue step of the innermost wrapper reaches
+               its transfer under the replay guards (pam_main also: the element below p' at the first opening of
+               the innermost level is y-free or the bare y).  Reusable: post_replay, pa_core, pa_core_g,
+               guarded_phase, BI / bi_x2 (barrier phase).
+Earlier (still compiling): OC.lean (oc1, only S is transparent), OT.lean (ot_main, rc_main), OTD.lean (frozen atoms,
+FH: fh_main / fh_rcomb), SL.lean (sl_main), CANON.lean (canonical_innermost).
+Hand-proved, not formalised: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB, Lemma AB-c's hypothesis for
+phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start; PROOF.md barrier lemma).

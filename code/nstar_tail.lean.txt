@@ -407,3 +407,101 @@ theorem layer_bound (L0 LN : List T) (N : Nat) (hN : run N L0 = some LN) (hlen :
   omega
 
 #print axioms layer_bound
+
+/-! ## Explicit potentials: a counter with d layers under a context of hole depth H can reach at most d + H/h layers -/
+
+/-- depth of the hole -/
+def hdepth : Ctx → Nat
+  | Ctx.hole => 0
+  | Ctx.appL C _ => hdepth C + 1
+  | Ctx.appR _ C => hdepth C + 1
+
+/-- x does not occur in the side terms -/
+def cxfree : Ctx → Prop
+  | Ctx.hole => True
+  | Ctx.appL C x => cxfree C ∧ hx x = false
+  | Ctx.appR f C => hx f = false ∧ cxfree C
+
+theorem plug_hx' (u : T) : ∀ C : Ctx, cxfree C → hx (plug C u) = hx u
+  | Ctx.hole, _ => rfl
+  | Ctx.appL C x, h => by simp only [plug, hx, plug_hx' u C h.1, h.2, Bool.or_false]
+  | Ctx.appR f C, h => by simp only [plug, hx, plug_hx' u C h.2, h.1, Bool.false_or]
+
+/-- each layer node on the hole path adds at least one (closed layers, core free of y) -/
+theorem pot_plug_ge (u : T) (hxu : hx u = true) (hyu : hy u = false) :
+    ∀ C : Ctx, cclosed C → potT u + hdepth C ≤ potT (plug C u)
+  | Ctx.hole, _ => by simp [plug, hdepth]
+  | Ctx.appL C x, h => by
+    have ih := pot_plug_ge u hxu hyu C h.1
+    have hx1 : hx (plug C u) = true := by rw [plug_hx u C h.1]; exact hxu
+    simp only [plug, potT, hx1, h.2, b2n, hdepth]
+    simp
+    omega
+  | Ctx.appR f C, h => by
+    have ih := pot_plug_ge u hxu hyu C h.2
+    have hx1 : hx (plug C u) = true := by rw [plug_hx u C h.2]; exact hxu
+    have hy1 : hy (plug C u) = false := by rw [plug_hy u C h.2]; exact hyu
+    simp only [plug, potT, hx1, hy1, h.1, b2n, hdepth]
+    simp
+    omega
+
+/-- each node on the hole path adds at most one (x only in the core) -/
+theorem pot_plug_le (u : T) : ∀ C : Ctx, cxfree C → potT (plug C u) ≤ potT u + hdepth C
+  | Ctx.hole, _ => by simp [plug, hdepth]
+  | Ctx.appL C x, h => by
+    have ih := pot_plug_le u C h.1
+    have hx0 := h.2
+    simp only [plug, potT, hdepth]
+    rw [hx0]
+    rcases Bool.eq_false_or_eq_true (hx (plug C u)) with e1 | e1 <;>
+    rcases Bool.eq_false_or_eq_true (nv x) with e2 | e2 <;>
+    simp [e1, e2, b2n] <;> omega
+  | Ctx.appR f C, h => by
+    have ih := pot_plug_le u C h.2
+    have hx0 := h.1
+    simp only [plug, potT, hdepth]
+    rw [hx0]
+    rcases Bool.eq_false_or_eq_true (hx (plug C u)) with e1 | e1 <;>
+    rcases Bool.eq_false_or_eq_true (nv f) with e2 | e2 <;>
+    rcases Bool.eq_false_or_eq_true (hy (plug C u)) with e3 | e3 <;>
+    simp [e1, e2, e3, b2n] <;> omega
+
+theorem cclosed_cxfree : ∀ C : Ctx, cclosed C → cxfree C
+  | Ctx.hole, _ => trivial
+  | Ctx.appL C x, h => ⟨cclosed_cxfree C h.1, nv_hx x h.2⟩
+  | Ctx.appR f C, h => ⟨nv_hx f h.1, cclosed_cxfree C h.2⟩
+
+theorem iter_pot_eq (C : Ctx) (hC : cclosed C) (u : T) (hxu : hx u = true) (hyu : hy u = false) :
+    ∀ m, potT (iter C m u) = potT u + m * hdepth C
+  | 0 => by simp [iter]
+  | m + 1 => by
+    have ih := iter_pot_eq C hC u hxu hyu m
+    have h1 := pot_plug_ge (iter C m u) (by rw [iter_hx C hC]; exact hxu) (by rw [iter_hy C hC]; exact hyu) C hC
+    have h2 := pot_plug_le (iter C m u) C (cclosed_cxfree C hC)
+    simp only [iter]
+    rw [Nat.succ_mul]
+    omega
+
+/-- **Corollary N\* (explicit).** Let the node be N0 = D[L^d[u]] with D free of x (it may hold the other counter's core
+    y), L a closed layer of hole depth h, and the core u containing x but not y. In a head run from N0 that reaches a head
+    normal form and contains y, no list carries L^m[u'] (u' containing x but not y) with m·h > hdepth(D) + d·h + P_x(u):
+    the counter gains at most hdepth(D)/h + P_x(u)/h layers above its unread core. -/
+theorem layer_bound_explicit (D L : Ctx) (hD : cxfree D) (hL : cclosed L) (hne : L ≠ Ctx.hole) (d : Nat) (u : T)
+    (hxu : hx u = true) (hyu : hy u = false) (LN : List T) (N : Nat)
+    (hN : run N (args (plug D (iter L d u))) = some LN) (hlen : LN.length ≤ 2)
+    (hy0 : ∃ e ∈ args (plug D (iter L d u)), hy e = true)
+    (k : Nat) (hk : k ≤ N) (Lk : List T) (hLk : run k (args (plug D (iter L d u))) = some Lk)
+    (e : T) (he : e ∈ Lk) (u' : T) (hxu' : hx u' = true) (hyu' : hy u' = false) (m : Nat)
+    (hs : SubT (iter L m u') e) : m * hdepth L ≤ hdepth D + d * hdepth L + potT u := by
+  have h1 := iter_pot_eq L hL u' hxu' hyu' m
+  have hxi : hx (iter L m u') = true := by rw [iter_hx L hL]; exact hxu'
+  have h2 := sub_pot hs hxi
+  have h3 := pot_mem Lk e he (sub_hx hs hxi)
+  have h4 := nstar_run _ LN N hN hlen hy0 k hk Lk hLk
+  have h5 : potL (args (plug D (iter L d u))) ≤ potT (plug D (iter L d u)) := by
+    unfold potL; have := spine_le (plug D (iter L d u)) 0; omega
+  have h6 := pot_plug_le (iter L d u) D hD
+  have h7 := iter_pot_eq L hL u hxu hyu d
+  omega
+
+#print axioms layer_bound_explicit

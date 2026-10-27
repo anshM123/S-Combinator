@@ -188,7 +188,7 @@ CHECKS = [
  ("Lean 4: head normalisation theorem and Proposition CF (complete) machine-checked",
   ["lean_check.py", "../lean/Standard.lean"], [r"LEAN OK: no errors, no sorry", r"head_normalization: propext\s", r"cf_full: propext, Quot.sound"], 900),
  ("Lean 4: Theorem N* (potential bound for counters, list form) and Corollary N* (layer bound) machine-checked",
-  ["lean_check.py", "../lean/NStar.lean"], [r"LEAN OK: no errors, no sorry", r"nstar_run: propext, Classical.choice, Quot.sound", r"nstar_node: propext, Quot.sound", r"layer_bound: propext, Classical.choice, Quot.sound"], 900),
+  ["lean_check.py", "../lean/NStar.lean"], [r"LEAN OK: no errors, no sorry", r"nstar_run: propext, Classical.choice, Quot.sound", r"nstar_node: propext, Quot.sound", r"layer_bound: propext, Classical.choice, Quot.sound", r"layer_bound_explicit: propext, Classical.choice, Quot.sound"], 900),
  ("Lean 4: Lemma 11 (full-read principle) and Lemma 12 (right-depth cost) machine-checked",
   ["lean_check.py", "../lean/ReadCost.lean"], [r"LEAN OK: no errors, no sorry", r"lemma11: propext, Classical.choice, Quot.sound", r"lemma12: propext, Quot.sound"], 900),
  ("Lean 4 (non-universality agent): Corollary AB-c (phase 3 via atom renaming: no input-headed front once the C-region is large)",

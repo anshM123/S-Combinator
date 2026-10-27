@@ -32,6 +32,7 @@ ITEMS = [
     ("Barrier.lean", "barrier_lemma", "Barrier lemma: [P, x, y] ++ r never touches r."),
     ("NStar.lean", "nstar_run", "Theorem N*: the counter potential never increases along a head run."),
     ("NStar.lean", "layer_bound", "Corollary N*: layers above an unread core are bounded by the starting potential."),
+    ("NStar.lean", "layer_bound_explicit", "Corollary N* (explicit): at most hdepth(D)/h + P_x(u)/h new layers above an unread core."),
     ("TheoremH.lean", "corH1", "Corollary H1: S g1 g2 x w never reaches an hnf without opening x or w."),
     ("TheoremH.lean", "corH2", "Corollary H2: closed K outside the nest classes cannot hold two data."),
     ("TheoremUstar.lean", "ustar", "Theorem U*: fuel-free runs stay fuel-free through zero tests."),

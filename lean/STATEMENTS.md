@@ -204,6 +204,18 @@ theorem layer_bound (L0 LN : List T) (N : Nat) (hN : run N L0 = some LN) (hlen :
     (hyu : hy u = false) (m : Nat) (hs : SubT (iter C m u) e) : m ≤ potL L0
 ```
 
+## `layer_bound_explicit` — `lean/NStar.lean`
+Corollary N* (explicit): at most hdepth(D)/h + P_x(u)/h new layers above an unread core.
+```lean
+theorem layer_bound_explicit (D L : Ctx) (hD : cxfree D) (hL : cclosed L) (hne : L ≠ Ctx.hole) (d : Nat) (u : T)
+    (hxu : hx u = true) (hyu : hy u = false) (LN : List T) (N : Nat)
+    (hN : run N (args (plug D (iter L d u))) = some LN) (hlen : LN.length ≤ 2)
+    (hy0 : ∃ e ∈ args (plug D (iter L d u)), hy e = true)
+    (k : Nat) (hk : k ≤ N) (Lk : List T) (hLk : run k (args (plug D (iter L d u))) = some Lk)
+    (e : T) (he : e ∈ Lk) (u' : T) (hxu' : hx u' = true) (hyu' : hy u' = false) (m : Nat)
+    (hs : SubT (iter L m u') e) : m * hdepth L ≤ hdepth D + d * hdepth L + potT u
+```
+
 ## `corH1` — `lean/TheoremH.lean`
 Corollary H1: S g1 g2 x w never reaches an hnf without opening x or w.
 ```lean

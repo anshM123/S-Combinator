@@ -566,6 +566,10 @@ along a Böhm-tree path whose head runs reach hnfs and whose nodes contain y, th
 The Layer lemma and the layer half of Corollary N* are machine-checked too (`layer`, `iter_pot`, `layer_bound`): m closed
 layers L^m[u] around a core u that contains x but not y add at least m to the potential, so no list along such a run,
 and no next node, contains such a stack with m larger than the starting potential.
+`layer_bound_explicit` computes the starting potential (`pot_plug_ge`, `pot_plug_le`, `iter_pot_eq`: each layer
+node on the hole path adds exactly one): for a node D[L^d[u]] with D free of x, L closed of hole depth h and u free
+of y, no list along the run carries L^m[u'] with m·h > hdepth(D) + d·h + P_x(u). So a counter gains at most
+(hdepth(D) + P_x(u))/h layers above an unread core — the uniform form of Theorem O's potential half.
 For an occurrence-wise path in a term, define (x, y opaque):
  LD_x  = max over occurrences of x of #{nodes u·v on the root-to-x path : u variable-free, x ∈ v, y ∉ u·v};
  SUPP_x = max over occurrences of x of #{nodes u·v on the root-to-x path : x ∈ u, v variable-free}.
