@@ -1,0 +1,123 @@
+
+/-! ## Head normalisation theorem (standardization for head normal forms) -/
+
+/-- one head step: contract the head redex S x y z (with any further spine arguments) -/
+inductive HStep : T → T → Prop
+  | redex (x y z : T) : HStep (app (app (app S x) y) z) (app (app x z) (app y z))
+  | left {f f' : T} (a : T) : HStep f f' → HStep (app f a) (app f' a)
+
+/-- head reduction, any number of steps (head-first) -/
+inductive HStar : T → T → Prop
+  | refl (t : T) : HStar t t
+  | step {t u v : T} : HStep t u → HStar u v → HStar t v
+
+theorem HStar.trans {t u v : T} (h1 : HStar t u) (h2 : HStar u v) : HStar t v := by
+  induction h1 with
+  | refl => exact h2
+  | step h _ ih => exact HStar.step h (ih h2)
+
+theorem hstar_left {f f' : T} (a : T) (h : HStar f f') : HStar (app f a) (app f' a) := by
+  induction h with
+  | refl => exact HStar.refl _
+  | step h _ ih => exact HStar.step (HStep.left a h) ih
+
+theorem hstep_red {t u : T} (h : HStep t u) : Red t u := by
+  induction h with
+  | redex x y z => exact Red.redex x y z
+  | left a _ ih => exact Red.left a ih
+
+theorem hstar_redstar {t u : T} (h : HStar t u) : RedStar t u := by
+  induction h with
+  | refl => exact RedStar.refl _
+  | step h _ ih => exact (RedStar.single (hstep_red h)).trans ih
+
+/-- internal parallel reduction: parallel reduction inside the arguments, never the head redex -/
+inductive IPar : T → T → Prop
+  | S : IPar S S
+  | var (n : Nat) : IPar (var n) (var n)
+  | app {f f' a a' : T} : IPar f f' → Par a a' → IPar (app f a) (app f' a')
+
+theorem ipar_shape {s u : T} (h : IPar s u) : head s = head u ∧ (args s).length = (args u).length := by
+  induction h with
+  | S => exact ⟨rfl, rfl⟩
+  | var n => exact ⟨rfl, rfl⟩
+  | app _ _ ih =>
+    simp only [head, args, List.length_append, List.length_singleton]
+    exact ⟨ih.1, by rw [ih.2]⟩
+
+theorem ipar_HN {s u : T} (h : IPar s u) (hn : HN u) : HN s := by
+  unfold HN at *
+  rw [(ipar_shape h).1, (ipar_shape h).2]
+  exact hn
+
+/-- decomposition: a parallel step = head steps followed by an internal parallel step -/
+theorem par_decomp {t u : T} (h : Par t u) : ∃ t', HStar t t' ∧ IPar t' u := by
+  induction h with
+  | S => exact ⟨S, HStar.refl _, IPar.S⟩
+  | var n => exact ⟨var n, HStar.refl _, IPar.var n⟩
+  | @app f f' a a' _ ha ihf _ =>
+    obtain ⟨f1, hf1, if1⟩ := ihf
+    exact ⟨app f1 a, hstar_left a hf1, IPar.app if1 ha⟩
+  | @redex x x' y y' z z' _ hy hz ihx _ _ =>
+    obtain ⟨x1, hx1, ix1⟩ := ihx
+    refine ⟨app (app x1 z) (app y z), HStar.step (HStep.redex x y z) ?_, ?_⟩
+    · exact hstar_left (app y z) (hstar_left z hx1)
+    · exact IPar.app (IPar.app ix1 hz) (Par.app hy hz)
+
+/-- postponement: an internal parallel step followed by a head step = a head step followed by a parallel step -/
+theorem ipar_hstep {s u u1 : T} (hi : IPar s u) (hh : HStep u u1) : ∃ w, HStep s w ∧ Par w u1 := by
+  induction hh generalizing s with
+  | redex x' y' z' =>
+    cases hi with
+    | app h1 hz =>
+      cases h1 with
+      | app h2 hy =>
+        cases h2 with
+        | app h3 hx =>
+          cases h3
+          exact ⟨_, HStep.redex _ _ _, Par.app (Par.app hx hz) (Par.app hy hz)⟩
+  | left a' _ ih =>
+    cases hi with
+    | app hf ha =>
+      obtain ⟨w, hw, pw⟩ := ih hf
+      exact ⟨app w _, HStep.left _ hw, Par.app pw ha⟩
+
+/-- if u head-normalises and s internally reduces to u, then s head-normalises -/
+theorem ipar_hn {u v : T} (h : HStar u v) (hn : HN v) : ∀ s, IPar s u → ∃ s', HStar s s' ∧ HN s' := by
+  induction h with
+  | refl => intro s hs; exact ⟨s, HStar.refl _, ipar_HN hs hn⟩
+  | step hh _ ih =>
+    intro s hs
+    obtain ⟨w, hw, pw⟩ := ipar_hstep hs hh
+    obtain ⟨w', hw', iw'⟩ := par_decomp pw
+    obtain ⟨s', hs', hn'⟩ := ih hn w' iw'
+    exact ⟨s', HStar.step hw (hw'.trans hs'), hn'⟩
+
+/-- head normalisation is closed under parallel expansion -/
+theorem hn_back {t t1 : T} (h : Par t t1) (q : ∃ h1, HStar t1 h1 ∧ HN h1) : ∃ h', HStar t h' ∧ HN h' := by
+  obtain ⟨h1, r1, n1⟩ := q
+  obtain ⟨t', ht', it'⟩ := par_decomp h
+  obtain ⟨s', hs', ns'⟩ := ipar_hn r1 n1 t' it'
+  exact ⟨s', ht'.trans hs', ns'⟩
+
+theorem hn_back_star {t u : T} (r : RedStar t u) : (∃ h1, HStar u h1 ∧ HN h1) → ∃ h', HStar t h' ∧ HN h' := by
+  induction r with
+  | refl => exact id
+  | tail _ h ih => exact fun q => ih (hn_back (red_par h) q)
+
+/-- **Head normalisation theorem.** If some reduct of t (any evaluation order) is head-normal, head reduction from t
+    reaches a head-normal term. -/
+theorem head_normalization {t h : T} (r : RedStar t h) (hn : HN h) : ∃ h', HStar t h' ∧ HN h' :=
+  hn_back_star r ⟨h, HStar.refl _, hn⟩
+
+/-- **Proposition CF** (complete): if some evaluation of t reaches a head normal form, head reduction reaches one, and
+    every head normal form reachable from t, by any evaluation order, has the same head, the same number of arguments
+    and pairwise joinable arguments. -/
+theorem cf_full {t h : T} (r : RedStar t h) (hn : HN h) :
+    ∃ h', HStar t h' ∧ HN h' ∧ ∀ h2, RedStar t h2 → HN h2 →
+      head h' = head h2 ∧ (args h').length = (args h2).length ∧ Jw (args h') (args h2) := by
+  obtain ⟨h', r', n'⟩ := head_normalization r hn
+  exact ⟨h', r', n', fun h2 r2 n2 => cf_control (hstar_redstar r') r2 n' n2⟩
+
+#print axioms head_normalization
+#print axioms cf_full

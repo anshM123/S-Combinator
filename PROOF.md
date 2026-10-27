@@ -2085,7 +2085,10 @@ hand argument at the level of rigour of Theorem CA-par (not machine-checked beyo
 *Proposition CF — PROVED (from standard facts); the order-independent part MACHINE-CHECKED (lean/CF.lean, 2026-10-27:
 `cf_control` — any two head-normal reducts of a term with variables, reached by any evaluation orders, have the same
 head, the same number of arguments and pairwise joinable arguments; built on confluence with variables, re-proved
-there; axioms propext, Quot.sound). The standardization step (head reduction finds the hnf) is cited, not formalised.* Let F be an S-term at the front with arguments x, y and tape r, and
+there; axioms propext, Quot.sound). The standardization step is MACHINE-CHECKED too (lean/Standard.lean:
+`head_normalization` — if any reduct of t is head-normal, head reduction from t reaches a head-normal term — by
+decomposing parallel steps into head steps plus internal parallel steps and postponing the internal ones; `cf_full`
+combines both). So Proposition CF is machine-checked for head reduction; 'every head-fair order' is the hand step.* Let F be an S-term at the front with arguments x, y and tape r, and
 read the list as the term t = S·F·x·y·r_1⋯. If some reduction of t reaches a head normal form whose head is one of the
 argument variables, then every reduct of t — in particular the term obtained by first reducing F, x, y or the r_i in any
 order, any number of steps — reaches a head normal form with the same head variable and the same number of arguments,
