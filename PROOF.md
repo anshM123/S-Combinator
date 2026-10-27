@@ -628,6 +628,50 @@ entangled encodings (e.g. Gödel numbering in one counter — full-read regime),
 contexts, full re-execution designs, and non-head reduction strategies.
 
 ---------------------------------------------------------------------------------------------------
+## Master Reduction — what exactly a complete disproof needs (2026-10-27, main agent)
+This collects Theorem T, Propositions CF, R, P and UB into one statement, so that every result has a fixed place.
+*Setting.* A putative universal emulation of a machine U with undecidable halting problem consists of a computable
+encoder w ↦ t_w, an evaluation order Ord (any fixed strategy, or the multiway system), and a halting detector that is
+not itself universal. Detector classes:
+* (D1) halting = "the evolution stops" or "the multiway graph is finite";
+* (D2) halting = an MSO-definable property of the Böhm tree BT(t_w);
+* (D2′) halting along a Böhm-tree path ρ, for emulations that are modular at halting (Proposition R);
+* (D3) halting = the first step whose bounded (k, d)-window is accepted by a finite automaton (leftmost-outermost);
+* (D4) halting = the first step whose WHOLE state, serialised head first, is accepted by a finite automaton;
+* (D5) any other detector.
+
+*Lemma W (whole-state automata) — PROVED (Carton–Thomas, as in Proposition UB).* Let σ be a morphism from the free
+monoid on the serialisation alphabet into a finite monoid. If, for every σ, the infinite word (σ(config_n))_{n ≥ 0}
+over that finite monoid is effectively profinitely ultimately periodic (call this *configuration-level R″_PUP*), then
+"some config_n is accepted by a given automaton A" is decidable: take σ the transition morphism of A. Then the
+property is MSO over that word, and decidable by Carton–Thomas. ∎ Configuration-level R″_PUP implies window-level
+R″_PUP, because a window is a bounded-cost function of the serialisation.
+*Master Reduction — PROVED given the hypotheses below.* No emulation of U exists whose detector is of class:
+* (D1) unconditionally (Theorem T);
+* (D2) for every order and for multiway, given C5′ (MSO theory of Böhm trees decidable uniformly in t). Böhm-tree
+  properties are order-independent (Theorem T (2), Proposition CF);
+* (D2′) for path ρ, given decidability of "the ρ-path is infinite" (Corollary R1). The models L36, R19 and LO204
+  are conjectured to decide it; one half of each is proved (Proposition Q″);
+* (D3) for leftmost-outermost, given effective window-level R″_PUP (Proposition UB);
+* (D4) for order Ord, given effective configuration-level R″_PUP for the Ord-evolution (Lemma W).
+
+Class (D5) — detectors that do more than read a finite-automaton property, e.g. compare sizes of distant subterms — is
+NOT covered. A disproof must argue that Wolfram's "not itself capable of universal computation" excludes them, or treat
+them separately. This is the definitional piece.
+
+*Hypothesis ledger (2026-10-27).*
+
+| hypothesis | status |
+|---|---|
+| C5′ (MSO of Böhm trees decidable) | open; special cases: Q10 PROVED (hnf), C6 soundness half PROVED, C8 one half PROVED, path models one half PROVED (Q″); completeness halves certified ≤ 19 / ≤ 16 leaves; the leftmost-half size-change route fails with finite abstractions (FAILED_APPROACHES 29) |
+| window/configuration R″_PUP, leftmost-outermost | open in general. PROVED per term for every certified run: all 152 census counters, 850/850 random endpoints, the loop/nest/call/comb certificates; R″_PUP PROVED for nested loops (Lemma PUP) and the head-unique class (Theorem UR-C, Lean). Attack in progress: the non-universality agent's phase programme (OT, OTD, FH, SL, canonical_innermost in Lean) toward "re-execution is call-like" |
+| configuration R″_PUP, parallel and other orders | open; 86/150 parallel runs certified per term (Theorem LP-par) |
+| (D5) definitional argument | open (not a mathematical statement until a detector class is fixed) |
+
+So a complete disproof = C5′ + configuration-level R″_PUP for every order the emulation may choose + the (D5) argument.
+A universality proof must break one of these: a construction is impossible in (D1), and in (D2)–(D4) it would refute the
+corresponding hypothesis.
+
 ## Construction-agent obstruction theorems (2026-10-26/27; machine-checked parts re-verified by the main agent)
 A background construction agent (started at the user's request) tried to engineer data-dependent control. It found no
 construction. Its obstruction results:

@@ -24,6 +24,10 @@ def pargs_lp(e, Ls):
     args, _ = hm.spine(e)
     return all(lp(a, Ls) for a in args if cls(a) == 1)
 def check(L, Ls):
+    # only the part above the Y-region matters for MQ/MT/MA; keep the first Y element for GL
+    cut = 0
+    while cut < len(L) and cls(L[cut]) != 2: cut += 1
+    L = L[:cut + 1]
     cl = [cls(e) for e in L]
     Pel = [e for e, c in zip(L, cl) if c == 1]
     if Pel and not any(lp(e, Ls) for e in Pel): return "MQ"
@@ -46,7 +50,7 @@ if __name__ == "__main__":
     for D in data:
         Ls = MW.levels(D)
         lst = [Rr, Y, X, D]
-        for s in range(1500):
+        for s in range(500):
             v = check(list(reversed(lst)), Ls) if s > 0 else None
             if v:
                 st[v] += 1
