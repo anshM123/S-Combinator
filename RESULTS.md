@@ -47,6 +47,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | result | file | meaning |
 |---|---|---|
 | Lemmas W1+, W2, W2+ and comb rigidity | `AgentW1F/W2/W2R.lean` | leftmost-path (descent-machine) rounds: a single datum only forms Fibonacci words; with two data no code can store them, and the only code that carries both across a round is a comb S(S(…(S S)…)), which just swaps them Fibonacci-style — no second independent store |
+| Theorems PA, PB; Lemma FH1 | `AgentPA/FH1.lean` | for single-wrapper phase-2 handlers (glued in pattern alpha, or beta with c0 = S·a1), the next phase never makes a proper transfer, given replay guards certified per case: 830 of 836 real cases up to 11 leaves settled |
 | Lemmas AB, AB-c, MSL (strict form), YD, replay lemma; Lemma W1 | `AgentAB/ABC/MSL/MSLS/YD/REPLAY/W1.lean` | steps of the two agents' programmes: no P-onto-Y glue once the P-region is large; every glued P-wrapper of a multi-level datum is good; an early glued-down y kills proper transfers; a single-wrapper phase-2 transfer replays as a phase-3 re-execution; a descent-machine round adds at most one closed wrap to a single-copy datum |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
 
@@ -82,8 +83,9 @@ A universal emulation needs an encoder, an evaluation order and a halting detect
    leaves. A size-change attack on the leftmost half fails for every finite abstraction (FAILED_APPROACHES 29), and
    neither class-level acyclicity nor node size proves the C6 or leftmost halves (E114, FAILED_APPROACHES 30).
 2. Configuration-level regularity (R″_PUP) of every head run and of every other evaluation order. The
-   non-universality agent's phase programme (agent_work/) is the current attack; its open step is "phase 3 never
-   transfers properly" for multi-level data.
+   non-universality agent's phase programme (agent_work/) is the current attack; its open steps are "phase 3 never
+   transfers properly" for the remaining cases (6 single-wrapper cases up to 11 leaves and the multi-wrapper class)
+   and "re-execution is call-like".
 3. An argument that Wolfram's "non-universal decoder" falls under the covered classes (the definitional piece).
 
 **For "S is universal":** an explicit emulation. Every design pattern tried so far is blocked by a proved barrier or

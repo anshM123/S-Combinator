@@ -313,3 +313,9 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   f at the end of the datum's spine, which recreates the fuel for the next round (as in the reload cycle) — and
   otherwise the fuel-free classification applies to the datum x.f.  Fuel is never created by a fuel-free round
   (W1+: no fuel-free survivor ends with a closed spine argument after a datum), so it must come from the encoder.
+* MACHINE-CHECKED (03:51 EDT, `date`): `shnf_two_vars` added to agent_work_U/lean/WR.lean (no sorry; axioms propext,
+  Classical.choice, Quot.sound).  **For a closed S-term M, the head reduction of M x y (x, y variables) reaches an
+  S-headed head normal form only if M = S or M = S(S(...(S S)...)) = S(comb j)**; conversely these give
+  S F_j F_(j+1) over (x, y).  Every other M x y either becomes variable-headed or has no hnf.
+  COMPUTATIONALLY CERTIFIED cross-check (shnf_check.py 12 2000): of all 82,500 closed terms <= 12 leaves exactly 12 have
+  M x y reaching an S-headed hnf — S and S(comb j), j = 0..10 — and there is no counterexample.
