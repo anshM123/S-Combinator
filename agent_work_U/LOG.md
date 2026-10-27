@@ -9,32 +9,29 @@ All files of this agent live in agent_work_U/.
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## INTERIM 04:00 (refreshed 03:45 EDT; first version written 02:40)
+## INTERIM 04:00 (refreshed 04:25 EDT; first version written 02:40)
 **Status: no universal construction; no partial win (no non-PUP run).  Labels as in the entries below.**
 Main results (files in agent_work_U/):
 1. NEW FRAMEWORK, the descent machine DM (dm.py): leftmost-outermost evaluation along the leftmost Boehm path = the
-   head machine plus the erasure rule [c, d] -> ch(c) at every head normal form (PROVED, elementary).  The only place
-   where leftmost-outermost evaluation erases; by Lemma P it embeds in the head run of t A B.  Its sibling, the
-   right-spine machine RM (rm.py: continue with d after the left child normalises), keeps everything (no erasure).
+   head machine plus the erasure rule [c, d] -> ch(c) at every head normal form (PROVED, elementary; faithfulness
+   against genuine leftmost-outermost reduction checked, dmfaith.py).  Sibling: the right-spine machine RM (rm.py).
 2. DM capabilities (PROVED by inspection): Church booleans in tail position (S X Y => X, SS X Y => Y), application
-   (S(SS) X Y => X Y), identity SSSS, the selection gadget S(SS)(SS) E b => b (E b) (E (SS E) b): data-dependent
-   SELECTION with the full state in both branches — the step the head-run capability map lacked.
-3. DM limits — two MACHINE-CHECKED lemmas (Lean 4, no sorry):
-   - W1 (lean/W1.lean, 160 lines): with one opaque datum D and closed code, every round's single-copy survivor is D or
-     w.D (w closed): at most ONE closed wrap per round; hence copy-free single-datum leftmost paths only consume
-     their stack (a finite automaton reading it), growth needs copies of the datum.
-   - W2 (lean/W2.lean, 239 lines; reuses the main agent's Corollary 8(ii)): with two opaque data every round that
-     ends has an atom-headed or closed survivor — no code-controlled state ever keeps two data across a round.
-   Bounded certificates agree (survcat, twostack, twostack2, probe2, growth1; all negative).
-4. Other orders: CBV/innermost (cbv.py) — nf(b x) is constant or fixed-prefix on string encodings (b <= 8), CBV
-   iterations are exact linear recurrences (f <= 7); parallel clock channel — argued contractive (aging only
-   pre-computes work; an hnf-free waiting element captures the head for ever); Prop. CF makes every head-fair order
-   share the head run's control.  Remark (argued): W_reg with ARBITRARY regular redex selection is too generous —
-   the order could act as a finite control using S-terms as memory; the target should be restricted.
-5. Searches with negative outcome: word rounds, self-transforming words, comb halving, self-embedding Q ->* C[Q]
-   (none <= 11 leaves), RM census (only Zachos-type long right spines <= 11 leaves).
-Strongest concrete results: W1 and W2 (machine-checked), the DM selection mechanism.  No construction.
-Next: multi-copy single-datum rounds (the only regime W1/W2 leave open) — classify survivors with >= 2 copies.
+   S(SS), identity SSSS, selection gadget S(SS)(SS) E b => b (E b) (E (SS E) b).
+3. COMPLETE CLASSIFICATION of generic DM rounds — MACHINE-CHECKED (Lean 4, no sorry):
+   - W1 / W1-RM (lean/W1.lean, 197 lines): one datum => single-copy survivor x or W.x (W closed);
+   - W1+ (lean/W1F.lean, 248 lines): one datum => survivor closed, x, W.x or a Fibonacci word F_k(x, W.x);
+   - W2 (lean/W2.lean, 239 lines, uses the main agent's Cor. 8(ii)): two data => survivor closed or atom-headed;
+   - W2+ (lean/W2F.lean, 232 lines): two data => survivor is a Fibonacci word F_k(x, y);
+   - >= 3 data: no round end (main agent's Cor. 8(i)).
+   So between data executions the leftmost path can only erase, add ONE closed wrap, or apply the comb's
+   Fibonacci swap; two independent stores and transducer rounds are impossible at all sizes (generic data).
+   Bounded certificates agree (survcat, copycat <= 11, copycat2 <= 10, twostack, twostack2, probe2, growth1).
+4. Other orders: CBV/innermost — nf(b x) constant or fixed-prefix on string encodings (b <= 8), CBV iterations exact
+   linear recurrences (f <= 7); parallel clock channel argued contractive; Prop. CF covers head-fair orders.
+   W_reg with arbitrary regular redex selection: an 'order-as-CPU' emulation would need a cell factory, which S
+   lacks in small sizes (no self-embedding Q ->* C[Q] <= 11 leaves) — OPEN, not pursued.
+5. Negative searches: word rounds, self-transforming words, comb halving, periodic cells, RM long runs.
+Strongest concrete results: the machine-checked DM round classification (W1, W1+, W2, W2+).  No construction.
 
 ## 01:40 EDT  Direction chosen: the DESCENT MACHINE (leftmost-outermost along the leftmost Böhm path)
 * Observation (PROVED, elementary): leftmost-outermost evaluation restricted to the leftmost Böhm path is the

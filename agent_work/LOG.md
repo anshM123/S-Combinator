@@ -761,3 +761,13 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   'phase 3 is never a proper transfer' for 790 of the 836 real single-wrapper handlers <= 11 leaves, by a
   machine-checked theorem plus a finite per-case check of its hypotheses (which are properties of PHASE 2 alone).
   Remaining single-wrapper class: pattern beta (46), partly covered by replay_beta and FHL.
+* COMPUTATIONALLY CERTIFIED (unified_alpha.py t 7 4 9: the targeted family K <= 7, tails with wrappers <= 4 leaves)
+  for Theorem PA: 3,000 real single-wrapper pattern-alpha handlers (not p-headed); the hypotheses of pa_main hold in
+  2,996 (b0 = S 823, b0 closed 1,758, b0 a P-term 415); phase 3 then ends at a frozen front first 415, at a
+  non-proper p'-front 1,158, or replays to a REEXEC 1,423 — exactly as the theorem says.  In 4 cases the replay
+  guard FAILS (guardfail.py SS(S(SS))(S(S(S(SS))(SSSp))): the glued instance of w.y is itself glued away, a copy
+  of w.y is later RELEASED as the spine argument of an opened element, and that copy is the handler at the
+  transfer); PA does not apply there, and phase 3 still ends without a proper transfer (call of y).  So the
+  creation lemma describes how the TERM w.y is first formed; a handler element can also be a released copy —
+  a case PA's hypotheses exclude and which remains open (4 / 3,000 in this family, 0 / 680 in the exhaustive
+  <= 11 range).

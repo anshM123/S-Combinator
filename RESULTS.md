@@ -6,27 +6,45 @@ standard axioms only) > PROVED (hand proof) > COMPUTATIONALLY CERTIFIED > EXPERI
 Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: `PROOF.md`, section "Master Reduction".
 
 ## Machine-checked in Lean 4 (`lean/`, re-checked by `code/verify_all.py`)
+
+**Head normalisation, Böhm trees and finite models**
+
 | result | file | meaning |
 |---|---|---|
 | **Theorem Q10** (BEKW Question 10) | `Q10.lean` | head reduction of an S-term terminates iff its class in the 35-element model M35 is in F. This answers Question 10 of Barendregt–Endrullis–Klop–Waldmann ("Dance of the starlings") and gives an independent machine-checked proof that head normalisation of S-terms is decidable in linear time |
-| Lemma 4, hnf congruence | `Lemma4.lean` | all terms without a head normal form are interchangeable in every context; terms with the same M35 class have a head normal form in exactly the same contexts |
 | Theorem A | `TheoremA_M35.lean` | M35 class outside F ⇒ no head normal form; the model's S-identity is checked by the Lean kernel over all 42,875 class triples |
-| **Theorem P2** | `P2_Parity.lean` | the Böhm tree of S·S^j·(SSS)·(SS) is finite iff j is even or j = 1: S-terms can count modulo 2 |
+| Lemma 4, hnf congruence | `Lemma4.lean` | all terms without a head normal form are interchangeable in every context; terms with the same M35 class have a head normal form in exactly the same contexts |
 | Proposition Q | `PropQ.lean` | every term whose class in the 39-element productivity model is in F_P is productive (no ⊥ anywhere in its Böhm tree): one half of Conjecture C6, the conjectured answer to BEKW Question 5 |
 | Proposition Q″ | `PathModels.lean` | the "infinite" verdicts of the leftmost-path (36 classes) and rightmost-path (19 classes) models are correct |
-| Lemmas 8, 9 (core), Corollary 8(ii), Theorem J | `BarrierJ.lean` | data conservation; no write into data while two data are live; data stay in control; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
-| Theorem N* (list form), Corollary N* (layer bound) | `NStar.lean` | potential bound for counters: along a Böhm-tree path that never reads the cores, the layers that can still be added above one counter are bounded by a potential that never increases — the core of Theorem O (no bounded-cost two-counter simulation) |
-| Theorem H, Corollaries H1–H3 | `TheoremH.lean` | code that never inspects its inputs behaves the same on every input class of M35: no pair of gadgets S g1 g2 can hold two data cleanly, only the six nest classes can hold two data, and no S-term can hold three |
-| Lemmas 11, 12 | `ReadCost.lean` | full-read principle (a normalising run reads at least one of any three marked arguments) and right-depth cost (reading at right-depth D costs at least D steps) |
-| Lemma 10 | `Lemma10.lean` | no junk-free rotation: with two data, the bottom one can be brought in front of the other only together with a second copy of itself |
-| Proposition MW(a),(b) | `MW.lean` | in every evolution order the multiway graph of an S-term is acyclic, and every infinite evolution visits terms of unbounded size, so it never settles into finitely many forms |
+| Lemma P, Theorem LP1 | `LP1.lean` | if S·t·A·B has a head normal form, t's leftmost Böhm-tree path ends at S; hence every term whose M35 class is in F outside the five two-argument-dead classes D2 has a finite leftmost path ending at S |
+| **Theorem P2** | `P2_Parity.lean` | the Böhm tree of S·S^j·(SSS)·(SS) is finite iff j is even or j = 1: S-terms can count modulo 2 |
+
+**Evaluation orders and the multiway system (classical facts, machine-checked here for S)**
+
+| result | file | meaning |
+|---|---|---|
 | Confluence, Proposition MW(e) | `Confluence.lean` | S-reduction is confluent (normal forms are unique); a decoder that respects reachability cannot read two different halting outcomes of a nondeterministic machine from S's multiway system (true of every confluent system, SK included) |
 | Proposition CF, head normalisation theorem | `CF.lean`, `Standard.lean` | if any evaluation reaches a head normal form, head reduction does too; and whichever evaluation order reaches a head normal form, it finds the same head and the same number of arguments, with joinable arguments: control flow at Böhm-tree level does not depend on the evaluation order |
-| **Theorem T** (except decidability) | `TheoremT.lean` | termination is all-or-nothing: a term with a normal form has no infinite evolution in any order (Church's theorem for S) and a finite multiway graph; a term without one has no finite maximal evolution. With Waldmann's theorem (cited) this rules out 'the evolution stops' as a halting signal |
 | F5: Böhm trees are invariant under reduction | `BTInv.lean` | a term and every reduct (any evaluation order, any redex choices) have the same Böhm tree to every depth, so every Böhm-tree property is order-independent |
+| **Theorem T** (except decidability) | `TheoremT.lean` | termination is all-or-nothing: a term with a normal form has no infinite evolution in any order (Church's theorem for S) and a finite multiway graph; a term without one has no finite maximal evolution. With Waldmann's theorem (cited) this rules out 'the evolution stops' as a halting signal |
+| Proposition MW(a),(b) | `MW.lean` | in every evolution order the multiway graph of an S-term is acyclic, and every infinite evolution visits terms of unbounded size, so it never settles into finitely many forms |
+
+**Barriers for constructions**
+
+| result | file | meaning |
+|---|---|---|
 | Barrier lemma | `Barrier.lean` | every S-term P run on two opaque arguments [P, x, y | r] hands control to an argument before it touches anything below them: loop bodies can never touch their accumulator |
-| Lemma P, Theorem LP1 | `LP1.lean` | if S·t·A·B has a head normal form, t's leftmost Böhm-tree path ends at S; hence every term whose M35 class is in F outside the five two-argument-dead classes D2 has a finite leftmost path ending at S |
+| Lemmas 8, 9 (core), Corollary 8(ii), Theorem J | `BarrierJ.lean` | data conservation; no write into data while two data are live; data stay in control; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
+| Lemma 10 | `Lemma10.lean` | no junk-free rotation: with two data, the bottom one can be brought in front of the other only together with a second copy of itself |
+| Lemmas 11, 12 | `ReadCost.lean` | full-read principle (a normalising run reads at least one of any three marked arguments) and right-depth cost (reading at right-depth D costs at least D steps) |
+| Theorem N* (list form), Corollary N* (layer bound) | `NStar.lean` | potential bound for counters: along a Böhm-tree path that never reads the cores, the layers that can still be added above one counter are bounded by a potential that never increases — the core of Theorem O (no bounded-cost two-counter simulation) |
+| Theorem H, Corollaries H1–H3 | `TheoremH.lean` | code that never inspects its inputs behaves the same on every input class of M35: no pair of gadgets S g1 g2 can hold two data cleanly, only the six nest classes can hold two data, and no S-term can hold three |
 | Theorems UR-R, UR-C | `URCore.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); very likely overlaps Waldmann's "Nimm Zwei" (1997) |
+
+**The two agents' programmes**
+
+| result | file | meaning |
+|---|---|---|
 | Lemmas AB, AB-c, MSL (strict form), YD, replay lemma; Lemma W1 | `AgentAB/ABC/MSL/MSLS/YD/REPLAY/W1.lean` | steps of the two agents' programmes: no P-onto-Y glue once the P-region is large; every glued P-wrapper of a multi-level datum is good; an early glued-down y kills proper transfers; a single-wrapper phase-2 transfer replays as a phase-3 re-execution; a descent-machine round adds at most one closed wrap to a single-copy datum |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
 
@@ -59,7 +77,8 @@ A universal emulation needs an encoder, an evaluation order and a halting detect
 **For "S is not universal"** (all three are open research problems):
 1. C5′: decidability of MSO properties of Böhm trees. Special cases are open too: the completeness halves of C6
    (= BEKW Question 5, productivity) and C8, and the finite halves of the path models. These are certified up to 16–19
-   leaves. A size-change attack on the leftmost half fails for every finite abstraction (FAILED_APPROACHES 29).
+   leaves. A size-change attack on the leftmost half fails for every finite abstraction (FAILED_APPROACHES 29), and
+   neither class-level acyclicity nor node size proves the C6 or leftmost halves (E114, FAILED_APPROACHES 30).
 2. Configuration-level regularity (R″_PUP) of every head run and of every other evaluation order. The
    non-universality agent's phase programme (agent_work/) is the current attack; its open step is "phase 3 never
    transfers properly" for multi-level data.
@@ -72,4 +91,6 @@ erasure (agent_work_U/).
 ## What is not claimed
 No proof of universality or non-universality. Several results here turned out to be known (Zachos term, BEKW
 Fig. 14 = M35, Padovani's decidability of head normalisation, Waldmann's characterization of one-redex terms); see
-the novelty notes in `PROOF.md`. Machine-checked statements are exactly as stated in the Lean files.
+the novelty notes in `PROOF.md`. Confluence, Church's theorem, the head normalisation theorem and the invariance of
+Böhm trees are classical; they are machine-checked here for S so that the order-independence steps are rigorous.
+Machine-checked statements are exactly as stated in the Lean files.
