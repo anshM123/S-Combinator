@@ -1,0 +1,178 @@
+
+/-! ## Lemma 11 (full-read principle) and Lemma 12 (right-depth cost)
+
+  Mark occurrences by atoms and substitute closed (or any) terms for them: `subst s` replaces every atom var n by s n.
+  A replaced occurrence is *read* when the atom run reaches an atom-headed front (that front would be opened in the
+  substituted run). -/
+
+def subst (s : Nat → T) : T → T
+  | S => S
+  | var n => s n
+  | app f x => app (subst s f) (subst s x)
+
+theorem head_cases : ∀ t : T, head t = S ∨ ∃ n, head t = var n
+  | S => Or.inl rfl
+  | var n => Or.inr ⟨n, rfl⟩
+  | app f _ => head_cases f
+
+theorem subst_head (s : Nat → T) : ∀ a : T, head a = S → head (subst s a) = S
+  | S, _ => rfl
+  | var n, h => by simp [head] at h
+  | app f _, h => subst_head s f h
+
+theorem subst_args (s : Nat → T) : ∀ a : T, head a = S → args (subst s a) = (args a).map (subst s)
+  | S, _ => rfl
+  | var n, h => by simp [head] at h
+  | app f x, h => by
+    simp only [subst, args, List.map_append, List.map_cons, List.map_nil]
+    rw [subst_args s f h]
+
+/-- a step of the atom run is a step of the substituted run -/
+theorem subst_step (s : Nat → T) (L L' : List T) (h : step L = some L') :
+    step (L.map (subst s)) = some (L'.map (subst s)) := by
+  match L, h with
+  | a :: b :: c :: R, h =>
+    simp only [step] at h
+    split at h
+    · rename_i ha
+      simp only [Option.some.injEq] at h
+      subst h
+      simp only [List.map_cons, step, subst_head s a ha, if_pos, subst_args s a ha, List.map_append]
+      rfl
+    · simp at h
+
+theorem run_some_succ (k : Nat) (L L1 L2 : List T) (h1 : run k L = some L1) (h2 : step L1 = some L2) :
+    run (k + 1) L = some L2 := by
+  rw [run_add k 1 L L1 h1]
+  simp [run, h2]
+
+/-- **Lemma 11 (full-read principle).** Let L carry at least three data elements and let the substituted list reach a
+    head normal form in N steps. Then the atom run reads an atom before step N: it reaches a list of length >= 3 whose
+    front is atom-headed (in the substituted run that front, a replaced occurrence, is opened). -/
+theorem lemma11 (s : Nat → T) (L : List T) (h3 : 3 ≤ dcount L) (N : Nat) (LN : List T)
+    (hN : run N (L.map (subst s)) = some LN) (hlen : LN.length ≤ 2) :
+    ∃ k, k < N ∧ ∃ a R n, run k L = some (a :: R) ∧ head a = var n ∧ 2 ≤ R.length := by
+  have key : ∀ k, k ≤ N → (∃ j, j < k ∧ ∃ a R n, run j L = some (a :: R) ∧ head a = var n ∧ 2 ≤ R.length) ∨
+      (∃ Lk, run k L = some Lk ∧ run k (L.map (subst s)) = some (Lk.map (subst s))) := by
+    intro k
+    induction k with
+    | zero => intro _; exact Or.inr ⟨L, rfl, rfl⟩
+    | succ k ih =>
+      intro hk
+      rcases ih (by omega) with ⟨j, hj, rest⟩ | ⟨Lk, h1, h2⟩
+      · exact Or.inl ⟨j, by omega, rest⟩
+      · cases hs : step Lk with
+        | some L' =>
+          exact Or.inr ⟨L', run_some_succ k L Lk L' h1 hs,
+            run_some_succ k _ _ _ h2 (subst_step s Lk L' hs)⟩
+        | none =>
+          -- the substituted run still steps at time k, the atom run does not: an atom-headed front
+          left
+          have hrest : run (N - k) (Lk.map (subst s)) = some LN := by
+            have := run_add k (N - k) _ _ h2
+            rw [show k + (N - k) = N by omega, hN] at this
+            exact this.symm
+          obtain ⟨m, hm⟩ : ∃ m, N - k = m + 1 := ⟨N - k - 1, by omega⟩
+          rw [hm] at hrest
+          simp only [run] at hrest
+          cases hs2 : step (Lk.map (subst s)) with
+          | none => rw [hs2] at hrest; simp at hrest
+          | some L2 =>
+            match Lk, hs, hs2, h1 with
+            | a :: b :: c :: R, hs, hs2, h1 =>
+              simp only [step] at hs
+              split at hs
+              · simp at hs
+              · rename_i ha
+                rcases head_cases a with h | ⟨n, hn⟩
+                · exact absurd h ha
+                · exact ⟨k, by omega, a, b :: c :: R, n, h1, hn, by simp⟩
+            | [], _, hs2, _ => simp [step] at hs2
+            | [_], _, hs2, _ => simp [step] at hs2
+            | [_, _], _, hs2, _ => simp [step] at hs2
+  rcases key N (Nat.le_refl N) with ⟨j, hj, rest⟩ | ⟨LN', h1, h2⟩
+  · exact ⟨j, hj, rest⟩
+  · exfalso
+    rw [hN] at h2
+    simp only [Option.some.injEq] at h2
+    have hl : LN'.length ≤ 2 := by rw [← List.length_map (f := subst s), ← h2]; exact hlen
+    have := dcount_run N L LN' h1
+    have := dcount_le_length LN'
+    omega
+
+/-- some occurrence of the atom var 0 lies at right-depth at most d (d right edges from the root) -/
+inductive RD : T → Nat → Prop
+  | here (d : Nat) : RD (var 0) d
+  | left {f : T} (x : T) {d : Nat} : RD f d → RD (app f x) d
+  | right (f : T) {x : T} {d : Nat} : RD x d → RD (app f x) (d + 1)
+
+theorem RD_mono {t : T} {d : Nat} (h : RD t d) : ∀ e, d ≤ e → RD t e := by
+  induction h with
+  | here d => intro e _; exact RD.here e
+  | left x _ ih => intro e he; exact RD.left x (ih e he)
+  | right f _ ih =>
+    intro e he
+    obtain ⟨e', rfl⟩ : ∃ e', e = e' + 1 := ⟨e - 1, by omega⟩
+    exact RD.right f (ih e' (by omega))
+
+theorem RD_head : ∀ t : T, head t = var 0 → RD t 0
+  | S, h => by simp [head] at h
+  | var n, h => by simp [head] at h; subst h; exact RD.here 0
+  | app f x, h => RD.left x (RD_head f h)
+
+theorem RD_args : ∀ (a e : T) (d : Nat), e ∈ args a → RD e d → RD a (d + 1)
+  | S, _, _, h, _ => by simp [args] at h
+  | var _, _, _, h, _ => by simp [args] at h
+  | app f x, e, d, h, hr => by
+    simp only [args, List.mem_append, List.mem_singleton] at h
+    rcases h with h | rfl
+    · exact RD.left x (RD_args f e d h hr)
+    · exact RD.right f hr
+
+theorem RD_app_inv {b c : T} {d : Nat} (h : RD (app b c) d) : RD b d ∨ ∃ d', d = d' + 1 ∧ RD c d' := by
+  cases h with
+  | left _ h => exact Or.inl h
+  | right _ h => exact Or.inr ⟨_, rfl, h⟩
+
+/-- a head step lowers the least right-depth of the marked occurrences by at most one -/
+theorem RD_step (L L' : List T) (h : step L = some L') (e' : T) (he : e' ∈ L') (d : Nat) (hr : RD e' d) :
+    ∃ e ∈ L, RD e (d + 1) := by
+  match L, h with
+  | a :: b :: c :: R, h =>
+    simp only [step] at h
+    split at h
+    · simp only [Option.some.injEq] at h
+      subst h
+      rcases List.mem_append.1 he with he | he
+      · exact ⟨a, by simp, RD_args a e' d he hr⟩
+      · rcases List.mem_cons.1 he with rfl | he
+        · exact ⟨e', by simp, RD_mono hr _ (by omega)⟩
+        · rcases List.mem_cons.1 he with rfl | he
+          · rcases RD_app_inv hr with h1 | ⟨d', rfl, h2⟩
+            · exact ⟨b, by simp, RD_mono h1 _ (by omega)⟩
+            · exact ⟨c, by simp, RD_mono h2 _ (by omega)⟩
+          · exact ⟨e', by simp [he], RD_mono hr _ (by omega)⟩
+    · simp at h
+
+theorem RD_run : ∀ (k : Nat) (L L' : List T), run k L = some L' → ∀ e' ∈ L', ∀ d, RD e' d → ∃ e ∈ L, RD e (d + k)
+  | 0, L, L', h, e', he, d, hr => by simp [run] at h; subst h; exact ⟨e', he, hr⟩
+  | k + 1, L, L', h, e', he, d, hr => by
+    simp only [run] at h
+    cases hs : step L with
+    | none => rw [hs] at h; simp at h
+    | some L1 =>
+      rw [hs] at h
+      obtain ⟨e1, he1, hr1⟩ := RD_run k L1 L' h e' he d hr
+      obtain ⟨e0, he0, hr0⟩ := RD_step L L1 hs e1 he1 (d + k) hr1
+      exact ⟨e0, he0, by rw [show d + (k + 1) = d + k + 1 by omega]; exact hr0⟩
+
+/-- **Lemma 12 (right-depth cost).** If the run reaches, after k steps, a front headed by the marked atom (the marked
+    occurrence is read), then some marked occurrence started at right-depth at most k: reading an occurrence that lies
+    at right-depth D everywhere costs at least D head steps. -/
+theorem lemma12 (k : Nat) (L : List T) (a : T) (R : List T) (h : run k L = some (a :: R)) (ha : head a = var 0) :
+    ∃ e ∈ L, RD e k := by
+  obtain ⟨e, he, hr⟩ := RD_run k L (a :: R) h a (by simp) 0 (RD_head a ha)
+  exact ⟨e, he, by simpa using hr⟩
+
+#print axioms lemma11
+#print axioms lemma12
