@@ -77,5 +77,5 @@ configuration-level regularity (R″_PUP) of all runs in all orders, and the def
 "non-universal decoder". No universal construction either. See `RESULTS.md`, "Open", and `PRIZE_ASSESSMENT.md`.
 
 ## Verification
-`verify_all.py` passed 97/97 at 04:00 EDT on the working copy, and a fresh clone of the GitHub repository passed
+`verify_all.py` passed 116/116 at 17:41 EDT on the final working copy (all agent files included), and a fresh clone of the GitHub repository passed
 103/103 at 04:15 EDT (`code/verify_all.py` needs only Python 3 with numpy and the Lean 4.35.0 toolchain).
