@@ -268,6 +268,10 @@ eventually periodic in j along such families — the basis of the non-regularity
 
 ---------------------------------------------------------------------------------------------------
 ## Theorem C (an S-term with a non-regular Böhm tree) — PROVED (novelty unknown; check Satellite Ch. 7)
+*MACHINE-CHECKED (lean/TheoremC.lean, 2026-10-27; axioms propext, Quot.sound):* `theoremC` — for every r >= 1 the
+Böhm tree of K·W_1 has a node (W_{r+1}) whose subtree is finite with 11 + 2r leaves, via the exact runs (i)–(iii) and the
+cycle K·W_r ->1 P_r ->1 W_r W_{r+1} ->2 ... ->2 K·W_{r+1}; `bts_unique` (a node's subtree size is unique) and
+`distinct_subtrees` make 'infinitely many pairwise distinct subtrees' formal.
 Let `N_0=S, N_{j+1}=S N_j` (so N_1=SS, N_3=S(S(SS))), `K = S S N_3 N_1` (= SS(S(S(SS)))(SS), 8 leaves),
 `W_0 = K`, `W_{m+1} = S S W_m`. Head-reduction facts (all by the head machine, Lemma 2a):
  (i)  `K Z →³ S P (Z P)` with `P = N_3 N_1 Z`                 ([S,N3,N1,Z] ⇒ [N1,N3N1,Z] ⇒ [S,Z,N3N1Z] ⇒ [P, Z P])

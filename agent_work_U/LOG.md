@@ -263,3 +263,18 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   entirely from what executed data do with Fibonacci-recombined arguments (each execution again satisfies the same
   classification for its own captured data), i.e. from re-execution — the regime the main agent conjectures to be
   call-like.
+* Comb rigidity (PROVED by hand, 04:35; Lean in progress): with two opaque data a closed prefix of length >= 2 can
+  never shrink to length <= 1 without a step at length exactly 2, which is a write [p1, p2, F_k] (b = p2 closed,
+  c = data) creating a third data element (then no hnf ever, Cor. 8(i)).  Hence a DM round from C ++ [x, y] ends
+  without executing data iff C = [] or C = [S(S(...(S S)...))] (a comb S^(j)(S)), and then the survivor is F_j or
+  F_(j+1) over (x, y).  For one datum the same holds after the first write: arbitrary closed pre-computation, ONE
+  write by a closed W, then a comb.  The leftmost path's data-carrying code is literally the comb.
+* MACHINE-CHECKED (04:50 EDT): COMB RIGIDITY, agent_work_U/lean/W2R.lean (362 lines = W2F + 130 new lines; Lean 4
+  core, no sorry; axioms propext, Classical.choice, Quot.sound).
+  - `doomed_never_hnf`: from C ++ [fib2 k, fib2 (k+1)] with C closed and |C| >= 2 no list of length <= 2 is reachable;
+  - `comb_rigid`: if a list of length <= 2 is reachable from [p, fib2 k, fib2 (k+1)] (p closed) then p = comb j,
+    comb 0 = S, comb (j+1) = S.(comb j);
+  - `w2r_rigidity`: a descent-machine round from C ++ [x, y] (C closed) can end only if C = [] or C = [comb j].
+  The only closed code that carries two opaque data across a leftmost-path round is the comb S(S(..(S S)..)), whose
+  effect is the Fibonacci swap (W2+).  (The one-datum analogue — arbitrary closed pre-computation, one write, then a
+  comb — follows by the same argument; hand proof only.)
