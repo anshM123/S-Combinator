@@ -1379,3 +1379,22 @@ Reading: a fixed finite window passes on small terms and fails as larger terms a
 fine state of E109 passed. So size-change termination over finite class abstractions does not prove the
 leftmost-path half; a proof needs an infinite-state but structured abstraction (stack plus sizes) or a new idea.
 (Recorded as FAILED_APPROACHES 29.)
+
+## E114 — leftmost-path finite half: generalised Lemma P with opaque bottoms; class graphs; tail chains, 2026-10-27 (main agent)
+*Generalised Lemma P (PROVED, hand; same proof as Lemma P):* for a closed list L and ANY two terms D1, D2 (closed, or
+containing atoms), if the head run of L ++ [D1, D2] stops — at a list of length ≤ 2 or at an atom-headed front — then the
+leftmost Böhm-tree path of S·L is finite. (At a one-child node [x] the bottoms become [D2, D1·D2]; at a two-child node
+[x, y] they become [D1, y·D1, D2] and the prefix argument of Lemma P applies.) For the resisting component
+{(14,28), (14,26)} closed bottoms never work (M35 class 28 is dead under every argument, class 26 under every two), so
+the test uses atoms a, b. code/lw_atoms.py (data/lw_atoms_9.txt): at 7 leaves all 33 component terms stop at an
+atom-headed front; at 8 leaves 166 of 171 stop, but 5 grow past 200,000 leaves (e.g. SSS(SS)S(SS), 2,013 steps) although
+their leftmost paths are finite. The reason: at a one-child node the bottom element D1·D2 or y·D1 becomes the top, so the
+run continues into S-headed code after the path has ended. So the criterion is sufficient but not necessary, and it
+does not prove the half (FAILED_APPROACHES 30).
+*Class graphs (code/rw_classgraph.py).* Over the joint magma (path model × M35), restricted to path-flag-0 classes in F,
+with an edge to every possible child class: leftmost (L36, 69 joint classes) has 2 nontrivial SCCs, {(14,16)} and the
+known {(14,26), (14,28)}; rightmost (R19, 78 joint classes) has 11, one of them with 20 classes. Class-level edges cannot
+tell computed steps from structural ones, so the rightmost half is harder than the leftmost at this level.
+*Tail chains (code/lw_chain.py 10).* Computed steps that stay in the component write the child as a right comb
+q_{k−1}·(…(q_0·e_m)) over the node's last argument with k = 0…6 and 201 distinct chains at ≤ 10 leaves (e.g. q = [S(SS)],
+[SSS(SS)], [SSSS(SS), SSSS(S(SS(SS)S)S)]). No small family of chain shapes covers the component.

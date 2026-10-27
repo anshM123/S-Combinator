@@ -127,3 +127,8 @@
    Lesson: the information that bounds reloads in flag-0 classes is not in any bounded window of class data. A proof
    needs a structured infinite-state abstraction (e.g. the v-stack of Theorem Q10's chains, with sizes) or a
    different idea.
+30. **Opaque bottoms for the leftmost-path finite half (main agent, 2026-10-27; E114).** The generalised Lemma P (any two
+   bottom terms; a stop at an atom-headed front counts) is a correct sufficient criterion, but with atom bottoms it fails
+   on 5 of the 171 component terms with 8 leaves: their paths are finite, yet the run continues into S-headed code and
+   grows without bound. The leftmost half needs a well-foundedness argument for the pushdown-with-reading dynamics of the
+   tail chains (E112–E114), not a reduction to head normalisation with extra arguments.
