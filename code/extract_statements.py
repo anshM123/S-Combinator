@@ -40,7 +40,7 @@ ITEMS = [
 
 
 def statement(src, name):
-    m = re.search(r"^theorem " + re.escape(name) + r"\b(.*?):= ?(by|$|fun|\n|[A-Za-z])", src, re.S | re.M)
+    m = re.search(r"^theorem " + re.escape(name) + r"\b(.*?)(:=|\n\s+\|)", src, re.S | re.M)
     if not m:
         return None
     text = "theorem " + name + m.group(1)

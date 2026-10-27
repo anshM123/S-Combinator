@@ -30,6 +30,12 @@ Lemma 4: terms without head normal form are interchangeable in every context.
 theorem lemma4 (t t' : Tm) (ht : ¬ HasHnf t) (ht' : ¬ HasHnf t') (C : Ctx) : HasHnf (plug C t) ↔ HasHnf (plug C t')
 ```
 
+## `P2` — `lean/P2_Parity.lean`
+Theorem P2: BT(S S^j (SSS)(SS)) is finite iff j is even or j = 1.
+```lean
+theorem P2 : ∀ j, BTFin (args (T j)) ↔ (j % 2 = 0 ∨ j = 1)
+```
+
 ## `theoremC` — `lean/TheoremC.lean`
 Theorem C: BT(K W_1) has a node with a finite subtree of 11 + 2r leaves for every r >= 1.
 ```lean
