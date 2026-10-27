@@ -29,7 +29,8 @@ cd code
 python verify_all.py
 ```
 The Lean files need the Lean 4.35.0 toolchain (no Mathlib), e.g. `python lean_check.py ../lean/Q10.lean`. The full run
-took about 15 minutes on the author's laptop (97/97 checks passed, 2026-10-27, 04:00 EDT), mostly for the kernel checks of
+took about 15 minutes on the author's laptop (97/97 checks passed, 2026-10-27, 04:00 EDT; a fresh clone of this
+GitHub repository passed 103/103 at 04:15 EDT, so the checks need nothing outside the repository), mostly for the kernel checks of
 the finite models (`PropQ.lean` alone takes several minutes).
 
 Not included: the third-party papers that were consulted (copyright), two raw data files over 50 MB (regenerable with

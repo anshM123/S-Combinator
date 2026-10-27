@@ -36,52 +36,41 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        [lean/ABC.lean], CANON/FH.  Hand: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB.  REFUTED: (B1).
        OPEN: Conjecture R3 (LOG 04:10) = the replay theorems without per-case hypotheses (uncovered: pattern beta
        with c0 != S.a1; released-copy handlers).  R3 + INNER.lean = the chain bound (<= 2 proper transfers).
-   D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
+   D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target);
+       model-level evidence MACHINE-CHECKED (PA.lean: reexec_replays_transfer, replayed_handler_trivial,
+       trivH_next): in the replay class a re-execution replays the earlier transfer and its replayed handler can
+       never restart Church iteration in the (extended) chain model.
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
    (control flow order-independent) DONE; per-term parallel certificates (main agent) [PROOF.md, STATUS.md].
 F. Decoders reading unbounded parts of terms (not windows) ............................. OPEN (not covered by UB).
 Bottom line: NOT SOLVED.  No step above that is OPEN is close to a complete proof; D1 narrows the possible
 universal mechanisms (they must re-execute frozen values), it does not exclude them.
 
-# INTERIM 04:00 (non-universality agent; written 02:30, refreshed 2026-10-27 04:10 EDT)
+# INTERIM 04:00 (non-universality agent; written 02:30, last refreshed 2026-10-27 04:25 EDT)
 Bottom line: NOT SOLVED.  No complete proof of non-universality exists; nothing below claims one.
-New since the coordinator's 'go for the money' message (all in agent_work/; every MACHINE-CHECKED file compiles
-with Lean 4.35 core, no sorry, standard axioms only):
-0. HEADLINE (generic phase model): every Church chain of proper transfers has length <= 2, and <= 1 if it starts
-   from an ordered datum.  Machine-checked chain: every transfer after the first is innermost-dirty, with no extra
-   hypothesis (INNER.lean `ordered_innermost`, `chain_step_innermost`) -> after such a transfer the next phase cannot transfer
-   (PA.lean / FH / FHL / YD), the last step with per-case hypotheses that hold for 99.5-99.8% of all tested
-   transfers; census: no chain of length >= 3 among all 227,239 data <= 11 leaves.  It does NOT prove R''_PUP or
-   non-universality: re-execution (D3) is exactly what remains.
-1. MACHINE-CHECKED  Lemma AB [lean/AB.lean] (>= 3 live-atom elements is absorbing) and its c-view Corollary AB-c
-   [lean/ABC.lean] (>= 3 frozen-material elements above the inputs => the phase can only end by re-execution).
-2. MACHINE-CHECKED  Theorem MSL, generous and STRICT forms [lean/MSL.lean, lean/MSLS.lean]: in every phase-2 run of
-   a right comb K.(d2.(...(dk.p))) (frozen atoms allowed) each P-element glued onto a Y-element is prefixed by one
-   of the datum's own levels or has only such P-arguments.  = 'extend SL's invariant to several levels'.
-3. MACHINE-CHECKED  REPLAY THEOREMS PA, PB, PAM [lean/PA.lean]: if the innermost wrapper vn = b0.c0 of a phase-2
-   handler was glued onto y in pattern alpha (any number of wrappers; PB: pattern beta with c0 = S.a1), the next
-   phase never makes a proper transfer, provided phase 2's continuation from the glue reaches its transfer under
-   the replay guards (+ for PAM a condition on the first opening of the innermost level).  Mechanism = the REPLAY
-   RELATION [lean/REPLAY.lean]: the next phase re-runs the code that decided the transfer, on other arguments, and
-   reaches the frozen predecessor where phase 2 reached the live one (transfer -> re-execution).
-   COMBINED (with FH, FHL, YD; hypotheses certified per case): 1,078 of the 1,083 real proper transfers of the
-   exhaustive <= 11-leaf range and 4,851 of 5,086 in a targeted family up to 16 leaves are covered by these
-   machine-checked theorems; the rest are certified by simulation only.
-4. MACHINE-CHECKED  blocking lemmas for the next phase: YD [lean/YD.lean] (bare y glued down early; bare-S outer
-   wrapper), FH1/FHL [lean/FH1.lean, lean/FHL.lean] (a wrapper whose leftmost first-argument path reaches p);
-   replay corollaries replay_glue / replay_beta / replay_cycle [lean/REPLAY.lean].
-5. PROVED (hand)  creation lemma (innermost wrapper glued in pattern alpha or beta), Theorem FS (first-step
-   dichotomy for single-level phase 3), Lemmas Sigma2, Gamma, CB.  REFUTED: (B1) 'a buffer blocks every later
-   proper transfer' (explicit general-shape counterexample) — real data avoid it because of the replay.
-6. COMPUTATIONALLY CERTIFIED  'phase 3 is never a proper transfer' on the exhaustive <= 11 range and on 780k
-   targeted phase-2 data (K <= 9 leaves), 0 counterexamples.
-Still OPEN for item D of the map: D2(b) in general (a replay theorem without per-case hypotheses; 5 open cases
-<= 11 leaves, 235 in the targeted family); D3 're-execution is call-like'; items A, C, E, F (not addressed by this
-agent).
-Files: lean/{AB,ABC,MSL,MSLS,YD,REPLAY,PA,FH1,FHL,INNER}.lean (new today; PA.lean holds PA, PB, PAM) + OC, OT, OTD, SL, CANON (earlier);
-scripts msl_inv.py, target3.py, inner_forms.py, outer_forms.py, live_census.py, fh1_cover.py, fhl_cover.py,
-wcreate.py, prefix_replay.py, replay_cover.py, replay_b.py, replay_b2.py, unified_alpha.py, bufq.py, b0_cases.py,
-cycle_real.py, pb_check.py, pam_check.py, coverage_all.py (results in the LOG entries of 2026-10-27 01:35-04:00).
+All MACHINE-CHECKED files below compile with Lean 4.35 core, no sorry, standard axioms only (re-checked 04:12:
+OC, OT, OTD, SL, CANON, AB, ABC, MSL, MSLS, YD, REPLAY, PA, FH1, FHL, INNER in agent_work/lean/).
+0. HEADLINE (generic phase model, item D2 of the map): every Church chain of proper transfers has length <= 2, and
+   <= 1 if it starts from an ordered datum.  Steps: (1)+(2) every transfer after the first is innermost-dirty —
+   MACHINE-CHECKED with no extra hypothesis (INNER.lean: ordered_innermost, chain_step_innermost); (3) after an
+   innermost-dirty transfer the next phase cannot transfer — Conjecture R3, MACHINE-CHECKED under per-case
+   hypotheses on the transferring phase (PA.lean: pa_main / pb_main / pam_main, plus FH, FHL, YD), which hold for
+   1,078/1,083 right-comb and 2,612/2,621 ordered data <= 11 leaves and 99.7-99.8% of random larger data.
+   Census: no chain of length >= 3 among 227,239 data <= 11 leaves and 1.41M random data up to 22 leaves.
+   This does NOT prove R''_PUP or non-universality: a universal mechanism would have to re-execute frozen values
+   (or iterate data-blind calls); D3 'what re-execution does' is exactly what remains.
+1. Mechanism found: the REPLAY RELATION (REPLAY.lean, PA.lean).  The next phase re-runs the code c0 that decided
+   the transfer, on two other arguments, and reaches the frozen predecessor where the live one was reached;
+   `reexec_replays_transfer`: the re-executed frozen value receives the images of exactly the arguments with which
+   the live predecessor was activated at the transfer; `replayed_handler_trivial` / `trivH_next`: the replayed
+   handler is y-free, y or (p'-headed).y, so in the Church-chain model extended to re-executions it cannot restart
+   Church iteration (re-execution behaves like a call there) — model-level evidence for D3, not a proof.
+2. MACHINE-CHECKED  Theorem MSL (generous + strict, MSL.lean / MSLS.lean): extend SL's invariant to several levels.
+3. MACHINE-CHECKED  Lemma AB and Corollary AB-c (AB.lean / ABC.lean); YD (YD.lean); FH1 / FHL (FH1.lean / FHL.lean).
+4. PROVED (hand)  creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB.  REFUTED: (B1) (explicit counterexample).
+5. OPEN for item D: Conjecture R3 without per-case hypotheses (uncovered: pattern beta with c0 != S.a1, released-copy
+   handlers); D3.  Items A, C, E, F of the map: not addressed by this agent.
+Theorem index: section 'THEOREM INDEX' below (04:00); every claim's script and numbers are in the dated entries.
 
 # agent_work LOG (construction agent)
 
@@ -927,3 +916,24 @@ phase-3 data (c-view orderedness), the barrier lemma for closed codes (LOG start
 * REFINEMENT (EXPERIMENTALLY SUPPORTED, guardfail.py): in a guard failure (phase 2 opens a copy of w.y after the
   glue), the replay holds up to that step and phase 3's front there is the image e2-prefixed element; in the
   observed cases e2 = y, so phase 3 stops with a call of y exactly where phase 2 re-ran w's code.
+* MACHINE-CHECKED (agent_work/lean/PA.lean, now 1,580 lines; no sorry) — toward D3, the re-execution side:
+  `replayed_handler_trivial`: in the next phase of a single-wrapper handler w = b0.c0, every reachable list is
+  still in the barrier phase (strengthened invariant BIv: the p'-barrier is never destroyed) or comes after the
+  first c0'-prefixed front, whose opening puts e1, e2 after args(c0') with e2 TRIVIAL — y-free, the bare y, or
+  (p'-headed).y (`x1_handler`).  e2 is exactly what replaces the handler w.y in the re-execution
+  (`reexec_replays_transfer`).  `trivH_next`: for a trivial e2 the Church-chain model's next datum
+  e2[y := p'', p' := c'] has no live predecessor at all, or is the bare p'', or is frozen-headed — none of these can
+  make a proper transfer.  So, IN THE CHURCH-CHAIN MODEL EXTENDED TO RE-EXECUTIONS (assumption: the re-executed
+  frozen value treats its handler argument as the live predecessor treated V), a replayed re-execution never
+  restarts Church iteration: it behaves like a call.  COMPUTATIONALLY CERTIFIED (reexec_chain.py 11): for all 470
+  x1-front cases <= 11 leaves the next datum is predecessor-free 357, frozen-headed 100, the bare p'' 13.
+  Caveat (honest scope): this is a statement inside the phase model; it does not determine what an actual
+  frozen value does, so it is evidence for, not a proof of, 're-execution is call-like' (D3 stays OPEN).
+* COMPUTATIONALLY CERTIFIED (fs_check.py 5 100000 14; audit of the hand-proved Theorem FS on 24,481 random
+  single-level phase-3-shaped data W.p', W ordered, S-headed, containing c): (a) |args W| = 1: sigma_C at the first
+  step in all 3,100 cases with an S-headed argument, immediate frozen front in 3,739; (b) |args W| >= 2: p' untouched
+  until exactly two elements lie above it and then a C-element glued onto p' (a buffer) in 10,694 cases, phase
+  ended before (re-execution / call / hnf) in 6,844, step budget 104; no violation of either statement.
+* THEOREM INDEX update (04:25): INNER.lean — ordered_innermost (any ordered datum: proper transfers are
+  innermost-dirty), chain_step_innermost (every transfer after the first in a Church chain is innermost-dirty);
+  PA.lean — reexec_replays_transfer, replayed_handler_trivial (with BIv, pa_phase_v, x1_handler), trivH_next.
