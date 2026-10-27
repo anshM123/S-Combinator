@@ -5,11 +5,16 @@ _2026-10-25. Status labels as in PROOF.md. Nothing here has been released or sub
 ## Update 2026-10-27, early morning (machine-checked core; three workers) — read first
 **Still not solved; nothing submitted.** The repository is public on GitHub (anshM123/S-Combinator) at the user's
 request; the prize submission itself still needs the user's approval. The one-page summary is `RESULTS.md`.
-* **Machine-checked in Lean 4 (no `sorry`, standard axioms; all in `code/verify_all.py`):** Theorem Q10 (BEKW Question 10:
-  M35 decides head normalisation), Theorem A, Theorem P2 (Böhm-tree finiteness counts mod 2), Proposition Q (soundness
-  half of C6 = BEKW Question 5), Proposition Q″ (the 'infinite' halves of the path models), Lemma P and Theorem LP1, the
-  barrier lemmas (Lemmas 8, 9, 10, Corollary 8(ii), Theorem J, Barrier lemma), Proposition MW, Theorems UR-R/UR-C, and
-  the agents' obstruction theorems (OT, RC, OC, OTD, FH, SL, AB, MSL, YD, replay lemma, W1).
+* **Machine-checked in Lean 4 (no `sorry`, standard axioms; all in `code/verify_all.py`):**
+  * Finite models: Theorem Q10 (BEKW Question 10: M35 decides head normalisation), Theorem A, Lemma 4, Theorem P2
+    (Böhm-tree finiteness counts mod 2), Theorem C (a non-regular Böhm tree), Proposition Q (soundness half of C6 = BEKW
+    Question 5), Proposition Q″ (the 'infinite' halves of the path models), Lemma P and Theorem LP1.
+  * Evaluation orders: confluence, Church's theorem for S and Theorem T (termination is all-or-nothing, finite multiway
+    graphs; only the decidability is cited, Waldmann 2000), the head normalisation theorem and Proposition CF (control
+    flow is order-independent), F5 (Böhm trees invariant under reduction), Proposition MW(a), (b), (e).
+  * Barriers: Lemmas 8, 9, 10, 11, 12, Corollary 8(ii), Theorem J, Barrier lemma, Theorem N* with its layer bound,
+    Theorem H with Corollaries H1–H3, Theorems UR-R/UR-C.
+  * The agents' lemmas: OT, RC, OC, OTD, FH, SL, AB, AB-c, MSL, YD, replay lemma; W1, W1+, W2, W2+ (comb rigidity).
 * **What MW(b) settles about the rules.** Every infinite evolution, in every order, visits terms of unbounded size, so
   "only a finite number of distinct forms" is false for every infinite evolution. A disproof therefore has to take the
   "essentially finite" or "jump-ahead" route: exact symbolic descriptions (R″_PUP) of all runs.

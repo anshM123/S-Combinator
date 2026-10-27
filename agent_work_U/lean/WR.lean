@@ -278,3 +278,16 @@ theorem w2r (C : List T) (hC : allc C) (L : List T) (hr : ReachH (C ++ [X, var 1
 #print axioms rigid_pair
 #print axioms w1r
 #print axioms w2r
+
+/-- **Corollary (S-headed head normal forms with two variables).**  For a closed S-term M (head M = S), if the head
+    reduction of  M x y  (x, y variables) reaches a head normal form headed by S — i.e. the list machine from
+    args M ++ [x, y] reaches a list of length <= 2 — then M = S or M = S(comb j) = S(S(...(S S)...)).
+    (Conversely S x y and S(comb j) x y do reach S F_j F_(j+1); see W2F.lean.) -/
+theorem shnf_two_vars (M : T) (hM : nv M = true) (hS : head M = S) (L : List T)
+    (hr : ReachH (args M ++ [X, var 1]) L) (hlen : L.length ≤ 2) :
+    M = S ∨ ∃ j, M = app S (comb j) := by
+  rcases w2r (args M) (allc_args M hM) L hr hlen with h | ⟨j, hj⟩
+  · exact Or.inl (head_args_nil M hS h)
+  · exact Or.inr ⟨j, head_args_single M (comb j) hS hj⟩
+
+#print axioms shnf_two_vars
