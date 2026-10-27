@@ -18,9 +18,11 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
   rotate data cleanly, create 'fuel', hold two data except as a comb, or let a counter grow beside an unread counter
   beyond a fixed potential, and it must read what it uses, at a cost. Every construction route tried so far is blocked
   by one of these or failed in bounded searches; this is evidence, not a proof, that none exists.
+* **Closest to a new decidability theorem:** leftmost-path finiteness of S-terms. Everything is machine-checked except
+  one conjecture (J: an infinite leftmost walk makes only finitely many 'jumps'); with J, the 36-class model decides it.
 * **What a full disproof still needs:** decidability of Böhm-tree properties (open even for productivity, BEKW Question 5,
-  and leftmost-path finiteness), regularity of all head runs (R″_PUP), and a definitional argument about Wolfram's
-  "non-universal decoder" (see "Open" below).
+  and, pending J, leftmost-path finiteness), regularity of all head runs (R″_PUP), and a definitional argument about
+  Wolfram's "non-universal decoder" (see "Open" below).
 
 ## Machine-checked in Lean 4 (`lean/`, re-checked by `code/verify_all.py`)
 
@@ -70,6 +72,7 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
 
 | result | file | meaning |
 |---|---|---|
+| Leftmost-path finite half reduced to Conjecture J | `AgentEMA.lean` | an infinite leftmost walk from a term in a flag-0 class of the 36-class model must make infinitely many 'jumps' (nodes S p τ); so if every infinite leftmost walk makes only finitely many jumps (Conjecture J, unrefuted in all tests), leftmost-path finiteness of S-terms is decidable |
 | Leftmost/rightmost-path finite halves reduced to Conjecture EM | `AgentFiniteHalfGen.lean` | no infinite leftmost walk from a flag-0 term is eventually monotone, so the finite half of the leftmost-path model (and of the rightmost-path model, under EM_R) follows from one conjecture: every infinite leftmost walk is eventually monotone (finitely many pops, jumps and returns) |
 | Leftmost-path finite half: known mechanisms excluded | `AgentFiniteHalf.lean` | the leftmost-path model's flag is invariant along leftmost steps, and both known infinite leftmost mechanisms (the reload cycle and the Omega cycle, and any mixture) only occur in flag-1 classes; the finite half still needs 'every infinite walk eventually uses only these steps' (Conjecture SF) |
 | `shnf_two_vars`, comb rigidity for any two data | `AgentWR.lean` | for closed M, M x y reaches an S-headed head normal form only if M = S or M = S(S(…(S S)…)): with two opaque arguments, S-code either hands control to an argument or is a comb |
@@ -112,8 +115,8 @@ A universal emulation needs an encoder, an evaluation order and a halting detect
    (= BEKW Question 5, productivity) and C8, and the finite halves of the path models. These are certified up to 16–19
    leaves. A size-change attack on the leftmost half fails for every finite abstraction (FAILED_APPROACHES 29), and
    neither class-level acyclicity nor node size proves the C6 or leftmost halves (E114, FAILED_APPROACHES 30). For the
-   leftmost half the problem is now reduced in Lean to one conjecture, EM (every infinite leftmost walk is eventually
-   monotone; R98), and the same holds for the rightmost path under EM_R.
+   leftmost half the problem is now reduced in Lean to one conjecture, J (every infinite leftmost walk makes only
+   finitely many jumps; R103), after EM's other cases were closed; the rightmost path is reduced to EM_R (R98).
 2. Configuration-level regularity (R″_PUP) of every head run and of every other evaluation order. The
    non-universality agents' phase programme (agent_work/) bounds Church chains by two transfers whenever the second
    transfer is single-wrapper or FH (all observed chains); still open: multi-wrapper R3 (R3 for several occurrences of

@@ -37,3 +37,37 @@ search, timeout <= 30 min per search.
   pass, so if the race node evolves as S P^j(A) P^j(B), a pattern 'left side normal, right side not normal' (+ a marker)
   fires iff n_par(A) < n_par(B) (n_par = first pass at which the term is normal). The detector is then a finite tree
   automaton (linear time), the class Theorem RR concludes with anyway; but it is no longer a bounded-time pattern.
+
+## 2026-10-27 12:09 EDT E2 + Theorem B2: a BILINEAR ReplaceAll normalisation time from two numerals, write-free -- PROVED + COMPUTATIONALLY CERTIFIED
+* Scan (nf_scan.py; n_par = first k with P^k(t) a normal form, direct passes code/parallel_eval.step_fn):
+  one numeral, <= 4 leaves over {N, S, s=SS}, n = 1..8: e.g. n_par(N N S) = n^2 + 2n - 2, n_par(N s N) = n^2 + n - 1
+  (nf4.txt). Two numerals, 3 leaves over {N, M, S, s}, n, m = 1..6 (nf3_two.txt): exactly 4 non-separable templates:
+  N M S: nm + 2n - 2;  N s M: nm + 2n - m - 1;  and the mirror images M N S, M s N. All four are WRITE-FREE (no closed
+  term applied to a data-containing argument): 'data holding data' (n-bar absorbs m-bar), allowed by Lemma 9 / Thm J.
+* Pass identities used (Lemma LZ; numerals k-bar = S S (k-1)-bar, 1-bar = SS; U_m(R) := m-bar S R, V_m(R) := S S (m-bar S) R):
+  P(U_{m+1}(R)) = V_m(P(R));  P(V_m(R)) = S R U_m(R);  P(U_1(R)) = S R (S R);  P(S A B) = S P(A) P(B).
+* Lemma U -- PROVED. For m >= 1 and every term R with n_par(R) = r finite: n_par(m-bar S R) = max(2m - 1, m + r).
+  Proof: induction on m. m = 1: P(U_1(R)) = S R (S R), normal iff R is: 1 + r = max(1, 1 + r). m >= 2: P^2(U_m(R)) =
+  S R1 U_{m-1}(R1) with R1 = P(R), n_par(R1) = r' = max(r - 1, 0); an hnf S A B is normal iff A and B are, and evolves
+  as S P^j(A) P^j(B); so n_par = 2 + max(r', max(2m - 3, m - 1 + r')) = max(2m - 1, m + r) (cases r >= 1, r = 0). QED
+  Reading: each spine level holds the copy of R back by one pass (R is the third argument of the redex V_k(R), which a
+  pass does not enter), so m-bar S R ADDS m to the normalisation time of a slow R: a sum gadget.
+* Theorem B2 -- PROVED. For all n, m >= 1: n_par(n-bar m-bar S) = n*m + 2n - 2.
+  Proof: P(n-bar m-bar S) = S m-bar ((n-1)-bar m-bar) S and P^2(n-bar m-bar S) = U_m((n-1)-bar m-bar S) (n >= 2; Lemma LZ (i)
+  twice; the redex arguments are not entered). By Lemma U, T(n) = 2 + max(2m - 1, m + T(n-1)) = 2 + m + T(n-1) because
+  T(n-1) >= m. Base: 1-bar m-bar S = S S m-bar S -> S S (m-bar S); m-bar S -> S S ((m-1)-bar S) -> ... -> S S (1-bar S)...
+  and 1-bar S = SSS is normal, so T(1) = 1 + (m - 1) = m. Hence T(n) = m + (n - 1)(m + 2) = nm + 2n - 2. QED
+* Certified: bilinear_check.py 30 30 -> 900 of 900 (n, m) <= 30 agree (max 432,107 hash-consed nodes, 21.7 s).
+* Contrast: by C2 + Cor. PT-F the HNF time of any term is <= 2|t|; the NORMALISATION time n_par(n-bar m-bar S) ~ nm is
+  quadratic in the size 4n + 4m + 1. The product is produced by the critical path through nested copies (a delay chain),
+  not by a long head run.
+
+## 2026-10-27 12:22 EDT Lemma U and Theorem B2 -- MACHINE-CHECKED (lean/Bilinear.lean)
+* agent_work_RR/lean/Bilinear.lean (standalone, Lean 4 core; T, pass, passN verbatim from agent_work_P/lean/ParTime.lean,
+  whose pass is cross-checked against the Python ReplaceAll pass by 30 kernel-checked instances; isNf = 'no redex').
+  `cd code && python lean_check.py ../agent_work_RR/lean/Bilinear.lean` -> "exit 0, 0 errors, 3 theorems checked ...
+  LEAN OK: no errors, no sorry"; axioms propext, Classical.choice, Quot.sound.
+  - `lemmaU`: (forall i, isNf (passN i R) <-> r <= i) -> isNf (passN i ((k+1)-bar S R)) <-> 2k+1 <= i /\ k+1+r <= i.
+  - `num_S_time`: (k+1)-bar S is normal from pass k on, exactly.
+  - `theoremB2`: isNf (passN i ((j+1)-bar (k+1)-bar S)) <-> (j+1)(k+1) + 2j <= i, i.e. n_par(n-bar m-bar S) = nm + 2n - 2.
+  - two `decide` instances: 4-bar 4-bar S (numP 3) is normal at pass 22 = 4*4 + 2*4 - 2 and not at pass 21.

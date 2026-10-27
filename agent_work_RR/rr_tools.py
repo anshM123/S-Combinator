@@ -84,8 +84,9 @@ def fit_poly2(data, deg=2):
     """least-squares-free exact fit: data = {(n, m): value}; find integer-free rational coefficients of monomials n^i m^j
     (i + j <= deg) by solving on a subset and verifying on all.  Returns (coeffs dict, ok)."""
     from fractions import Fraction
-    mons = [(i, j) for i in range(deg + 1) for j in range(deg + 1 - i)]
     pts = sorted(data)
+    one = len({p[1] for p in pts}) == 1
+    mons = [(i, j) for i in range(deg + 1) for j in range(deg + 1 - i) if not (one and j > 0)]
     # pick points greedily to get an invertible system
     import itertools
     rows = []; vals = []; chosen = []

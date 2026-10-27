@@ -243,6 +243,8 @@ CHECKS = [
   ["lean_check.py", "../lean/AgentParTime.lean"], [r"LEAN OK: no errors, no sorry", r"theoremPT_all: propext, Quot.sound", r"transfer_principle_replaceAll: propext, Classical.choice, Quot.sound", r"lemmaPJ: propext, Classical.choice, Quot.sound"], 1500),
  ("Lean 4 (parallel agent): Lemma 10 in every evaluation order",
   ["lean_check.py", "../lean/AgentLemma10Any.lean"], [r"LEAN OK: no errors, no sorry", r"lemma10_any: propext, Classical.choice, Quot.sound"], 900),
+ ("Lean 4 (EM agent): leftmost-path finite half reduced to Conjecture J (finitely many jumps); cases (a') and (b) of EM closed",
+  ["lean_check.py", "../lean/AgentEMA.lean"], [r"LEAN OK: no errors, no sorry", r"SC.finite_half_of_J: propext, Classical.choice, Quot.sound", r"SC.EM_deep: propext, Classical.choice, Quot.sound", r"CA.depth_to_infinity: propext, Classical.choice, Quot.sound"], 2400),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",

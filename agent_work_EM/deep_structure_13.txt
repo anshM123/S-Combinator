@@ -1,0 +1,4 @@
+seed 13 N 400000 nodes 1200 time 194.9
+long flag-1 walks: deep 1046 bounded-depth 32
+(kind, K, c0 at K=2/3) over the second halves of the deep walks: {('step', 1, ''): 612955, ('step', 2, 'S(SS)'): 14645}
+deviations from the generalized-Omega prediction: []

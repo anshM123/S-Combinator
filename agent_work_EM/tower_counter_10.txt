@@ -1,0 +1,2 @@
+n 10 M 6 nodes 400 time 344.3 {'no step': 34590}
+counter steps found (m, chain of codes): []

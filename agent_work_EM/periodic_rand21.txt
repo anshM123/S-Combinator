@@ -1,0 +1,2 @@
+rand ['21', '2000', '100000'] time 502.4 {'bot': 59470, 'leaf': 40248, 'cap': 282}
+periodic walks (term, (first index, repeat index, jumps in cycle), flag): []

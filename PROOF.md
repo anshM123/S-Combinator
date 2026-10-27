@@ -166,9 +166,19 @@ and the REDUCTION `EM.finite_half_of_EM` / `FM.finite_half_monotone_all`: no inf
 L36-flag-0 term is eventually monotone (from some node on, every node has >= 3 arguments and no child equals the
 node's last argument). So Conjecture EM (every infinite leftmost walk is eventually monotone) implies the
 leftmost-path finite half for every flag-0 class; `EM.finite_half_right_of_EMR` / `RM.finite_half_right_monotone_all`
-do the same for R19 under Conjecture EM_R. OPEN: EM itself; it can fail only through (a') a jump-free walk returning
-infinitely often to nodes q·S with infinitely many T3/T4 steps, (b) unbounded depth with infinitely many pops or
-returns, or (c) infinitely many jumps. EXPERIMENTALLY SUPPORTED: after burn-in all 37,657,000 steps of 13,151 long
+do the same for R19 under Conjecture EM_R. OPEN at 10:12: EM itself; it can fail only through (a') a jump-free walk
+returning infinitely often to nodes q·S with infinitely many T3/T4 steps, (b) unbounded depth with infinitely many pops
+or returns, or (c) infinitely many jumps.
+**Cases (a') and (b) CLOSED, MACHINE-CHECKED (EM agent, 12:27; lean/AgentEMA.lean, 8,480 lines, 65 theorems, re-compiled
+by the main agent):** `CA.chain_T2` (every infinite chain of T1–T4 return steps is eventually T2-only), `CA.no_caseA`
+(case (a') is impossible from a flag-0 term), `CA.depth_to_infinity` (a jump-free infinite leftmost walk from a flag-0
+term has right-spine depth tending to infinity), `SC.EM_deep` (every jump-free infinite leftmost walk whose depth
+tends to infinity is eventually monotone; no flag hypothesis), `SC.NT_holds` and the reading lemma `DP.gamma_walk`.
+Hence **`SC.finite_half_of_J`: an infinite leftmost walk from an L36-flag-0 term makes infinitely many jumps** (nodes
+S p τ). So Conjecture J (every infinite leftmost walk makes only finitely many jumps) implies the leftmost-path finite
+half for every flag-0 class, and with Proposition Q″ L36 would decide leftmost-path finiteness of S-terms. J is OPEN
+(EXPERIMENTALLY SUPPORTED: no late jump among all 58,786 terms with 12 leaves and 240,000 random compositions; no
+periodic leftmost walk found). EXPERIMENTALLY SUPPORTED: after burn-in all 37,657,000 steps of 13,151 long
 flag-1 walks are pushes; no case (a') among 780,000 depth-1 returns. EXPERIMENTALLY
 SUPPORTED: no flag-0 walk runs 400 nodes among 656,250 6-letter trees over {S, SS, S(SS), B, M} (up to 42 leaves).
 

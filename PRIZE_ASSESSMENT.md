@@ -29,6 +29,9 @@ request; the prize submission itself still needs the user's approval. The one-pa
   occurrence, which is open but certified exhaustively up to 13 leaves. A universal mechanism would therefore have to re-execute frozen
   values or iterate data-blind calls. Open: R3 in general, D3 ('re-execution is call-like'), the phase decomposition of
   all head runs. (PROOF.md, 'Chain bound in the generic phase model'.)
+* **EM agent (12:27 EDT):** two of the three open cases of Conjecture EM are closed in Lean, so the leftmost-path finite
+  half now rests on one conjecture, J (every infinite leftmost walk makes only finitely many jumps). With J, the 36-class
+  model would decide leftmost-path finiteness of S-terms — a decidable Böhm-tree property beyond head normalisation.
 * **Parallel-evaluation agent (11:28 EDT):** no universal construction under ReplaceAll. Machine-checked: every
   evaluation order is the head run re-timed (Theorems PT, PT-all), so the head-run barriers transfer to every order
   and the choice of order changes only timing and syntax inside elements. The remaining universality lead is precise:

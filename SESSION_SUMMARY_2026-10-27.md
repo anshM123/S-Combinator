@@ -44,6 +44,11 @@ replays the earlier transfer) is machine-checked. D3 remains open.
   finite half is reduced to Conjecture EM (every infinite leftmost walk is eventually monotone); the same for the
   rightmost path under EM_R.
 
+## The EM agent's result (12:27 EDT)
+Cases (a') and (b) of Conjecture EM closed and machine-checked (lean/AgentEMA.lean, 8,480 lines, 65 theorems):
+`CA.depth_to_infinity`, `SC.EM_deep`, `SC.finite_half_of_J`. The leftmost-path finite half now reduces to Conjecture
+J (every infinite leftmost walk makes only finitely many jumps), which is open but unrefuted in every test.
+
 ## The parallel-evaluation agent's result (11:28 EDT)
 No universal construction under ReplaceAll. Machine-checked (lean/AgentParTime.lean, AgentLemma10Any.lean): a
 ReplaceAll run, and every other evaluation order, is the head run re-timed with list elements replaced by reducts
