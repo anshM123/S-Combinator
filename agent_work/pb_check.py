@@ -52,4 +52,4 @@ for D2 in data:
     st[("beta, c0 = S.a1", "b0 S-headed" if hm.head(b0) == 0 else "b0 atom", "a1 S-headed" if hm.head(a1) == 0 else "a1 atom",
         "guards ok" if guard else "GUARD FAIL", "top -> p-front" if ok else "top other", "phase3 PROPER" if proper else "phase3 not proper")] += 1
     hm.truncate(M0)
-for k in sorted(st): print(k, st[k])
+for k in sorted(st, key=str): print(k, st[k])

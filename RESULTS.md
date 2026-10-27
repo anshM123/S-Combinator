@@ -46,6 +46,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 
 | result | file | meaning |
 |---|---|---|
+| Lemmas W1+, W2, W2+ and comb rigidity | `AgentW1F/W2/W2R.lean` | leftmost-path (descent-machine) rounds: a single datum only forms Fibonacci words; with two data no code can store them, and the only code that carries both across a round is a comb S(S(…(S S)…)), which just swaps them Fibonacci-style — no second independent store |
 | Lemmas AB, AB-c, MSL (strict form), YD, replay lemma; Lemma W1 | `AgentAB/ABC/MSL/MSLS/YD/REPLAY/W1.lean` | steps of the two agents' programmes: no P-onto-Y glue once the P-region is large; every glued P-wrapper of a multi-level datum is good; an early glued-down y kills proper transfers; a single-wrapper phase-2 transfer replays as a phase-3 re-execution; a descent-machine round adds at most one closed wrap to a single-copy datum |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
 
