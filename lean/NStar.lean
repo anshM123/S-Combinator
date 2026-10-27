@@ -557,3 +557,137 @@ theorem nstar_node (LN : List T) (e : T) (he : e ∈ LN) : potL (args e) ≤ pot
 #print axioms nstar_step
 #print axioms nstar_run
 #print axioms nstar_node
+
+/-! ## Corollary N* (layer bound): a counter cannot grow above an unread core beyond the potential -/
+
+/-- closed one-hole contexts (the layers of a unary counter) -/
+inductive Ctx where
+  | hole : Ctx
+  | appL : Ctx → T → Ctx
+  | appR : T → Ctx → Ctx
+
+def plug : Ctx → T → T
+  | Ctx.hole, u => u
+  | Ctx.appL C x, u => app (plug C u) x
+  | Ctx.appR f C, u => app f (plug C u)
+
+/-- all side terms of the context are atom-free -/
+def cclosed : Ctx → Prop
+  | Ctx.hole => True
+  | Ctx.appL C x => cclosed C ∧ nv x = true
+  | Ctx.appR f C => nv f = true ∧ cclosed C
+
+/-- m layers: L^m[u] -/
+def iter (C : Ctx) : Nat → T → T
+  | 0, u => u
+  | m + 1, u => plug C (iter C m u)
+
+theorem plug_hx (u : T) : ∀ C : Ctx, cclosed C → hx (plug C u) = hx u
+  | Ctx.hole, _ => rfl
+  | Ctx.appL C x, h => by simp only [plug, hx, plug_hx u C h.1, nv_hx x h.2, Bool.or_false]
+  | Ctx.appR f C, h => by simp only [plug, hx, plug_hx u C h.2, nv_hx f h.1, Bool.false_or]
+
+theorem plug_hy (u : T) : ∀ C : Ctx, cclosed C → hy (plug C u) = hy u
+  | Ctx.hole, _ => rfl
+  | Ctx.appL C x, h => by simp only [plug, hy, plug_hy u C h.1, nv_hy x h.2, Bool.or_false]
+  | Ctx.appR f C, h => by simp only [plug, hy, plug_hy u C h.2, nv_hy f h.1, Bool.false_or]
+
+/-- **Layer lemma.** A closed layer around a term that contains x but not y adds at least one to the potential. -/
+theorem layer (u : T) (hxu : hx u = true) (hyu : hy u = false) :
+    ∀ C : Ctx, cclosed C → C ≠ Ctx.hole → potT u + 1 ≤ potT (plug C u)
+  | Ctx.hole, _, hne => absurd rfl hne
+  | Ctx.appL C x, h, _ => by
+    have hx1 : hx (plug C u) = true := by rw [plug_hx u C h.1]; exact hxu
+    have ih : potT u ≤ potT (plug C u) := by
+      cases C with
+      | hole => exact Nat.le_refl _
+      | appL C' x' => have := layer u hxu hyu (Ctx.appL C' x') h.1 (by simp); omega
+      | appR f' C' => have := layer u hxu hyu (Ctx.appR f' C') h.1 (by simp); omega
+    simp only [plug, potT, hx1, h.2, b2n]
+    simp
+    omega
+  | Ctx.appR f C, h, _ => by
+    have hx1 : hx (plug C u) = true := by rw [plug_hx u C h.2]; exact hxu
+    have hy1 : hy (plug C u) = false := by rw [plug_hy u C h.2]; exact hyu
+    have ih : potT u ≤ potT (plug C u) := by
+      cases C with
+      | hole => exact Nat.le_refl _
+      | appL C' x' => have := layer u hxu hyu (Ctx.appL C' x') h.2 (by simp); omega
+      | appR f' C' => have := layer u hxu hyu (Ctx.appR f' C') h.2 (by simp); omega
+    simp only [plug, potT, hx1, hy1, h.1, b2n]
+    simp
+    omega
+
+theorem iter_hx (C : Ctx) (hC : cclosed C) (u : T) : ∀ m, hx (iter C m u) = hx u
+  | 0 => rfl
+  | m + 1 => by simp only [iter]; rw [plug_hx _ C hC, iter_hx C hC u m]
+
+theorem iter_hy (C : Ctx) (hC : cclosed C) (u : T) : ∀ m, hy (iter C m u) = hy u
+  | 0 => rfl
+  | m + 1 => by simp only [iter]; rw [plug_hy _ C hC, iter_hy C hC u m]
+
+/-- m closed layers add at least m to the potential -/
+theorem iter_pot (C : Ctx) (hC : cclosed C) (hne : C ≠ Ctx.hole) (u : T) (hxu : hx u = true) (hyu : hy u = false) :
+    ∀ m, potT u + m ≤ potT (iter C m u)
+  | 0 => by simp [iter]
+  | m + 1 => by
+    have ih := iter_pot C hC hne u hxu hyu m
+    have := layer (iter C m u) (by rw [iter_hx C hC]; exact hxu) (by rw [iter_hy C hC]; exact hyu) C hC hne
+    simp only [iter]
+    omega
+
+/-- subterm relation -/
+inductive SubT : T → T → Prop
+  | refl (t : T) : SubT t t
+  | left {s f : T} (a : T) : SubT s f → SubT s (app f a)
+  | right (f : T) {s a : T} : SubT s a → SubT s (app f a)
+
+theorem sub_hx {s t : T} (h : SubT s t) (hs : hx s = true) : hx t = true := by
+  induction h with
+  | refl => exact hs
+  | left a _ ih => simp [hx, ih hs]
+  | right f _ ih => simp [hx, ih hs]
+
+/-- the potential of a subterm containing x is at most the potential of the term -/
+theorem sub_pot {s t : T} (h : SubT s t) (hs : hx s = true) : potT s ≤ potT t := by
+  induction h with
+  | refl => exact Nat.le_refl _
+  | @left s' f a h1 ih =>
+    have hf := sub_hx h1 hs
+    have := ih hs
+    simp only [potT, hf]
+    simp
+    omega
+  | @right f s' a h1 ih =>
+    have ha := sub_hx h1 hs
+    have := ih hs
+    simp only [potT, ha]
+    simp
+    omega
+
+theorem pot_mem : ∀ (L : List T) (e : T), e ∈ L → hx e = true → potT e ≤ potL L
+  | [], _, h, _ => by simp at h
+  | g :: R, e, h, hxe => by
+    unfold potL at *
+    simp only [potLo]
+    rcases List.mem_cons.1 h with rfl | h
+    · simp [hxe]; omega
+    · have := pot_mem R e h hxe
+      unfold potL at this
+      omega
+
+/-- **Corollary N* (layer bound).** In a head run that reaches a head normal form and contains y, no list along the run
+    (in particular no component of the head normal form, i.e. the next Böhm-tree node) contains m closed layers of a
+    counter around a core that contains x but not y with m larger than the starting potential. -/
+theorem layer_bound (L0 LN : List T) (N : Nat) (hN : run N L0 = some LN) (hlen : LN.length ≤ 2)
+    (hy0 : ∃ e ∈ L0, hy e = true) (k : Nat) (hk : k ≤ N) (L : List T) (hL : run k L0 = some L)
+    (e : T) (he : e ∈ L) (C : Ctx) (hC : cclosed C) (hne : C ≠ Ctx.hole) (u : T) (hxu : hx u = true)
+    (hyu : hy u = false) (m : Nat) (hs : SubT (iter C m u) e) : m ≤ potL L0 := by
+  have h1 := iter_pot C hC hne u hxu hyu m
+  have hxi : hx (iter C m u) = true := by rw [iter_hx C hC]; exact hxu
+  have h2 := sub_pot hs hxi
+  have h3 := pot_mem L e he (sub_hx hs hxi)
+  have h4 := nstar_run L0 LN N hN hlen hy0 k hk L hL
+  omega
+
+#print axioms layer_bound

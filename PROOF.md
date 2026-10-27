@@ -545,6 +545,9 @@ P_x of a term (maximum over the occurrences of x of its LD + SUPP count), `potL`
 run that reaches an hnf and contains y, potL never increases (the excluded write is ruled out by Theorem J(i),
 `theoremJ_global`); `nstar_node`: the next Böhm-tree node's list potential is at most that of the final list. Together:
 along a Böhm-tree path whose head runs reach hnfs and whose nodes contain y, the list potential never increases.
+The Layer lemma and the layer half of Corollary N* are machine-checked too (`layer`, `iter_pot`, `layer_bound`): m closed
+layers L^m[u] around a core u that contains x but not y add at least m to the potential, so no list along such a run,
+and no next node, contains such a stack with m larger than the starting potential.
 For an occurrence-wise path in a term, define (x, y opaque):
  LD_x  = max over occurrences of x of #{nodes u·v on the root-to-x path : u variable-free, x ∈ v, y ∉ u·v};
  SUPP_x = max over occurrences of x of #{nodes u·v on the root-to-x path : x ∈ u, v variable-free}.

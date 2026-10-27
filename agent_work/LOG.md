@@ -683,3 +683,10 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   (a)).  The earlier reduction 'single-wrapper D2(b) <= B1' is therefore void; what remains for single-wrapper
   handlers is: case (b) (b0 != S, 626 real cases <= 11 leaves, all certified non-proper) and 5 uncovered case-(a)
   cases.  (bufq.py statistics on random shapes are still running; the constructed counterexample already settles B1.)
+* MACHINE-CHECKED (agent_work/lean/ABC.lean = AB.lean + 95 lines; no sorry; axioms propext, Classical.choice,
+  Quot.sound): **Corollary AB-c.**  `run_ren`: atom renamings commute with the generic run.  `abc_no_input_front`:
+  if the c-view of a list (rename c = var 4 to var 0 and p' = var 0 to var 1) satisfies Lemma AB's hypothesis —
+  regions CL* C* I*, at least three C-elements, every element c-view ordered — then along the generic run of the
+  original list no front is ever headed by p', x, y or r.  So with >= 3 elements carrying frozen material above the
+  inputs, the phase can only end by RE-EXECUTING a frozen value (or a head normal form, or not at all): a
+  machine-checked instance of 'frozen material forces re-execution'.
