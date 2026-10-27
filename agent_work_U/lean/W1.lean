@@ -72,14 +72,13 @@ theorem occ_D : occ D = 1 := by simp [D, occ]
 
 /-- Phase 0: nothing wrapped yet (closed prefix over the bare datum).
     Phase 1: the bottom B and the element U directly above it both contain D, and a single-copy B is w.D, w closed. -/
-def Inv (L : List T) : Prop :=
+def W1Inv (L : List T) : Prop :=
   (∃ C : List T, L = C ++ [D] ∧ ∀ x, x ∈ C → closed x) ∨
-  (∃ P U B : T × T × T → True, False) ∨
   (∃ (P : List T) (U B : T), L = P ++ [U, B] ∧ 0 < occ U ∧ 0 < occ B ∧
       (occ B = 1 → ∃ w, closed w ∧ B = app w D))
 
-theorem inv_step (L L' : List T) (hI : Inv L) (hs : step L = some L') : Inv L' := by
-  rcases hI with ⟨C, hL, hC⟩ | ⟨_, h⟩ | ⟨P, U, B, hL, hU, hB, h1⟩
+theorem inv_step (L L' : List T) (hI : W1Inv L) (hs : step L = some L') : W1Inv L' := by
+  rcases hI with ⟨C, hL, hC⟩ | ⟨P, U, B, hL, hU, hB, h1⟩
   · -- phase 0
     subst hL
     match C, hC, hs with
@@ -90,7 +89,7 @@ theorem inv_step (L L' : List T) (hI : Inv L) (hs : step L = some L') : Inv L' :
       split at hs
       · cases hs
         have hb : closed b := hC b (by simp)
-        refine Or.inr (Or.inr ⟨args a, D, app b D, by simp, ?_, ?_, ?_⟩)
+        refine Or.inr ⟨args a, D, app b D, by simp, ?_, ?_, ?_⟩
         · simp [occ_D]
         · simp [occ, occ_closed b hb, occ_D]
         · intro _; exact ⟨b, hb, rfl⟩
@@ -111,7 +110,6 @@ theorem inv_step (L L' : List T) (hI : Inv L) (hs : step L = some L') : Inv L' :
         · subst hx; exact ⟨hb, hc⟩
         · exact hC x (by simp [hx])
       · cases hs
-  · exact absurd h id
   · -- phase 1
     subst hL
     match P, hs with
@@ -120,7 +118,7 @@ theorem inv_step (L L' : List T) (hI : Inv L) (hs : step L = some L') : Inv L' :
       simp only [List.cons_append, List.nil_append, step] at hs
       split at hs
       · cases hs
-        refine Or.inr (Or.inr ⟨args a, B, app U B, by simp, hB, ?_, ?_⟩)
+        refine Or.inr ⟨args a, B, app U B, by simp, hB, ?_, ?_⟩
         · simp [occ]; omega
         · intro h; simp [occ] at h; omega
       · cases hs
@@ -128,17 +126,17 @@ theorem inv_step (L L' : List T) (hI : Inv L) (hs : step L = some L') : Inv L' :
       simp only [List.cons_append, List.nil_append, step] at hs
       split at hs
       · cases hs
-        refine Or.inr (Or.inr ⟨args a ++ [U], app b U, B, by simp, ?_, hB, h1⟩)
+        refine Or.inr ⟨args a ++ [U], app b U, B, by simp, ?_, hB, h1⟩
         simp [occ]; omega
       · cases hs
     | a :: b :: c :: P', hs =>
       simp only [List.cons_append, step] at hs
       split at hs
       · cases hs
-        exact Or.inr (Or.inr ⟨args a ++ c :: app b c :: P', U, B, by simp, hU, hB, h1⟩)
+        exact Or.inr ⟨args a ++ c :: app b c :: P', U, B, by simp, hU, hB, h1⟩
       · cases hs
 
-theorem inv_reach (L0 L : List T) (h0 : Inv L0) (hr : Reach L0 L) : Inv L := by
+theorem inv_reach (L0 L : List T) (h0 : W1Inv L0) (hr : Reach L0 L) : W1Inv L := by
   induction hr with
   | refl => exact h0
   | tail _ hs ih => exact inv_step _ _ ih hs
@@ -147,15 +145,14 @@ theorem inv_reach (L0 L : List T) (h0 : Inv L0) (hr : Reach L0 L) : Inv L := by
 theorem w1_survivor (C : List T) (hC : ∀ x, x ∈ C → closed x) (a b c : T)
     (hr : Reach (C ++ [D]) [a, b, c]) :
     0 < occ c ∧ (occ c = 1 → c = D ∨ ∃ w, closed w ∧ c = app w D) := by
-  have hI : Inv [a, b, c] := inv_reach _ _ (Or.inl ⟨C, rfl, hC⟩) hr
-  rcases hI with ⟨C', hL, _⟩ | ⟨_, h⟩ | ⟨P, U, B, hL, _, hB, h1⟩
+  have hI : W1Inv [a, b, c] := inv_reach _ _ (Or.inl ⟨C, rfl, hC⟩) hr
+  rcases hI with ⟨C', hL, _⟩ | ⟨P, U, B, hL, _, hB, h1⟩
   · -- [a, b, c] = C' ++ [D]
     have hc : c = D := by
       have := congrArg List.getLast? hL
       simpa using this
     subst hc
     exact ⟨by simp [occ_D], fun _ => Or.inl rfl⟩
-  · exact absurd h id
   · have hc : c = B := by
       have := congrArg List.getLast? hL
       simpa using this

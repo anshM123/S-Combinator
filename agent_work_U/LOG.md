@@ -160,3 +160,9 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   twostack2.py 7 30000 5 6 3 3000: 30,000 random two-stack configurations (symbols <= 5, controllers <= 6 leaves,
   stack depth <= 3): every survivor with both clean stacks is a pop of the active stack; no push, no change of the
   passive stack (15 changed cases, all pops).
+* MACHINE-CHECKED (03:05 EDT): Lemma W1 in Lean 4 core — agent_work_U/lean/W1.lean (160 lines, no sorry; axioms
+  propext, Classical.choice, Quot.sound; compile: ~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean W1.lean).
+  `w1_survivor`: from C ++ [D] (C closed, D = var 0, atom-headed fronts stuck), every reachable 3-list [a, b, c] has
+  0 < occ c, and occ c = 1 implies c = D or c = w.D with w closed.  Since a DM round ends exactly by [S, b, c] ->
+  [c, b.c] with survivor c, this is the 'one closed wrap per round' lemma.  Invariant: phase 0 (closed prefix over the
+  bare datum) or phase 1 (bottom and the element above it both contain D; a single-copy bottom is w.D, w closed).
