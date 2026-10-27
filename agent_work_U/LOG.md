@@ -11,44 +11,51 @@ the clock; '~' marks times reconstructed from `date` outputs.  From now on every
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## FINAL SUMMARY (refreshed 07:31 EDT by `date`; first written 06:54)
+## FINAL SUMMARY (refreshed 09:05 EDT by `date`; first written 06:54; earlier refreshes 07:31, 08:53)
 **Brief (universality): no universal construction was found; no partial win.**  All results are obstructions or
 structure theory, labelled below.  Nothing was submitted, posted or published.
 **Coordinator task 04:03 (leftmost-path finite half for the joint classes (14,28), (14,26)): NOT fully proved; no
-counterexample; the two known infinite mechanisms are excluded by end-to-end machine-checked theorems, and the
-remaining gap is one precise conjecture (SF).**
+counterexample.  Since 07:31 the gap has been narrowed by machine-checked theorems: the finite half (for every L36
+flag-0 class) now follows from ONE conjecture, EM: every infinite leftmost walk is eventually monotone (only
+finitely many pops, jumps and returns, a return being a computed step whose child is the node's last argument).
+Moreover one of EM's failure modes is now excluded outright (Scenario A over a non-tower fuel, no flag needed).**
 MACHINE-CHECKED (Lean 4 core, no Mathlib, no sorry, axioms among propext / Classical.choice / Quot.sound; compile with
-~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean <file>; all re-compiled today):
-* agent_work_U/lean/FiniteHalf.lean (3,153 lines; contains the main agent's lean/PathModels.lean verbatim as namespace
-  PM): FH.flag_step — the L36 flag is invariant along every leftmost step; FH.finite_half_TC — no infinite leftmost
-  walk from a flag-0 term ends in tail calls over a fixed bottom (reload mechanism); FH.finite_half_Omega — none ends
-  in tail calls + canonical Omega steps (Omega mechanism); FH.finite_half_families — none ends in any mixture.
-  RIGHTMOST PATH (R19): RR.flagR_step (R19 flag invariant along rightmost steps); RR.finite_half_right — no rightmost
-  walk from an R19-flag-0 term ends in rightmost tail calls + canonical reload steps (the reload's rightmost path).
-* agent_work_U/lean/Reload.lean (1,587): every infinite chain of fuel-S tail calls is eventually the reload cycle
-  N_i N_m S (RC2.reload_classification_full, walk_reload_full); no infinite tail calls over a bottom /= S
-  (FZ.no_tail_calls_fuel).
-* agent_work_U/lean/TheoremV.lean (1,416): Theorem V, leftmost and rightmost (an infinite path consumes its last
-  argument; closed code over an untouched datum cannot run forever).
-* agent_work_U/lean/LargePush.lean (613): an infinite leftmost path has infinitely many large pushes.
-* agent_work_U/lean/Strip.lean (402), StripV.lean (772): stripping theorem (no infinite H(P_j) = S S P_(j+1) or
-  S (S S) P_(j+1)); k = 1 round lemma.
-* Earlier today: lean/W1, W1F, W2, W2F, W2R, WR (descent-machine round classification, comb rigidity, shnf_two_vars).
-COMPUTATIONALLY CERTIFIED: flag invariance on 16,580 concrete steps; only the canonical counters N_k / w_k arise from
-R- / R2-chains into B / M (<= 12 leaves); reload and Omega node classes; censuses of large pushes and jumps.
-PROVED (paper): Scenario-A structure (jump-free bounded-depth walks: return multipliers trace an infinite rightmost
-path; the frozen bottom is executed infinitely often).
-CONJECTURAL: SF (every infinite leftmost walk eventually uses only tail calls and canonical Omega steps; 2,051 known
-infinite walks, 619,000 steps after burn-in, no exception) — SF + FiniteHalf.lean => the leftmost finite half for every flag-0 class,
-hence (with Prop. Q'') decidability of leftmost-path infinity and (D2') for the leftmost path.  SF_R (rightmost
-analogue: rightmost tail calls and canonical reload steps; 609 walks, 146,160 steps) — SF_R + RR.finite_half_right =>
-R19's finite half.  Conjectures F, G.
-EXPERIMENTALLY SUPPORTED: no counterexample in about 1.5 million leftmost walks of targeted terms beyond the 16-leaf
-census (gadget trees, self-applications, random component terms to 60 leaves, restart / Omega / fuel / jump searches).
-Strongest concrete result: FiniteHalf.lean — end-to-end machine-checked exclusion of the reload and Omega mechanisms
-from flag-0 classes, with flag invariance.  Most promising next step: prove SF (or its pieces: finitely many jumps;
-finitely many non-tail-call, non-Omega steps) — e.g. by extending the wrap-history invariant WH of
-lean/FiniteHalf.lean to multi-push steps.
+~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean <file>):
+* agent_work_U/lean/FiniteHalfGen.lean (4,905 lines, ~1.5 min; = FiniteHalf.lean + namespaces FG, RG, FM, RM, SA;
+  contains the main agent's lean/PathModels.lean verbatim as namespace PM):
+  - FM.finite_half_monotone_all (NEW, strongest): no infinite leftmost walk from an L36-flag-0 term is eventually
+    monotone, i.e. there are no j0, t, s with u (j0+j) = (t j).(s j), t j with >= 2 arguments, u (j0+j+1) /= s j.
+  - FM.fib_step (Lemma Fib, NEW): over a bottom z that is not a tower S(S(...(SS))), every computed step is a
+    Fibonacci step: H(Q) = S (tw K) c0 and the leftmost child is Fw K (Fw 0 = z, Fw 1 = c0.z, Fw (i+2) = Fw i . Fw (i+1));
+    RM.fib_step2: the rightmost child is Fw (K+1).
+  - SA.no_TT_chain (NEW): no infinite chain with H(W_j) = S (tw K_j) W_(j+1) (generalises no_R_chain, no_R2_chain).
+  - SA.no_scenarioA (NEW, no flag): no jump-free infinite leftmost walk keeps a non-tower Z as a proper spine suffix of
+    every node while returning infinitely often to nodes q.Z.  So in Scenario A the frozen fuel is a tower (half of
+    Conjecture F).
+  - FG.finite_half_Omega_general / FG.finite_half_general_families (NEW): no flag-0 walk ends in tail calls + Omega
+    steps with ANY second component.
+  - RG.finite_half_right_general, RM.finite_half_right_monotone_all (NEW, rightmost path / R19): no rightmost walk
+    from an R19-flag-0 term eventually has only nodes with >= 3 arguments; R19's finite half reduces to EM_R.
+  - unchanged from FiniteHalf.lean: FH.flag_step (L36 flag invariant along leftmost steps), FH.finite_half_TC,
+    FH.finite_half_Omega, FH.finite_half_families, RR.flagR_step, RR.finite_half_right.
+* agent_work_U/lean/FiniteHalf.lean (3,153), Reload.lean (1,587: reload classification), TheoremV.lean (1,416),
+  LargePush.lean (613), Strip.lean (402), StripV.lean (772), and the earlier W1, W1F, W2, W2F, W2R, WR files.
+COMPUTATIONALLY CERTIFIED: flag invariance on 16,580 concrete steps; counters N_k / w_k from R- / R2-chains into B / M
+(<= 12 leaves); reload / Omega node classes; censuses of large pushes and jumps.
+EXPERIMENTALLY SUPPORTED: Lemma Fib on 12,957 random instances (fibcheck.py); SF (hence EM) on 2,051 infinite walks /
+619,000 steps after burn-in (only tail calls and canonical Omega steps); no counterexample to the finite half in about
+1.5 million leftmost walks of targeted terms beyond the 16-leaf census.
+PROVED (paper, from the Lean theorems plus liminf bookkeeping): Scenario A (jump-free, depth returning infinitely often
+to its eventual minimum) has a tower fuel; its return multipliers follow q -> snd H(q).
+CONJECTURAL: EM (leftmost) and EM_R (rightmost); SF / SF_R (stronger); Conjectures F (fuel = S), G.  For flag-0
+terms EM can now fail only through (a) Scenario A over a tower fuel S(S(...)), (b) unbounded depth with infinitely
+many pops/returns, (c) infinitely many jumps.  The L36 x M35 classes give no shortcut: SCC nodes can sit over every
+tower bottom (towercls check, 09:0x).
+Strongest concrete result: lean/FiniteHalfGen.lean, FM.finite_half_monotone_all — end-to-end machine-checked: an
+infinite leftmost walk from a flag-0 term (e.g. any term of (14,28), (14,26)) must pop, jump or return infinitely
+often (and, by SA.no_scenarioA, cannot do so by returning to a fixed level over a non-tower fuel).  Most promising
+next step: (a) Scenario A over tower fuels (the excursion analysis starts from Lemma Fib over W = c.Z, which is a
+non-tower), then (b) and (c).
 
 ## SUMMARY (refreshed 06:53 EDT by `date`; draft of the FINAL summary — supersedes the INTERIM block below)
 **A. Universality (the brief): no universal construction; no partial win.  Machine-checked obstructions only.**
@@ -905,3 +912,100 @@ every node N_i N_k has R19 class 4.4 = flag 1, contradicting flag invariance.
   (t (j+1) = s j, s (j+1) = q.(s j)).  Same proof pattern as FG: once size (s j) >= 6, top_rtc (a rightmost tail call
   from q.sigma forces q = S S, via R_strip) and top_rr (H(q.sigma) = S (S S) p forces q = S(SS), p = sigma) leave only
   q = S S; RR.finite_half_right excludes the canonical case.  So SF_R may be weakened in the same way (SF_R-).
+
+## 08:37 EDT — MACHINE-CHECKED: Lemma Fib and the finite half for eventually MONOTONE walks (lean/FiniteHalfGen.lean, ns FM)
+* lean/FiniteHalfGen.lean (now 4,045 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound) adds namespace FM.  Towers: tw 0 = S, tw (m+1) = S (tw m); 'non-tower' = some
+  right-spine multiplier is not S.
+* FM.fib_step (Lemma Fib): if Q has >= 2 arguments, z is a non-tower and the head run of Q.z reaches [ch, d], then
+  H(Q) = S (tw K) c0 and ch = Fw z c0 K, where Fw 0 = z, Fw 1 = c0.z, Fw (i+2) = Fw i . Fw (i+1).  So over a non-tower
+  bottom every computed step is a 'Fibonacci step' (no refills).  Proof: chain invariant FM.J over the wrap history
+  OM.WH — once the current head is a non-tower it stays one (a refill's first component is a spine-wrap of the
+  current bottom, FM.first_suf; a peel keeps it), and a non-tower head can never end the chain.  (Cross-check
+  fibcheck.py: 12,957 random instances, all Fibonacci.)
+* FM.finite_half_monotone: an infinite leftmost walk from an L36-flag-0 term never ends in nodes (t j).(s j) with t j
+  having >= 2 arguments (no pops, no jumps) and u (j0+j+1) /= s j (no step returns to its bottom), once the bottom s 0
+  is a non-tower.  Proof: every step is Fibonacci with K >= 1 pushes; the top after a K-step is Fw (K-2); a top A.B
+  with B a non-tower forces A = tw (K'+1) (FM.htop inside the proof); hence K >= 4 is impossible, a K = 3 step must be
+  followed by a tail call with second component the old stack and leaves the stack (s j).(S(SS).(s j)), which can never
+  become a top — but the next growing step makes it the top.  So all steps are tail calls or Omega-type steps, and
+  FG.finite_half_general_families applies.
+* Consequence: the leftmost finite half for flag-0 classes now follows from Conjecture EM (every infinite leftmost walk
+  is eventually monotone: eventually no pops, no jumps, no returns k = 0) together with excluding monotone walks
+  whose bottoms are towers S(S(...(SS))) forever (towers allow refills; not covered).  Remaining cases are therefore
+  Scenario A (depth returns infinitely often), Scenario C (infinitely many jumps), Scenario B with infinitely many
+  returns/pops, and the tower case.
+
+## 08:42 EDT — MACHINE-CHECKED: no flag-0 term has an eventually monotone infinite leftmost walk (FM.finite_half_monotone_all)
+* lean/FiniteHalfGen.lean (4,219 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound).  FM.finite_half_monotone_all: an infinite leftmost walk from an L36-flag-0 term never
+  ends in nodes (t j).(s j) with t j having >= 2 arguments and u (j0+j+1) /= s j — i.e. it is never EVENTUALLY
+  MONOTONE (from some node on: no pops, no jumps, no step that returns to its bottom).  No hypothesis on the bottom.
+* Tower case (FM.tower_grow): if a computed step from Q.z has a child A.B with A having >= 2 arguments, B a tower and
+  B /= z, then size z <= 2 (the chain's last head is S S, its previous wrap is S or S S).  So over tower bottoms
+  the bottom changes at most twice and is then fixed: FH.finite_half_TC.  Non-tower case: FM.finite_half_monotone.
+* Status of the coordinator's task: the leftmost finite half for (14,28), (14,26) (indeed for every flag-0 class)
+  now reduces to CONJECTURE EM: every infinite leftmost walk is eventually monotone — equivalently, it has only
+  finitely many pops, jumps and returns (computed steps whose child is the node's own last argument).  Scenario A
+  (stack depth returns to a fixed level infinitely often) and Scenario C (infinitely many jumps) are exactly the
+  ways EM could fail, plus Scenario B with infinitely many pops/returns.  EM is EXPERIMENTALLY SUPPORTED by the same
+  data as SF (2,051 infinite walks, 619,000 steps after burn-in: only tail calls and canonical Omega steps).
+
+## 08:50 EDT — MACHINE-CHECKED: the rightmost analogue (RM) — R19's finite half reduces to 'eventually monotone'
+* lean/FiniteHalfGen.lean (4,593 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound) adds namespace RM.
+* RM.fib_step2: over a non-tower bottom z, the head normal form of Q.z (Q with >= 2 arguments) is
+  [Fw z c0 K, Fw z c0 (K+1)] where H(Q) = S (tw K) c0.  So the leftmost child is Fw K and the rightmost child Fw (K+1).
+* RM.finite_half_right_monotone_all: a rightmost walk from an R19-flag-0 term never ends in nodes (t j).(s j) with
+  t j having >= 2 arguments, i.e. it never eventually consists of nodes with >= 3 arguments (no rightmost step that
+  drops a multiplier).  Non-tower bottoms: RM.finite_half_right_monotone (push counts P = K+1 >= 3 are impossible as in
+  FM; P = 1 rightmost tail calls, P = 2 reload-type steps; RG.finite_half_right_general).  Tower bottoms
+  (RM.rtower_grow): the bottom can change only from S, so it is eventually fixed and the walk is an R-chain — no
+  flag needed.
+* So R19's finite half reduces to CONJECTURE EM_R: every infinite rightmost walk eventually has only nodes with >= 3
+  arguments (finitely many 1- or 2-argument nodes).
+
+## 09:02 EDT — MACHINE-CHECKED: no infinite tower-headed chain; no Scenario A over a non-tower fuel (ns SA)
+* lean/FiniteHalfGen.lean (4905 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound) adds namespace SA.  No flag hypothesis in either theorem.
+* SA.no_TT_chain: there is no sequence W0, W1, ... of closed S-terms with H(W_j) = S (tw K_j) W_(j+1) (any K_j >= 0).
+  Generalises no_R_chain (K = 0) and no_R2_chain (K = 1).  Proof: some W_j has >= 3 arguments (else sizes drop);
+  from then on W_j = Y_j.(tw m_j) with Y_j having >= 2 arguments (SA.TT_strip; otherwise the chain dies within two
+  steps, SA.TT_dies), and each step is an R-step Y_j -> Y_(j+1) with the same tower, except that the tower may grow
+  once from S to S S; so eventually an infinite R-chain.
+* SA.no_scenarioA: no jump-free infinite leftmost walk (no node with exactly two arguments) keeps a non-tower Z as a
+  proper right-spine suffix of every node and returns infinitely often to the level directly above Z (nodes q.Z).
+  Proof: at a return q.Z the step is a Fibonacci step (FM.fib_step), H(q) = S (tw K) c with K >= 1 (K = 0 would
+  reach Z); by SA.step_keeps the walk stays above c.Z until it is at c.Z, so the next return multiplier is c; the
+  return multipliers form an infinite tower-headed chain.
+* Consequence (PROVED from the two Lean theorems; the 'liminf' bookkeeping is on paper): in Scenario A (jump-free,
+  stack depth returning infinitely often to its eventual minimum d*), the frozen part Z below level d* must be a
+  tower S(S(...(S S))) — half of Conjecture F, which says Z = S.  EM can now fail only through Scenario A over a
+  tower fuel, unbounded depth with infinitely many pops/returns, or infinitely many jumps.
+
+## 09:08 EDT — MACHINE-CHECKED: the reductions in final form (ns EM)
+* lean/FiniteHalfGen.lean (4949 lines; recompiled by path, exit 0, 0 errors, no sorry; axioms propext,
+  Classical.choice, Quot.sound) adds namespace EM:
+  - EM.finite_half_of_EM: for an infinite leftmost walk u from an L36-flag-0 term, the hypothesis
+    'exists j0, for all j >= j0: u j has >= 3 arguments and u (j+1) /= (last argument of u j)' is contradictory.
+    I.e. CONJECTURE EM => every flag-0 term (e.g. of (14,28), (14,26)) has a finite leftmost path.
+  - EM.finite_half_right_of_EMR: same for the rightmost path, R19 flag 0 and 'eventually >= 3 arguments'.
+
+## 09:09 EDT — Theorem map for lean/FiniteHalfGen.lean (4,949 lines; for the main agent; line numbers of the statements)
+| Lean name (line) | statement (closed S-terms; LChild/RChildC = leftmost/rightmost step; flag = L36, flagR = R19) |
+|---|---|
+| EM.finite_half_of_EM (4927) | infinite leftmost walk, flag (u 0) = false, eventually (>= 3 args and child /= last arg) => False |
+| EM.finite_half_right_of_EMR (4938) | infinite rightmost walk, flagR (u 0) = false, eventually >= 3 args => False |
+| FM.finite_half_monotone_all (4145) | same as EM.finite_half_of_EM, stated with u (j0+j) = (t j).(s j) |
+| FM.finite_half_monotone (3843) | the non-tower case (s 0 not a tower) |
+| FM.tower_grow (4081) | growing step to a tower bottom with a >=2-arg top starts from a bottom of size <= 2 |
+| FM.fib_step (3790) | Lemma Fib: non-tower z, Q >= 2 args, hnf [ch, d] of Q.z => H(Q) = S (tw K) c0, ch = Fw z c0 K |
+| FM.first_suf (3683) | first hnf component of a list of length >= 3 is a right-spine wrap of its last element |
+| RM.fib_step2 (4231) | Lemma Fib with the second component: d = Fw z c0 (K+1) |
+| RM.finite_half_right_monotone(_all) (4285, 4519) | rightmost analogues; RM.rtower_grow (4478) |
+| SA.no_TT_chain (4680) | no infinite chain with H(W_j) = S (tw K_j) W_(j+1) |
+| SA.no_scenarioA (4823) | no jump-free infinite walk returning infinitely often to q.Z over a fixed non-tower proper suffix Z |
+| FG.finite_half_Omega_general (3224), FG.finite_half_general_families (3355) | tail calls + Omega steps with any second component excluded for flag 0 |
+| RG.right_reload_detect_gen (3407), RG.finite_half_right_general (3490) | rightmost reload-type steps with any second component excluded for flagR 0 |
+Definitions: FM.tw (towers), FM.Tower, FM.Suf (right-spine suffix), FM.Fw / FM.Fc (Fibonacci words), SA.TT, SA.rpart.
+All #print axioms lines at the ends of the sections report [propext, Classical.choice, Quot.sound].

@@ -25,6 +25,12 @@
     THEOREM IL-GEN (`il_gen`): IL-NH with the condition 'NHc(cn) OR bn never calls its first hole'.
     R3-RC SINGLE (`r3_rc_single`): r3_single2 for every S-headed right comb over p with closed wrappers
       (frozen atoms allowed), ordT and the single occurrence of p derived from the comb shape.
+    `il_atom_example`: non-vacuity of il_atom (two-wrapper handler of S(S(S(S(SS))S))(S(SS)p), checked by decide).
+    `mw_alpha2_example`: non-vacuity of mw_alpha2 (nested alpha handler of SSS(S(SS(SS)(Sp))), checked by decide).
+    THEOREM S1-LAMBDA (`s1_coreL`, with GoodL/IAL/IBL/ia_stepL/ib_stepL/s1_invL): s1_core with the bare y replaced by any
+      fixed rank-2 term (S1 at the outer levels of multi-wrapper handlers).
+    THEOREM R3-SINGLE-ALL (`r3_single_all`): every single-wrapper handler (b0, c0 arbitrary) of an ordered
+      single-occurrence datum; the condition 'H1ok(c0) OR NK1(b0)' is needed only when b0, c0 are both S-headed.
   Plain Lean 4 core.
 -/
 /-
@@ -6272,3 +6278,1040 @@ theorem r3_rc_single (ds : List T) (b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) 
     hDh1 hDh2 hb0S hc0S hw1 hw2 hw3 hV T' f b R hT hf hcond
 
 #print axioms r3_rc_single
+
+/-! non-vacuity of il_atom: the datum S(S(S(S(SS))S))(S(SS)p) (handler S.((S(SS)p).y), innermost c-code p) -/
+def exD2 : T := app (app S (app S (app (app S (app S (app S S))) S))) (app (app S (app S S)) (var 0))
+def exL2 : T := app (app (app S (app S S)) (var 0)) (var 2)
+
+theorem exD2_reopen : run 7 [exD2, var 1, var 2, var 3] = some (args (app S (app S S)) ++ var 0 :: var 2 ::
+    [app S exL2, app (var 2) exL2, app (app (app S exL2) (app exL2 (app S exL2))) (app (var 2) exL2),
+     app (var 1) (var 2), var 3]) := by decide
+
+theorem exD2_transfer : run 9 [exD2, var 1, var 2, var 3] = some (app (var 0) (var 2) ::
+    app (var 2) (app (var 0) (var 2)) :: app S exL2 ::
+    [app (var 2) exL2, app (app (app S exL2) (app exL2 (app S exL2))) (app (var 2) exL2),
+     app (var 1) (var 2), var 3]) := by decide
+
+/-- non-vacuity: il_atom applies to S(S(S(S(SS))S))(S(SS)p) - the next phase of its two-wrapper handler
+    S.((S(SS)p).y) has no p'-front at all -/
+theorem il_atom_example : ∀ (m : Nat) (f' : T) (L' : List T),
+    run m [rcombT (([S] ++ [app (app S (app S S)) (var 0)]).map (sb 4)) (var 0), var 1, var 2, var 3] =
+      some (f' :: L') → head f' ≠ var 0 :=
+  il_atom [S] (app S (app S S)) (var 0) 0 4 5 6 (by decide) (by decide) (by decide) (by decide) (by decide)
+    rfl rfl (by decide) (by decide) [exD2, var 1, var 2, var 3] 7 9 _ exD2_reopen (by decide) _ _ _ _
+    exD2_transfer rfl
+
+#print axioms il_atom_example
+
+/-! non-vacuity of mw_alpha2: the datum SSS(S(SS(SS)(Sp))) (handler SS(Sp).(S(S(SS(SS)(Sp))).y), nested alpha) -/
+def exD3 : T := app (app (app S S) S) (app S (app (app (app S S) (app S S)) (app S (var 0))))
+def exc2 : T := app S (app (app (app S S) (app S S)) (app S (var 0)))
+
+theorem noPre_of_check (w : T) (L0 : List T) (t : Nat)
+    (h : (match run t L0 with | some (g :: _) => wpreB w g | _ => false) = false) :
+    ∀ g L, run t L0 = some (g :: L) → ¬ wpre w g := by
+  intro g L hr hw
+  rw [hr] at h
+  simp only at h
+  rw [(wpreB_iff w g).2 hw] at h
+  exact Bool.noConfusion h
+
+theorem exD3_inner : run 2 [exD3, var 1, var 2, var 3] =
+    some (exc2 :: app S exc2 :: var 2 :: [app (var 1) (var 2), var 3]) := by decide
+
+theorem exD3_outer : run 5 [exD3, var 1, var 2, var 3] =
+    some (app S (var 0) :: app (app S S) (app S (var 0)) :: app (app S exc2) (var 2) ::
+      [app (var 2) (app (app S exc2) (var 2)), app (var 1) (var 2), var 3]) := by decide
+
+theorem exD3_transfer : run 6 [exD3, var 1, var 2, var 3] =
+    some (var 0 :: app (app S exc2) (var 2) ::
+      app (app (app S S) (app S (var 0))) (app (app S exc2) (var 2)) ::
+      [app (var 2) (app (app S exc2) (var 2)), app (var 1) (var 2), var 3]) := by decide
+
+/-- non-vacuity: mw_alpha2 applies to SSS(S(SS(SS)(Sp))) -/
+theorem mw_alpha2_example : ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+    run m [rcombT ([app (app S S) (app S (var 0)), app S exc2].map (sb 4)) (var 0), var 1, var 2, var 3] =
+      some (f' :: b' :: d' :: R') → head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 :=
+  mw_alpha2 (app S S) (app S (var 0)) S exc2 4 5 6 7 (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) rfl rfl rfl rfl (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) ⟨by decide, by decide, by decide⟩
+    [exD3, var 1, var 2, var 3] 2 5 6 _ _ exD3_inner exD3_outer (by decide) (by decide) _ _ _ _ exD3_transfer rfl
+    (by
+      intro t g L h1 h2 hr
+      have ht : t = 3 ∨ t = 4 ∨ t = 5 ∨ t = 6 := by omega
+      rcases ht with rfl | rfl | rfl | rfl
+      · exact noPre_of_check _ _ _ (by decide) g L hr
+      · exact noPre_of_check _ _ _ (by decide) g L hr
+      · exact noPre_of_check _ _ _ (by decide) g L hr
+      · exact noPre_of_check _ _ _ (by decide) g L hr)
+
+#print axioms mw_alpha2_example
+
+/-! ## S1 Part 15: THEOREM S1 with an arbitrary rank-2 Y-top Λ (for outer levels of multi-wrapper handlers) -/
+
+/-- U.V was created at some time s <= t by a step with the bare y as Y-top: run s L1 = k :: U :: V :: y :: R -/
+def GoodL (L1 : List T) (Λ : T) (t : Nat) (U V : T) : Prop :=
+  ∃ s, s ≤ t ∧ ∃ k R, run s L1 = some (k :: U :: V :: Λ :: R)
+
+/-- every 2P term on the right spine of a term is GoodL -/
+def rsgL (L1 : List T) (Λ : T) (t : Nat) : T → Prop
+  | app U V => (rk U = 1 ∧ rk V = 1) → (GoodL L1 Λ t U V ∧ rsgL L1 Λ t V)
+  | _ => True
+
+theorem rsg_monoL (L1 : List T) (Λ : T) (hΛ : rk Λ = 2) (t t' : Nat) (htt : t ≤ t') : ∀ Z, rsgL L1 Λ t Z → rsgL L1 Λ t' Z
+  | S, _ => trivial
+  | var _, _ => trivial
+  | app U V, h => by
+    intro hUV
+    obtain ⟨⟨s, hs, hk⟩, hr⟩ := h hUV
+    exact ⟨⟨s, by omega, hk⟩, rsg_monoL L1 Λ hΛ t t' htt V hr⟩
+
+theorem rsg_of_not2PL (L1 : List T) (Λ : T) (hΛ : rk Λ = 2) (t : Nat) (Z : T) (h : ¬ twoP Z) : rsgL L1 Λ t Z := by
+  match Z, h with
+  | S, _ => trivial
+  | var _, _ => trivial
+  | app U V, h => intro hUV; exact absurd hUV h
+
+def IAL (L1 : List T) (Λ : T) (t : Nat) (L : List T) : Prop :=
+  ∀ Z, twoP Z → ((Z ∈ Preg L ∧ Ytop L = some (Λ)) ∨ (∃ e ∈ L, sub (app Z (Λ)) e)) → rsgL L1 Λ t Z
+
+theorem ia_stepL (L1 : List T) (Λ : T) (hΛ : rk Λ = 2) (t : Nat) (a b c : T) (R : List T) (ha : head a = S)
+    (hrun : run t L1 = some (a :: b :: c :: R))
+    (hseg : Seg (a :: b :: c :: R)) (h2 : (Preg (a :: b :: c :: R)).length ≤ 2)
+    (h2' : (Preg (args a ++ c :: app b c :: R)).length ≤ 2)
+    (hc1 : IC1 (a :: b :: c :: R)) (hc2 : IC2 (a :: b :: c :: R))
+    (hc1' : IC1 (args a ++ c :: app b c :: R))
+    (hia : IAL L1 Λ t (a :: b :: c :: R)) : IAL L1 Λ (t + 1) (args a ++ c :: app b c :: R) := by
+  obtain ⟨hab, hbc, hcR⟩ := srt3 a b c R hseg.1
+  have hrbc : rk (app b c) = max (rk b) (rk c) := rk_app b c
+  have hna : noKZ a := hc2 a (by simp)
+  have hoa : ordT a := hseg.2 a (by simp)
+  have mono : ∀ Z, rsgL L1 Λ t Z → rsgL L1 Λ (t + 1) Z := rsg_monoL L1 Λ hΛ t (t + 1) (by omega)
+  intro Z hZ hcase
+  rcases hcase with ⟨hZin, hY⟩ | ⟨e, he, hsub⟩
+  · rw [Preg_append] at hZin
+    unfold Ytop at hY
+    rw [Yl_append] at hY
+    rcases rk_cases c with hc | hc | hc
+    · have ha0 : rk a = 0 := by omega
+      have hb0 : rk b = 0 := by omega
+      have hbc0 : rk (app b c) = 0 := by rw [hrbc]; omega
+      rw [Preg_args_closed a ha0] at hZin
+      rw [Yl_args_le1 a (by omega)] at hY
+      simp only [Preg_cons, Yl_cons, hc, hbc0] at hZin hY
+      simp at hZin hY
+      apply mono; apply hia Z hZ; left
+      refine ⟨by simp only [Preg_cons, ha0, hb0, hc]; simpa using hZin, ?_⟩
+      unfold Ytop; simp only [Yl_cons, ha0, hb0, hc]; simpa using hY
+    · have hbc1 : rk (app b c) = 1 := by rw [hrbc]; omega
+      have ha0 : rk a = 0 := by
+        rcases rk_cases a with h | h | h
+        · exact h
+        · exfalso
+          have hb1 : rk b = 1 := by omega
+          simp only [Preg_cons, h, hb1, hc, if_true, List.length_cons] at h2; omega
+        · omega
+      rw [Preg_args_closed a ha0] at hZin
+      rw [Yl_args_le1 a (by omega)] at hY
+      have hc2' : rk c ≠ 2 := by omega
+      have hbc2 : rk (app b c) ≠ 2 := by omega
+      simp only [Preg_cons, Yl_cons, hc, hbc1, hc2', hbc2, if_true, if_false, List.nil_append] at hZin hY
+      simp at hY
+      have hYL : Ytop (a :: b :: c :: R) = some (Λ) := by
+        unfold Ytop; simp only [Yl_cons]
+        have ha2 : rk a ≠ 2 := by omega
+        have hb2 : rk b ≠ 2 := by omega
+        simp [ha2, hb2, hc2', hY]
+      simp at hZin
+      rcases hZin with hZc | hZbc | hZR
+      · subst hZc
+        apply mono; apply hia Z hZ; left
+        refine ⟨?_, hYL⟩
+        simp only [Preg_cons, ha0, hc]
+        by_cases hb1 : rk b = 1 <;> simp [hb1]
+      · subst hZbc
+        obtain ⟨hb1, _⟩ := hZ
+        intro _
+        have hR : Preg R = [] := by
+          have h2'' := h2
+          simp [Preg_cons, ha0, hb1, hc] at h2''
+          first | exact h2'' | exact List.eq_nil_of_length_eq_zero (by omega)
+        have hR2 : ∀ x ∈ R, rk x = 2 := by
+          intro x hx
+          have := hcR x hx
+          rcases rk_cases x with h | h | h
+          · omega
+          · exfalso
+            have : x ∈ Preg R := by unfold Preg; simp [hx, h]
+            rw [hR] at this; simp at this
+          · exact h
+        have hYR : Yl R = R := by
+          unfold Yl; rw [List.filter_eq_self]; intro x hx; simp [hR2 x hx]
+        rw [hYR] at hY
+        obtain ⟨R', hR'⟩ : ∃ R', R = Λ :: R' := by
+          match R, hY with
+          | x :: R', hY => simp at hY; exact ⟨R', by rw [hY]⟩
+        refine ⟨⟨t, by omega, a, R', by rw [hrun, hR']⟩, ?_⟩
+        by_cases h2c : twoP c
+        · apply mono; apply hia c h2c; left
+          exact ⟨by simp only [Preg_cons, ha0, hb1, hc]; simp, hYL⟩
+        · exact rsg_of_not2PL L1 Λ hΛ (t + 1) c h2c
+      · apply mono; apply hia Z hZ; left
+        refine ⟨?_, hYL⟩
+        simp only [Preg_cons, ha0, hc]
+        by_cases hb1 : rk b = 1 <;> simp [hb1, hZR]
+    · have hbc2 : rk (app b c) = 2 := by rw [hrbc]; omega
+      have hR : Preg R = [] := Preg_nil_of R (fun e he => by have := hcR e he; omega)
+      have hPL' : Preg (args a ++ c :: app b c :: R) = Preg (args a) := by
+        rw [Preg_append]; simp only [Preg_cons, hc, hbc2, hR]; simp
+      simp only [Preg_cons, hc, hbc2, hR] at hZin
+      simp at hZin
+      have hlen : (Preg (args a)).length ≤ 2 := by rw [← hPL']; exact h2'
+      rcases rk_cases a with ha' | ha' | ha'
+      · rw [Preg_args_closed a ha'] at hZin; simp at hZin
+      · -- P-front
+        rw [Yl_args_le1 a (by omega)] at hY
+        simp only [Yl_cons, hc, hbc2, if_true, List.nil_append] at hY
+        simp at hY
+        rcases mem_short _ Z hZin hlen with hP | ⟨V', hP⟩ | ⟨V', hP⟩
+        · exact absurd hZ (hc1' Z (by rw [hPL', hP]))
+        · exact absurd hZ (first_P_arg_not2P a ha hoa hna Z [V'] hP)
+        · obtain ⟨M', hM'1, haM, _⟩ := pair_prefix a ha hoa V' Z hP
+          have haeq : a = app M' Z := haM (Yl_args_le1 a (by omega))
+          have hZ1 : rk Z = 1 := twoP_rk Z hZ
+          have h2a : twoP a := by rw [haeq]; exact ⟨hM'1, hZ1⟩
+          have hb1 : rk b = 1 := by
+            rcases rk_cases b with h | h | h
+            · omega
+            · exact h
+            · exfalso
+              apply hc1 a _ h2a
+              have hb2 : rk b ≠ 1 := by omega
+              have hc2' : rk c ≠ 1 := by omega
+              simp only [Preg_cons, ha', hb2, hc2', hR]; simp
+          have hYL : Ytop (a :: b :: c :: R) = some (Λ) := by
+            rw [Ytop_third a b c R (by omega) (by omega) hc, hY]
+          have := hia a h2a (Or.inl ⟨by simp only [Preg_cons, ha']; simp, hYL⟩)
+          rw [haeq] at this
+          exact mono Z (this ⟨hM'1, hZ1⟩).2
+      · -- Y-front
+        obtain ⟨y', Y', hYa⟩ : ∃ y' Y', Yl (args a) = y' :: Y' := by
+          have hne := Yl_args_ne_nil a ha ha'
+          cases h : Yl (args a) with
+          | nil => exact absurd h hne
+          | cons y' Y' => exact ⟨y', Y', rfl⟩
+        rw [hYa] at hY
+        simp at hY
+        subst hY
+        rcases mem_short _ Z hZin hlen with hP | ⟨V', hP⟩ | ⟨V', hP⟩
+        · exact absurd hZ (hc1' Z (by rw [hPL', hP]))
+        · exact absurd hZ (first_P_arg_not2P a ha hoa hna Z [V'] hP)
+        · obtain ⟨M', hM'1, _, hsubA⟩ := pair_prefix a ha hoa V' Z hP
+          have h2M : twoP (app M' Z) := ⟨hM'1, twoP_rk Z hZ⟩
+          have := hia (app M' Z) h2M (Or.inr ⟨a, by simp, hsubA _ _ hYa⟩)
+          exact mono Z (this h2M).2
+  · simp at he
+    rcases he with he | he | he | he
+    · exact mono Z (hia Z hZ (Or.inr ⟨a, by simp, sub_trans _ _ _ hsub (sub_of_args a e he)⟩))
+    · rw [he] at hsub; exact mono Z (hia Z hZ (Or.inr ⟨c, by simp, hsub⟩))
+    · rw [he] at hsub
+      rcases hsub with h | h | h
+      · injection h with hZb hyc
+        subst hZb; subst hyc
+        have hb1 : rk Z = 1 := twoP_rk Z hZ
+        apply mono; apply hia Z hZ; left
+        refine ⟨?_, Ytop_third a Z (Λ) R (by omega) (by omega) hΛ⟩
+        simp only [Preg_cons, hb1]
+        by_cases ha1 : rk a = 1 <;> simp [ha1]
+      · exact mono Z (hia Z hZ (Or.inr ⟨b, by simp, h⟩))
+      · exact mono Z (hia Z hZ (Or.inr ⟨c, by simp, h⟩))
+    · exact mono Z (hia Z hZ (Or.inr ⟨e, by simp [he], hsub⟩))
+
+/-- (S1) has occurred by time t: some list args(c0) ++ [w, y | B] -/
+def S1occL (L1 : List T) (Λ : T) (t : Nat) (c0 w : T) : Prop :=
+  ∃ s, s ≤ t ∧ ∃ B, run s L1 = some (args c0 ++ w :: Λ :: B)
+
+def IBL (L1 : List T) (Λ : T) (w c0 : T) (t : Nat) (L : List T) : Prop :=
+  ∀ U, Preg L = [U, w] → inX c0 U → U ≠ c0 → Ytop L = some (Λ) → S1occL L1 Λ t c0 w
+
+/-- at a GOOD time the P-region is the pair [M, w] over the bare y -/
+theorem good_pairL (Λ : T) (hΛ : rk Λ = 2) (k M w : T) (R : List T) (hS : Seg (k :: M :: w :: Λ :: R))
+    (h2 : (Preg (k :: M :: w :: Λ :: R)).length ≤ 2) (hM : rk M = 1) (hw : rk w = 1) :
+    Preg (k :: M :: w :: Λ :: R) = [M, w] ∧ Ytop (k :: M :: w :: Λ :: R) = some (Λ) := by
+  have hkM := srt_tail_ge k _ hS.1 M (by simp)
+  have hyR := srt_tail_ge (Λ) R (srt_tail w _ (srt_tail M _ (srt_tail k _ hS.1)))
+  rw [hΛ] at hyR
+  have hR : Preg R = [] := Preg_nil_of R (fun e he => by have := hyR e he; omega)
+  have hk0 : rk k = 0 := by
+    rcases rk_cases k with h | h | h
+    · exact h
+    · exfalso; simp only [Preg_cons, h, hM, hw, if_true, List.length_cons] at h2; omega
+    · omega
+  have hk2 : rk k ≠ 2 := by omega
+  have hM2 : rk M ≠ 2 := by omega
+  have hw2 : rk w ≠ 2 := by omega
+  refine ⟨?_, ?_⟩
+  · simp only [Preg_cons, hk0, hM, hw, hΛ, hR]; simp
+  · unfold Ytop; simp only [Yl_cons, hk2, hM2, hw2, hΛ]; simp
+
+theorem ib_stepL (L1 : List T) (Λ : T) (hΛ : rk Λ = 2) (w b0 c0 : T) (hw : w = app b0 c0) (hwr : rk w = 1) (t : Nat)
+    (a b c : T) (R : List T) (ha : head a = S) (hrun : run t L1 = some (a :: b :: c :: R))
+    (hseg : Seg (a :: b :: c :: R)) (h2 : (Preg (a :: b :: c :: R)).length ≤ 2)
+    (hc1 : IC1 (a :: b :: c :: R)) (hiw : IW w c0 (a :: b :: c :: R)) (hia : IAL L1 Λ t (a :: b :: c :: R))
+    (hist : ∀ s Ls, s ≤ t → run s L1 = some Ls → IBL L1 Λ w c0 s Ls)
+    (hbound : ∀ s Ls, s ≤ t → run s L1 = some Ls → (Preg Ls).length ≤ 2)
+    (hsegs : ∀ s Ls, run s L1 = some Ls → Seg Ls) :
+    IBL L1 Λ w c0 (t + 1) (args a ++ c :: app b c :: R) := by
+  obtain ⟨hab, hbc, hcR⟩ := srt3 a b c R hseg.1
+  have hrbc : rk (app b c) = max (rk b) (rk c) := rk_app b c
+  have hoa : ordT a := hseg.2 a (by simp)
+  have hwa : wsubOK w c0 a := hiw.1 a (by simp)
+  have hstep : step (a :: b :: c :: R) = some (args a ++ c :: app b c :: R) := by simp [step, ha]
+  have hrun' := run_succ_of L1 t _ _ hrun hstep
+  have mono : S1occL L1 Λ t c0 w → S1occL L1 Λ (t + 1) c0 w := by
+    rintro ⟨s, hs, B, hB⟩; exact ⟨s, by omega, B, hB⟩
+  have monoS : ∀ s, s ≤ t → S1occL L1 Λ s c0 w → S1occL L1 Λ (t + 1) c0 w := by
+    rintro s hst ⟨s', hs', B, hB⟩; exact ⟨s', by omega, B, hB⟩
+  -- from a GOOD pair [M, w] at an earlier time to (S1)
+  have fromGood : ∀ M, rk M = 1 → inX c0 M → M ≠ c0 → GoodL L1 Λ t M w → S1occL L1 Λ (t + 1) c0 w := by
+    rintro M hM1 hXM hMc ⟨s, hs, k, R', hks⟩
+    have hSs := hsegs s _ hks
+    obtain ⟨hPs, hYs⟩ := good_pairL Λ hΛ k M w R' hSs (hbound s _ hs hks) hM1 hwr
+    exact monoS s hs (hist s _ hs hks M hPs hXM hMc hYs)
+  intro U hU hX hne hY
+  have hU0 := hU
+  rw [Preg_append] at hU
+  rcases rk_cases c with hc | hc | hc
+  · have ha0 : rk a = 0 := by omega
+    have hb0 : rk b = 0 := by omega
+    have hbc0 : rk (app b c) = 0 := by rw [hrbc]; omega
+    rw [Preg_args_closed a ha0] at hU
+    simp only [Preg_cons, hc, hbc0] at hU
+    apply mono
+    apply hist t _ (Nat.le_refl t) hrun U _ hX hne
+    · unfold Ytop at hY ⊢
+      rw [Yl_append, Yl_args_le1 a (by omega)] at hY
+      simp only [Yl_cons, ha0, hb0, hc, hbc0] at hY ⊢
+      simpa using hY
+    · simp only [Preg_cons, ha0, hb0, hc]; simpa using hU
+  · have hbc1 : rk (app b c) = 1 := by rw [hrbc]; omega
+    have ha0 : rk a = 0 := by
+      rcases rk_cases a with h | h | h
+      · exact h
+      · exfalso
+        have hb1 : rk b = 1 := by omega
+        simp only [Preg_cons, h, hb1, hc, if_true, List.length_cons] at h2; omega
+      · omega
+    rw [Preg_args_closed a ha0] at hU
+    simp only [Preg_cons, hc, hbc1, if_true, List.nil_append] at hU
+    have h1 := List.cons.inj hU
+    have h2' := List.cons.inj h1.2
+    have hbcw : app b c = w := h2'.1
+    rw [hw] at hbcw
+    injection hbcw with _ hcc
+    exact absurd (by rw [← h1.1, hcc]) hne
+  · have hbc2 : rk (app b c) = 2 := by rw [hrbc]; omega
+    have hR : Preg R = [] := Preg_nil_of R (fun e he => by have := hcR e he; omega)
+    simp only [Preg_cons, hc, hbc2, hR] at hU
+    simp at hU
+    obtain ⟨M, hMS, hM1, hMU, hsub, C, Y, hargs, hMA, hC, hYY⟩ := release_pair a ha hoa U w hU
+    have hXM : inX c0 M := (wsubOK_sub w c0 _ a hwa hsub).2.2 rfl hM1
+    have hU1 : rk U = 1 := by
+      have : U ∈ Preg (args a) := by rw [hU]; simp
+      unfold Preg at this; simp at this; exact this.2
+    have hYa : Yl (args a) = Y := by
+      rw [hargs]
+      have := Yl_split C [U, w] Y hC (by simp [hU1, hwr]) hYY
+      simpa using this
+    by_cases hMc : M = c0
+    · -- the front has prefix c0.w: (S1) right now
+      subst hMc
+      refine ⟨t + 1, Nat.le_refl _, ?_⟩
+      have hL' : args a ++ c :: app b c :: R = args M ++ w :: (Y ++ c :: app b c :: R) := by
+        rw [hargs, hMA]; simp
+      unfold Ytop at hY
+      rw [Yl_append, hYa] at hY
+      cases Y with
+      | nil =>
+        simp only [Yl_cons, hc, hbc2, if_true, List.nil_append] at hY
+        simp at hY
+        subst c
+        exact ⟨app b (Λ) :: R, by rw [hrun', hL']; simp⟩
+      | cons y' Y' =>
+        simp at hY
+        subst y'
+        exact ⟨Y' ++ c :: app b c :: R, by rw [hrun', hL']; simp⟩
+    · rcases rk_cases a with ha' | ha' | ha'
+      · rw [Preg_args_closed a ha'] at hU; simp at hU
+      · -- P-front a = M.w over the bare y
+        have hY0 : Y = [] := by rw [← hYa]; exact Yl_args_le1 a (by omega)
+        subst hY0
+        obtain ⟨M2, hM2S, hM2A, haeq⟩ := spine_last a ha (C ++ [U]) w (by rw [hargs]; simp)
+        have hM2 : M2 = M := spine_eq M2 M hM2S hMS (by rw [hM2A, hMA])
+        rw [hM2] at haeq
+        have h2a : twoP a := by rw [haeq]; exact ⟨hM1, hwr⟩
+        have hb1 : rk b = 1 := by
+          rcases rk_cases b with h | h | h
+          · omega
+          · exact h
+          · exfalso
+            apply hc1 a _ h2a
+            have hb2 : rk b ≠ 1 := by omega
+            have hc2' : rk c ≠ 1 := by omega
+            simp only [Preg_cons, ha', hb2, hc2', hR]; simp
+        unfold Ytop at hY
+        rw [Yl_append, hYa] at hY
+        simp only [Yl_cons, hc, hbc2, if_true, List.nil_append] at hY
+        simp at hY
+        have hYL : Ytop (a :: b :: c :: R) = some (Λ) := by
+          rw [Ytop_third a b c R (by omega) (by omega) hc, hY]
+        have hr := hia a h2a (Or.inl ⟨by simp only [Preg_cons, ha']; simp, hYL⟩)
+        rw [haeq] at hr
+        exact fromGood M hM1 hXM hMc (hr ⟨hM1, hwr⟩).1
+      · -- Y-front (M.w).y ...
+        unfold Ytop at hY
+        rw [Yl_append, hYa] at hY
+        cases Y with
+        | nil => exact absurd hYa (Yl_args_ne_nil a ha ha')
+        | cons y' Y' =>
+          simp at hY
+          subst y'
+          obtain ⟨M2, hM2S, hM2A, hsub2⟩ := spine_prefix a ha (C ++ [U, w]) Y' (Λ) (by rw [hargs]; simp)
+          obtain ⟨M3, hM3S, hM3A, hM2e⟩ := spine_last M2 hM2S (C ++ [U]) w (by rw [hM2A]; simp)
+          have hM3 : M3 = M := spine_eq M3 M hM3S hMS (by rw [hM3A, hMA])
+          rw [hM2e, hM3] at hsub2
+          have h2M : twoP (app M w) := ⟨hM1, hwr⟩
+          have hr := hia (app M w) h2M (Or.inr ⟨a, by simp, hsub2⟩)
+          exact fromGood M hM1 hXM hMc (hr h2M).1
+
+theorem s1_baseL (L1 : List T) (Λ : T) (hΛ : rk Λ = 2) (w c0 : T) (hwr : rk w = 1) (hp : (L1.map (occN 0)).sum ≤ 1) :
+    IC1 L1 ∧ IC2 L1 ∧ IW w c0 L1 ∧ IAL L1 Λ 0 L1 ∧ IBL L1 Λ w c0 0 L1 := by
+  have hel : ∀ e ∈ L1, occN 0 e ≤ 1 := fun e he => by have := mem_occ_le L1 e he; omega
+  have hlen : (Preg L1).length ≤ 1 := by have := Preg_len_le_occ L1; omega
+  refine ⟨?_, fun e he => noKZ_of_le1 e (hel e he), ⟨fun e he => wsubOK_of_le1 w c0 hwr e (hel e he), ?_⟩, ?_, ?_⟩
+  · intro Z hZ h2Z
+    have hZm : Z ∈ L1 := by
+      have : Z ∈ Preg L1 := by rw [hZ]; simp
+      unfold Preg at this; simp at this; exact this.1
+    have := hel Z hZm; have := twoP_occ Z h2Z; omega
+  · intro U hU; rw [hU] at hlen; simp at hlen
+  · intro Z h2Z hcase
+    exfalso
+    rcases hcase with ⟨hZm, _⟩ | ⟨e, he, hsub⟩
+    · have : Z ∈ L1 := by unfold Preg at hZm; simp at hZm; exact hZm.1
+      have := hel Z this; have := twoP_occ Z h2Z; omega
+    · have h1 := occN_sub_le 0 _ _ hsub
+      have := hel e he; have := twoP_occ Z h2Z
+      simp only [occN] at h1; omega
+  · intro U hU; rw [hU] at hlen; simp at hlen
+
+/-- the invariants hold at every time up to tmax -/
+theorem s1_invL (L1 : List T) (Λ : T) (hΛ : rk Λ = 2) (w b0 c0 : T) (hw : w = app b0 c0) (hwr : rk w = 1)
+    (hS : Seg L1) (hp : (L1.map (occN 0)).sum ≤ 1) (tmax : Nat)
+    (hbound : ∀ s Ls, s ≤ tmax → run s L1 = some Ls → (Preg Ls).length ≤ 2) :
+    ∀ t, t ≤ tmax → ∀ s Ls, s ≤ t → run s L1 = some Ls →
+      IC1 Ls ∧ IC2 Ls ∧ IW w c0 Ls ∧ IAL L1 Λ s Ls ∧ IBL L1 Λ w c0 s Ls := by
+  have hsegs : ∀ s Ls, run s L1 = some Ls → Seg Ls := fun s Ls h => seg_run s L1 Ls hS h
+  intro t
+  induction t with
+  | zero =>
+    intro _ s Ls hs hr
+    have : s = 0 := by omega
+    subst this
+    simp [run] at hr
+    rw [← hr]
+    exact s1_baseL L1 Λ hΛ w c0 hwr hp
+  | succ t ih =>
+    intro ht s Ls hs hr
+    rcases Nat.lt_or_ge s (t + 1) with hst | hst
+    · exact ih (by omega) s Ls (by omega) hr
+    · have hs1 : s = t + 1 := by omega
+      subst hs1
+      obtain ⟨L, hL, hstep⟩ := run_succ_split L1 t Ls hr
+      obtain ⟨a, b, c, R, rfl, ha, rfl⟩ := step_some L _ hstep
+      obtain ⟨hc1, hc2, hiw, hia, _⟩ := ih (by omega) t _ (Nat.le_refl t) hL
+      have hseg := hsegs t _ hL
+      have h2 := hbound t _ (by omega) hL
+      have h2' := hbound (t + 1) _ ht hr
+      obtain ⟨hc1', hc2'⟩ := ic_step a b c R ha hseg h2 h2' hc1 hc2
+      refine ⟨hc1', hc2', iw_step w b0 c0 hw hwr a b c R ha hseg h2 hiw,
+        ia_stepL L1 Λ hΛ t a b c R ha hL hseg h2 h2' hc1 hc2 hc1' hia, ?_⟩
+      exact ib_stepL L1 Λ hΛ w b0 c0 hw hwr t a b c R ha hL hseg h2 hc1 hiw hia
+        (fun s' Ls' hs' hr' => (ih (by omega) s' Ls' hs' hr').2.2.2.2)
+        (fun s' Ls' hs' hr' => hbound s' Ls' (by omega) hr') hsegs
+
+/-- **THEOREM S1 (structural claim, generic form).**  Let a run start from a list L1 that is rank-sorted with
+    hereditarily sorted spines (Seg) and contains at most ONE occurrence of p in total, and let it reach, at time T',
+    a list whose third element contains x, y or r (e.g. a proper transfer).  If at a time tg <= T' the run passes
+    through a glue list a1 :: w :: y :: R0 with w = b0.c0 a P-term and a1 a P-term different from c0, then at some
+    time s <= tg the run passes through args(c0) ++ w :: y :: B ('c0 runs on (w, y)'). -/
+theorem s1_coreL (L1 : List T) (Λ : T) (hΛ : rk Λ = 2) (w b0 c0 : T) (hw : w = app b0 c0) (hwr : rk w = 1)
+    (hS : Seg L1) (hp : (L1.map (occN 0)).sum ≤ 1)
+    (T' : Nat) (f b d : T) (R : List T) (hT : run T' L1 = some (f :: b :: d :: R)) (hd : rk d = 2)
+    (tg : Nat) (htg : tg ≤ T') (a1 : T) (R0 : List T) (hg : run tg L1 = some (a1 :: w :: Λ :: R0))
+    (ha1 : rk a1 = 1) (hne : a1 ≠ c0) :
+    ∃ s, s ≤ tg ∧ ∃ B, run s L1 = some (args c0 ++ w :: Λ :: B) := by
+  have hbound : ∀ s Ls, s ≤ T' → run s L1 = some Ls → (Preg Ls).length ≤ 2 :=
+    fun s Ls hs hr => ab3_bound L1 hS T' f b d R hT hd s Ls hs hr
+  obtain ⟨_, _, hiw, _, hib⟩ := s1_invL L1 Λ hΛ w b0 c0 hw hwr hS hp T' hbound tg htg tg _ (Nat.le_refl _) hg
+  have hSg := seg_run tg L1 _ hS hg
+  have hyR := srt_tail_ge (Λ) R0 (srt_tail w _ (srt_tail a1 _ hSg.1))
+  rw [hΛ] at hyR
+  have hR0 : Preg R0 = [] := Preg_nil_of R0 (fun e he => by have := hyR e he; omega)
+  have hP : Preg (a1 :: w :: Λ :: R0) = [a1, w] := by
+    simp only [Preg_cons, ha1, hwr, hΛ, hR0]; simp
+  have hY : Ytop (a1 :: w :: Λ :: R0) = some (Λ) := by
+    have h1 : rk a1 ≠ 2 := by omega
+    have h2 : rk w ≠ 2 := by omega
+    unfold Ytop; simp only [Yl_cons, h1, h2, hΛ]; simp
+  exact hib a1 hP (hiw.2 a1 hP) hne hY
+
+#print axioms s1_coreL
+
+#print axioms s1_coreL
+
+/-! ## S1 Part 16: R3 for EVERY single-wrapper handler of an ordered single-occurrence datum -/
+
+theorem head_sb_var (c n : Nat) (hc : c ≠ 0) : ∀ t : T, head t = var n → head (sb c t) ≠ var 0 ∧ head (sb c t) ≠ S
+  | S, h => by simp [head] at h
+  | var m, h => by
+    simp [head] at h; subst h
+    by_cases h0 : m = 0
+    · subst h0; simp [sb, head, hc]
+    · simp [sb, head, h0]
+  | app f x, h => by
+    simp only [head] at h
+    simp only [sb, head]
+    exact head_sb_var c n hc f h
+
+/-- **THEOREM R3-SINGLE-ALL.**  For an S-headed ordered datum D free of x, y, r with at most one p, and ANY
+    single-wrapper handler (b0.c0).y of a phase-2 transfer (b0.c0 free of x, y, r): the next phase never makes a
+    proper transfer, provided - only when b0 and c0 are both S-headed - 'H1ok(c0) OR b0 never calls its first hole'.
+    (b0 atom-headed: the next datum is atom-headed; c0 atom-headed: pah_main; both S-headed: r3_single2, where the
+    condition is used only for a glue front that is a P-term other than c0.) -/
+theorem r3_single_all (D b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : 4 ≤ h1) (hh2 : 4 ≤ h2)
+    (h12 : h1 ≠ h2) (hH : 4 ≤ H)
+    (hDS : head D = S) (hDo : ordT D) (hD1 : occN 1 D = 0) (hD2 : occN 2 D = 0) (hD3 : occN 3 D = 0)
+    (hDp : occN 0 D ≤ 1) (hDh1 : occN h1 D = 0) (hDh2 : occN h2 D = 0)
+    (hw1 : occN 1 (app b0 c0) = 0) (hw2 : occN 2 (app b0 c0) = 0)
+    (hw3 : occN 3 (app b0 c0) = 0) (hV : fresh3 H (app (app b0 c0) (var 2)))
+    (T' : Nat) (f b : T) (R : List T)
+    (hT : run T' [D, var 1, var 2, var 3] = some (f :: b :: app (app b0 c0) (var 2) :: R)) (hf : head f = var 0)
+    (hcond : head b0 = S → head c0 = S →
+      ((∀ (k : Nat) (g : T) (L : List T), run k (args c0 ++ [var h1, var h2]) = some (g :: L) →
+        head g = var h1 → (args g).head? = some (var h2) ∨ (args g = [] ∧ ∃ b' R', L = b' :: var h2 :: R')) ∨
+       (∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var h1, var h2]) = some (g :: L) →
+        head g ≠ var h1))) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  have hy0 : occ2 b0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+  have hy1 : occ2 c0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+  rcases head_cases b0 with hb0S | ⟨n, hn⟩
+  · rcases head_cases c0 with hc0S | ⟨n', hn'⟩
+    · exact r3_single2 D b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS hDo hD1 hD2 hD3 hDp hDh1 hDh2 hb0S hc0S hw1 hw2
+        hw3 hV T' f b R hT hf (hcond hb0S hc0S)
+    · have hn2 : n' ≠ 2 := by
+        intro e; subst e
+        have : occ2 c0 ≠ 0 := by
+          have key : ∀ t : T, head t = var 2 → occ2 t ≠ 0 := by
+            intro t; induction t with
+            | S => intro h; simp [head] at h
+            | var m => intro h; simp [head] at h; subst h; simp [occ2]
+            | app f x ihf _ => intro h; simp only [head] at h; simp only [occ2]; have := ihf h; omega
+          exact key c0 hn'
+        exact this hy1
+      exact pah_main b0 c0 c n' hc2 hb0S hy0 hy1 hn' hn2
+  · -- b0 atom-headed: the next datum is atom-headed, its run never moves
+    intro m f' b' d' R' hm hf'
+    obtain ⟨hne0, hneS⟩ := head_sb_var c n hc b0 hn
+    have hD'h : head (app (app (sb c b0) (sb c c0)) (var 0)) = head (sb c b0) := rfl
+    match m, hm with
+    | 0, hm =>
+      simp only [run, Option.some.injEq, List.cons.injEq] at hm
+      rw [← hm.1, hD'h] at hf'; exact absurd hf' hne0
+    | m' + 1, hm =>
+      simp only [run] at hm
+      rw [step_head_ne _ _ (by rw [hD'h]; exact hneS)] at hm
+      simp at hm
+
+#print axioms r3_single_all
+
+/-! ## S1 Part 17: the abstract side of Lemma YT, and the B-form residual (BF -> NK1)
+    If c0's two-hole run reaches the 'B-form' front h1.(X.h1) followed by h2 (X an S-headed hole-free P-term), then
+    in pattern beta the earlier phase reaches args(b0) ++ [c0, X.w, y | R]; Lemma YT on the pair (c0, X.w), read on
+    b0's abstract two-hole run, shows that b0's first hole front is its SECOND hole: NK1(b0) is DERIVED. -/
+
+theorem run_two (a b : T) : ∀ (s : Nat) (g : T) (L : List T), run s [a, b] = some (g :: L) → g = a
+  | 0, g, L, h => by simp [run] at h; exact h.1.symm
+  | s + 1, g, L, h => by simp [run, step] at h
+
+theorem chainE_headS (U V : T) (hU : head U = S) (hV : head V = S) : ∀ n, head (chainE U V n) = S
+  | 0 => hU
+  | 1 => hV
+  | n + 2 => by simp only [chainE, head]; exact chainE_headS U V hU hV n
+
+/-- **LEMMA YT, abstract side.**  Along the YT chain the abstract run of K ++ [U0, V0] (same closed code K, the pair
+    replaced by U0, V0) has, at every reachable list, a front that is either free of the atom h (a K-element) or the
+    chain element chainE U0 V0 j' where j' is the index at which the concrete run reaches its pair. -/
+theorem yt_abs (L1 : List T) (T' : Nat) (f b d : T) (RT : List T)
+    (hT : run T' L1 = some (f :: b :: d :: RT)) (hd : rk d = 2)
+    (hbound : ∀ s Ls, s ≤ T' → run s L1 = some Ls → (Preg Ls).length ≤ 2)
+    (U V Yt : T) (R : List T) (hU : rk U = 1) (hV : rk V = 1) (U0 V0 : T) (h : Nat) :
+    ∀ (n : Nat) (t j : Nat) (K : List T), T' - t = n → t ≤ T' → (∀ k ∈ K, rk k = 0) →
+      (∀ k ∈ K, occN h k = 0) →
+      run t L1 = some (K ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) →
+      ∃ t' j', t ≤ t' ∧ t' ≤ T' ∧ run t' L1 = some (chainE U V j' :: chainE U V (j' + 1) :: Yt :: R) ∧
+        ∀ s g L, run s (K ++ [chainE U0 V0 j, chainE U0 V0 (j + 1)]) = some (g :: L) →
+          occN h g = 0 ∨ g = chainE U0 V0 j' := by
+  intro n
+  induction n with
+  | zero =>
+    intro t j K hn ht hK hKh hr
+    have htT : t = T' := by omega
+    subst htT
+    rw [hT] at hr
+    injection hr with hr
+    match K, hK, hKh, hr with
+    | [], _, _, hr =>
+      refine ⟨t, j, Nat.le_refl _, Nat.le_refl _, by rw [hT, hr]; simp, ?_⟩
+      intro s g L hs
+      right; exact run_two _ _ s g L (by simpa using hs)
+    | [k1], _, _, hr =>
+      simp at hr; obtain ⟨_, _, hd', _⟩ := hr
+      rw [hd', chainE_rk U V hU hV] at hd; omega
+    | [k1, k2], _, _, hr =>
+      simp at hr; obtain ⟨_, _, hd', _⟩ := hr
+      rw [hd', chainE_rk U V hU hV] at hd; omega
+    | k1 :: k2 :: k3 :: K', hK, _, hr =>
+      simp at hr; obtain ⟨_, _, hd', _⟩ := hr
+      rw [hd', hK k3 (by simp)] at hd; omega
+  | succ n ih =>
+    intro t j K hn ht hK hKh hr
+    match K, hK, hKh, hr with
+    | [], _, _, hr =>
+      refine ⟨t, j, Nat.le_refl _, ht, hr, ?_⟩
+      intro s g L hs
+      right; exact run_two _ _ s g L (by simpa using hs)
+    | [k1], hK, hKh, hr =>
+      have htT : t < T' := by omega
+      have hk1S : head k1 = S := head_of_continue L1 t T' k1 _ _ _ hr htT _ hT
+      have hstep : step ([k1] ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) =
+          some (args k1 ++ chainE U V (j + 1) :: chainE U V (j + 2) :: Yt :: R) := by
+        simp [step, hk1S, chainE]
+      have hr' := run_succ_of L1 t _ _ hr hstep
+      obtain ⟨t', j', h1, h2, h3, h4⟩ := ih (t + 1) (j + 1) (args k1) (by omega) (by omega)
+        (fun k hk => by have := rk_args_le k1 k hk; rw [hK k1 (by simp)] at this; omega)
+        (fun k hk => occN_args h k1 (hKh k1 (by simp)) k hk) hr'
+      refine ⟨t', j', by omega, h2, h3, ?_⟩
+      intro s g L hs
+      cases s with
+      | zero =>
+        left; simp [run] at hs; obtain ⟨rfl, -⟩ := hs; exact hKh _ (by simp)
+      | succ s =>
+        have e : run (s + 1) ([k1] ++ [chainE U0 V0 j, chainE U0 V0 (j + 1)]) =
+            run s (args k1 ++ [chainE U0 V0 (j + 1), chainE U0 V0 (j + 1 + 1)]) := by
+          simp [run, step, hk1S, chainE]
+        rw [e] at hs
+        exact h4 s g L hs
+    | [k1, k2], hK, _, hr =>
+      exfalso
+      have htT : t < T' := by omega
+      have hk1S : head k1 = S := head_of_continue L1 t T' k1 _ _ _ hr htT _ hT
+      have hstep : step ([k1, k2] ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) =
+          some (args k1 ++ chainE U V j :: app k2 (chainE U V j) :: chainE U V (j + 1) :: Yt :: R) := by
+        simp [step, hk1S]
+      have hr' := run_succ_of L1 t _ _ hr hstep
+      have hb := hbound (t + 1) _ (by omega) hr'
+      have hk20 : rk k2 = 0 := hK k2 (by simp)
+      have hk1a : Preg (args k1) = [] := Preg_args_closed k1 (hK k1 (by simp))
+      have hj := chainE_rk U V hU hV j
+      have hj1 := chainE_rk U V hU hV (j + 1)
+      have hk2j : rk (app k2 (chainE U V j)) = 1 := by rw [rk_app, hk20, hj]; rfl
+      rw [Preg_append, hk1a] at hb
+      simp only [Preg_cons, hj, hk2j, hj1, if_true, List.nil_append, List.length_cons] at hb
+      omega
+    | k1 :: k2 :: k3 :: K', hK, hKh, hr =>
+      have htT : t < T' := by omega
+      have hk1S : head k1 = S := head_of_continue L1 t T' k1 _ _ _ hr htT _ hT
+      have hstep : step ((k1 :: k2 :: k3 :: K') ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) =
+          some ((args k1 ++ k3 :: app k2 k3 :: K') ++ chainE U V j :: chainE U V (j + 1) :: Yt :: R) := by
+        simp [step, hk1S]
+      have hr' := run_succ_of L1 t _ _ hr hstep
+      have hk0 : ∀ k ∈ args k1 ++ k3 :: app k2 k3 :: K', rk k = 0 := by
+        intro k hk
+        simp at hk
+        rcases hk with hk | hk | hk | hk
+        · have := rk_args_le k1 k hk; rw [hK k1 (by simp)] at this; omega
+        · rw [hk]; exact hK k3 (by simp)
+        · rw [hk, rk_app, hK k2 (by simp), hK k3 (by simp)]; rfl
+        · exact hK k (by simp [hk])
+      have hkh : ∀ k ∈ args k1 ++ k3 :: app k2 k3 :: K', occN h k = 0 := by
+        intro k hk
+        simp at hk
+        rcases hk with hk | hk | hk | hk
+        · exact occN_args h k1 (hKh k1 (by simp)) k hk
+        · rw [hk]; exact hKh k3 (by simp)
+        · rw [hk]; simp only [occN]; rw [hKh k2 (by simp), hKh k3 (by simp)]
+        · exact hKh k (by simp [hk])
+      obtain ⟨t', j', h1, h2, h3, h4⟩ := ih (t + 1) j _ (by omega) (by omega) hk0 hkh hr'
+      refine ⟨t', j', by omega, h2, h3, ?_⟩
+      intro s g L hs
+      cases s with
+      | zero =>
+        left; simp [run] at hs; obtain ⟨rfl, -⟩ := hs; exact hKh _ (by simp)
+      | succ s =>
+        have e : run (s + 1) ((k1 :: k2 :: k3 :: K') ++ [chainE U0 V0 j, chainE U0 V0 (j + 1)]) =
+            run s ((args k1 ++ k3 :: app k2 k3 :: K') ++ [chainE U0 V0 j, chainE U0 V0 (j + 1)]) := by
+          simp [run, step, hk1S]
+        rw [e] at hs
+        exact h4 s g L hs
+
+/-- the B-form of an h1-front of a two-hole run: h1.(X.h1) followed by h2, as its next argument or at position 3 -/
+def BFfront (X : T) (h1 h2 : Nat) (G : T) (L : List T) : Prop :=
+  head G = var h1 ∧ ((args G = [app X (var h1)] ∧ ∃ b' L', L = b' :: var h2 :: L') ∨
+    ∃ A, args G = app X (var h1) :: var h2 :: A)
+
+theorem img_args (c e1 e2 : T) (h1 h2 : Nat) (h12 : h1 ≠ h2) (hf1 : occN h1 c = 0) (hf2 : occN h2 c = 0)
+    (B : List T) :
+    (args c ++ [var h1, var h2]).map (asub (sg2 h1 h2 e1 e2)) ++ B = args c ++ e1 :: e2 :: B := by
+  have hs1 : sg2 h1 h2 e1 e2 h1 = e1 := by simp [sg2]
+  have hs2 : sg2 h1 h2 e1 e2 h2 = e2 := by simp [sg2, Ne.symm h12]
+  have hargs : (args c).map (asub (sg2 h1 h2 e1 e2)) = args c := by
+    have : (args c).map (asub (sg2 h1 h2 e1 e2)) = (args c).map id := by
+      apply List.map_congr_left
+      intro e he'
+      exact asub_sg2_id h1 h2 _ _ e (occN_args h1 c hf1 e he') (occN_args h2 c hf2 e he')
+    simpa using this
+  simp only [List.map_append, hargs, List.map_cons, List.map_nil, asub, hs1, hs2]
+  simp
+
+/-- opening the image of a B-form front (hole h1 -> e1, S-headed) lays out args(e1) ++ [X.e1, e2, ...] -/
+theorem bf_step (X : T) (h1 h2 : Nat) (h12 : h1 ≠ h2) (hX1 : occN h1 X = 0) (hX2 : occN h2 X = 0)
+    (e1 e2 : T) (he1 : head e1 = S) (G : T) (L B L'' : List T) (hG : BFfront X h1 h2 G L)
+    (hs : step ((G :: L).map (asub (sg2 h1 h2 e1 e2)) ++ B) = some L'') :
+    ∃ R', L'' = args e1 ++ app X e1 :: e2 :: R' := by
+  obtain ⟨hGh, hGf⟩ := hG
+  have hs1 : sg2 h1 h2 e1 e2 h1 = e1 := by simp [sg2]
+  have hs2 : sg2 h1 h2 e1 e2 h2 = e2 := by simp [sg2, Ne.symm h12]
+  have hXid : asub (sg2 h1 h2 e1 e2) X = X := asub_sg2_id h1 h2 e1 e2 X hX1 hX2
+  have hargs : args (asub (sg2 h1 h2 e1 e2) G) = args e1 ++ (args G).map (asub (sg2 h1 h2 e1 e2)) := by
+    rw [asub_args_var (sg2 h1 h2 e1 e2) h1 (by rw [hs1]; exact he1) G hGh, hs1]
+  obtain ⟨a, b, c, R0, hL, _, hL''⟩ := step_some _ _ hs
+  simp only [List.map_cons, List.cons_append] at hL
+  injection hL with ha hrest
+  rcases hGf with ⟨hA, b', L', hL'⟩ | ⟨A, hA⟩
+  · subst hL'
+    simp only [List.map_cons, List.cons_append] at hrest
+    injection hrest with hb hrest2
+    injection hrest2 with hc hR0
+    have hc' : c = e2 := by rw [← hc]; simp [asub, hs2]
+    refine ⟨app b c :: R0, ?_⟩
+    rw [hL'', ← ha, hargs, hA, hc']
+    simp [asub, hs1, hXid]
+  · refine ⟨(A.map (asub (sg2 h1 h2 e1 e2))) ++ c :: app b c :: R0, ?_⟩
+    rw [hL'', ← ha, hargs, hA]
+    simp [asub, hs1, hs2, hXid]
+
+theorem Preg_len_ge3 (A : List T) (e1 e2 : T) (B : List T) (hA : 1 ≤ (Preg A).length) (h1 : rk e1 = 1)
+    (h2 : rk e2 = 1) : 3 ≤ (Preg (A ++ e1 :: e2 :: B)).length := by
+  rw [Preg_append]
+  simp only [Preg_cons, h1, h2, if_true, List.length_append, List.length_cons]
+  omega
+
+/-- **THEOREM BF-NK1.**  Let a run from L1 reach a p-front list with a rank-2 third element at T' (|P| <= 2 up to
+    T').  If at a time t <= T' the list is args(b0) ++ [c0, X.w, y | R] (w = b0.c0, c0 and X S-headed P-terms, b0 of
+    rank <= 1, holes h1, h2 fresh) and c0's two-hole run reaches a B-form front h1.(X.h1) followed by h2, then b0's
+    two-hole run never reaches a first-hole front (NK1(b0)).  Proof: YT on the pair (c0, X.w) and its abstract side
+    (yt_abs): b0's only possible hole front is E_j' (j' <= 3); j' = 0 makes c0 run on (y, ...) - its h1-front is a
+    y-front; j' = 2 makes c0 run on (X.w, y) - opening its B-form front leaves 3 P-elements; so j' is odd. -/
+theorem bform_nk1 (L1 : List T) (T' : Nat) (f b d : T) (RT : List T)
+    (hT : run T' L1 = some (f :: b :: d :: RT)) (hd : rk d = 2) (hf : head f = var 0)
+    (hbound : ∀ s Ls, s ≤ T' → run s L1 = some Ls → (Preg Ls).length ≤ 2)
+    (b0 c0 X : T) (h1 h2 : Nat) (h12 : h1 ≠ h2)
+    (hb0r : rk b0 ≤ 1) (hb0h1 : occN h1 b0 = 0) (hc0h1 : occN h1 c0 = 0) (hc0h2 : occN h2 c0 = 0)
+    (hX1 : occN h1 X = 0) (hX2 : occN h2 X = 0)
+    (hc0S : head c0 = S) (hc0r : rk c0 = 1) (hXS : head X = S) (hXr : rk X = 1)
+    (t : Nat) (ht : t ≤ T') (R : List T)
+    (hr : run t L1 = some (args b0 ++ c0 :: app X (app b0 c0) :: var 2 :: R))
+    (m0 : Nat) (G : T) (LG : List T) (hm0 : run m0 (args c0 ++ [var h1, var h2]) = some (G :: LG))
+    (hBF : BFfront X h1 h2 G LG) :
+    ∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var h1, var h2]) = some (g :: L) → head g ≠ var h1 := by
+  intro m g L hm hg
+  have hwr : rk (app b0 c0) = 1 := by rw [rk_app, hc0r, Nat.max_eq_right hb0r]
+  have hVr : rk (app X (app b0 c0)) = 1 := by rw [rk_app, hXr, hwr]; rfl
+  have hVS : head (app X (app b0 c0)) = S := by simp [head, hXS]
+  have hXVr : rk (app X (app X (app b0 c0))) = 1 := by rw [rk_app, hXr, hVr]; rfl
+  -- b0's arguments are closed (|P| <= 2 at time t)
+  have hK0 : ∀ k ∈ args b0, rk k = 0 := by
+    intro k hk
+    have hle := rk_args_le b0 k hk
+    rcases Nat.lt_or_ge (rk k) 1 with h0 | h1'
+    · omega
+    · exfalso
+      have hk1 : rk k = 1 := by omega
+      have hb := hbound t _ ht hr
+      rw [Preg_append] at hb
+      simp only [Preg_cons, hc0r, hVr, if_true, List.length_append, List.length_cons] at hb
+      have : 1 ≤ (Preg (args b0)).length := by
+        unfold Preg; apply List.length_pos_iff_exists_mem.2; exact ⟨k, by simp [hk, hk1]⟩
+      omega
+  have hc0P : 1 ≤ (Preg (args c0)).length := by
+    obtain ⟨s, hs, hs1⟩ := P_has_P_arg c0 hc0S hc0r
+    unfold Preg; apply List.length_pos_iff_exists_mem.2; exact ⟨s, by simp [hs, hs1]⟩
+  have hVP : 1 ≤ (Preg (args (app X (app b0 c0)))).length := by
+    obtain ⟨s, hs, hs1⟩ := P_has_P_arg _ hVS hVr
+    unfold Preg; apply List.length_pos_iff_exists_mem.2; exact ⟨s, by simp [hs, hs1]⟩
+  have hXP : 1 ≤ (Preg (args X)).length := by
+    obtain ⟨s, hs, hs1⟩ := P_has_P_arg X hXS hXr
+    unfold Preg; apply List.length_pos_iff_exists_mem.2; exact ⟨s, by simp [hs, hs1]⟩
+  obtain ⟨t', j', htt', ht'T, hrt', habs⟩ := yt_abs L1 T' f b d RT hT hd hbound c0 (app X (app b0 c0)) (var 2) R
+    hc0r hVr (var h1) (var h2) h1 (T' - t) t 0 (args b0) rfl ht hK0 (occN_args h1 b0 hb0h1)
+    (by simpa [chainE] using hr)
+  rcases habs m g L (by simpa [chainE] using hm) with hocc | hgE
+  · exact occN_head h1 g hg hocc
+  · have hES : ∀ n, head (chainE c0 (app X (app b0 c0)) n) = S := chainE_headS _ _ hc0S hVS
+    have ht'lt : t' < T' := by
+      rcases Nat.lt_or_ge t' T' with h | h
+      · exact h
+      · exfalso
+        have he : t' = T' := by omega
+        rw [he, hT] at hrt'
+        injection hrt' with hrt'
+        injection hrt' with hf' _
+        rw [hf', hES] at hf; simp at hf
+    have hstep' : step (chainE c0 (app X (app b0 c0)) j' :: chainE c0 (app X (app b0 c0)) (j' + 1) :: var 2 :: R) =
+        some (args (chainE c0 (app X (app b0 c0)) j') ++ var 2 ::
+          app (chainE c0 (app X (app b0 c0)) (j' + 1)) (var 2) :: R) := by
+      simp [step, hES]
+    have hr1 := run_succ_of L1 t' _ _ hrt' hstep'
+    have hj3 : j' ≤ 3 := by
+      have hlen := Preg_args_chainE_len c0 _ hc0r hVr hc0P hVP j'
+      have hb := hbound (t' + 1) _ (by omega) hr1
+      rw [Preg_append] at hb
+      simp only [List.length_append] at hb
+      omega
+    subst hgE
+    rcases (by omega : j' = 0 ∨ j' = 1 ∨ j' = 2 ∨ j' = 3) with hj | hj | hj | hj <;> subst hj
+    · -- j' = 0: c0 runs on (y, (X.w).y); its h1-front is a y-front
+      have hr1' : run (t' + 1) L1 = some ((args c0 ++ [var h1, var h2]).map
+          (asub (sg2 h1 h2 (var 2) (app (app X (app b0 c0)) (var 2)))) ++ R) := by
+        rw [img_args c0 _ _ h1 h2 h12 hc0h1 hc0h2 R]; simpa [chainE] using hr1
+      obtain ⟨hstuck, _⟩ := image_stuck _ _ R L1 (t' + 1) T' (by omega) hr1' f b d RT hT hf m0 (G :: LG) hm0
+      have hy : head (asub (sg2 h1 h2 (var 2) (app (app X (app b0 c0)) (var 2))) G) = var 2 := by
+        rw [asub_headvar _ h1 G hBF.1]; simp [sg2, head]
+      have hne : head (asub (sg2 h1 h2 (var 2) (app (app X (app b0 c0)) (var 2))) G) ≠ S := by
+        rw [hy]; simp
+      have p2 : run (t' + 1 + m0) L1 = some ((G :: LG).map
+          (asub (sg2 h1 h2 (var 2) (app (app X (app b0 c0)) (var 2)))) ++ R) := by
+        rw [run_add (t' + 1) m0, hr1', Option.bind_some]
+        exact run_append m0 _ _ R (asub_run _ m0 _ _ hm0)
+      have hnone : run (t' + 1 + m0 + 1) L1 = none := by
+        rw [run_add (t' + 1 + m0) 1, p2, Option.bind_some]
+        simp only [List.map_cons, List.cons_append]
+        simp [run, step_head_ne _ _ hne]
+      obtain ⟨hfe, _⟩ := hstuck hnone
+      simp only [List.map_cons, List.cons_append] at hfe
+      injection hfe with hfe _
+      rw [← hfe, hy] at hf; simp at hf
+    · simp [chainE, head] at hg; exact h12 hg.symm
+    · -- j' = 2: c0 runs on (X.w, y); opening its B-form front leaves 3 P-elements
+      have hr1' : run (t' + 1) L1 = some ((args c0 ++ [var h1, var h2]).map
+          (asub (sg2 h1 h2 (app X (app b0 c0)) (var 2))) ++
+            (app (chainE c0 (app X (app b0 c0)) 3) (var 2) :: R)) := by
+        rw [img_args c0 _ _ h1 h2 h12 hc0h1 hc0h2]; simpa [chainE, args] using hr1
+      obtain ⟨_, hearly⟩ := image_stuck _ _ _ L1 (t' + 1) T' (by omega) hr1' f b d RT hT hf m0 (G :: LG) hm0
+      have hge : t' + 1 + m0 ≤ T' := Nat.le_of_not_lt hearly
+      have p2 : run (t' + 1 + m0) L1 = some ((G :: LG).map
+          (asub (sg2 h1 h2 (app X (app b0 c0)) (var 2))) ++
+            (app (chainE c0 (app X (app b0 c0)) 3) (var 2) :: R)) := by
+        rw [run_add (t' + 1) m0, hr1', Option.bind_some]
+        exact run_append m0 _ _ _ (asub_run _ m0 _ _ hm0)
+      have hGS : head (asub (sg2 h1 h2 (app X (app b0 c0)) (var 2)) G) = S := by
+        rw [asub_headvar _ h1 G hBF.1]; simp [sg2]; exact hVS
+      have hlt : t' + 1 + m0 < T' := by
+        rcases Nat.lt_or_ge (t' + 1 + m0) T' with h | h
+        · exact h
+        · exfalso
+          have he : t' + 1 + m0 = T' := by omega
+          rw [he, hT] at p2
+          injection p2 with p2
+          simp only [List.map_cons, List.cons_append] at p2
+          injection p2 with p2 _
+          rw [p2, hGS] at hf; simp at hf
+      obtain ⟨L'', hL'', _⟩ := run_prefix T' (t' + 1 + m0 + 1) L1 _ hT (by omega)
+      obtain ⟨Lm, hLm, hsLm⟩ := run_succ_split L1 (t' + 1 + m0) L'' hL''
+      rw [p2] at hLm; injection hLm with hLm; subst hLm
+      obtain ⟨R', hR'⟩ := bf_step X h1 h2 h12 hX1 hX2 (app X (app b0 c0)) (var 2) hVS G LG _ L'' hBF hsLm
+      have hb := hbound _ _ (by omega) hL''
+      have hL3 : L'' = args X ++ app b0 c0 :: app X (app X (app b0 c0)) :: var 2 :: R' := by
+        rw [hR']; simp [args]
+      rw [hL3] at hb
+      have := Preg_len_ge3 (args X) (app b0 c0) (app X (app X (app b0 c0))) (var 2 :: R') hXP hwr hXVr
+      omega
+    · simp [chainE, head] at hg; exact h12 hg.symm
+
+#print axioms yt_abs
+#print axioms bform_nk1
+
+/-- the residual condition BF(c0): c0's two-hole run reaches a B-form front h1.(X.h1) followed by h2, X an S-headed
+    hole-free P-term -/
+def BFc (c0 : T) (h1 h2 : Nat) : Prop :=
+  ∃ X m0 G LG, head X = S ∧ rk X = 1 ∧ occN h1 X = 0 ∧ occN h2 X = 0 ∧
+    run m0 (args c0 ++ [var h1, var h2]) = some (G :: LG) ∧ BFfront X h1 h2 G LG
+
+/-- a code whose two-hole run has a B-form front contains p -/
+theorem bf_c0_rank (c0 X : T) (h1 h2 : Nat) (hh1 : h1 ≠ 0) (hh2 : h2 ≠ 0) (hc1 : occN 1 c0 = 0)
+    (hc2 : occN 2 c0 = 0) (hc3 : occN 3 c0 = 0) (hXr : rk X = 1) (m0 : Nat) (G : T) (LG : List T)
+    (hm0 : run m0 (args c0 ++ [var h1, var h2]) = some (G :: LG)) (hBF : BFfront X h1 h2 G LG) : rk c0 = 1 := by
+  have hp : occN 0 c0 ≠ 0 := by
+    intro h0
+    have hz := occ_run_zero 0 m0 _ _ (by
+      intro e he
+      simp at he
+      rcases he with he | he | he
+      · exact occN_args 0 c0 h0 e he
+      · subst he; simp [occN]; omega
+      · subst he; simp [occN]; omega) hm0 G (by simp)
+    have hXG : app X (var h1) ∈ args G := by
+      rcases hBF.2 with ⟨hA, _⟩ | ⟨A, hA⟩ <;> simp [hA]
+    have hz2 := occN_args 0 G hz _ hXG
+    simp only [occN] at hz2
+    rcases rk_spec X with h | h | h <;> omega
+  rcases rk_spec c0 with h | h | h <;> omega
+
+/-- **THEOREM R3-SINGLE-3.**  r3_single2 with the residual condition widened: the next phase of a single-wrapper
+    handler (b0.c0).y (b0, c0 S-headed) of an ordered single-occurrence datum never makes a proper transfer provided
+    H1ok(c0), or b0 never calls its first hole, or c0's two-hole run has a B-form front h1.(X.h1) followed by h2
+    (BFc).  In the last case NK1(b0) is DERIVED (bform_nk1) in pattern beta; patterns alpha and closed need no
+    condition. -/
+theorem r3_single3 (D b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : 4 ≤ h1) (hh2 : 4 ≤ h2)
+    (h12 : h1 ≠ h2) (hH : 4 ≤ H)
+    (hDS : head D = S) (hDo : ordT D) (hD1 : occN 1 D = 0) (hD2 : occN 2 D = 0) (hD3 : occN 3 D = 0)
+    (hDp : occN 0 D ≤ 1) (hDh1 : occN h1 D = 0) (hDh2 : occN h2 D = 0)
+    (hb0S : head b0 = S) (hc0S : head c0 = S) (hw1 : occN 1 (app b0 c0) = 0) (hw2 : occN 2 (app b0 c0) = 0)
+    (hw3 : occN 3 (app b0 c0) = 0) (hV : fresh3 H (app (app b0 c0) (var 2)))
+    (T' : Nat) (f b : T) (R : List T)
+    (hT : run T' [D, var 1, var 2, var 3] = some (f :: b :: app (app b0 c0) (var 2) :: R)) (hf : head f = var 0)
+    (hcond : (∀ (k : Nat) (g : T) (L : List T), run k (args c0 ++ [var h1, var h2]) = some (g :: L) →
+      head g = var h1 → (args g).head? = some (var h2) ∨ (args g = [] ∧ ∃ b' R', L = b' :: var h2 :: R')) ∨
+      (∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var h1, var h2]) = some (g :: L) → head g ≠ var h1) ∨
+      BFc c0 h1 h2) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  rcases hcond with hH1 | hNK1 | hBF
+  · exact r3_single2 D b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS hDo hD1 hD2 hD3 hDp hDh1 hDh2 hb0S hc0S hw1 hw2
+      hw3 hV T' f b R hT hf (Or.inl hH1)
+  · exact r3_single2 D b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS hDo hD1 hD2 hD3 hDp hDh1 hDh2 hb0S hc0S hw1 hw2
+      hw3 hV T' f b R hT hf (Or.inr hNK1)
+  have hh1' : h1 ≠ 0 := by omega
+  have hh2' : h2 ≠ 0 := by omega
+  have hw2' : occN 2 b0 = 0 ∧ occN 2 c0 = 0 := by simp only [occN] at hw2; omega
+  have hy0 : occ2 b0 = 0 := by rw [occ2_eq]; exact hw2'.1
+  have hy1 : occ2 c0 = 0 := by rw [occ2_eq]; exact hw2'.2
+  have hz : ∀ hh, 4 ≤ hh → occN hh D = 0 → ∀ (k : Nat) (L : List T), run k [D, var 1, var 2, var 3] = some L →
+      ∀ e ∈ L, occN hh e = 0 := by
+    intro hh h4 hD k L hk
+    apply occ_run_zero hh k _ L _ hk
+    intro e he
+    simp at he
+    rcases he with he | he | he | he <;> subst he
+    · exact hD
+    · simp [occN]; omega
+    · simp [occN]; omega
+    · simp [occN]; omega
+  have hTm : app (app b0 c0) (var 2) ∈ f :: b :: app (app b0 c0) (var 2) :: R := by simp
+  have hw0 := hz h1 hh1 hDh1 T' _ hT _ hTm
+  have hw0' := hz h2 hh2 hDh2 T' _ hT _ hTm
+  simp only [occN] at hw0 hw0'
+  have hc0f1 : occN h1 c0 = 0 := by omega
+  have hc0f2 : occN h2 c0 = 0 := by omega
+  have hb0f1 : occN h1 b0 = 0 := by omega
+  have hb0f2 : occN h2 b0 = 0 := by omega
+  -- the glue that created the handler node w.y
+  obtain ⟨tg, htg, a1, R0, hg⟩ := creation (app b0 c0) (var 2) T' _ _ hT
+    ⟨_, hTm, sub_refl _⟩ (by
+      intro e he hs
+      simp at he
+      rcases he with he | he | he | he <;> subst he
+      · have := occN_sub_le 2 _ _ hs; simp [occN] at this; omega
+      · simp [sub] at hs
+      · simp [sub] at hs
+      · simp [sub] at hs)
+  have ha1S : head a1 = S := head_of_continue _ tg T' a1 _ _ R0 hg htg _ hT
+  have htg1 : 1 ≤ tg := by
+    rcases Nat.eq_zero_or_pos tg with h0 | h0
+    · subst h0; simp [run] at hg
+    · exact h0
+  obtain ⟨hSeg, hocc⟩ := phase2_start D hDS hDo hD1 hD2 hD3
+  have hg1 : run (tg - 1) (args D ++ [var 2, app (var 1) (var 2), var 3]) = some (a1 :: app b0 c0 :: var 2 :: R0) := by
+    rw [← phase2_shift D hDS (tg - 1), show tg - 1 + 1 = tg by omega]; exact hg
+  have hT1 : run (T' - 1) (args D ++ [var 2, app (var 1) (var 2), var 3]) = some (f :: b :: app (app b0 c0) (var 2) :: R) := by
+    rw [← phase2_shift D hDS (T' - 1), show T' - 1 + 1 = T' by omega]; exact hT
+  have hSg := seg_run _ _ _ hSeg hg1
+  have hrank : rk a1 ≤ rk (app b0 c0) := srt_tail_ge a1 _ hSg.1 _ (by simp)
+  have hwr : rk (app b0 c0) ≤ 1 := rk_le1_of _ hw1 hw2 hw3
+  have ha1f1 : occN h1 a1 = 0 := hz h1 hh1 hDh1 tg _ hg a1 (by simp)
+  have ha1f2 : occN h2 a1 = 0 := hz h2 hh2 hDh2 tg _ hg a1 (by simp)
+  by_cases hac : a1 = c0
+  · -- pattern alpha
+    subst hac
+    exact alpha_main b0 a1 c h1 h2 H hc hc2 hh1' hh2' h12 hH hb0S hc0S hy0 hy1 hc0f1 hc0f2 hV _ tg T' R0 hg htg
+      f b _ R hT hf
+  · rcases rk_cases a1 with ha0 | ha1 | ha2
+    · -- closed glue front
+      have ha10 : occN 0 a1 = 0 := ((rk_eq0 a1).1 ha0).2
+      have hno := closedglue_main a1 (app b0 c0) c h1 h2 H hc hh1' hh2' h12 hH ha1S ha10 (by simp [head, hb0S])
+        ha1f1 ha1f2 hV _ tg T' R0 hg htg f b _ R hT hf
+      have hD3' : asub (sg3 c) (app (app b0 c0) (var 2)) = app (app (sb c b0) (sb c c0)) (var 0) := by
+        simp [asub, asub_sg3_sb c b0 hy0, asub_sg3_sb c c0 hy1, sg3]
+      intro m f' b' d' R' hm hf'
+      rw [← hD3'] at hm
+      exact absurd hf' (hno m f' _ hm)
+    · -- P-front different from c0: THEOREM S1, then the B-form front, BF-NK1 and PAXB
+      have hw1r : rk (app b0 c0) = 1 := by omega
+      obtain ⟨s, hs, B, hsB⟩ := s1_core _ (app b0 c0) b0 c0 rfl hw1r hSeg (by rw [hocc]; exact hDp)
+        (T' - 1) f b _ R hT1 (by rw [rk_app, rk_var2]; omega) (tg - 1) (by omega) a1 R0 hg1 ha1 hac
+      obtain ⟨X, m0, G, LG, hXS, hXr, hX1, hX2, hm0, hBFf⟩ := hBF
+      have hb0r : rk b0 ≤ 1 := by have := rk_app_left b0 c0; omega
+      have hc0r : rk c0 = 1 := by
+        simp only [occN] at hw1 hw2 hw3
+        exact bf_c0_rank c0 X h1 h2 hh1' hh2' (by omega) (by omega) (by omega) hXr m0 G LG hm0 hBFf
+      have hd2 : rk (app (app b0 c0) (var 2)) = 2 := by rw [rk_app, rk_var2]; omega
+      have hbound := fun s Ls hs hr => ab3_bound _ hSeg (T' - 1) f b _ R hT1 hd2 s Ls hs hr
+      have hwS : head (app b0 c0) = S := by simp [head, hb0S]
+      have hr0 : run s (args D ++ [var 2, app (var 1) (var 2), var 3]) = some ((args c0 ++ [var h1, var h2]).map
+          (asub (sg2 h1 h2 (app b0 c0) (var 2))) ++ B) := by
+        rw [img_args c0 _ _ h1 h2 h12 hc0f1 hc0f2 B]; exact hsB
+      obtain ⟨_, hearly⟩ := image_stuck _ _ B _ s (T' - 1) (by omega) hr0 f b _ R hT1 hf m0 (G :: LG) hm0
+      have hge : s + m0 ≤ T' - 1 := Nat.le_of_not_lt hearly
+      have p2 : run (s + m0) (args D ++ [var 2, app (var 1) (var 2), var 3]) = some ((G :: LG).map
+          (asub (sg2 h1 h2 (app b0 c0) (var 2))) ++ B) := by
+        rw [run_add s m0, hr0, Option.bind_some]
+        exact run_append m0 _ _ B (asub_run _ m0 _ _ hm0)
+      have hGS : head (asub (sg2 h1 h2 (app b0 c0) (var 2)) G) = S := by
+        rw [asub_headvar _ h1 G hBFf.1]; simp [sg2]; exact hb0S
+      have hlt : s + m0 < T' - 1 := by
+        rcases Nat.lt_or_ge (s + m0) (T' - 1) with h | h
+        · exact h
+        · exfalso
+          have he : s + m0 = T' - 1 := by omega
+          rw [he, hT1] at p2
+          injection p2 with p2
+          simp only [List.map_cons, List.cons_append] at p2
+          injection p2 with p2 _
+          rw [p2, hGS] at hf; simp at hf
+      obtain ⟨L'', hL'', _⟩ := run_prefix (T' - 1) (s + m0 + 1) _ _ hT1 (by omega)
+      obtain ⟨Lm, hLm, hsLm⟩ := run_succ_split _ (s + m0) L'' hL''
+      rw [p2] at hLm; injection hLm with hLm; subst hLm
+      obtain ⟨R', hR'⟩ := bf_step X h1 h2 h12 hX1 hX2 (app b0 c0) (var 2) hwS G LG B L'' hBFf hsLm
+      have hL3 : L'' = args b0 ++ c0 :: app X (app b0 c0) :: var 2 :: R' := by
+        rw [hR']; simp [args]
+      have hNK1 := bform_nk1 _ (T' - 1) f b _ R hT1 hd2 hf hbound b0 c0 X h1 h2 h12 hb0r hb0f1 hc0f1 hc0f2
+        hX1 hX2 hc0S hc0r hXS hXr (s + m0 + 1) (by omega) R' (by rw [← hL3]; exact hL'') m0 G LG hm0 hBFf
+      exact paxb_main b0 c0 c h1 h2 hc hc2 hh1 hh2 h12 hb0S hc0S hy0 hy1 hb0f1 hb0f2 hNK1
+    · omega
+
+#print axioms bf_c0_rank
+#print axioms r3_single3

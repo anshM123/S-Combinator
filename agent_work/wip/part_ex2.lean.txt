@@ -1,0 +1,24 @@
+
+/-! non-vacuity of il_atom: the datum S(S(S(S(SS))S))(S(SS)p) (handler S.((S(SS)p).y), innermost c-code p) -/
+def exD2 : T := app (app S (app S (app (app S (app S (app S S))) S))) (app (app S (app S S)) (var 0))
+def exL2 : T := app (app (app S (app S S)) (var 0)) (var 2)
+
+theorem exD2_reopen : run 7 [exD2, var 1, var 2, var 3] = some (args (app S (app S S)) ++ var 0 :: var 2 ::
+    [app S exL2, app (var 2) exL2, app (app (app S exL2) (app exL2 (app S exL2))) (app (var 2) exL2),
+     app (var 1) (var 2), var 3]) := by decide
+
+theorem exD2_transfer : run 9 [exD2, var 1, var 2, var 3] = some (app (var 0) (var 2) ::
+    app (var 2) (app (var 0) (var 2)) :: app S exL2 ::
+    [app (var 2) exL2, app (app (app S exL2) (app exL2 (app S exL2))) (app (var 2) exL2),
+     app (var 1) (var 2), var 3]) := by decide
+
+/-- non-vacuity: il_atom applies to S(S(S(S(SS))S))(S(SS)p) - the next phase of its two-wrapper handler
+    S.((S(SS)p).y) has no p'-front at all -/
+theorem il_atom_example : ∀ (m : Nat) (f' : T) (L' : List T),
+    run m [rcombT (([S] ++ [app (app S (app S S)) (var 0)]).map (sb 4)) (var 0), var 1, var 2, var 3] =
+      some (f' :: L') → head f' ≠ var 0 :=
+  il_atom [S] (app S (app S S)) (var 0) 0 4 5 6 (by decide) (by decide) (by decide) (by decide) (by decide)
+    rfl rfl (by decide) (by decide) [exD2, var 1, var 2, var 3] 7 9 _ exD2_reopen (by decide) _ _ _ _
+    exD2_transfer rfl
+
+#print axioms il_atom_example

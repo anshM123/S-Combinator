@@ -1,0 +1,4 @@
+seed 2 flag-1 terms 1789 walks completing 3000 nodes: 1789 steps after burn-in: {'push': 3578000} 17 s
+walks with pops/jumps/returns after burn-in: []
+seed 12 flag-1 walks completing 3000 nodes: 7 step counts after burn-in: {'push': 14000} 5 s
+walks with pops/jumps/returns after burn-in: []

@@ -1,0 +1,44 @@
+
+/-! non-vacuity of mw_alpha2: the datum SSS(S(SS(SS)(Sp))) (handler SS(Sp).(S(S(SS(SS)(Sp))).y), nested alpha) -/
+def exD3 : T := app (app (app S S) S) (app S (app (app (app S S) (app S S)) (app S (var 0))))
+def exc2 : T := app S (app (app (app S S) (app S S)) (app S (var 0)))
+
+theorem noPre_of_check (w : T) (L0 : List T) (t : Nat)
+    (h : (match run t L0 with | some (g :: _) => wpreB w g | _ => false) = false) :
+    ∀ g L, run t L0 = some (g :: L) → ¬ wpre w g := by
+  intro g L hr hw
+  rw [hr] at h
+  simp only at h
+  rw [(wpreB_iff w g).2 hw] at h
+  exact Bool.noConfusion h
+
+theorem exD3_inner : run 2 [exD3, var 1, var 2, var 3] =
+    some (exc2 :: app S exc2 :: var 2 :: [app (var 1) (var 2), var 3]) := by decide
+
+theorem exD3_outer : run 5 [exD3, var 1, var 2, var 3] =
+    some (app S (var 0) :: app (app S S) (app S (var 0)) :: app (app S exc2) (var 2) ::
+      [app (var 2) (app (app S exc2) (var 2)), app (var 1) (var 2), var 3]) := by decide
+
+theorem exD3_transfer : run 6 [exD3, var 1, var 2, var 3] =
+    some (var 0 :: app (app S exc2) (var 2) ::
+      app (app (app S S) (app S (var 0))) (app (app S exc2) (var 2)) ::
+      [app (var 2) (app (app S exc2) (var 2)), app (var 1) (var 2), var 3]) := by decide
+
+/-- non-vacuity: mw_alpha2 applies to SSS(S(SS(SS)(Sp))) -/
+theorem mw_alpha2_example : ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+    run m [rcombT ([app (app S S) (app S (var 0)), app S exc2].map (sb 4)) (var 0), var 1, var 2, var 3] =
+      some (f' :: b' :: d' :: R') → head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 :=
+  mw_alpha2 (app S S) (app S (var 0)) S exc2 4 5 6 7 (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) rfl rfl rfl rfl (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) ⟨by decide, by decide, by decide⟩
+    [exD3, var 1, var 2, var 3] 2 5 6 _ _ exD3_inner exD3_outer (by decide) (by decide) _ _ _ _ exD3_transfer rfl
+    (by
+      intro t g L h1 h2 hr
+      have ht : t = 3 ∨ t = 4 ∨ t = 5 ∨ t = 6 := by omega
+      rcases ht with rfl | rfl | rfl | rfl
+      · exact noPre_of_check _ _ _ (by decide) g L hr
+      · exact noPre_of_check _ _ _ (by decide) g L hr
+      · exact noPre_of_check _ _ _ (by decide) g L hr
+      · exact noPre_of_check _ _ _ (by decide) g L hr)
+
+#print axioms mw_alpha2_example

@@ -1,0 +1,67 @@
+
+/-! ## S1 Part 16: R3 for EVERY single-wrapper handler of an ordered single-occurrence datum -/
+
+theorem head_sb_var (c n : Nat) (hc : c ≠ 0) : ∀ t : T, head t = var n → head (sb c t) ≠ var 0 ∧ head (sb c t) ≠ S
+  | S, h => by simp [head] at h
+  | var m, h => by
+    simp [head] at h; subst h
+    by_cases h0 : m = 0
+    · subst h0; simp [sb, head, hc]
+    · simp [sb, head, h0]
+  | app f x, h => by
+    simp only [head] at h
+    simp only [sb, head]
+    exact head_sb_var c n hc f h
+
+/-- **THEOREM R3-SINGLE-ALL.**  For an S-headed ordered datum D free of x, y, r with at most one p, and ANY
+    single-wrapper handler (b0.c0).y of a phase-2 transfer (b0.c0 free of x, y, r): the next phase never makes a
+    proper transfer, provided - only when b0 and c0 are both S-headed - 'H1ok(c0) OR b0 never calls its first hole'.
+    (b0 atom-headed: the next datum is atom-headed; c0 atom-headed: pah_main; both S-headed: r3_single2, where the
+    condition is used only for a glue front that is a P-term other than c0.) -/
+theorem r3_single_all (D b0 c0 : T) (c h1 h2 H : Nat) (hc : c ≠ 0) (hc2 : c ≠ 2) (hh1 : 4 ≤ h1) (hh2 : 4 ≤ h2)
+    (h12 : h1 ≠ h2) (hH : 4 ≤ H)
+    (hDS : head D = S) (hDo : ordT D) (hD1 : occN 1 D = 0) (hD2 : occN 2 D = 0) (hD3 : occN 3 D = 0)
+    (hDp : occN 0 D ≤ 1) (hDh1 : occN h1 D = 0) (hDh2 : occN h2 D = 0)
+    (hw1 : occN 1 (app b0 c0) = 0) (hw2 : occN 2 (app b0 c0) = 0)
+    (hw3 : occN 3 (app b0 c0) = 0) (hV : fresh3 H (app (app b0 c0) (var 2)))
+    (T' : Nat) (f b : T) (R : List T)
+    (hT : run T' [D, var 1, var 2, var 3] = some (f :: b :: app (app b0 c0) (var 2) :: R)) (hf : head f = var 0)
+    (hcond : head b0 = S → head c0 = S →
+      ((∀ (k : Nat) (g : T) (L : List T), run k (args c0 ++ [var h1, var h2]) = some (g :: L) →
+        head g = var h1 → (args g).head? = some (var h2) ∨ (args g = [] ∧ ∃ b' R', L = b' :: var h2 :: R')) ∨
+       (∀ (m : Nat) (g : T) (L : List T), run m (args b0 ++ [var h1, var h2]) = some (g :: L) →
+        head g ≠ var h1))) :
+    ∀ (m : Nat) (f' b' d' : T) (R' : List T),
+      run m [app (app (sb c b0) (sb c c0)) (var 0), var 1, var 2, var 3] = some (f' :: b' :: d' :: R') →
+      head f' = var 0 → occ2 d' = 0 ∨ d' = var 2 := by
+  have hy0 : occ2 b0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+  have hy1 : occ2 c0 = 0 := by rw [occ2_eq]; simp only [occN] at hw2; omega
+  rcases head_cases b0 with hb0S | ⟨n, hn⟩
+  · rcases head_cases c0 with hc0S | ⟨n', hn'⟩
+    · exact r3_single2 D b0 c0 c h1 h2 H hc hc2 hh1 hh2 h12 hH hDS hDo hD1 hD2 hD3 hDp hDh1 hDh2 hb0S hc0S hw1 hw2
+        hw3 hV T' f b R hT hf (hcond hb0S hc0S)
+    · have hn2 : n' ≠ 2 := by
+        intro e; subst e
+        have : occ2 c0 ≠ 0 := by
+          have key : ∀ t : T, head t = var 2 → occ2 t ≠ 0 := by
+            intro t; induction t with
+            | S => intro h; simp [head] at h
+            | var m => intro h; simp [head] at h; subst h; simp [occ2]
+            | app f x ihf _ => intro h; simp only [head] at h; simp only [occ2]; have := ihf h; omega
+          exact key c0 hn'
+        exact this hy1
+      exact pah_main b0 c0 c n' hc2 hb0S hy0 hy1 hn' hn2
+  · -- b0 atom-headed: the next datum is atom-headed, its run never moves
+    intro m f' b' d' R' hm hf'
+    obtain ⟨hne0, hneS⟩ := head_sb_var c n hc b0 hn
+    have hD'h : head (app (app (sb c b0) (sb c c0)) (var 0)) = head (sb c b0) := rfl
+    match m, hm with
+    | 0, hm =>
+      simp only [run, Option.some.injEq, List.cons.injEq] at hm
+      rw [← hm.1, hD'h] at hf'; exact absurd hf' hne0
+    | m' + 1, hm =>
+      simp only [run] at hm
+      rw [step_head_ne _ _ (by rw [hD'h]; exact hneS)] at hm
+      simp at hm
+
+#print axioms r3_single_all

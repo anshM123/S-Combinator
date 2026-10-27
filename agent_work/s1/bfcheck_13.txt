@@ -1,0 +1,4 @@
+197 ('none', 'calls-k1') S(SS)(S(SS)S(SS)(S(S(pS))))
+186 ('none', 'NK1') S(SS)(SSS(S(SS))(S(S(pS))))
+1 ('BF1', 'NK1') S(S(SS))(SS)(S(S(SS))(S(Sp)))
+exit 0

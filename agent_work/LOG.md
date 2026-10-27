@@ -1594,3 +1594,64 @@ non-universality or R''_PUP.
   the next-phase outcome column of cover6 is the simulated outcome within 3,000 steps.)
   (b) s1/lemcheck.py 8 (1,429 runs, 54 single-wrapper transfers, 2 beta-P glues) and 7: no violation of the
   invariants F, C1, C2, FA, FW, FB or of (S1) - the lemmas of the hand proof hold on every list.
+* 08:36 HAND SKETCH (NOT complete) for the remaining single-wrapper gap 'pattern beta with a P-front, NOT H1ok(c0),
+  NOT NK1(b0)' (never observed).  From (S1) at time s the list is K ++ [X1, w, y | B]; Lemma YT (now machine-checked)
+  gives the next P-event [E_j(X1, w), E_{j+1}, y] with j <= 3: j = 1 is IGEN, j = 2 recurses with X2, j = 3 opens
+  w.(X1.w) over y (in c0's two-hole run: the h1-front h1.(X1.h1) with h2 at position 3), j = 0 is the beta glue of w
+  by X1.  If c0's first hole front is of the form h1.(X_i.h1) (followed by h2), then NOT NK1(b0) is contradictory:
+  phase 2 then reaches args(b0) ++ [c0, X_i.w, y | R] (b0 closed by |P| <= 2), and Lemma YT on the pair (c0, X_i.w)
+  shows that b0's first hole call is either c0 over (X_i.w, y) - c0 then runs on (y, ...) and its first (h1-)hole
+  call is a y-call - or c0.(X_i.w) over y - c0 runs on (X_i.w, y), its h1-front h1.(X_i.h1) opens X_i.w with
+  argument X_i.(X_i.w), leaving >= 3 P-elements (Lemma AB): both impossible.  MISSING: that c0's first hole front is
+  of the H1ok forms or of the form h1.(X_i.h1)[h2] - the j = 0 branch needs a 'barrier order' lemma (after the beta
+  glue the topmost h1-headed element is the descendant of h1.h2 = w.y, which reaches the front before the deeper
+  (h1.(X_i.h1)).h2 elements).  Not formalised.
+* 08:37 COMPUTATIONALLY CERTIFIED (random ordered single-occurrence data, 4-22 leaves, 2,000,000 samples each):
+  s1/wptest.py rand 141 22 2000000: WP, WY and WG hold in all 24,877 single-wrapper transfers (IGEN included);
+  s1/strand.py rand 131 22 2000000: in every single-wrapper transfer the wrapper w is created EXACTLY ONCE and with
+  the bare y as Y-top ((Z)); P-elements stranded over a non-y Y-top occur (inside c0, unrelated, once containing c0)
+  but never c0 itself.  (Z)/WY/WP/WG stay CONJECTURAL (not needed for any theorem above; the S1 proof only uses the
+  lineage of the glue, whose creation provably has Y-top y).
+* 08:42 MACHINE-CHECKED non-vacuity (R3G.lean, 6,344 lines, 'LEAN OK: no errors, no sorry'): `il_atom_example`
+  (all hypotheses of il_atom discharged by decide for S(S(S(S(SS))S))(S(SS)p): the earlier phase re-opens the inner
+  level args(S(SS)) ++ [p, y, ...] at step 7 and transfers S.((S(SS)p).y) at step 9) and `mw_alpha2_example` (all
+  hypotheses of mw_alpha2 discharged for SSS(S(SS(SS)(Sp))): inner alpha glue at step 2, outer alpha glue at step 5,
+  transfer at step 6, no v2.y-prefixed front in between - checked per time with wpreB).  Together with
+  r3_single_example: the three new main theorems are not vacuous.
+* 08:44 MACHINE-CHECKED (agent_work/lean/R3G.lean, 6,768 lines, 'LEAN OK: no errors, no sorry'): **THEOREM
+  S1-LAMBDA (`s1_coreL`)** - the whole S1 proof (GoodL, IAL, IBL, ia_stepL, ib_stepL, s1_baseL, s1_invL) with the
+  bare y replaced by an arbitrary fixed term Lam of rank 2: a glue list a1 :: w :: Lam :: R0 (w = b0.c0 a P-term, a1 a
+  P-term != c0) is preceded by args(c0) ++ w :: Lam :: B.  For a multi-wrapper handler this is (S1) at every outer
+  level (Lam = L_{j+1}): the outer pattern-beta glues seen in the data ('outer P-front that ran') are now explained
+  structurally.  (A theorem combining it with an outer-level H1ok, analogous to beta_main, was not written: the only
+  data family of this shape is already covered by NHALL.)
+* 08:47 MACHINE-CHECKED (agent_work/lean/R3G.lean, 6,838 lines, 'LEAN OK: no errors, no sorry'): **THEOREM
+  R3-SINGLE-ALL (`r3_single_all`)**: for an S-headed ordered datum D free of x, y, r with at most one p and ANY
+  single-wrapper handler (b0.c0).y of its phase-2 transfer (b0.c0 free of x, y, r; fresh hole atoms): the next phase
+  never makes a proper transfer, the condition 'H1ok(c0) OR b0 never calls its first hole' being needed only when b0
+  and c0 are BOTH S-headed (b0 atom-headed: the next datum is atom-headed and never moves; c0 atom-headed: pah_main;
+  both S-headed: r3_single2, where the condition enters only for a glue front that is a P-term other than c0).
+  COMPUTATIONALLY CERTIFIED (s1/cover6.py rc 13: ALL S-headed right combs over p with closed wrappers <= 13 leaves):
+  10,161 proper transfers = FH 3,823 + ALPHA 5,703 + S1+H1ok 274 + MWA2 266 + IL-ATOM 37 + IGEN 27 + IL-NH 18 +
+  NHALL 12 + S1+NK1 1: every transfer covered (s1/listrc.py 12 / 13: no NHALL-less multi-wrapper case remains).
+* 09:10 COMPUTATIONALLY CERTIFIED (s1/condcheck.py 12 and 13 13): every handler-only condition used by the coverage
+  classes is DECIDED, not budget-limited - re-running the relevant abstract two-hole runs with a 50,000-step budget,
+  all of them reach an atom-headed front or a short list: <= 12 leaves S1+H1ok 193, IL-NH 2; 13 leaves S1+H1ok 395,
+  IL-NH 18, NHALL 12, S1+NK1 1 - all decided (and they hold, as cover6 recorded).  (rc 13 re-running; the earlier
+  random lemcheck run 'rand 5 14 200000' was killed by its timeout without output - re-run with 4,000 samples.)
+* 09:10 MACHINE-CHECKED (agent_work/lean/R3G.lean, 7,317 lines, 'LEAN OK: no errors, no sorry'): **BF-NK1** - half of
+  the residual single-wrapper case is closed.
+  - `yt_abs` (Lemma YT, abstract side): along the YT chain from K ++ [U, V, Yt | R] (K closed and free of an atom h)
+    the abstract run of K ++ [U0, V0] has at every reachable list a front that is h-free or chainE U0 V0 j', where j'
+    is the index at which the concrete run reaches [E_j', E_j'+1, Yt | R].
+  - `bform_nk1`: if at some time the earlier phase is at args(b0) ++ [c0, X.w, y | R] (w = b0.c0; c0, X S-headed
+    P-terms; X hole-free) and c0's two-hole run reaches a B-FORM front h1.(X.h1) followed by h2 (as next argument or
+    at position 3; `BFfront`), then b0's two-hole run NEVER reaches a first-hole front (NK1(b0) DERIVED).  Proof: YT
+    on (c0, X.w) + yt_abs: b0's only hole front is E_j', j' <= 3; j' = 0: c0 runs on (y, ...) and its h1-front is a
+    y-front; j' = 2: c0 runs on (X.w, y) and opening its B-form front leaves X's P-argument, w and X.(X.w) in the
+    P-region (3 > 2, Lemma AB); so j' is odd: a second-hole front.
+  - `r3_single3`: r3_single2 with the condition widened to 'H1ok(c0) OR NK1(b0) OR BFc(c0)' (BFc: c0's two-hole run
+    has a B-form front with an S-headed hole-free P-term X; `bf_c0_rank` shows c0 then contains p).  In pattern beta
+    the B-form front is reached from the S1 list args(c0) ++ [w, y | B], opening it gives args(b0) ++ [c0, X.w, y |
+    R'] (`bf_step`), then bform_nk1 and paxb_main.  The remaining single-wrapper gap is now: c0's first hole front is
+    h1-headed but neither of H1ok form nor of B-form, and b0 calls its first hole.

@@ -1,0 +1,4 @@
+202 ('none', 'NK1') S(S(S(SS)))(S(SS))(S(S(p(SSS))))
+198 ('none', 'calls-k1') SS(SS)(S(SS))(S(Sp))
+1 ('BF1', 'NK1') S(S(SS))(SS)(S(S(SS))(S(Sp)))
+exit 0
