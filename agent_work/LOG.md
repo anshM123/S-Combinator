@@ -616,3 +616,20 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   COMPUTATIONALLY CERTIFIED (prefix_replay.py 11): for all 100 real single-wrapper transfers with w = S.c0
   (<= 11 leaves) the guards hold; 96 are pattern alpha and replay to a REEXEC exactly as the theorem says; 4 are
   pattern beta (not covered by replay_glue).
+* PROVED (hand; single-level phase 3, i.e. single-wrapper phase-2 handler; P' = contains p', no x, y, r).
+  Lemma Sigma2: if at some time the C-region has >= 2 elements while the P'-region is exactly [bare p'], then from
+  then on either the C-region keeps >= 2 elements for ever (so no p'-front at all), or a BUFFER is created (a
+  C-element glued onto the bare p').  [While |C| >= 2, p' sits at position >= 3, so the only step touching it glues
+  the C-bottom onto it; by the MSL case analysis in the c-view, |C| leaves {2} downwards only by such a step, and
+  |C| >= 3 is absorbing (Lemma AB with c as the live atom).]
+  Lemma Gamma: if at some time the list is CL+ ++ [e] ++ [p'] ++ Y (one C-element e below >= 1 closed elements), then
+  either |C| becomes 2 with P' = [p'] (a step [k1, k2, e] inserts k2.e) or a buffer is created ([k, e, p']), unless
+  the phase ends first.  [The number of elements above e drops by at most 1 per step.]
+  Consequence: for real single-wrapper handlers w = b0.c0 (pattern alpha) with b0 != S (702 of 836 cases <= 11
+  leaves; plus the frozen-headed b0, which is FH), phase 3 starts in configuration Gamma (b0 closed) or with |C| >= 2
+  (b0 a P-term), so 'phase 3 never makes a proper transfer' for this class REDUCES TO
+  (B1) once a buffer has been created, no proper transfer follows (single-level phase 3).
+  Together with replay_glue (b0 = S) only (B1) and pattern beta (46 cases <= 11) remain open for single-wrapper
+  handlers.  Also (hand): before any buffer, a proper transfer's innermost wrapper vn (p'-headed by CANON) can only
+  be glued onto y by a sigma_C step, after which the P'-region stays empty for ever (SL's 'hy': S-headed Y-elements
+  release no P'-arguments), so the p'-front is a p'-headed Y-element.

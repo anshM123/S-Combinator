@@ -181,6 +181,8 @@ CHECKS = [
   ["lean_check.py", "../lean/AgentW1.lean"], ['LEAN OK: no errors, no sorry', 'w1_survivor: propext, Classical.choice, Quot.sound'], 1500),
  ("Lean 4: Barrier lemma (the tape below two barriers is never touched) machine-checked",
   ["lean_check.py", "../lean/Barrier.lean"], [r"LEAN OK: no errors, no sorry", r"barrier_lemma: propext, Classical.choice, Quot.sound"], 900),
+ ("Lean 4: confluence of S-reduction, uniqueness of normal forms, Proposition MW(e) machine-checked",
+  ["lean_check.py", "../lean/Confluence.lean"], [r"LEAN OK: no errors, no sorry", r"confluence: propext\s", r"mw_e_terminal: propext\s"], 900),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",

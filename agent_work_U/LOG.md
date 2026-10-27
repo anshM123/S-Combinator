@@ -179,3 +179,17 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   would hold for almost any growing rewrite rule.  So W_reg should be restricted (e.g. to head-fair orders, where
   Prop. CF reduces everything to the head run's control, plus explicitly descending/path orders such as DM and RM)
   before it is used as the disproof target.  Not constructed here: building it would not be accepted as S computing.
+* EXPERIMENTALLY SUPPORTED: dmcensus.py 3 4000 18 30000 — of 4,000 random 18-leaf terms, 1,578 have a finite leftmost
+  path (only 3 with >= 10 rounds) and 2,422 reach a node without hnf within < 10 rounds; none has >= 100 rounds in
+  30,000 steps.  Long leftmost paths are rare (cf. LP1: infinite leftmost paths only in the D2 classes).
+* W2 (two data force data execution) — status: COMPUTATIONALLY CERTIFIED for closed code <= 8 leaves (survcat.py);
+  hand proof SKETCH: the bottom changes only at 3-lists [a, U, B]; U is never closed after the first wrap (the first
+  wrapper of Y is X or X-derived, as in W1); a code-headed data element b.X in the data zone always has an
+  atom-headed copy of X above it, which must be executed (stuck) or absorb downward (making an atom-headed element)
+  before b.X can reach position 2 — so the last wrapper is atom-headed and every 2-data survivor is atom-headed.
+  The invariant is of the same type as SL's INV-Q; NOT formalised.
+* COMPUTATIONALLY CERTIFIED (bounded, negative): selfembed.py 11 400 — no closed Q <= 11 leaves (with a head redex)
+  reaches, within 400 head steps, a term containing Q itself as a proper subterm (checked: all subterms of all list
+  elements and the spine prefix S q1..qm).  No small 'self-reproducing' term Q ->* C[Q] exists along head reduction,
+  so token factories for a regular-strategy 'S as RAM' design are not available off the shelf (increment would have to
+  use duplication of a marked token).

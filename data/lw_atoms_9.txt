@@ -7,3 +7,9 @@
      e.g. ((14, 26), 'b'): S(S(S(S(S(SSS)))))  (6 steps)
      e.g. ((14, 28), 'a'): SSS(S(S(SSS)))  (5 steps)
      e.g. ((14, 28), 'big'): SSS(SS)S(SS)  (2013 steps)
+9 leaves: (14, 26)->a: 133, (14, 26)->b: 201, (14, 26)->big: 20, (14, 28)->a: 329, (14, 28)->big: 29
+     e.g. ((14, 26), 'a'): S(S(S(S(S(S(SSS))))))  (7 steps)
+     e.g. ((14, 26), 'b'): S(S(S(S(S(SS(SS))))))  (6 steps)
+     e.g. ((14, 26), 'big'): S(S(SSS)S(SSS))  (1769 steps)
+     e.g. ((14, 28), 'a'): SSS(S(S(S(SSS))))  (12 steps)
+     e.g. ((14, 28), 'big'): S(SS)S(S(SSS)S)  (134 steps)

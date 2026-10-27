@@ -2541,6 +2541,10 @@ For a term t let |t| be its number of leaves and D(t) the sum of the depths of i
 *MACHINE-CHECKED (lean/MW.lean, 2026-10-27): (a) `red_potential` and (b) `acyclic`, `unbounded`, for one-redex steps
 anywhere in the term (so for every evolution order and every choice of redexes; a parallel step is a finite sequence of
 such steps). `unbounded`: for every infinite evolution s and every N some s n has more than N leaves. Standard axioms.*
+*MACHINE-CHECKED (lean/Confluence.lean, 2026-10-27): confluence of S-reduction (`confluence`, by parallel reduction and
+Takahashi's complete development; this is fact F2 used in (d)), uniqueness of normal forms (`nf_unique`), and (e)
+(`mw_e`, `mw_e_terminal`, for any decoder into any system M whose reachability is transitive). Axiom: propext only.
+Not formalised: the cofinality of Gross–Knuth reduction used in the second half of (d).*
 (a) *Potential.* If t → u contracts a redex S x y z anywhere in t, then |u| = |t| + |z| − 1, and if z = S then
 D(u) = D(t) − |x|. So (|t|, −D(t)) increases strictly (lexicographically) along every step, in every evolution order.
 *Proof.* The context is unchanged, so compare B = ((S x) y) z with A = (x z)(y z) at the redex depth d. Leaves:
