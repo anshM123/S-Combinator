@@ -213,6 +213,8 @@ CHECKS = [
   ["lean_check.py", "../lean/AgentPA.lean"], ['LEAN OK: no errors, no sorry', 'pa_main: propext, Classical.choice, Quot.sound', 'pb_main: propext, Classical.choice, Quot.sound'], 2400),
  ('Lean 4 (non-universality agent): Lemma FH1 (a frozen-headed first spine argument blocks the predecessor)',
   ["lean_check.py", "../lean/AgentFH1.lean"], ['LEAN OK: no errors, no sorry', 'fh1_main: propext, Classical.choice, Quot.sound'], 2400),
+ ("Lean 4: Theorem U* (fuel-free runs stay fuel-free through zero tests) machine-checked",
+  ["lean_check.py", "../lean/TheoremUstar.lean"], [r"LEAN OK: no errors, no sorry", r"ustar: propext, Quot.sound"], 900),
  ("E108 descents: one-redex evolutions with descents into arguments, 9 leaves (two descend once, one for ever)",
   ["descent_runs.py", "9", "2000", "9"], [r"9 leaves: alive after 2000 steps by \(initial descents, mid-run descents\): \{\(0, 1\): 2, \(0, 1936\): 1\}"], 600),
  ("Theorem DK: rules D1-D3 symbolically; every forever-descending one-redex term up to 12 leaves enters the K-cycle",

@@ -11,29 +11,29 @@ the clock; '~' marks times reconstructed from `date` outputs.  From now on every
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## INTERIM 04:00 (refreshed ~03:44 EDT; first version written ~02:38)
+## INTERIM 04:00 (refreshed 03:53 EDT by `date`; first version written ~02:38)
 **Status: no universal construction; no partial win (no non-PUP run).  Labels as in the entries below.**
-Main results (files in agent_work_U/):
+Main results (files in agent_work_U/; Lean files compile with ~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean):
 1. NEW FRAMEWORK, the descent machine DM (dm.py): leftmost-outermost evaluation along the leftmost Boehm path = the
-   head machine plus the erasure rule [c, d] -> ch(c) at every head normal form (PROVED, elementary; faithfulness
-   against genuine leftmost-outermost reduction checked, dmfaith.py).  Sibling: the right-spine machine RM (rm.py).
-2. DM capabilities (PROVED by inspection): Church booleans in tail position (S X Y => X, SS X Y => Y), application
-   S(SS), identity SSSS, selection gadget S(SS)(SS) E b => b (E b) (E (SS E) b).
-3. COMPLETE CLASSIFICATION of generic DM rounds — MACHINE-CHECKED (Lean 4, no sorry):
-   - W1 / W1-RM (lean/W1.lean, 197 lines): one datum => single-copy survivor x or W.x (W closed);
-   - W1+ (lean/W1F.lean, 248 lines): one datum => survivor closed, x, W.x or a Fibonacci word F_k(x, W.x);
-   - W2 (lean/W2.lean, 239 lines, uses the main agent's Cor. 8(ii)): two data => survivor closed or atom-headed;
-   - W2+ (lean/W2F.lean, 232 lines): two data => survivor is a Fibonacci word F_k(x, y);
+   head machine plus the erasure rule [c, d] -> ch(c) at every head normal form (PROVED; checked against genuine
+   leftmost-outermost reduction, dmfaith.py).  Sibling: the right-spine machine RM (rm.py).
+2. DM capabilities (PROVED): Church booleans in tail position (S X Y => X, SS X Y => Y), application S(SS), identity
+   SSSS, selection gadget S(SS)(SS) E b => b (E b) (E (SS E) b).
+3. COMPLETE CLASSIFICATION of fuel-free generic DM rounds — MACHINE-CHECKED (Lean 4 core, no sorry):
+   - W1 (+W1-RM) lean/W1.lean; W1+ lean/W1F.lean: one datum => survivor closed, x, W.x or Fibonacci F_k(x, W.x);
+   - W2 lean/W2.lean (uses main agent's Cor. 8(ii)); W2+ lean/W2F.lean: two data => survivor F_k(x, y);
+   - comb rigidity lean/W2R.lean, lean/WR.lean: two data are carried across a round only by the empty code or a comb
+     S^(j)(S); one datum: closed pre-computation, ONE write, then a comb;
+   - corollary `shnf_two_vars` (WR.lean): M x y has an S-headed hnf only for M = S or M = S(comb j) (checked on
+     all 82,500 terms <= 12 leaves);
    - >= 3 data: no round end (main agent's Cor. 8(i)).
-   So between data executions the leftmost path can only erase, add ONE closed wrap, or apply the comb's
-   Fibonacci swap; two independent stores and transducer rounds are impossible at all sizes (generic data).
-   Bounded certificates agree (survcat, copycat <= 11, copycat2 <= 10, twostack, twostack2, probe2, growth1).
-4. Other orders: CBV/innermost — nf(b x) constant or fixed-prefix on string encodings (b <= 8), CBV iterations exact
-   linear recurrences (f <= 7); parallel clock channel argued contractive; Prop. CF covers head-fair orders.
-   W_reg with arbitrary regular redex selection: an 'order-as-CPU' emulation would need a cell factory, which S
-   lacks in small sizes (no self-embedding Q ->* C[Q] <= 11 leaves) — OPEN, not pursued.
-5. Negative searches: word rounds, self-transforming words, comb halving, periodic cells, RM long runs.
-Strongest concrete results: the machine-checked DM round classification (W1, W1+, W2, W2+).  No construction.
+   Caveat: 'fuel' (a closed element below the data, as in the reload cycle N_i N_k S) is outside these lemmas; the
+   fuel catalogs show it only adds 'append the same fuel constant to the datum' (fuelcat*.py, bounded).
+4. Other orders: CBV/innermost (nf(b x) constant or prefix-only, b <= 8; CBV iterations linear recurrences);
+   parallel clock channel argued contractive; Prop. CF covers head-fair orders; W_reg with arbitrary regular
+   selection would need a cell factory that S lacks in small sizes (no self-embedding term <= 11 leaves) — OPEN.
+5. Negative searches: word rounds, self-transforming words, comb halving, periodic cells, RM long runs, two stacks.
+Strongest concrete results: the machine-checked DM round classification and comb rigidity.  No construction.
 
 ## ~01:30 EDT  Direction chosen: the DESCENT MACHINE (leftmost-outermost along the leftmost Böhm path)
 * Observation (PROVED, elementary): leftmost-outermost evaluation restricted to the leftmost Böhm path is the

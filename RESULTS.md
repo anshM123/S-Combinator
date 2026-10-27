@@ -40,6 +40,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | Lemmas 11, 12 | `ReadCost.lean` | full-read principle (a normalising run reads at least one of any three marked arguments) and right-depth cost (reading at right-depth D costs at least D steps) |
 | Theorem N* (list form), Corollary N* (layer bound) | `NStar.lean` | potential bound for counters: along a Böhm-tree path that never reads the cores, the layers that can still be added above one counter are bounded by a potential that never increases — the core of Theorem O (no bounded-cost two-counter simulation) |
 | Theorem H, Corollaries H1–H3 | `TheoremH.lean` | code that never inspects its inputs behaves the same on every input class of M35: no pair of gadgets S g1 g2 can hold two data cleanly, only the six nest classes can hold two data, and no S-term can hold three |
+| Theorem U* | `TheoremUstar.lean` | a head run that starts without 'fuel' (no closed element directly below data) never creates any, even through zero tests that execute marked data: counter-transfer designs need fuel built into the program |
 | Theorems UR-R, UR-C | `URCore.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); very likely overlaps Waldmann's "Nimm Zwei" (1997) |
 
 **The two agents' programmes**

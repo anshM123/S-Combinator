@@ -1269,6 +1269,8 @@ on the left spine looked through, including inside marked terms) is closed-prefi
 full-spine form is necessary — K = [m S, M_y S, M_y S] with m = M_x(S S (M_y S)) satisfies F2 on spines that treat marks as
 opaque, fails full-spine F2, and violates F1 after one step.)
 *Theorem U\* (Theorem U survives zero tests).* If the initial list satisfies F1/F2, so does every later list, forever.
+[MACHINE-CHECKED (lean/TheoremUstar.lean, 2026-10-27; axioms propext, Quot.sound): `ustar`, with marked terms `mk t`, full
+spines that look through marks, F1 on lists and full-spine F2 on every subterm occurrence, exactly as stated here.]
 *Proof.* Step [a,b,c]++R ⇒ ch(a)++[c, b·c]++R. If a is closed, ch(a) is closed; by F1 either b, c are both closed (then
 b·c is closed), or b is closed and c data (b·c is data, with spine closed ++ [c]), or both are data; in every case
 [c, b·c] ++ R is closed-prefix ++ data-suffix and the new spine of b·c keeps F2 (if b's spine contains data, b is data, so c
