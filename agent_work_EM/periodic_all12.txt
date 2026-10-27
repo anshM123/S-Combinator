@@ -1,0 +1,2 @@
+all ['12', '2000'] time 194.0 {'leaf': 38250, 'bot': 20531, 'cap': 5}
+periodic walks (term, (first index, repeat index, jumps in cycle), flag): []

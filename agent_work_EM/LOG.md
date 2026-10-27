@@ -198,3 +198,121 @@ So TP_deep holds, and DP.EM_of_TP gives EM_deep.  Missing for a proof: the forma
 B* below every late copy, the base program's determinism), the transient before the first late K = 2 push, and the
 'stacks eventually two-level non-towers' hypothesis.  Status: ARGUED.  The machine-checked ingredients are DP.gamma_walk,
 DP.tower_letter_frozen, DP.no_SS_letter, DP.tw2_skips, DP.no_tw3_push, DP.EM_of_TP, SA.no_TT_chain, SA.no_scenarioA.
+
+## 11:40 EDT — MACHINE-CHECKED (vs compiled base): a strict cut at a K = 2 step forces a generalized Omega cycle
+* New namespace SC (wip/SC_part1-3.lean): SC.fib_next (the Fibonacci child is determined by H(top)), SC.twr2_decomp
+  (every term is S(SS)^n Y with Y not S(SS)-headed), SC.BaseChain / SC.base_run / SC.base_exists (the 'base program':
+  a finite chain of tail calls b 0 = Y, ..., b i0 followed by a step with K /= 1; it exists when the walk never
+  revisits the stack — via no_R2_chain — and it runs identically over every non-tower stack), SC.CycInv / SC.cyc_step /
+  SC.cyc_forever (the invariant of the generalized Omega cycle: nodes (S(SS)^k Y).(S(SS)^(m+1) Y), 1 <= k <= m, or
+  (b i).(S(SS)^(m+1) Y); it is preserved and every step is monotone).
+* SC.cut_monotone: u jump-free infinite leftmost walk; u t = q.σ, σ a non-tower, H(q) = S (S(SS)) c (a K = 2 step),
+  and ∀ e, msl (u t) < msl (u (t+1+e)) (t is a strict cut: the depth never comes back to the level of u t)  ⇒
+  ∀ e, 3 <= |args (u (t+e))| ∧ u (t+e+1) ≠ last argument of u (t+e).  I.e. from a K = 2 strict cut on, the walk is
+  EVENTUALLY MONOTONE (it is a generalized Omega cycle: S(SS)-skips, the base program, a CALL pushing S(SS)).
+  This is the formal core of the 11:28 'base action' argument (cases RET / K3 / CALL all handled).
+
+## 11:43 EDT — MACHINE-CHECKED (vs compiled base; full re-check running): case (b) reduced to a tower condition
+* SC.copy_monotone: u jump-free infinite, u t1 = σ.(c.σ) (σ a non-tower: a copy on top of the letter c), and the walk
+  never visits c.σ from t1 on  ⇒  monotone from t1 on.   (cut_monotone in copy form; no strict-cut hypothesis.)
+* SC.no_escape: u s = σ.(σ.Z) (σ, Z non-towers) and the walk never visits σ.Z from s on  ⇒  False.
+* SC.K3_monotone: any K = 3 step from q.σ (σ a non-tower, H(q) = S (tw 3) c) in a jump-free infinite walk is followed,
+  after finitely many steps, by a monotone walk (c = S(SS); the walk returns to σ.(S(SS).σ); copy_monotone).
+* SC.last_le: the last time t >= T with depth <= depth (u T) exists when the depth tends to infinity (a strict cut).
+* SC.EM_deep_nt: u jump-free, infinite, depth -> infinity, and stacks eventually non-towers  ⇒  u eventually monotone.
+  (Only the stack at ONE strict cut is used: K = 2 -> cut_monotone, K = 3 -> K3_monotone, K >= 4 -> reading lemma.)
+* SC.finite_half_of_J_NT: flag (u 0) = false, (J) eventually no jump nodes, (NT) [depth -> infinity ⇒ stacks
+  eventually non-towers]  ⇒  False.
+* MEANING: Conjecture EM_deep is now PROVED (machine-checked) up to the tower condition NT; together with case (a')
+  (CA.no_caseA) the leftmost finite half for flag-0 classes reduces to (J) finitely many jumps and (NT).
+  NT fails only in the scenario 'every strict cut sits on a tower stack S(S(...(SS)))' (the frozen limit stack is all S);
+  by FM.tower_grow such a stack can never grow by a single S letter at a computed step with a >= 2-argument top.
+
+## 11:46 EDT — full re-check: lean/EMA.lean (7,960 lines) LEAN OK — exit 0, 0 errors, no sorry (lean/EMA_check.txt)
+* All CA, DP and SC theorems compile in the single file; axioms only propext / Classical.choice / Quot.sound.
+* tower_cut_hunt.py 7 6 600: walks from S x S (tw m) and x.(tw m) (x <= 7 leaves, m <= 6): all 2,364 end — no
+  walk showing the tower scenario that (NT) excludes.  (Larger run 9 8 600 started.)
+
+## 11:48 EDT — ARGUED (partial): the tower scenario that (NT) excludes
+* If some strict cut of a deep jump-free walk has a non-tower stack, SC.EM_deep_nt's proof applies (it only uses the
+  stack at ONE strict cut).  So (NT) can fail only if every late strict cut sits on a tower stack tw m.  Then (argued,
+  from FM.tower_grow, final_app and the first-wrap structure of OM.cinv2_reach): the top is S x S, the child pushes S
+  at level m+1 (otherwise a frozen non-tower letter makes all later stacks non-towers), the second wrap pushes a
+  letter c2 /= S (a non-tower code letter: towers would give jump nodes), the walk later returns to c2.(tw (m+1)),
+  and the next strict cut sits on tw (m+1): a 'unary tower counter' that grows by one S per cycle.  Not excluded yet;
+  no example found (tower_cut_hunt.py; tp_check.py self 12 1000: the 9 long flag-1 self-applications with 12-leaf X
+  are 8 bounded-depth walks and 1 deep generalized-Omega walk, TP holds, no jump).
+
+## 11:51 EDT — tower scenario: structure (ARGUED) and search (EXPERIMENTALLY SUPPORTED)
+* tower_cut_hunt.py 9 8 600 (tower_cut_hunt_9.txt): walks from S x S (tw m) and x.(tw m), x <= 9 leaves, m <= 8:
+  32,895 end, 1 runs 600 nodes and is deep with non-tower strict cuts; none shows the tower scenario.
+* ARGUED refinement of the 11:48 entry: in the tower scenario, consecutive strict cuts at depths d and d+1 sit at
+  nodes (S x_d S).(tw (d-1)) and (S x_(d+1) S).(tw d); the returns to depth d+1 in between are R2-steps over the
+  tower fuel tw d (the SA3 analysis for tower fuels of height >= 2), and R2-steps into a term whose last argument is not
+  S S are syntactic (OM.R2_into), so the second-wrap letter c2 of the strict cut at d is S(SS)^r (S x_(d+1) S) and
+  H(x_d . tw (d-1)) = S x2 c2: the code x_(d+1) of the next cycle is read off the rightmost child of x_d.(tw (d-1)).
+  A 'unary tower counter' would need a self-reproducing code of this kind; none exists among the terms searched.
+
+## 11:52 EDT — MACHINE-CHECKED (vs compiled base; full re-check running): EM from ONE strict cut (SC.EM_of_cut)
+* SC.EM_of_cut: u jump-free infinite, t a strict cut (∀ e, msl (u t) < msl (u (t+1+e))) with ¬ Tower (rpart (u t))
+  ⇒ u eventually monotone.  No hypothesis on the depth otherwise.  (EM_deep_nt is the special case found by last_le.)
+* SC.finite_half_of_J_NT2: flag (u 0) = false, (J) ∃ N, ∀ j >= N, u j not a jump node, and (NT') for every such N,
+  if the depth tends to infinity there is a strict cut t >= N on a non-tower stack  ⇒  False.
+* So (NT') — 'a deep jump-free walk has a strict cut on a non-tower stack' — is all that is left of case (b); it fails
+  only in the 'unary tower counter' scenario of the 11:48 / 11:51 entries.
+
+## 11:54 EDT — ARGUED (roadmap, not proved): the anatomy of jumps — case (c) / conjecture (J)
+* By DP.jump_child, a jump node reached by a computed step over a non-tower stack v comes from one of: K = 1 with
+  c0 = S p (DISCARD jump: the target p is the argument of the rightmost child S p of the top; the stack is dropped);
+  K = 0 onto a stack level whose letter is S p (a DELAYED discard: the letter S p was pushed as c0 by an earlier K = 2
+  step whose copy-read returned); K = 2 with v = S.p (the target is the stack below an S letter, i.e. an OLDER STACK);
+  K = 3 with c0 = S (the target is the current stack).  In reading terms, a discard jump from a read top is the
+  reading of an S letter of a copy: the walk continues inside the copy-rest (an older stack), dropping the current one.
+* So (J) splits into: (J1) finitely many 'code' jumps (targets = arguments of rightmost children S p of tops), and
+  (J2) finitely many 'stack' jumps (targets = older stack suffixes; these lower the depth like pops).  Every 'death'
+  branch of the jump-free proofs in DP/SC that ends at a jump node is exactly where a walk with jumps continues, so a
+  proof of (J) can reuse those case splits.  Evidence: no infinite walk with more than one jump is known; periodic
+  walks (the simplest way to jump infinitely often) do not occur among all closed terms with <= 12 leaves
+  (periodic_hunt.py, see below).
+
+## FINAL (EM agent) — draft written 11:49 EDT (to be refreshed before 15:00)
+**Bottom line.  Case (a') of Conjecture EM is CLOSED and case (b) is closed up to one narrow tower condition, both
+MACHINE-CHECKED.  For every L36-flag-0 term, the leftmost Böhm path is finite provided (J) the walk makes only finitely
+many jumps and (NT) a deep walk eventually has non-tower stacks (SC.finite_half_of_J_NT).  Scenario A (depth bounded
+infinitely often) needs no conjecture any more (CA.depth_to_infinity), and EM_deep — every jump-free infinite walk with
+depth -> infinity is eventually monotone — is proved for walks with one strict cut on a non-tower stack
+(SC.EM_deep_nt).  The challenge is NOT solved; (J) and (NT) are open; no counterexample was found.**
+MACHINE-CHECKED: agent_work_EM/lean/EMA.lean (7,960 lines = agent_work_U/lean/FiniteHalfGen.lean verbatim + new
+namespaces CA, DP, SC); `cd code && python lean_check.py ../agent_work_EM/lean/EMA.lean`: exit 0, 0 errors,
+59 theorems checked, "LEAN OK: no errors, no sorry", axioms only propext / Classical.choice / Quot.sound (saved in
+agent_work_EM/lean/EMA_check.txt).  Notation: u : Nat → C.T an infinite leftmost walk (∀ j, FH.LChild (u j) (u (j+1))),
+'jump-free' = ∀ j p τ, u j ≠ S p τ, flag = FH.flag (L36), msl = right-spine depth, R x y = H(x) = S S y.
+ Case (a') [ns CA]:
+ * CA.chain_T2 (no flag): Reach (args (Q k)) [X k, Q (k+1)] ∧ Typed (X k) for all k ⇒ eventually ∃ y, R (X k) y.
+   (Typed = T1 SS / T2 / T3 S(SS) / T4 of SA4.return_types_S; helpers CA.T4_shape, CA.typed_dead, CA.step_types.)
+ * CA.no_caseA: flag (u 0) = false, jump-free, returns to nodes q.S infinitely often ⇒ False.
+ * CA.depth_to_infinity: flag (u 0) = false, jump-free ⇒ ∀ d, ∃ N, ∀ j >= N, d < msl (u j).
+ * CA.finite_half_of_J_EMdeep: flag 0 + (J) + [depth -> ∞ ⇒ eventually monotone] ⇒ False.
+ Deep walks [ns DP]:
+ * DP.gamma_node / DP.gamma_walk (reading lemma): jump-free, u t = (A.B).σ, B, σ non-towers ⇒ ∃ k <= 2,
+   A = tw (k+1) ∧ u (t+1) = Fw σ B k.
+ * DP.jump_child: Q >= 2 args, v non-tower, leftmost child of Q.v is S p τ ⇒ H(Q) = S (tw K) c0 with K = 0
+   (v = S p τ), 1 (c0 = S p, τ = v: discard jump), 2 (v = S p, τ = c0.v) or 3 (c0 = S, p = v).
+ * DP.tower_letter_frozen / DP.tower_letter_depth: a stack segment tw (k+1).ρ, once present, stays a proper suffix
+   forever and the depth never returns to its level.
+ * DP.EM_of_TP, DP.finite_half_of_J_TP: the tower-push reduction (superseded by SC, kept).
+ * DP.no_SS_letter: jump-free ⇒ no node X.(SS.ρ) with ρ a non-tower.   DP.tw2_skips: (S(SS)^n Y).X ⇒ Y.X after n
+   steps.   DP.no_tw3_push: no K = 2 step from q.(S(SS)^n (S(S(SS)).B)), B non-tower.
+ Strict cuts [ns SC]:
+ * SC.fib_next, SC.twr2_decomp, SC.BaseChain / base_run / base_exists, SC.CycInv / cyc_step / cyc_forever.
+ * SC.cut_monotone: jump-free, u t = q.σ, σ non-tower, H(q) = S (S(SS)) c, ∀ e, msl (u t) < msl (u (t+1+e))
+   ⇒ ∀ e, 3 <= |args (u (t+e))| ∧ u (t+e+1) ≠ rpart (u (t+e))  (a generalized Omega cycle from t on).
+ * SC.copy_monotone: jump-free, u t1 = σ.(c.σ), σ non-tower, c.σ never visited from t1 on ⇒ monotone from t1.
+ * SC.no_escape, SC.K3_monotone (any K = 3 step over a non-tower stack ⇒ monotone from some later time),
+   SC.last_le (strict cuts exist when depth -> ∞).
+ * SC.EM_deep_nt: jump-free, depth -> ∞, ∃ T, ∀ t >= T, ¬ Tower (rpart (u t)) ⇒ ∃ j0, ∀ j >= j0,
+   3 <= |args (u j)| ∧ u (j+1) ≠ rpart (u j).
+ * SC.finite_half_of_J_NT: flag (u 0) = false, (J) ∃ N, ∀ j >= N, u j not a jump node, (NT) [depth -> ∞ ⇒
+   ∃ T, ∀ t >= T, ¬ Tower (rpart (u t))] ⇒ False.
+OPEN: (J) finitely many jumps (case (c)); (NT) the 'unary tower counter' scenario (every late strict cut on a tower
+stack S(S(...(SS))); see the 11:48 entry).  Both are EXPERIMENTALLY SUPPORTED only.

@@ -967,3 +967,937 @@ end DP
 
 #print axioms DP.tw2_skips
 #print axioms DP.no_tw3_push
+
+/-! ## Strict cuts in deep walks — SC (agent_work_EM, 2026-10-27) -/
+
+namespace SC
+
+open C
+open C.T
+open FM
+open DP
+
+/-- the Fibonacci child is determined by H(b) -/
+theorem fib_next (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (s : Nat) (b X c : T) (K : Nat) (hX : ¬ Tower X) (hb : 2 ≤ (args b).length)
+    (hs : u s = app b X) (hK : Reach (args b) [tw K, c]) : u (s + 1) = Fw X c K := by
+  have hc := hchild s
+  rw [hs] at hc
+  rcases hc with ⟨hlen, _, _⟩ | ⟨_, dd, hrr⟩
+  · exfalso; rw [args_app] at hlen; simp at hlen; omega
+  obtain ⟨K', c', hK', hch⟩ := fib_step b X _ dd hb hX hrr
+  have e := RC.reach_det _ _ _ hK hK' (by simp) (by simp)
+  simp only [List.cons.injEq] at e
+  obtain ⟨h1, h2, _⟩ := e
+  have := SA3.tw_inj K K' h1
+  subst this; subst h2
+  exact hch
+
+/-- every term is S(SS)^n Y with Y not headed by the letter S(SS) -/
+theorem twr2_decomp : ∀ σ : T, ∃ n Y, σ = Twr2 Y n ∧ ∀ Y', Y ≠ app (tw 2) Y'
+  | S => ⟨0, S, rfl, fun Y' h => by cases h⟩
+  | app f x => by
+    by_cases hf : f = tw 2
+    · obtain ⟨n, Y, hx, hY⟩ := twr2_decomp x
+      exact ⟨n + 1, Y, by rw [hf, hx]; rfl, hY⟩
+    · exact ⟨0, app f x, rfl, fun Y' h => by
+        simp only [app.injEq] at h; exact hf h.1⟩
+
+/-- the base program: tail calls b 0 = Y, ..., b i0, then a step with K0 /= 1 -/
+def BaseChain (Y : T) (i0 : Nat) (b : Nat → T) (K0 : Nat) (c0 : T) : Prop :=
+  b 0 = Y ∧ (∀ i, i < i0 → 2 ≤ (args (b i)).length ∧ Reach (args (b i)) [tw 1, b (i + 1)]) ∧
+  2 ≤ (args (b i0)).length ∧ Reach (args (b i0)) [tw K0, c0] ∧ K0 ≠ 1
+
+/-- running the base program over any non-tower stack -/
+theorem base_run (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (Y : T) (i0 : Nat) (b : Nat → T) (K0 : Nat) (c0 : T) (hBC : BaseChain Y i0 b K0 c0)
+    (X : T) (hX : ¬ Tower X) (s : Nat) (hs : u s = app Y X) :
+    (∀ i, i ≤ i0 → u (s + i) = app (b i) X) ∧ u (s + i0 + 1) = Fw X c0 K0 := by
+  obtain ⟨hb0, htail, hlast2, hlast, _⟩ := hBC
+  have hrun : ∀ i, i ≤ i0 → u (s + i) = app (b i) X := by
+    intro i
+    induction i with
+    | zero => intro _; rw [hb0]; exact hs
+    | succ i ih =>
+      intro hi
+      obtain ⟨h2, hr⟩ := htail i (by omega)
+      have := fib_next u hchild (s + i) (b i) X (b (i + 1)) 1 hX h2 (ih (by omega)) hr
+      rw [show s + (i + 1) = s + i + 1 by omega]
+      exact this
+  exact ⟨hrun, fib_next u hchild (s + i0) (b i0) X c0 K0 hX hlast2 (hrun i0 (Nat.le_refl _)) hlast⟩
+
+/-- the base program exists when the walk never comes back to the stack X -/
+theorem base_exists (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (s : Nat) (Y X : T) (hX : ¬ Tower X)
+    (hs : u s = app Y X) (hnoX : ∀ e, u (s + e) ≠ X) :
+    ∃ i0 b K0 c0, BaseChain Y i0 b K0 c0 := by
+  let b : Nat → T := fun i => lchild (u (s + i))
+  -- one step from a node (b i).X
+  have hone : ∀ i, u (s + i) = app (b i) X → 2 ≤ (args (b i)).length ∧ ∃ K c,
+      Reach (args (b i)) [tw K, c] ∧ u (s + i + 1) = Fw X c K ∧ K ≠ 0 := by
+    intro i hi
+    have hc := hchild (s + i)
+    rw [hi] at hc
+    rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, dd, hrr⟩
+    · exfalso
+      rw [args_app] at hlen hrr
+      match hq : args (b i), hlen, hrr with
+      | [], _, hrr =>
+        simp only [List.nil_append, List.cons.injEq] at hrr
+        exact hnoX (i + 1) (by rw [show s + (i + 1) = s + i + 1 by omega]; exact hrr.1.symm)
+      | [p], _, _ => exact hnj (s + i) p X (by rw [hi, TC.args_one' (b i) p hq])
+      | _ :: _ :: _, hlen, _ => simp at hlen
+    · rw [args_app] at hlen
+      have h2 : 2 ≤ (args (b i)).length := by simp at hlen; omega
+      obtain ⟨K, c, hK, hch⟩ := fib_step (b i) X _ dd h2 hX hrr
+      refine ⟨h2, K, c, hK, hch, fun h0 => ?_⟩
+      subst h0
+      exact hnoX (i + 1) (by rw [show s + (i + 1) = s + i + 1 by omega]; exact hch)
+  have hb0 : u (s + 0) = app (b 0) X := by
+    show u (s + 0) = app (lchild (u (s + 0))) X
+    rw [Nat.add_zero, hs]; rfl
+  -- either some step has K /= 1, or all are tail calls (an infinite R2-chain)
+  refine Classical.byContradiction (fun hno => ?_)
+  have hall : ∀ i, u (s + i) = app (b i) X ∧ Reach (args (b i)) [tw 1, b (i + 1)] := by
+    intro i
+    induction i using Nat.strongRecOn with
+    | _ i ih =>
+      have hi : u (s + i) = app (b i) X := by
+        cases i with
+        | zero => exact hb0
+        | succ i' =>
+          have h := (ih i' (by omega)).1
+          obtain ⟨_, K, c, hK, hch, _⟩ := hone i' h
+          have hK1 := (ih i' (by omega)).2
+          have e := RC.reach_det _ _ _ hK hK1 (by simp) (by simp)
+          simp only [List.cons.injEq] at e
+          obtain ⟨e1, e2, _⟩ := e
+          have := SA3.tw_inj K 1 e1
+          subst this; subst e2
+          have hn : u (s + (i' + 1)) = app (b (i' + 1)) X := by
+            rw [show s + (i' + 1) = s + i' + 1 by omega]; exact hch
+          exact hn
+      refine ⟨hi, ?_⟩
+      obtain ⟨h2, K, c, hK, hch, hK0⟩ := hone i hi
+      by_cases hK1 : K = 1
+      · subst hK1
+        have hc' : c = b (i + 1) := by
+          show c = lchild (u (s + (i + 1)))
+          rw [show s + (i + 1) = s + i + 1 by omega, hch]; rfl
+        rw [← hc']; exact hK
+      · exfalso
+        apply hno
+        refine ⟨i, b, K, c, (by show lchild (u (s + 0)) = Y; rw [Nat.add_zero, hs]; rfl),
+          fun i' hi' => ?_, h2, hK, hK1⟩
+        have hp := (ih i' hi').2
+        refine ⟨(hone i' (ih i' hi').1).1, hp⟩
+  exact no_R2_chain b (fun i => (hall i).2)
+
+end SC
+
+#print axioms SC.fib_next
+#print axioms SC.twr2_decomp
+#print axioms SC.base_run
+#print axioms SC.base_exists
+
+namespace SC
+
+open C
+open C.T
+open FM
+open DP
+
+theorem Twr2_shift (Y : T) : ∀ k, Twr2 Y (k + 1) = Twr2 (app (tw 2) Y) k
+  | 0 => rfl
+  | k + 1 => by
+    show app (tw 2) (Twr2 Y (k + 1)) = app (tw 2) (Twr2 (app (tw 2) Y) k)
+    rw [Twr2_shift Y k]
+
+theorem size_app_ne (a b : T) : app a b ≠ b := OM.size_app_ne a b
+
+theorem msl_app (a b : T) : SA2.msl (app a b) = SA2.msl b + 1 := rfl
+
+/-- the invariant of the generalized Omega cycle with base program b (b 0 = Y) and push letter S(SS) -/
+def CycInv (Y : T) (i0 : Nat) (b : Nat → T) (x : T) : Prop :=
+  ∃ m, (∃ k, 1 ≤ k ∧ k ≤ m ∧ x = app (Twr2 Y k) (Twr2 Y (m + 1))) ∨
+    (∃ i, i ≤ i0 ∧ x = app (b i) (Twr2 Y (m + 1)))
+
+/-- one step of the cycle: the invariant is kept and the step is monotone (>= 3 args, child /= last argument) -/
+theorem cyc_step (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (Y : T) (hY : ¬ Tower Y) (i0 : Nat) (b : Nat → T)
+    (hBC : BaseChain Y i0 b 2 (tw 2)) (s : Nat) (hI : CycInv Y i0 b (u s)) :
+    CycInv Y i0 b (u (s + 1)) ∧ 3 ≤ (args (u s)).length ∧ u (s + 1) ≠ SA.rpart (u s) := by
+  obtain ⟨hb0, htail, hlast2, hlast, _⟩ := hBC
+  have hnt : ∀ k, ¬ Tower (Twr2 Y k) := Twr2_nontower Y hY
+  obtain ⟨m, ⟨k, hk1, hkm, hx⟩ | ⟨i, hi, hx⟩⟩ := hI
+  · -- a skip node
+    obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
+    have hx' : u s = app (app (tw 2) (Twr2 Y k')) (Twr2 Y (m + 1)) := hx
+    obtain ⟨kk, _, hkk, h1⟩ := gamma_walk u hchild hnj s (tw 2) _ _ hx' (hnt k') (hnt (m + 1))
+    have := SA3.tw_inj 2 (kk + 1) hkk
+    obtain rfl : kk = 1 := by omega
+    have e : Fw (Twr2 Y (m + 1)) (Twr2 Y k') 1 = app (Twr2 Y k') (Twr2 Y (m + 1)) := rfl
+    rw [e] at h1
+    refine ⟨?_, ?_, ?_⟩
+    · rw [h1]
+      cases k' with
+      | zero => exact ⟨m, Or.inr ⟨0, Nat.zero_le _, by rw [hb0]; rfl⟩⟩
+      | succ k'' => exact ⟨m, Or.inl ⟨k'' + 1, by omega, by omega, rfl⟩⟩
+    · rw [hx]; show 3 ≤ (args (Twr2 Y (k' + 1)) ++ [Twr2 Y (m + 1)]).length
+      show 3 ≤ (args (app (tw 2) (Twr2 Y k')) ++ [Twr2 Y (m + 1)]).length
+      simp [args, tw]
+    · rw [h1, hx]; exact size_app_ne _ _
+  · -- a base node
+    have h2 : 2 ≤ (args (b i)).length := by
+      by_cases h : i < i0
+      · exact (htail i h).1
+      · obtain rfl : i = i0 := by omega
+        exact hlast2
+    have h3 : 3 ≤ (args (u s)).length := by rw [hx, args_app]; simp; omega
+    by_cases hlt : i < i0
+    · obtain ⟨h2', hr⟩ := htail i hlt
+      have h1 := fib_next u hchild s (b i) _ (b (i + 1)) 1 (hnt (m + 1)) h2' hx hr
+      have e : Fw (Twr2 Y (m + 1)) (b (i + 1)) 1 = app (b (i + 1)) (Twr2 Y (m + 1)) := rfl
+      rw [e] at h1
+      refine ⟨⟨m, Or.inr ⟨i + 1, by omega, h1⟩⟩, h3, ?_⟩
+      rw [h1, hx]; exact size_app_ne _ _
+    · obtain rfl : i = i0 := by omega
+      have h1 := fib_next u hchild s (b i) _ (tw 2) 2 (hnt (m + 1)) hlast2 hx hlast
+      have e : Fw (Twr2 Y (m + 1)) (tw 2) 2 = app (Twr2 Y (m + 1)) (Twr2 Y (m + 2)) := rfl
+      rw [e] at h1
+      refine ⟨⟨m + 1, Or.inl ⟨m + 1, by omega, by omega, h1⟩⟩, h3, ?_⟩
+      rw [h1, hx]; simp only [SA.rpart]
+      intro h; have := congrArg size h; simp [size] at this
+      have := size_pos (Twr2 Y (m + 2)); have := size_pos (Twr2 Y (m + 1))
+      have : size (Twr2 Y (m + 2)) = size (tw 2) + size (Twr2 Y (m + 1)) := rfl
+      omega
+
+/-- the cycle runs forever and is monotone -/
+theorem cyc_forever (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (Y : T) (hY : ¬ Tower Y) (i0 : Nat) (b : Nat → T)
+    (hBC : BaseChain Y i0 b 2 (tw 2)) (s : Nat) (hI : CycInv Y i0 b (u s)) :
+    ∀ e, 3 ≤ (args (u (s + e))).length ∧ u (s + e + 1) ≠ SA.rpart (u (s + e)) := by
+  have hall : ∀ e, CycInv Y i0 b (u (s + e)) := by
+    intro e
+    induction e with
+    | zero => exact hI
+    | succ e ih =>
+      rw [show s + (e + 1) = s + e + 1 by omega]
+      exact (cyc_step u hchild hnj Y hY i0 b hBC (s + e) ih).1
+  intro e
+  exact (cyc_step u hchild hnj Y hY i0 b hBC (s + e) (hall e)).2
+
+end SC
+
+#print axioms SC.cyc_step
+#print axioms SC.cyc_forever
+
+namespace SC
+
+open C
+open C.T
+open FM
+open DP
+
+theorem twr2_tw2_nontower (Y : T) : ¬ Tower (app (tw 2) Y) := by
+  rintro ⟨m, hm⟩
+  cases m with
+  | zero => cases hm
+  | succ m =>
+    simp only [tw, app.injEq] at hm
+    exact absurd hm.1 (by intro h; cases h)
+
+/-- **Strict cut at a K = 2 step ⇒ the walk is a generalized Omega cycle from then on.**  In a jump-free infinite
+    leftmost walk, let t be a time whose node q.σ (σ a non-tower) makes a K = 2 step (H(q) = S (S(SS)) c) and after
+    which the depth never comes back to the level of u t.  Then from t on every node has >= 3 arguments and no child
+    is the node's last argument (eventually monotone).  Proof: σ = S(SS)^n Y; the copy is read (tw2_skips); Y cannot
+    be a tower, an SS- or S(S(SS))-headed letter over a non-tower (strict cut, no_tw3_push), so Y has a tower last
+    argument and starts a base program (base_exists); its final step cannot return (strict cut), K = 3 and K >= 4 die
+    (reading lemma, no_SS_letter), so it is a CALL; the reading lemma at the first two CALLs forces c = c0 = S(SS)
+    (no_SS_letter, no_tw3_push), and then the cycle invariant (cyc_forever) holds forever. -/
+theorem cut_monotone (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (t : Nat) (q σ c : T) (hu : u t = app q σ)
+    (hσ : ¬ Tower σ) (hq : 2 ≤ (args q).length) (hK : Reach (args q) [tw 2, c])
+    (hcut : ∀ e, SA2.msl (u t) < SA2.msl (u (t + 1 + e))) :
+    ∀ e, 3 ≤ (args (u (t + e))).length ∧ u (t + e + 1) ≠ SA.rpart (u (t + e)) := by
+  have h1 : u (t + 1) = app σ (app c σ) := fib_next u hchild t q σ c 2 hσ hq hu hK
+  have hcσ : ¬ Tower (app c σ) := app_nontower c σ hσ
+  have hnoX : ∀ e, u (t + 1 + e) ≠ app c σ := by
+    intro e h
+    have h2 := hcut e
+    rw [h, hu] at h2
+    simp only [SA2.msl] at h2
+    omega
+  obtain ⟨n, Y, hσY, hYn⟩ := twr2_decomp σ
+  -- Y is not a tower
+  have hY : ¬ Tower Y := by
+    rintro ⟨mY, hmY⟩
+    cases n with
+    | zero => exact hσ ⟨mY, by rw [hσY, hmY]; rfl⟩
+    | succ n1 =>
+      have hs := tw2_skips u hchild hnj (app (tw 2) Y) (app c σ) (twr2_tw2_nontower Y) hcσ n1 (t + 1)
+        (by rw [h1, hσY, Twr2_shift])
+      have hb2 : 2 ≤ (args (app (tw 2) Y)).length := by simp [args, tw]
+      have hr : Reach (args (app (tw 2) Y)) [tw 1, Y] := Reach.refl
+      have h2 := fib_next u hchild (t + 1 + n1) (app (tw 2) Y) (app c σ) Y 1 hcσ hb2 hs hr
+      have e1 : Fw (app c σ) Y 1 = app Y (app c σ) := rfl
+      rw [e1, hmY] at h2
+      cases mY with
+      | zero =>
+        have hc2 := hchild (t + 1 + n1 + 1)
+        rw [h2] at hc2
+        rcases hc2 with ⟨_, rest, hrr⟩ | ⟨hlen, _, _⟩
+        · simp only [tw, args, List.nil_append, List.cons.injEq] at hrr
+          exact hnoX (n1 + 2) (by rw [show t + 1 + (n1 + 2) = t + 1 + n1 + 1 + 1 by omega]; exact hrr.1.symm)
+        · simp [args, tw] at hlen
+      | succ m1 => exact hnj _ (tw m1) (app c σ) h2
+  have hs0 : u (t + 1 + n) = app Y (app c σ) :=
+    tw2_skips u hchild hnj Y (app c σ) hY hcσ n (t + 1) (by rw [h1, hσY])
+  -- Y = l.ρ
+  match Y, hY, hYn, hσY, hs0 with
+  | S, hY, _, _, _ => exact absurd ⟨0, rfl⟩ hY
+  | app l ρ, hY, hYn, hσY, hs0 =>
+  by_cases hρ : Tower ρ
+  · -- the base program
+    obtain ⟨i0, b, K0, c0, hBC⟩ := base_exists u hchild hnj (t + 1 + n) (app l ρ) (app c σ) hcσ hs0
+      (fun e => by rw [show t + 1 + n + e = t + 1 + (n + e) by omega]; exact hnoX (n + e))
+    obtain ⟨hrun, hend⟩ := base_run u hchild (app l ρ) i0 b K0 c0 hBC (app c σ) hcσ (t + 1 + n) hs0
+    have hK0ne : K0 ≠ 1 := hBC.2.2.2.2
+    have hlast : Reach (args (b i0)) [tw K0, c0] := hBC.2.2.2.1
+    have hcall : u (t + 1 + n + i0) = app (b i0) (app c σ) := hrun i0 (Nat.le_refl _)
+    match K0, hK0ne, hlast, hend with
+    | 0, _, _, hend =>
+      exact absurd hend (by rw [show t + 1 + n + i0 + 1 = t + 1 + (n + i0 + 1) by omega]; exact hnoX _)
+    | 1, hne, _, _ => exact absurd rfl hne
+    | 2, _, hlast, hend =>
+      -- first CALL: the reading lemma at the copy c.σ
+      have e2 : Fw (app c σ) c0 2 = app (app c σ) (app c0 (app c σ)) := rfl
+      rw [e2] at hend
+      have hc0X : ¬ Tower (app c0 (app c σ)) := app_nontower _ _ hcσ
+      obtain ⟨k, hk2, hk, hnext⟩ := gamma_walk u hchild hnj _ c σ _ hend hσ hc0X
+      match k, hk2, hk, hnext with
+      | 0, _, hk, _ =>
+        exact (no_SS_letter u hchild hnj (t + 1) σ σ hσ (by rw [h1, hk]; rfl)).elim
+      | 2, _, hk, _ =>
+        exact (no_tw3_push u hchild hnj (t + 1 + n + i0) (b i0) c0 σ 0 hσ (by rw [hcall, hk]; rfl)
+          hBC.2.2.1 hlast).elim
+      | 1, _, hk, hnext =>
+        -- c = S(SS); the second CALL forces c0 = S(SS)
+        have e3 : Fw (app c0 (app c σ)) σ 1 = app σ (app c0 (app c σ)) := rfl
+        rw [e3] at hnext
+        have hs1 := tw2_skips u hchild hnj (app l ρ) (app c0 (app c σ)) hY hc0X n _ (by rw [hnext, hσY])
+        have hrun2 := base_run u hchild (app l ρ) i0 b 2 c0 hBC (app c0 (app c σ)) hc0X _ hs1
+        have hend2 := hrun2.2
+        have hcall2 := hrun2.1 i0 (Nat.le_refl _)
+        have e4 : Fw (app c0 (app c σ)) c0 2 = app (app c0 (app c σ)) (app c0 (app c0 (app c σ))) := rfl
+        rw [e4] at hend2
+        obtain ⟨k2, hk22, hk2', _⟩ := gamma_walk u hchild hnj _ c0 (app c σ) _ hend2 hcσ (app_nontower _ _ hc0X)
+        match k2, hk22, hk2' with
+        | 0, _, hk2' =>
+          exact (no_SS_letter u hchild hnj (t + 1 + n + i0 + 1) (app c σ) (app c σ) hcσ
+            (by rw [hend, hk2']; rfl)).elim
+        | 2, _, hk2' =>
+          exact (no_tw3_push u hchild hnj _ (b i0) c0 (app c σ) 0 hcσ (by rw [hcall2, hk2']; rfl)
+            hBC.2.2.1 hlast).elim
+        | 1, _, hk2' =>
+          -- c = c0 = S(SS): the cycle invariant holds at t+1
+          have hBC' : BaseChain (app l ρ) i0 b 2 (tw 2) := by rw [← hk2']; exact hBC
+          have hI : CycInv (app l ρ) i0 b (u (t + 1)) := by
+            rw [h1, hσY, hk]
+            cases n with
+            | zero => exact ⟨0, Or.inr ⟨0, Nat.zero_le _, by rw [hBC.1]; rfl⟩⟩
+            | succ n1 => exact ⟨n1 + 1, Or.inl ⟨n1 + 1, by omega, Nat.le_refl _, rfl⟩⟩
+          have hmono := cyc_forever u hchild hnj (app l ρ) hY i0 b hBC' (t + 1) hI
+          intro e
+          cases e with
+          | zero =>
+            show 3 ≤ (args (u t)).length ∧ u (t + 1) ≠ SA.rpart (u t)
+            refine ⟨by rw [hu, args_app]; simp; omega, ?_⟩
+            rw [h1, hu]; simp only [SA.rpart]
+            intro h
+            have h2 := congrArg size h
+            have h3 : size (app σ (app c σ)) = size σ + size (app c σ) := rfl
+            have h4 := size_pos (app c σ)
+            omega
+          | succ e1 =>
+            have := hmono e1
+            rw [show t + 1 + e1 = t + (e1 + 1) by omega] at this
+            exact this
+    | 3, _, hlast, hend =>
+      exfalso
+      have e2 : Fw (app c σ) c0 3 = app (app c0 (app c σ)) (app (app c σ) (app c0 (app c σ))) := rfl
+      rw [e2] at hend
+      have hc0X : ¬ Tower (app c0 (app c σ)) := app_nontower _ _ hcσ
+      have hXc0X : ¬ Tower (app (app c σ) (app c0 (app c σ))) := app_nontower _ _ hc0X
+      obtain ⟨k, hk2, hk, hnext⟩ := gamma_walk u hchild hnj _ c0 (app c σ) _ hend hcσ hXc0X
+      match k, hk2, hk, hnext with
+      | 0, _, hk, hnext =>
+        exact no_SS_letter u hchild hnj _ (app c σ) (app c σ) hcσ (by rw [hnext, hk]; rfl)
+      | 2, _, _, hnext =>
+        obtain ⟨k3, _, hk3, _⟩ := gamma_walk u hchild hnj _ (app c σ) _ _ hnext hc0X (app_nontower _ _ hXc0X)
+        exact hcσ ⟨k3 + 1, hk3⟩
+      | 1, _, hk, hnext =>
+        have e3 : Fw (app (app c σ) (app c0 (app c σ))) (app c σ) 1 =
+            app (app c σ) (app (app c σ) (app c0 (app c σ))) := rfl
+        rw [e3] at hnext
+        obtain ⟨k1, hk12, hk1, hnext2⟩ := gamma_walk u hchild hnj _ c σ _ hnext hσ hXc0X
+        match k1, hk12, hk1, hnext2 with
+        | 0, _, hk1, _ => exact no_SS_letter u hchild hnj (t + 1) σ σ hσ (by rw [h1, hk1]; rfl)
+        | 2, _, _, hnext2 =>
+          obtain ⟨k3, _, hk3, _⟩ := gamma_walk u hchild hnj _ (app c σ) _ _ hnext2
+            hc0X (app_nontower _ _ hXc0X)
+          exact hcσ ⟨k3 + 1, hk3⟩
+        | 1, _, _, hnext2 =>
+          have e4 : Fw (app (app c σ) (app c0 (app c σ))) σ 1 =
+              app σ (app (app c σ) (app c0 (app c σ))) := rfl
+          rw [e4] at hnext2
+          have hs2 := tw2_skips u hchild hnj (app l ρ) _ hY hXc0X n _ (by rw [hnext2, hσY])
+          have hend3 := (base_run u hchild (app l ρ) i0 b 3 c0 hBC _ hXc0X _ hs2).2
+          have e5 : ∀ W : T, Fw W c0 3 = app (app c0 W) (app W (app c0 W)) := fun W => rfl
+          rw [e5] at hend3
+          obtain ⟨k4, _, hk4, hnext4⟩ := gamma_walk u hchild hnj _ c0 _ _ hend3 hXc0X
+            (app_nontower _ _ (app_nontower _ _ hXc0X))
+          have hk4' : k4 = 1 := by
+            have := SA3.tw_inj (k4 + 1) 2 (by rw [← hk4, hk])
+            omega
+          subst hk4'
+          have e6 : ∀ W : T, Fw (app W (app c0 W)) W 1 = app W (app W (app c0 W)) := fun W => rfl
+          rw [e6] at hnext4
+          obtain ⟨k5, _, hk5, _⟩ := gamma_walk u hchild hnj _ (app c σ) (app c0 (app c σ)) _
+            hnext4 hc0X (app_nontower _ _ (app_nontower _ _ hXc0X))
+          exact hcσ ⟨k5 + 1, hk5⟩
+    | K + 4, _, _, hend =>
+      exfalso
+      have hnt : ∀ i, ¬ Tower (Fw (app c σ) c0 i) := fun i => SA3.fw_nontower _ c0 hcσ i
+      have e : Fw (app c σ) c0 (K + 4) =
+          app (app (Fw (app c σ) c0 K) (Fw (app c σ) c0 (K + 1))) (Fw (app c σ) c0 (K + 3)) := by
+        rw [show K + 4 = (K + 2) + 2 by omega, Fw_add2, Fw_add2]
+      rw [e] at hend
+      obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj _ _ _ _ hend (hnt (K + 1)) (hnt (K + 3))
+      exact hnt K ⟨k1 + 1, hk1⟩
+  · -- ρ is a non-tower: the reading lemma at Y.(c.σ)
+    exfalso
+    obtain ⟨k, _, hk, hnext⟩ := gamma_walk u hchild hnj (t + 1 + n) l ρ (app c σ) hs0 hρ hcσ
+    match k, hk, hnext with
+    | 0, _, hnext => exact hnoX (n + 1) (by rw [show t + 1 + (n + 1) = t + 1 + n + 1 by omega]; exact hnext)
+    | 1, hk, _ => exact hYn ρ (by rw [hk])
+    | 2, hk, _ =>
+      exact no_tw3_push u hchild hnj t q c ρ n hρ (by rw [hu, hσY, hk]) hq hK
+    | k + 3, _, _ => omega
+
+theorem copy_monotone (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (t1 : Nat) (σ c : T)
+    (h1 : u t1 = app σ (app c σ)) (hσ : ¬ Tower σ) (hnoX : ∀ e, u (t1 + e) ≠ app c σ) :
+    ∀ e, 3 ≤ (args (u (t1 + e))).length ∧ u (t1 + e + 1) ≠ SA.rpart (u (t1 + e)) := by
+  have hcσ : ¬ Tower (app c σ) := app_nontower c σ hσ
+  obtain ⟨n, Y, hσY, hYn⟩ := twr2_decomp σ
+  -- Y is not a tower
+  have hY : ¬ Tower Y := by
+    rintro ⟨mY, hmY⟩
+    cases n with
+    | zero => exact hσ ⟨mY, by rw [hσY, hmY]; rfl⟩
+    | succ n1 =>
+      have hs := tw2_skips u hchild hnj (app (tw 2) Y) (app c σ) (twr2_tw2_nontower Y) hcσ n1 (t1)
+        (by rw [h1, hσY, Twr2_shift])
+      have hb2 : 2 ≤ (args (app (tw 2) Y)).length := by simp [args, tw]
+      have hr : Reach (args (app (tw 2) Y)) [tw 1, Y] := Reach.refl
+      have h2 := fib_next u hchild (t1 + n1) (app (tw 2) Y) (app c σ) Y 1 hcσ hb2 hs hr
+      have e1 : Fw (app c σ) Y 1 = app Y (app c σ) := rfl
+      rw [e1, hmY] at h2
+      cases mY with
+      | zero =>
+        have hc2 := hchild (t1 + n1 + 1)
+        rw [h2] at hc2
+        rcases hc2 with ⟨_, rest, hrr⟩ | ⟨hlen, _, _⟩
+        · simp only [tw, args, List.nil_append, List.cons.injEq] at hrr
+          exact hnoX (n1 + 2) (by rw [show t1 + (n1 + 2) = t1 + n1 + 1 + 1 by omega]; exact hrr.1.symm)
+        · simp [args, tw] at hlen
+      | succ m1 => exact hnj _ (tw m1) (app c σ) h2
+  have hs0 : u (t1 + n) = app Y (app c σ) :=
+    tw2_skips u hchild hnj Y (app c σ) hY hcσ n (t1) (by rw [h1, hσY])
+  -- Y = l.ρ
+  match Y, hY, hYn, hσY, hs0 with
+  | S, hY, _, _, _ => exact absurd ⟨0, rfl⟩ hY
+  | app l ρ, hY, hYn, hσY, hs0 =>
+  by_cases hρ : Tower ρ
+  · -- the base program
+    obtain ⟨i0, b, K0, c0, hBC⟩ := base_exists u hchild hnj (t1 + n) (app l ρ) (app c σ) hcσ hs0
+      (fun e => by rw [show t1 + n + e = t1 + (n + e) by omega]; exact hnoX (n + e))
+    obtain ⟨hrun, hend⟩ := base_run u hchild (app l ρ) i0 b K0 c0 hBC (app c σ) hcσ (t1 + n) hs0
+    have hK0ne : K0 ≠ 1 := hBC.2.2.2.2
+    have hlast : Reach (args (b i0)) [tw K0, c0] := hBC.2.2.2.1
+    have hcall : u (t1 + n + i0) = app (b i0) (app c σ) := hrun i0 (Nat.le_refl _)
+    match K0, hK0ne, hlast, hend with
+    | 0, _, _, hend =>
+      exact absurd hend (by rw [show t1 + n + i0 + 1 = t1 + (n + i0 + 1) by omega]; exact hnoX _)
+    | 1, hne, _, _ => exact absurd rfl hne
+    | 2, _, hlast, hend =>
+      -- first CALL: the reading lemma at the copy c.σ
+      have e2 : Fw (app c σ) c0 2 = app (app c σ) (app c0 (app c σ)) := rfl
+      rw [e2] at hend
+      have hc0X : ¬ Tower (app c0 (app c σ)) := app_nontower _ _ hcσ
+      obtain ⟨k, hk2, hk, hnext⟩ := gamma_walk u hchild hnj _ c σ _ hend hσ hc0X
+      match k, hk2, hk, hnext with
+      | 0, _, hk, _ =>
+        exact (no_SS_letter u hchild hnj (t1) σ σ hσ (by rw [h1, hk]; rfl)).elim
+      | 2, _, hk, _ =>
+        exact (no_tw3_push u hchild hnj (t1 + n + i0) (b i0) c0 σ 0 hσ (by rw [hcall, hk]; rfl)
+          hBC.2.2.1 hlast).elim
+      | 1, _, hk, hnext =>
+        -- c = S(SS); the second CALL forces c0 = S(SS)
+        have e3 : Fw (app c0 (app c σ)) σ 1 = app σ (app c0 (app c σ)) := rfl
+        rw [e3] at hnext
+        have hs1 := tw2_skips u hchild hnj (app l ρ) (app c0 (app c σ)) hY hc0X n _ (by rw [hnext, hσY])
+        have hrun2 := base_run u hchild (app l ρ) i0 b 2 c0 hBC (app c0 (app c σ)) hc0X _ hs1
+        have hend2 := hrun2.2
+        have hcall2 := hrun2.1 i0 (Nat.le_refl _)
+        have e4 : Fw (app c0 (app c σ)) c0 2 = app (app c0 (app c σ)) (app c0 (app c0 (app c σ))) := rfl
+        rw [e4] at hend2
+        obtain ⟨k2, hk22, hk2', _⟩ := gamma_walk u hchild hnj _ c0 (app c σ) _ hend2 hcσ (app_nontower _ _ hc0X)
+        match k2, hk22, hk2' with
+        | 0, _, hk2' =>
+          exact (no_SS_letter u hchild hnj (t1 + n + i0 + 1) (app c σ) (app c σ) hcσ
+            (by rw [hend, hk2']; rfl)).elim
+        | 2, _, hk2' =>
+          exact (no_tw3_push u hchild hnj _ (b i0) c0 (app c σ) 0 hcσ (by rw [hcall2, hk2']; rfl)
+            hBC.2.2.1 hlast).elim
+        | 1, _, hk2' =>
+          -- c = c0 = S(SS): the cycle invariant holds at t+1
+          have hBC' : BaseChain (app l ρ) i0 b 2 (tw 2) := by rw [← hk2']; exact hBC
+          have hI : CycInv (app l ρ) i0 b (u (t1)) := by
+            rw [h1, hσY, hk]
+            cases n with
+            | zero => exact ⟨0, Or.inr ⟨0, Nat.zero_le _, by rw [hBC.1]; rfl⟩⟩
+            | succ n1 => exact ⟨n1 + 1, Or.inl ⟨n1 + 1, by omega, Nat.le_refl _, rfl⟩⟩
+          have hmono := cyc_forever u hchild hnj (app l ρ) hY i0 b hBC' (t1) hI
+          exact hmono
+    | 3, _, hlast, hend =>
+      exfalso
+      have e2 : Fw (app c σ) c0 3 = app (app c0 (app c σ)) (app (app c σ) (app c0 (app c σ))) := rfl
+      rw [e2] at hend
+      have hc0X : ¬ Tower (app c0 (app c σ)) := app_nontower _ _ hcσ
+      have hXc0X : ¬ Tower (app (app c σ) (app c0 (app c σ))) := app_nontower _ _ hc0X
+      obtain ⟨k, hk2, hk, hnext⟩ := gamma_walk u hchild hnj _ c0 (app c σ) _ hend hcσ hXc0X
+      match k, hk2, hk, hnext with
+      | 0, _, hk, hnext =>
+        exact no_SS_letter u hchild hnj _ (app c σ) (app c σ) hcσ (by rw [hnext, hk]; rfl)
+      | 2, _, _, hnext =>
+        obtain ⟨k3, _, hk3, _⟩ := gamma_walk u hchild hnj _ (app c σ) _ _ hnext hc0X (app_nontower _ _ hXc0X)
+        exact hcσ ⟨k3 + 1, hk3⟩
+      | 1, _, hk, hnext =>
+        have e3 : Fw (app (app c σ) (app c0 (app c σ))) (app c σ) 1 =
+            app (app c σ) (app (app c σ) (app c0 (app c σ))) := rfl
+        rw [e3] at hnext
+        obtain ⟨k1, hk12, hk1, hnext2⟩ := gamma_walk u hchild hnj _ c σ _ hnext hσ hXc0X
+        match k1, hk12, hk1, hnext2 with
+        | 0, _, hk1, _ => exact no_SS_letter u hchild hnj (t1) σ σ hσ (by rw [h1, hk1]; rfl)
+        | 2, _, _, hnext2 =>
+          obtain ⟨k3, _, hk3, _⟩ := gamma_walk u hchild hnj _ (app c σ) _ _ hnext2
+            hc0X (app_nontower _ _ hXc0X)
+          exact hcσ ⟨k3 + 1, hk3⟩
+        | 1, _, _, hnext2 =>
+          have e4 : Fw (app (app c σ) (app c0 (app c σ))) σ 1 =
+              app σ (app (app c σ) (app c0 (app c σ))) := rfl
+          rw [e4] at hnext2
+          have hs2 := tw2_skips u hchild hnj (app l ρ) _ hY hXc0X n _ (by rw [hnext2, hσY])
+          have hend3 := (base_run u hchild (app l ρ) i0 b 3 c0 hBC _ hXc0X _ hs2).2
+          have e5 : ∀ W : T, Fw W c0 3 = app (app c0 W) (app W (app c0 W)) := fun W => rfl
+          rw [e5] at hend3
+          obtain ⟨k4, _, hk4, hnext4⟩ := gamma_walk u hchild hnj _ c0 _ _ hend3 hXc0X
+            (app_nontower _ _ (app_nontower _ _ hXc0X))
+          have hk4' : k4 = 1 := by
+            have := SA3.tw_inj (k4 + 1) 2 (by rw [← hk4, hk])
+            omega
+          subst hk4'
+          have e6 : ∀ W : T, Fw (app W (app c0 W)) W 1 = app W (app W (app c0 W)) := fun W => rfl
+          rw [e6] at hnext4
+          obtain ⟨k5, _, hk5, _⟩ := gamma_walk u hchild hnj _ (app c σ) (app c0 (app c σ)) _
+            hnext4 hc0X (app_nontower _ _ (app_nontower _ _ hXc0X))
+          exact hcσ ⟨k5 + 1, hk5⟩
+    | K + 4, _, _, hend =>
+      exfalso
+      have hnt : ∀ i, ¬ Tower (Fw (app c σ) c0 i) := fun i => SA3.fw_nontower _ c0 hcσ i
+      have e : Fw (app c σ) c0 (K + 4) =
+          app (app (Fw (app c σ) c0 K) (Fw (app c σ) c0 (K + 1))) (Fw (app c σ) c0 (K + 3)) := by
+        rw [show K + 4 = (K + 2) + 2 by omega, Fw_add2, Fw_add2]
+      rw [e] at hend
+      obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj _ _ _ _ hend (hnt (K + 1)) (hnt (K + 3))
+      exact hnt K ⟨k1 + 1, hk1⟩
+  · -- ρ is a non-tower: the reading lemma at Y.(c.σ)
+    exfalso
+    obtain ⟨k, _, hk, hnext⟩ := gamma_walk u hchild hnj (t1 + n) l ρ (app c σ) hs0 hρ hcσ
+    match k, hk, hnext with
+    | 0, _, hnext => exact hnoX (n + 1) (by rw [show t1 + (n + 1) = t1 + n + 1 by omega]; exact hnext)
+    | 1, hk, _ => exact hYn ρ (by rw [hk])
+    | 2, hk, hnext =>
+      have e7 : Fw (app c σ) ρ 2 = app (app c σ) (app ρ (app c σ)) := rfl
+      rw [e7] at hnext
+      have hρcσ : ¬ Tower (app ρ (app c σ)) := app_nontower _ _ hcσ
+      obtain ⟨k1, hk12, hk1, hnext2⟩ := gamma_walk u hchild hnj _ c σ _ hnext hσ hρcσ
+      match k1, hk12, hk1, hnext2 with
+      | 0, _, hk1, _ => exact no_SS_letter u hchild hnj t1 σ σ hσ (by rw [h1, hk1]; rfl)
+      | 2, _, _, hnext2 =>
+        have e8 : Fw (app ρ (app c σ)) σ 2 = app (app ρ (app c σ)) (app σ (app ρ (app c σ))) := rfl
+        rw [e8] at hnext2
+        obtain ⟨k3, _, hk3, _⟩ := gamma_walk u hchild hnj _ ρ (app c σ) _ hnext2 hcσ (app_nontower _ _ hρcσ)
+        exact hρ ⟨k3 + 1, hk3⟩
+      | 1, _, _, hnext2 =>
+        have e8 : Fw (app ρ (app c σ)) σ 1 = app σ (app ρ (app c σ)) := rfl
+        rw [e8] at hnext2
+        have hs3 := tw2_skips u hchild hnj (app l ρ) _ hY hρcσ n _ (by rw [hnext2, hσY])
+        rw [hk] at hs3
+        obtain ⟨k4, _, hk4, hnext4⟩ := gamma_walk u hchild hnj _ (tw 3) ρ _ hs3 hρ hρcσ
+        have hk4' : k4 = 2 := by have := SA3.tw_inj 3 (k4 + 1) hk4; omega
+        subst hk4'
+        have e9 : Fw (app ρ (app c σ)) ρ 2 = app (app ρ (app c σ)) (app ρ (app ρ (app c σ))) := rfl
+        rw [e9] at hnext4
+        obtain ⟨k5, _, hk5, _⟩ := gamma_walk u hchild hnj _ ρ (app c σ) _ hnext4 hcσ (app_nontower _ _ hρcσ)
+        exact hρ ⟨k5 + 1, hk5⟩
+    | k + 3, _, _ => omega
+
+
+end SC
+
+#print axioms SC.cut_monotone
+
+namespace SC
+
+open C
+open C.T
+open FM
+open DP
+
+/-- **A read of a copy over a stack it cannot leave dies.**  If u s = σ.(σ.Z) (σ, Z non-towers) and the walk never
+    visits σ.Z from s on, we get a contradiction: the copy σ is read (S(SS)-skips), and its first other letter, its
+    base program's final step, or the copied stack met as a letter, all lead to a jump node, to σ.Z, or to a node that
+    contradicts the reading lemma. -/
+theorem no_escape (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (s : Nat) (σ Z : T) (hσ : ¬ Tower σ) (hZ : ¬ Tower Z)
+    (hs : u s = app σ (app σ Z)) (hno : ∀ e, u (s + e) ≠ app σ Z) : False := by
+  have hX : ¬ Tower (app σ Z) := app_nontower _ _ hZ
+  obtain ⟨n, Y, hσY, hYn⟩ := twr2_decomp σ
+  have hY : ¬ Tower Y := by
+    rintro ⟨mY, hmY⟩
+    cases n with
+    | zero => exact hσ ⟨mY, by rw [hσY, hmY]; rfl⟩
+    | succ n1 =>
+      have hs1 := tw2_skips u hchild hnj (app (tw 2) Y) (app σ Z) (twr2_tw2_nontower Y) hX n1 s
+        (by rw [hs]; conv => lhs; arg 1; rw [hσY, Twr2_shift])
+      have hb2 : 2 ≤ (args (app (tw 2) Y)).length := by simp [args, tw]
+      have hr : Reach (args (app (tw 2) Y)) [tw 1, Y] := Reach.refl
+      have h2 := fib_next u hchild (s + n1) (app (tw 2) Y) (app σ Z) Y 1 hX hb2 hs1 hr
+      have e1 : Fw (app σ Z) Y 1 = app Y (app σ Z) := rfl
+      rw [e1, hmY] at h2
+      cases mY with
+      | zero =>
+        have hc2 := hchild (s + n1 + 1)
+        rw [h2] at hc2
+        rcases hc2 with ⟨_, rest, hrr⟩ | ⟨hlen, _, _⟩
+        · simp only [tw, args, List.nil_append, List.cons.injEq] at hrr
+          exact hno (n1 + 2) (by rw [show s + (n1 + 2) = s + n1 + 1 + 1 by omega]; exact hrr.1.symm)
+        · simp [args, tw] at hlen
+      | succ m1 => exact hnj _ (tw m1) (app σ Z) h2
+  have hs0 : u (s + n) = app Y (app σ Z) :=
+    tw2_skips u hchild hnj Y (app σ Z) hY hX n s (by rw [hs]; conv => lhs; arg 1; rw [hσY])
+  match Y, hY, hYn, hσY, hs0 with
+  | S, hY, _, _, _ => exact hY ⟨0, rfl⟩
+  | app l ρ, hY, hYn, hσY, hs0 =>
+  by_cases hρ : Tower ρ
+  · obtain ⟨i0, b, K0, c0, hBC⟩ := base_exists u hchild hnj (s + n) (app l ρ) (app σ Z) hX hs0
+      (fun e => by rw [show s + n + e = s + (n + e) by omega]; exact hno (n + e))
+    have hend := (base_run u hchild (app l ρ) i0 b K0 c0 hBC (app σ Z) hX (s + n) hs0).2
+    have hK0ne : K0 ≠ 1 := hBC.2.2.2.2
+    have hc0X : ¬ Tower (app c0 (app σ Z)) := app_nontower _ _ hX
+    match K0, hK0ne, hend with
+    | 0, _, hend => exact hno (n + i0 + 1) (by rw [show s + (n + i0 + 1) = s + n + i0 + 1 by omega]; exact hend)
+    | 1, hne, _ => exact hne rfl
+    | 2, _, hend =>
+      have e2 : Fw (app σ Z) c0 2 = app (app σ Z) (app c0 (app σ Z)) := rfl
+      rw [e2] at hend
+      obtain ⟨k, _, hk, _⟩ := gamma_walk u hchild hnj _ σ Z _ hend hZ hc0X
+      exact hσ ⟨k + 1, hk⟩
+    | 3, _, hend =>
+      have e3 : Fw (app σ Z) c0 3 = app (app c0 (app σ Z)) (app (app σ Z) (app c0 (app σ Z))) := rfl
+      rw [e3] at hend
+      have hXc : ¬ Tower (app (app σ Z) (app c0 (app σ Z))) := app_nontower _ _ hc0X
+      obtain ⟨k, hk2, hk, hnext⟩ := gamma_walk u hchild hnj _ c0 (app σ Z) _ hend hX hXc
+      match k, hk2, hk, hnext with
+      | 0, _, hk, hnext =>
+        exact no_SS_letter u hchild hnj _ (app σ Z) (app σ Z) hX (by rw [hnext, hk]; rfl)
+      | 1, _, _, hnext =>
+        have e4 : Fw (app (app σ Z) (app c0 (app σ Z))) (app σ Z) 1 =
+            app (app σ Z) (app (app σ Z) (app c0 (app σ Z))) := rfl
+        rw [e4] at hnext
+        obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj _ σ Z _ hnext hZ hXc
+        exact hσ ⟨k1 + 1, hk1⟩
+      | 2, _, _, hnext =>
+        have e4 : Fw (app (app σ Z) (app c0 (app σ Z))) (app σ Z) 2 =
+            app (app (app σ Z) (app c0 (app σ Z))) (app (app σ Z) (app (app σ Z) (app c0 (app σ Z)))) := rfl
+        rw [e4] at hnext
+        obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj _ (app σ Z) _ _ hnext hc0X (app_nontower _ _ hXc)
+        exact hX ⟨k1 + 1, hk1⟩
+    | K + 4, _, hend =>
+      have hnt : ∀ i, ¬ Tower (Fw (app σ Z) c0 i) := fun i => SA3.fw_nontower _ c0 hX i
+      have e : Fw (app σ Z) c0 (K + 4) =
+          app (app (Fw (app σ Z) c0 K) (Fw (app σ Z) c0 (K + 1))) (Fw (app σ Z) c0 (K + 3)) := by
+        rw [show K + 4 = (K + 2) + 2 by omega, Fw_add2, Fw_add2]
+      rw [e] at hend
+      obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj _ _ _ _ hend (hnt (K + 1)) (hnt (K + 3))
+      exact hnt K ⟨k1 + 1, hk1⟩
+  · obtain ⟨k, _, hk, hnext⟩ := gamma_walk u hchild hnj (s + n) l ρ (app σ Z) hs0 hρ hX
+    match k, hk, hnext with
+    | 0, _, hnext => exact hno (n + 1) (by rw [show s + (n + 1) = s + n + 1 by omega]; exact hnext)
+    | 1, hk, _ => exact hYn ρ (by rw [hk])
+    | 2, _, hnext =>
+      have e5 : Fw (app σ Z) ρ 2 = app (app σ Z) (app ρ (app σ Z)) := rfl
+      rw [e5] at hnext
+      obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj _ σ Z _ hnext hZ (app_nontower _ _ hX)
+      exact hσ ⟨k1 + 1, hk1⟩
+    | k + 3, _, _ => omega
+
+/-- **A K = 3 step leads to a generalized Omega cycle.**  In a jump-free infinite leftmost walk, a computed step from
+    q.σ (σ a non-tower) with H(q) = S (tw 3) c is followed, after finitely many steps, by a monotone walk: c is S(SS)
+    (reading lemma, no_SS_letter), the walk must come back to σ.(S(SS).σ) (no_escape), and from there copy_monotone
+    applies (the letter S(SS) over σ is a jump node, never visited). -/
+theorem K3_monotone (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (t : Nat) (q σ c : T) (hu : u t = app q σ)
+    (hσ : ¬ Tower σ) (hq : 2 ≤ (args q).length) (hK : Reach (args q) [tw 3, c]) :
+    ∃ t2, ∀ e, 3 ≤ (args (u (t2 + e))).length ∧ u (t2 + e + 1) ≠ SA.rpart (u (t2 + e)) := by
+  have h1 := fib_next u hchild t q σ c 3 hσ hq hu hK
+  have e1 : Fw σ c 3 = app (app c σ) (app σ (app c σ)) := rfl
+  rw [e1] at h1
+  have hcσ : ¬ Tower (app c σ) := app_nontower _ _ hσ
+  have hσcσ : ¬ Tower (app σ (app c σ)) := app_nontower _ _ hcσ
+  obtain ⟨k, hk2, hk, hnext⟩ := gamma_walk u hchild hnj (t + 1) c σ _ h1 hσ hσcσ
+  match k, hk2, hk, hnext with
+  | 0, _, hk, hnext =>
+    exact (no_SS_letter u hchild hnj (t + 1 + 1) σ σ hσ (by rw [hnext, hk]; rfl)).elim
+  | 2, _, _, hnext =>
+    have e2 : Fw (app σ (app c σ)) σ 2 = app (app σ (app c σ)) (app σ (app σ (app c σ))) := rfl
+    rw [e2] at hnext
+    obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj _ σ (app c σ) _ hnext hcσ (app_nontower _ _ hσcσ)
+    exact (hσ ⟨k1 + 1, hk1⟩).elim
+  | 1, _, hk, hnext =>
+    have e2 : Fw (app σ (app c σ)) σ 1 = app σ (app σ (app c σ)) := rfl
+    rw [e2] at hnext
+    -- the walk comes back to σ.(c.σ)
+    have hback : ∃ e, u (t + 1 + 1 + e) = app σ (app c σ) := by
+      refine Classical.byContradiction (fun hno => ?_)
+      exact no_escape u hchild hnj (t + 1 + 1) σ (app c σ) hσ hcσ hnext
+        (fun e he => hno ⟨e, he⟩)
+    obtain ⟨e0, he0⟩ := hback
+    refine ⟨t + 1 + 1 + e0, copy_monotone u hchild hnj (t + 1 + 1 + e0) σ c he0 hσ (fun e he => ?_)⟩
+    exact hnj _ (tw 1) σ (by rw [he, hk]; rfl)
+
+theorem last_le (f : Nat → Nat) (d T : Nat) (hT : f T ≤ d) :
+    ∀ M, T < M → (∀ j, M ≤ j → d < f j) → ∃ t, T ≤ t ∧ f t ≤ d ∧ ∀ e, d < f (t + 1 + e) := by
+  intro M
+  induction M with
+  | zero => intro h; omega
+  | succ M ih =>
+    intro hTM hM
+    by_cases hfM : f M ≤ d
+    · refine ⟨M, by omega, hfM, fun e => hM _ (by omega)⟩
+    · by_cases hTM' : T < M
+      · exact ih hTM' (fun j hj => by
+          rcases Nat.lt_or_ge j (M + 1) with h | h
+          · have : j = M := by omega
+            subst this; omega
+          · exact hM j h)
+      · have : T = M := by omega
+        subst this; exact absurd hT hfM
+
+/-- **EM_deep, up to non-tower stacks.**  A jump-free infinite leftmost walk whose right-spine depth tends to infinity
+    and whose stacks (last arguments) are eventually non-towers is eventually monotone.  Proof: the last time t >= T
+    at which the depth is <= depth (u T) is a strict cut; its step is a K >= 2 Fibonacci step; K = 2: cut_monotone;
+    K = 3: K3_monotone; K >= 4 contradicts the reading lemma. -/
+theorem EM_deep_nt (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ)
+    (hdeep : ∀ d, ∃ N, ∀ j, N ≤ j → d < SA2.msl (u j))
+    (hnt : ∃ T, ∀ t, T ≤ t → ¬ Tower (SA.rpart (u t))) :
+    ∃ j0, ∀ j, j0 ≤ j → 3 ≤ (args (u j)).length ∧ u (j + 1) ≠ SA.rpart (u j) := by
+  obtain ⟨T, hT⟩ := hnt
+  obtain ⟨N, hN⟩ := hdeep (SA2.msl (u T))
+  obtain ⟨t, htT, htd, hcut⟩ := last_le (fun j => SA2.msl (u j)) (SA2.msl (u T)) T (Nat.le_refl _) (T + N + 1)
+    (by omega) (fun j hj => hN j (by omega))
+  have htd' : SA2.msl (u t) ≤ SA2.msl (u T) := htd
+  have hcut' : ∀ e, SA2.msl (u t) < SA2.msl (u (t + 1 + e)) := fun e => by
+    have h : SA2.msl (u T) < SA2.msl (u (t + 1 + e)) := hcut e
+    omega
+  -- the step at t goes up
+  have hσ := hT t htT
+  have hc := hchild t
+  match hut : u t with
+  | S => rw [hut] at hc; exact absurd hc (CA.no_child_S _)
+  | app q σ =>
+    rw [hut] at hc hσ hcut'
+    simp only [SA.rpart] at hσ
+    rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, dd, hrr⟩
+    · exfalso
+      rw [args_app] at hlen hrr
+      match hq : args q, hlen, hrr with
+      | [], _, hrr =>
+        simp only [List.nil_append, List.cons.injEq] at hrr
+        have := hcut' 0
+        rw [Nat.add_zero, ← hrr.1] at this
+        simp only [SA2.msl] at this
+        omega
+      | [p], _, _ => exact hnj t p σ (by rw [hut, TC.args_one' q p hq])
+      | _ :: _ :: _, hlen, _ => simp at hlen
+    · rw [args_app] at hlen
+      have hq2 : 2 ≤ (args q).length := by simp at hlen; omega
+      obtain ⟨K, c, hK, hch⟩ := fib_step q σ _ dd hq2 hσ hrr
+      have hm := (msl_Fw σ c K).1
+      rw [← hch] at hm
+      have hup := hcut' 0
+      rw [Nat.add_zero, hm] at hup
+      simp only [SA2.msl] at hup
+      match K, hK, hch with
+      | 0, _, _ => omega
+      | 1, _, _ => omega
+      | 2, hK, _ =>
+        exact ⟨t, fun j hj => by
+          have := cut_monotone u hchild hnj t q σ c hut hσ hq2 hK (by rw [hut]; exact hcut') (j - t)
+          rwa [show t + (j - t) = j by omega] at this⟩
+      | 3, hK, _ =>
+        obtain ⟨t2, ht2⟩ := K3_monotone u hchild hnj t q σ c hut hσ hq2 hK
+        exact ⟨t2, fun j hj => by
+          have := ht2 (j - t2)
+          rwa [show t2 + (j - t2) = j by omega] at this⟩
+      | K + 4, _, hch =>
+        exfalso
+        have hntw : ∀ i, ¬ Tower (Fw σ c i) := fun i => SA3.fw_nontower _ c hσ i
+        have e : Fw σ c (K + 4) = app (app (Fw σ c K) (Fw σ c (K + 1))) (Fw σ c (K + 3)) := by
+          rw [show K + 4 = (K + 2) + 2 by omega, Fw_add2, Fw_add2]
+        rw [e] at hch
+        obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj (t + 1) _ _ _ hch (hntw (K + 1)) (hntw (K + 3))
+        exact hntw K ⟨k1 + 1, hk1⟩
+
+/-- **The leftmost finite half for flag 0 from (J) and (NT).**  An infinite leftmost walk from an L36-flag-0 term is
+    impossible if (J) it makes only finitely many jumps and (NT) when its depth tends to infinity its stacks are
+    eventually non-towers.  (Scenario A: CA.depth_to_infinity; deep walks: EM_deep_nt; monotone walks:
+    EM.finite_half_of_EM.) -/
+theorem finite_half_of_J_NT (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hflag : FH.flag (u 0) = false)
+    (hJ : ∃ N, ∀ j, N ≤ j → ∀ p τ, u j ≠ app (app S p) τ)
+    (hNT : (∀ d, ∃ N, ∀ j, N ≤ j → d < SA2.msl (u j)) → ∃ T, ∀ t, T ≤ t → ¬ Tower (SA.rpart (u t))) :
+    False := by
+  apply CA.finite_half_of_J_EMdeep u hchild hflag hJ
+  intro hdeep
+  obtain ⟨N, hN⟩ := hJ
+  obtain ⟨T0, hT0⟩ := hNT hdeep
+  let v : Nat → T := fun j => u (N + j)
+  have hv : ∀ j, FH.LChild (v j) (v (j + 1)) := fun j => by
+    show FH.LChild (u (N + j)) (u (N + (j + 1)))
+    rw [show N + (j + 1) = N + j + 1 by omega]; exact hchild (N + j)
+  have hvnj : ∀ j p τ, v j ≠ app (app S p) τ := fun j p τ => hN (N + j) (by omega) p τ
+  have hvdeep : ∀ d, ∃ M, ∀ j, M ≤ j → d < SA2.msl (v j) := by
+    intro d
+    obtain ⟨M, hM⟩ := hdeep d
+    exact ⟨M, fun j hj => hM (N + j) (by omega)⟩
+  obtain ⟨j0, hj0⟩ := EM_deep_nt v hv hvnj hvdeep ⟨T0, fun t ht => hT0 (N + t) (by omega)⟩
+  refine ⟨N + j0, fun j hj => ?_⟩
+  have h := hj0 (j - N) (by omega)
+  have h1 : 3 ≤ (args (u (N + (j - N)))).length ∧ u (N + (j - N + 1)) ≠ SA.rpart (u (N + (j - N))) := h
+  rw [show N + (j - N) = j by omega, show N + (j - N + 1) = j + 1 by omega] at h1
+  exact h1
+
+end SC
+
+#print axioms SC.copy_monotone
+#print axioms SC.no_escape
+#print axioms SC.K3_monotone
+#print axioms SC.EM_deep_nt
+#print axioms SC.finite_half_of_J_NT
+
+namespace SC
+
+open C
+open C.T
+open FM
+open DP
+
+/-- **EM from one strict cut on a non-tower stack.**  A jump-free infinite leftmost walk that has ONE strict cut (a time
+    t after which the depth stays strictly above the depth of u t) whose stack is a non-tower is eventually monotone.
+    (No hypothesis on the depth otherwise.) -/
+theorem EM_of_cut (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hnj : ∀ j p τ, u j ≠ app (app S p) τ) (t : Nat) (hσ : ¬ Tower (SA.rpart (u t)))
+    (hcut : ∀ e, SA2.msl (u t) < SA2.msl (u (t + 1 + e))) :
+    ∃ j0, ∀ j, j0 ≤ j → 3 ≤ (args (u j)).length ∧ u (j + 1) ≠ SA.rpart (u j) := by
+  have hc := hchild t
+  match hut : u t with
+  | S => rw [hut] at hc; exact absurd hc (CA.no_child_S _)
+  | app q σ =>
+    rw [hut] at hc hσ hcut
+    simp only [SA.rpart] at hσ
+    rcases hc with ⟨hlen, rest, hrr⟩ | ⟨hlen, dd, hrr⟩
+    · exfalso
+      rw [args_app] at hlen hrr
+      match hq : args q, hlen, hrr with
+      | [], _, hrr =>
+        simp only [List.nil_append, List.cons.injEq] at hrr
+        have := hcut 0
+        rw [Nat.add_zero, ← hrr.1] at this
+        simp only [SA2.msl] at this
+        omega
+      | [p], _, _ => exact hnj t p σ (by rw [hut, TC.args_one' q p hq])
+      | _ :: _ :: _, hlen, _ => simp at hlen
+    · rw [args_app] at hlen
+      have hq2 : 2 ≤ (args q).length := by simp at hlen; omega
+      obtain ⟨K, c, hK, hch⟩ := fib_step q σ _ dd hq2 hσ hrr
+      have hm := (msl_Fw σ c K).1
+      rw [← hch] at hm
+      have hup := hcut 0
+      rw [Nat.add_zero, hm] at hup
+      simp only [SA2.msl] at hup
+      match K, hK, hch with
+      | 0, _, _ => omega
+      | 1, _, _ => omega
+      | 2, hK, _ =>
+        exact ⟨t, fun j hj => by
+          have := cut_monotone u hchild hnj t q σ c hut hσ hq2 hK (by rw [hut]; exact hcut) (j - t)
+          rwa [show t + (j - t) = j by omega] at this⟩
+      | 3, hK, _ =>
+        obtain ⟨t2, ht2⟩ := K3_monotone u hchild hnj t q σ c hut hσ hq2 hK
+        exact ⟨t2, fun j hj => by
+          have := ht2 (j - t2)
+          rwa [show t2 + (j - t2) = j by omega] at this⟩
+      | K + 4, _, hch =>
+        exfalso
+        have hntw : ∀ i, ¬ Tower (Fw σ c i) := fun i => SA3.fw_nontower _ c hσ i
+        have e : Fw σ c (K + 4) = app (app (Fw σ c K) (Fw σ c (K + 1))) (Fw σ c (K + 3)) := by
+          rw [show K + 4 = (K + 2) + 2 by omega, Fw_add2, Fw_add2]
+        rw [e] at hch
+        obtain ⟨k1, _, hk1, _⟩ := gamma_walk u hchild hnj (t + 1) _ _ _ hch (hntw (K + 1)) (hntw (K + 3))
+        exact hntw K ⟨k1 + 1, hk1⟩
+
+/-- **The leftmost finite half for flag 0 from (J) and (NT').**  (NT'): if the depth tends to infinity, some strict cut
+    of the (eventually jump-free) walk sits on a non-tower stack. -/
+theorem finite_half_of_J_NT' (u : Nat → C.T) (hchild : ∀ j, FH.LChild (u j) (u (j + 1)))
+    (hflag : FH.flag (u 0) = false)
+    (hJ : ∃ N, ∀ j, N ≤ j → ∀ p τ, u j ≠ app (app S p) τ)
+    (hNT : ∀ N, (∀ j, N ≤ j → ∀ p τ, u j ≠ app (app S p) τ) → (∀ d, ∃ M, ∀ j, M ≤ j → d < SA2.msl (u j)) →
+      ∃ t, N ≤ t ∧ ¬ Tower (SA.rpart (u t)) ∧ ∀ e, SA2.msl (u t) < SA2.msl (u (t + 1 + e))) : False := by
+  apply CA.finite_half_of_J_EMdeep u hchild hflag hJ
+  intro hdeep
+  obtain ⟨N, hN⟩ := hJ
+  obtain ⟨t, hNt, hσ, hcut⟩ := hNT N hN hdeep
+  let v : Nat → T := fun j => u (t + j)
+  have hv : ∀ j, FH.LChild (v j) (v (j + 1)) := fun j => by
+    show FH.LChild (u (t + j)) (u (t + (j + 1)))
+    rw [show t + (j + 1) = t + j + 1 by omega]; exact hchild (t + j)
+  have hvnj : ∀ j p τ, v j ≠ app (app S p) τ := fun j p τ => hN (t + j) (by omega) p τ
+  obtain ⟨j0, hj0⟩ := EM_of_cut v hv hvnj 0 (by show ¬ Tower (SA.rpart (u (t + 0))); exact hσ)
+    (fun e => by
+      show SA2.msl (u (t + 0)) < SA2.msl (u (t + (0 + 1 + e)))
+      rw [Nat.add_zero, show t + (0 + 1 + e) = t + 1 + e by omega]; exact hcut e)
+  refine ⟨t + j0, fun j hj => ?_⟩
+  have h := hj0 (j - t) (by omega)
+  have h1 : 3 ≤ (args (u (t + (j - t)))).length ∧ u (t + (j - t + 1)) ≠ SA.rpart (u (t + (j - t))) := h
+  rw [show t + (j - t) = j by omega, show t + (j - t + 1) = j + 1 by omega] at h1
+  exact h1
+
+end SC
+
+#print axioms SC.EM_of_cut
+#print axioms SC.finite_half_of_J_NT'

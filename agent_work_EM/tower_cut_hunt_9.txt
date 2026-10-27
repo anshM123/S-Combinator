@@ -1,0 +1,3 @@
+n 9 M 8 nodes 600 time 267.0
+results: {'ends': 32895, ('deep', 'ok'): 1}
+walks whose second-half strict cuts all sit on tower stacks (term, flag, #cuts): []
