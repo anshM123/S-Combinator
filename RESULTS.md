@@ -23,7 +23,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | Barrier lemma | `Barrier.lean` | every S-term P run on two opaque arguments [P, x, y | r] hands control to an argument before it touches anything below them: loop bodies can never touch their accumulator |
 | Lemma P, Theorem LP1 | `LP1.lean` | if S·t·A·B has a head normal form, t's leftmost Böhm-tree path ends at S; hence every term whose M35 class is in F outside the five two-argument-dead classes D2 has a finite leftmost path ending at S |
 | Theorems UR-R, UR-C | `URCore.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); very likely overlaps Waldmann's "Nimm Zwei" (1997) |
-| Lemmas AB, MSL (strict form), YD, replay lemma; Lemma W1 | `AgentAB/MSL/MSLS/YD/REPLAY/W1.lean` | steps of the two agents' programmes: no P-onto-Y glue once the P-region is large; every glued P-wrapper of a multi-level datum is good; an early glued-down y kills proper transfers; a single-wrapper phase-2 transfer replays as a phase-3 re-execution; a descent-machine round adds at most one closed wrap to a single-copy datum |
+| Lemmas AB, AB-c, MSL (strict form), YD, replay lemma; Lemma W1 | `AgentAB/ABC/MSL/MSLS/YD/REPLAY/W1.lean` | steps of the two agents' programmes: no P-onto-Y glue once the P-region is large; every glued P-wrapper of a multi-level datum is good; an early glued-down y kills proper transfers; a single-wrapper phase-2 transfer replays as a phase-3 re-execution; a descent-machine round adds at most one closed wrap to a single-copy datum |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
 
 ## Proved by hand (with computer-certified finite facts)
@@ -36,6 +36,20 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
   640 leaves (loop, nested-loop, call and comb provers); 86/150 sampled parallel (ReplaceAll) runs.
 * Master Reduction (PROOF.md): a precise list of what a complete disproof needs, including Lemma W for whole-state
   finite-automaton decoders.
+
+## How the pieces fit (PROOF.md, Master Reduction)
+A universal emulation needs an encoder, an evaluation order and a halting detector that is not itself universal.
+* Halting = "the evolution stops": impossible in every order (Theorem T; uses confluence, which is machine-checked,
+  and two cited theorems: Church's theorem for non-erasing systems and Waldmann's regularity of normalisation).
+* Halting = a property of the Böhm tree: control at Böhm-tree level is the same in every evaluation order
+  (Proposition CF, machine-checked for head reduction). Such detectors are excluded once the property is decidable.
+  Head normalisation is (Theorem Q10, machine-checked); productivity and path finiteness are decided by finite models
+  in one direction (machine-checked), and the other direction is open.
+* Halting = a finite-automaton test of the current state: excluded under configuration-level regularity of the runs
+  (R″_PUP; Lemma W). This is open in general. It is proved per term for every certified run. The barrier lemmas
+  above (machine-checked) explain why constructions fail: code cannot write into live data, rotate data cleanly,
+  read without paying, or grow one counter beside an unread one.
+* Anything else: outside every result here (the definitional step).
 
 ## Open — what would still be needed
 **For "S is not universal"** (all three are open research problems):

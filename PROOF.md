@@ -723,6 +723,8 @@ them separately. This is the definitional piece.
 | window/configuration R″_PUP, leftmost-outermost | open in general. PROVED per term for every certified run: all 152 census counters, 850/850 random endpoints, the loop/nest/call/comb certificates; R″_PUP PROVED for nested loops (Lemma PUP) and the head-unique class (Theorem UR-C, Lean). Attack in progress: the non-universality agent's phase programme (OT, OTD, FH, SL, canonical_innermost in Lean) toward "re-execution is call-like" |
 | configuration R″_PUP, parallel and other orders | open; 86/150 parallel runs certified per term (Theorem LP-par) |
 | (D5) definitional argument | open (not a mathematical statement until a detector class is fixed) |
+| facts used by the reduction | F2 (confluence) MACHINE-CHECKED (lean/Confluence.lean, lean/CF.lean); Proposition CF MACHINE-CHECKED for head reduction (lean/CF.lean, lean/Standard.lean); MW(a),(b),(e) MACHINE-CHECKED (lean/MW.lean, lean/Confluence.lean); F3 (Church's theorem for non-erasing systems), F4 (Waldmann's regularity), F5 and Carton–Thomas are cited |
+| barrier lemmas behind 'no construction' | Lemmas 8, 9 (core), 10, 11, 12, Corollary 8(ii), Theorem J, Barrier lemma, Theorem N* and its layer bound MACHINE-CHECKED (lean/BarrierJ.lean, Lemma10.lean, ReadCost.lean, Barrier.lean, NStar.lean); Theorem O's residual walk and Proposition M are hand proofs |
 
 So a complete disproof = C5′ + configuration-level R″_PUP for every order the emulation may choose + the (D5) argument.
 A universality proof must break one of these: a construction is impossible in (D1), and in (D2)–(D4) it would refute the
