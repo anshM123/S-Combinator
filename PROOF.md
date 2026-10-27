@@ -404,6 +404,8 @@ to data at every step. Sanity: 20,000 random K (2–22 leaves): 10,863 runs stuc
 ## Lemma 8 (data conservation) — PROVED (elementary; gives H1, H2-necessity, H3 without any finite model) and MACHINE-CHECKED (lean/BarrierJ.lean, 2026-10-27)
 *Lean:* `dcount_step` (a step never lowers the number of data elements), `no_hnf_of_three_data` (Corollary (i): from >= 3
 data elements no list of length <= 2 is reachable; an atom-headed front is stuck). Axioms: propext, Quot.sound.
+`cor8ii` (Corollary (ii), 2026-10-27): from a list with at least two data elements, all atom-headed, every data element of
+every later list of a run that reaches an hnf is atom-headed (standard axioms).
 Fix a set of opaque variables. Call a stack element *data* if it contains one. In any head step
 `[a,b,c]++R ⇒ ch(a)++[c, b·c]++R` in which a is not variable-headed, the number of data elements does not
 decrease. *Proof.* If a is closed, ch(a) is closed and the change is [b·c data] − [b data] ≥ 0 (c survives
@@ -427,7 +429,10 @@ datum's code acting on the others). This is the exact structural content behind 
 two-counter constructions; universality, if true, must come from a data-driven design (tag-system-like), not
 from a program with registers.
 
-## Lemma 9 (no writing into data while two data are live) — PROVED (from Lemma 8 and Lemma 7)
+## Lemma 9 (no writing into data while two data are live) — PROVED (from Lemma 8 and Lemma 7); core MACHINE-CHECKED
+*Lean (lean/BarrierJ.lean, 2026-10-27):* `lemma9_nowrite` — in a run that reaches an hnf, once the list holds at least
+two data elements, no later step has b closed and c data; part (a) is `cor8ii`. Standard axioms. Part (b)'s reading
+(what code can still do: select components and nesting) is not formalised.
 Suppose at some point of a head run the list holds exactly two data elements, both variable-headed, and the run
 **terminates** without opening a variable-headed element. Then (a) every data element stays variable-headed (Lemma 8(ii));
 (b) a closed element can be appended to a data element only if it lies *below* that data element; closed

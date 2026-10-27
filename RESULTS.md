@@ -13,7 +13,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | **Theorem P2** | `P2_Parity.lean` | the Böhm tree of S·S^j·(SSS)·(SS) is finite iff j is even or j = 1: S-terms can count modulo 2 |
 | Proposition Q | `PropQ.lean` | every term whose class in the 39-element productivity model is in F_P is productive (no ⊥ anywhere in its Böhm tree): one half of Conjecture C6, the conjectured answer to BEKW Question 5 |
 | Proposition Q″ | `PathModels.lean` | the "infinite" verdicts of the leftmost-path (36 classes) and rightmost-path (19 classes) models are correct |
-| Lemma 8, Theorem J | `BarrierJ.lean` | data conservation; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
+| Lemmas 8, 9 (core), Corollary 8(ii), Theorem J | `BarrierJ.lean` | data conservation; no write into data while two data are live; data stay in control; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
 | Lemma 10 | `Lemma10.lean` | no junk-free rotation: with two data, the bottom one can be brought in front of the other only together with a second copy of itself |
 | Proposition MW(a),(b) | `MW.lean` | in every evolution order the multiway graph of an S-term is acyclic, and every infinite evolution visits terms of unbounded size, so it never settles into finitely many forms |
 | Barrier lemma | `Barrier.lean` | every S-term P run on two opaque arguments [P, x, y | r] hands control to an argument before it touches anything below them: loop bodies can never touch their accumulator |
@@ -24,8 +24,8 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 
 ## Proved by hand (with computer-certified finite facts)
 * Theorem O: no bounded-cost two-counter simulation (independently audited).
-* Lemma 9 and Proposition M: with opaque data, code cannot write into data or append like a tag system in one pass
-  (Lemmas 8 and 10 and Theorem J, the other barrier lemmas, are machine-checked above).
+* Proposition M: with opaque data, code cannot append like a tag system in one uniform pass (the barrier lemmas it
+  rests on — Lemmas 8, 9, 10, Theorem J and the Barrier lemma — are machine-checked above).
 * Theorem NM: morphic regularity of head runs is false (square runs), while the weaker R″_PUP holds for every certified run.
 * Per-term exactness certificates for every census counter (152/152 at 12 leaves) and for 850/850 random endpoints up to
   640 leaves (loop, nested-loop, call and comb provers); 86/150 sampled parallel (ReplaceAll) runs.

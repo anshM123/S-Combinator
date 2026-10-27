@@ -166,3 +166,16 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   0 < occ c, and occ c = 1 implies c = D or c = w.D with w closed.  Since a DM round ends exactly by [S, b, c] ->
   [c, b.c] with survivor c, this is the 'one closed wrap per round' lemma.  Invariant: phase 0 (closed prefix over the
   bare datum) or phase 1 (bottom and the element above it both contain D; a single-copy bottom is w.D, w closed).
+
+## 03:25 EDT  Note on the prize target W_reg (arbitrary regular redex selection) — CONJECTURAL / argued
+* PROOF.md's working target W_reg allows ANY regular redex-selection rule sigma.  By Proposition CF, an order that keeps
+  contracting the head redex (with terminating excursions into arguments) follows the head run's Boehm-level control
+  flow; the only other thing a regular sigma can do is (a) pre-evaluate arguments (finite excursions: changes syntax
+  and timing only) or (b) commit to a descent into an argument (a walk on Boehm-tree paths, DM/RM type).  BUT a
+  regular sigma may also choose WHERE to fire based on markers and bounded patterns, i.e. act as the finite control of
+  a Turing machine that uses the S-term only as writable memory (fire a redex at the marked cell = write/move).  If
+  S-rewrites suffice as such memory (plausible: firing at a marked position is a local, non-erasing write), W_reg is
+  satisfied for reasons that have nothing to do with S computing ('hidden computation' in the order), and the same
+  would hold for almost any growing rewrite rule.  So W_reg should be restricted (e.g. to head-fair orders, where
+  Prop. CF reduces everything to the head run's control, plus explicitly descending/path orders such as DM and RM)
+  before it is used as the disproof target.  Not constructed here: building it would not be accepted as S computing.

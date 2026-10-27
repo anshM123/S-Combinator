@@ -208,3 +208,84 @@ theorem theoremJ_global (L0 LN : List T) (N k : Nat) (hN : run N L0 = some LN) (
 #print axioms no_hnf_of_three_data
 #print axioms theoremJ
 #print axioms theoremJ_unique
+
+/-! ## Corollary 8(ii) / Lemma 9: with two live data, code cannot write into data, and data stay in control -/
+
+/-- every data element is atom-headed -/
+def dhead (L : List T) : Prop := ∀ e ∈ L, nv e = false → ∃ n, head e = var n
+
+theorem nv_args : ∀ a : T, nv a = true → ∀ e ∈ args a, nv e = true
+  | S, _, e, he => by simp [args] at he
+  | var _, h, _, _ => by simp [nv] at h
+  | app f x, h, e, he => by
+    simp only [nv, Bool.and_eq_true] at h
+    simp only [args, List.mem_append, List.mem_singleton] at he
+    rcases he with he | rfl
+    · exact nv_args f h.1 e he
+    · exact h.2
+
+/-- **Corollary 8(ii).** If a list holds at least two data elements, all atom-headed, and the run reaches a head normal
+    form, then every data element of every later list (in particular of the hnf) is atom-headed: closed code never ends up
+    holding data. -/
+theorem cor8ii : ∀ (N : Nat) (L1 LN : List T), run N L1 = some LN → LN.length ≤ 2 →
+    2 ≤ dcount L1 → dhead L1 → dhead LN
+  | 0, L1, LN, h, _, _, hd => by simp [run] at h; subst h; exact hd
+  | N + 1, L1, LN, h, hlen, h2, hd => by
+    simp only [run] at h
+    cases hs : step L1 with
+    | none => rw [hs] at h; simp at h
+    | some L2 =>
+      rw [hs] at h
+      match L1, hs, h2, hd with
+      | a :: b :: c :: R, hs, h2, hd =>
+        simp only [step] at hs
+        split at hs
+        · rename_i ha
+          simp only [Option.some.injEq] at hs
+          subst hs
+          have hgrow := dcount_step a b c R ha
+          have hfin := dcount_run N _ LN h
+          have hlenN := dcount_le_length LN
+          -- the front is S-headed, so it is closed
+          have hna : nv a = true := by
+            cases hv : nv a
+            · obtain ⟨n, hn⟩ := hd a (by simp) hv
+              rw [ha] at hn
+              exact absurd hn (by simp)
+            · rfl
+          refine cor8ii N _ LN h hlen (by omega) ?_
+          intro e he hev
+          rcases List.mem_append.1 he with he | he
+          · rw [nv_args a hna e he] at hev
+            exact absurd hev (by decide)
+          · rcases List.mem_cons.1 he with rfl | he
+            · exact hd e (by simp) hev
+            · rcases List.mem_cons.1 he with rfl | he
+              · cases hb : nv b
+                · obtain ⟨n, hn⟩ := hd b (by simp) hb
+                  exact ⟨n, by simp [head, hn]⟩
+                · -- b closed and b·c data: a write, which would leave three data elements
+                  have hc : nv c = false := by simp [nv, hb] at hev; exact hev
+                  have := dcount_write a b c R ha hb hc
+                  omega
+              · exact hd e (by simp [he]) hev
+        · simp at hs
+
+/-- **Lemma 9 (no writing into data while two data are live).** In a run that reaches a head normal form, once the list
+    holds at least two data elements, no later step is a write (b closed, c data). -/
+theorem lemma9_nowrite (L0 LN : List T) (N k0 k : Nat) (hN : run N L0 = some LN) (hlen : LN.length ≤ 2)
+    (L1 : List T) (hk0 : run k0 L0 = some L1) (h2 : 2 ≤ dcount L1)
+    (a b c : T) (R : List T) (hk : run k L0 = some (a :: b :: c :: R)) (hk0k : k0 ≤ k) (hkN : k < N)
+    (ha : head a = S) (hb : nv b = true) : nv c = true := by
+  cases hc : nv c
+  · have J := (theoremJ L0 LN N k hN hlen a b c R hk hkN ha hb hc).1
+    have hmid : run (k - k0) L1 = some (a :: b :: c :: R) := by
+      have := run_add k0 (k - k0) _ _ hk0
+      rw [show k0 + (k - k0) = k by omega, hk] at this
+      exact this.symm
+    have := dcount_run _ _ _ hmid
+    omega
+  · rfl
+
+#print axioms cor8ii
+#print axioms lemma9_nowrite
