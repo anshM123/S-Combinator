@@ -11,7 +11,21 @@ def lp_reaches_p(t):
         args, _ = hm.spine(t)
         if not args: return False
         t = args[0]
-data = [D for D in c3.rcombs(int(sys.argv[1])) if hm.head(D) == 0]
+if sys.argv[1] == "t":
+    NK, WK, NT = map(int, sys.argv[2:5])
+    Ks = [t for n in range(1, NK + 1) for t in hm.trees(n) if hm.head(t) == 0]
+    wr = [t for n in range(1, WK + 1) for t in hm.trees(n)]
+    tails = [P]; fr = [(P, 1)]
+    while fr:
+        nf = []
+        for t, sz in fr:
+            for d in wr:
+                if sz + hm.size(d) <= NT:
+                    u = hm.app(d, t); tails.append(u); nf.append((u, sz + hm.size(d)))
+        fr = nf
+    data = [hm.app(K, T) for T in tails if T != P for K in Ks]
+else:
+    data = [D for D in c3.rcombs(int(sys.argv[1])) if hm.head(D) == 0]
 st = collections.Counter(); M0 = hm.mark()
 for D2 in data:
     o2, V, _ = T3.phase(D2, 1500)

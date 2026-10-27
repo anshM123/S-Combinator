@@ -5,11 +5,13 @@ encoder/detector/decoder.  Labels: PROVED / MACHINE-CHECKED / COMPUTATIONALLY CE
 CONJECTURAL / REFUTED.  Deadlines (coordinator): INTERIM summary 04:00 EDT, refresh ~every 2 h, FINAL summary by 15:30 EDT.
 All files of this agent live in agent_work_U/.
 
-## 01:15 EDT start
+## 01:14 EDT start
+(Timestamps of later entries were corrected at 03:47 EDT on the coordinator's request: earlier labels ran ahead of
+the clock; '~' marks times reconstructed from `date` outputs.  From now on every timestamp comes from `date`.)
 * Read: PROOF.md (prize target, Theorem SI, U/U*, pump, write-pass, OT/OTD/SL, full re-execution frontier, bridge UB),
   agent_work/LOG.md, NEXT_STEPS.md head.  Tools: code/hc.py, code/symb.py, agent_work/hm.py.
 
-## INTERIM 04:00 (refreshed 04:25 EDT; first version written 02:40)
+## INTERIM 04:00 (refreshed ~03:44 EDT; first version written ~02:38)
 **Status: no universal construction; no partial win (no non-PUP run).  Labels as in the entries below.**
 Main results (files in agent_work_U/):
 1. NEW FRAMEWORK, the descent machine DM (dm.py): leftmost-outermost evaluation along the leftmost Boehm path = the
@@ -33,7 +35,7 @@ Main results (files in agent_work_U/):
 5. Negative searches: word rounds, self-transforming words, comb halving, periodic cells, RM long runs.
 Strongest concrete results: the machine-checked DM round classification (W1, W1+, W2, W2+).  No construction.
 
-## 01:40 EDT  Direction chosen: the DESCENT MACHINE (leftmost-outermost along the leftmost Böhm path)
+## ~01:30 EDT  Direction chosen: the DESCENT MACHINE (leftmost-outermost along the leftmost Böhm path)
 * Observation (PROVED, elementary): leftmost-outermost evaluation restricted to the leftmost Böhm path is the
   deterministic list machine DM:  |L| >= 3: [a,b,c|R] -> ch(a)++[c, b.c|R];  |L| = 2: [c,d] -> ch(c);  |L| = 1: [c] -> ch(c);
   |L| = 0: the path ends at the leaf S.  (Leftmost-outermost reduces inside c of the hnf S c d before anything in d, so d
@@ -83,7 +85,7 @@ Strongest concrete results: the machine-checked DM round classification (W1, W1+
   branching on the top symbol).  Two independent stacks would need a datum moved over another, which always leaves a
   stale bundle (A, B) -> (B, A.B).  Open: whether stale bundles can be made harmless (stale copies of the form SS.c
   act as 'drop c, keep next' = KI c in tail position).
-* NOTE (bug fixed 03:00): dm.truncate() did not clear the size cache; any size printed after truncate() in
+* NOTE (bug fixed ~02:25 EDT): dm.truncate() did not clear the size cache; any size printed after truncate() in
   combcombs.py was unreliable (classifications end/budget were unaffected).  cbvsize.py: an apparent 'irregular' CBV
   size sequence was this artefact; after the fix, every CBV function nf(a u_n) with a <= 9 leaves (u_n = n nested S)
   has eventually affine size in n (n <= 14), and only a = S maps unary values to unary values (cbvfun.py 9 12).
@@ -109,7 +111,7 @@ Strongest concrete results: the machine-checked DM round classification (W1, W1+
   bit).  No internal rewriting: x -> nf(b x) is 'prefix-only' in this range (non-erasure duplicates x at every
   distributive step (S p q)*w = (p*w)*(q*w)).
 
-## 02:45 EDT  The right-spine machine RM (rightmost Boehm path with finite left children)
+## ~02:42 EDT  The right-spine machine RM (rightmost Boehm path with finite left children)
 * Observation (PROVED, elementary): if every left component normalises, leftmost-outermost evaluation finishes the
   left child c of each hnf S c d (emitting its normal form) and then evaluates d.  Along the right spine this is the
   list machine RM: head steps as usual; at [c, d] -> emit nf(c), continue with ch(d).  Since every round ends
@@ -118,7 +120,7 @@ Strongest concrete results: the machine-checked DM round classification (W1, W1+
   state is c.(w.c): the OLD datum is executed with the NEW datum as argument (data-dependent control for free).
   The emitted normal forms form an output stream (Boehm-level, so a universal RM would refute C5).
 
-## 03:10 EDT  Lemma W1 (one closed wrap per DM round) — PROVED (elementary; agrees with survcat.py output)
+## ~02:55 EDT  Lemma W1 (one closed wrap per DM round) — PROVED (elementary; agrees with survcat.py output)
 *Statement.* Let C be a list of closed terms and D an opaque datum (an atom).  Run the DM from C ++ [D] until its first
 descent, assuming no D-headed front occurs.  Then the survivor contains D, and if it contains D exactly once it is D or
 c.D with c CLOSED.  (A multi-symbol push c1.(c2.D) is impossible in one round; the only other survivors contain >= 2
@@ -150,14 +152,14 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   twostack2.py 7 30000 5 6 3 3000: 30,000 random two-stack configurations (symbols <= 5, controllers <= 6 leaves,
   stack depth <= 3): every survivor with both clean stacks is a pop of the active stack; no push, no change of the
   passive stack (15 changed cases, all pops).
-* MACHINE-CHECKED (03:05 EDT): Lemma W1 in Lean 4 core — agent_work_U/lean/W1.lean (160 lines, no sorry; axioms
+* MACHINE-CHECKED (~03:00 EDT): Lemma W1 in Lean 4 core — agent_work_U/lean/W1.lean (160 lines, no sorry; axioms
   propext, Classical.choice, Quot.sound; compile: ~/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean W1.lean).
   `w1_survivor`: from C ++ [D] (C closed, D = var 0, atom-headed fronts stuck), every reachable 3-list [a, b, c] has
   0 < occ c, and occ c = 1 implies c = D or c = w.D with w closed.  Since a DM round ends exactly by [S, b, c] ->
   [c, b.c] with survivor c, this is the 'one closed wrap per round' lemma.  Invariant: phase 0 (closed prefix over the
   bare datum) or phase 1 (bottom and the element above it both contain D; a single-copy bottom is w.D, w closed).
 
-## 03:25 EDT  Note on the prize target W_reg (arbitrary regular redex selection) — CONJECTURAL / argued
+## ~03:05 EDT  Note on the prize target W_reg (arbitrary regular redex selection) — CONJECTURAL / argued
 * PROOF.md's working target W_reg allows ANY regular redex-selection rule sigma.  By Proposition CF, an order that keeps
   contracting the head redex (with terminating excursions into arguments) follows the head run's Boehm-level control
   flow; the only other thing a regular sigma can do is (a) pre-evaluate arguments (finite excursions: changes syntax
@@ -184,7 +186,7 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   so token factories for a regular-strategy 'S as RAM' design are not available off the shelf (increment would have to
   use duplication of a marked token).
 
-## 03:40 EDT  Lemma W2 — MACHINE-CHECKED (coordinator's suggestion)
+## ~03:25 EDT  Lemma W2 — MACHINE-CHECKED (coordinator's suggestion)
 * agent_work_U/lean/W2.lean (239 lines, Lean 4 core, no sorry; axioms propext, Classical.choice, Quot.sound).
   Framework and Corollary 8(ii) copied verbatim from the main agent's lean/BarrierJ.lean (attributed in the file);
   new: `dcount_two_atoms`, `dhead_start`, and
@@ -199,7 +201,7 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   C ++ [X, Y], the BOTTOM element is atom-headed at every step (0 violations) — stronger than W2, which only needs
   the hnf moment; the topmost data element and the middle of 3-lists can be code-headed transiently (1,348 / 495
   occurrences), so those stronger invariants are false.
-* MACHINE-CHECKED (03:50 EDT): `w1_rm_next` added to agent_work_U/lean/W1.lean (still no sorry; axioms propext,
+* MACHINE-CHECKED (~03:32 EDT): `w1_rm_next` added to agent_work_U/lean/W1.lean (still no sorry; axioms propext,
   Classical.choice, Quot.sound).  For the right-spine machine (continue with the SECOND hnf component b.c after the
   left child normalises): the next state b.c holds D, and if it holds D exactly once then b is closed and c = D —
   a round of the right-spine machine either only replaces the closed controller or leaves >= 2 copies of the datum.
@@ -228,7 +230,7 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   (e.g. the binary counter's growing list).  So whether W_reg is trivially satisfiable for S is itself non-trivial;
   not pursued further (an order-as-CPU emulation would not count as S computing anyway).
 
-## 04:00 EDT  Fibonacci classification of single-datum DM rounds (W1+)
+## ~03:36 EDT  Fibonacci classification of single-datum DM rounds (W1+)
 * COMPUTATIONALLY CERTIFIED (copycat.py 11 4000): for every closed C <= 11 leaves, every survivor of the first DM
   round from ch(C) ++ [x] that holds x at least twice is a Fibonacci word F_k(x, W.x) — F_0 = x, F_1 = W.x,
   F_{k+2} = F_k F_{k+1}, W closed (here W = S c1 .. cj) — with k = 2..9 (2, 3, 5, ..., 34 copies; 29 shapes).
@@ -238,7 +240,7 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   third data element, after which (Lemma 8 + Corollary 8(i), main agent's BarrierJ.lean) no hnf is ever reached.
   So a round that ends has survivor closed, x, or F_k(x, W.x): the leftmost path's only copy mechanism is the
   Fibonacci swap of the comb, applied to (datum, one closed wrap of the datum).
-* MACHINE-CHECKED (04:10 EDT): agent_work_U/lean/W1F.lean (248 lines, Lean 4 core, no sorry; axioms propext,
+* MACHINE-CHECKED (~03:38 EDT): agent_work_U/lean/W1F.lean (248 lines, Lean 4 core, no sorry; axioms propext,
   Quot.sound [+ Classical.choice for the survivor theorem]).  Framework/Lemma 8 copied from lean/BarrierJ.lean.
   `w1f_inv_reach`: every list reachable from C ++ [x] (C closed) is C' ++ [x] with C' closed, or
   C' ++ [fib W k, fib W (k+1)] with C', W closed, or has >= 3 data elements;
@@ -247,7 +249,7 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   This is the complete classification of single-datum descent-machine rounds (it subsumes W1): the leftmost path can
   erase the datum, keep it, add ONE closed wrap, or copy it by the comb's Fibonacci swap of (x, W.x) — nothing else.
   (Agrees with copycat.py: all 29 multi-copy shapes <= 11 leaves are such Fibonacci words.)
-* MACHINE-CHECKED (04:20 EDT): agent_work_U/lean/W2F.lean (232 lines, Lean 4 core, no sorry; axioms propext,
+* MACHINE-CHECKED (~03:40 EDT): agent_work_U/lean/W2F.lean (232 lines, Lean 4 core, no sorry; axioms propext,
   Quot.sound [+ Classical.choice for the survivor theorem]).  W2+ (sharpens W2): from C ++ [x, y] (C closed) every
   reachable list is C' ++ [fib2 k, fib2 (k+1)] (C' closed) or holds >= 3 data elements, where fib2 0 = x, fib2 1 = y,
   fib2 (k+2) = (fib2 k)(fib2 (k+1)); hence every DM survivor of a two-datum round is a Fibonacci word over (x, y)
@@ -263,13 +265,13 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   entirely from what executed data do with Fibonacci-recombined arguments (each execution again satisfies the same
   classification for its own captured data), i.e. from re-execution — the regime the main agent conjectures to be
   call-like.
-* Comb rigidity (PROVED by hand, 04:35; Lean in progress): with two opaque data a closed prefix of length >= 2 can
+* Comb rigidity (PROVED by hand, ~03:42 EDT; Lean in progress): with two opaque data a closed prefix of length >= 2 can
   never shrink to length <= 1 without a step at length exactly 2, which is a write [p1, p2, F_k] (b = p2 closed,
   c = data) creating a third data element (then no hnf ever, Cor. 8(i)).  Hence a DM round from C ++ [x, y] ends
   without executing data iff C = [] or C = [S(S(...(S S)...))] (a comb S^(j)(S)), and then the survivor is F_j or
   F_(j+1) over (x, y).  For one datum the same holds after the first write: arbitrary closed pre-computation, ONE
   write by a closed W, then a comb.  The leftmost path's data-carrying code is literally the comb.
-* MACHINE-CHECKED (04:50 EDT): COMB RIGIDITY, agent_work_U/lean/W2R.lean (362 lines = W2F + 130 new lines; Lean 4
+* MACHINE-CHECKED (~03:45 EDT): COMB RIGIDITY, agent_work_U/lean/W2R.lean (362 lines = W2F + 130 new lines; Lean 4
   core, no sorry; axioms propext, Classical.choice, Quot.sound).
   - `doomed_never_hnf`: from C ++ [fib2 k, fib2 (k+1)] with C closed and |C| >= 2 no list of length <= 2 is reachable;
   - `comb_rigid`: if a list of length <= 2 is reachable from [p, fib2 k, fib2 (k+1)] (p closed) then p = comb j,
@@ -278,3 +280,36 @@ the datum (higher-order-pushdown-like) or a second datum (which, by survcat.py, 
   The only closed code that carries two opaque data across a leftmost-path round is the comb S(S(..(S S)..)), whose
   effect is the Fibonacci swap (W2+).  (The one-datum analogue — arbitrary closed pre-computation, one write, then a
   comb — follows by the same argument; hand proof only.)
+
+## ~03:46 EDT  Consequence: generic leftmost paths are countdown-and-reload processes (argued; rests on W1F/W2F/W2R)
+* Sustained DM dynamics needs every round to end, so <= 2 data per round (Cor. 8(i)); by W2R the code of a two-datum
+  round is a comb S^(j)(S) giving F_j(u, v); executing the survivor's head datum adds its rest to the data, so only
+  j <= 3 can be followed by another ending round.  Reading the stack symbols as comb depths:
+  - symbol S S (j = 1): survivor v — the head stack's rest is ERASED;
+  - symbol S(SS) (j = 2): survivor u'v, then u' is executed with v passive: COUNT DOWN u with v passive;
+  - symbol S(S(SS)) (j = 3): survivor v (u' v): v is executed with the bundle u'.v as partner — and popping that
+    bundle later executes u' with the stale v plus the current partner: three data, no further round end.
+  With one datum (W1F + the one-datum rigidity) the base of a countdown can write ONE closed W and copy by Fibonacci:
+  e.g. survivor v (W v): count down v with partner W.v, then the same with W.v: the reload counter (Theorem C /
+  reload cycles).  So for generic data the leftmost Boehm path is a countdown-and-reload process; data-dependence
+  enters only through countdown lengths.  This (i) explains why Attempt U found only countdown/reload programs on
+  leftmost walks, (ii) closes the leftmost path as a construction site, and (iii) suggests a proof route for the
+  main agent's leftmost-path goals (a pushdown/HORS abstraction with states = comb depths and closed wraps W).
+  Status: ARGUED from machine-checked lemmas; the multi-round composition is not formalised.
+* MACHINE-CHECKED (03:47 EDT, `date`): agent_work_U/lean/WR.lean (280 lines, Lean 4 core, no sorry; axioms propext,
+  Classical.choice, Quot.sound) — comb rigidity for an ARBITRARY pair of data u, v (Fibonacci family fibP u v):
+  `rigid_pair`: if a list of length <= 2 is reachable from C ++ [u, v] (C closed, u, v data) then C = [] or
+  C = [comb j]; `w1r`: one datum — after the first write [a, b, x] -> args a ++ [x, b.x] (a closed, b arbitrary) a
+  round can end only if args a = [] or [comb j] (closed pre-computation, one write, then a comb); `w2r`: two data.
+  (Note to the coordinator: timestamps in this LOG were corrected at 03:47 EDT; earlier labels had run ahead.)
+* CORRECTION / CAVEAT (03:50 EDT, `date`): W1, W1+, W2, W2+ and WR are about F1 states (closed code ABOVE the data,
+  nothing closed below them).  States with a closed element below the data ('fuel', PROOF.md's F1 violation) are not
+  covered, and the reload cycle N_i N_k S uses exactly such fuel (the trailing S).  The 03:46 'countdown-and-reload'
+  consequence therefore covers only fuel-free stretches; it is downgraded to ARGUED-WITH-GAP.
+* COMPUTATIONALLY CERTIFIED (fuelcat.py 9 1 S 3000; fuelcat2.py 8 f 2000 for f = S, SS, S(SS), SSS): with one datum x
+  and fuel f below it, the data-holding survivors of the first round are x, x.f (the datum re-absorbs the fuel
+  UNCHANGED — 40 codes for f = S, only S(SS) for the other fuels), closed wraps W.(x.f), and Fibonacci words over
+  (x.f, W.(x.f)) (15 shapes <= 9 leaves for f = S).  So fuel adds one operation — append the SAME closed constant
+  f at the end of the datum's spine, which recreates the fuel for the next round (as in the reload cycle) — and
+  otherwise the fuel-free classification applies to the datum x.f.  Fuel is never created by a fuel-free round
+  (W1+: no fuel-free survivor ends with a closed spine argument after a datum), so it must come from the encoder.

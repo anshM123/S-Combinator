@@ -1403,3 +1403,14 @@ the 17 nodes (⊥_P, F_M) form ONE strongly connected component under "has a ⊥
 argument exists. Sizes do not help either: at ≤ 10 leaves, of 497 computed ⊥_P nodes only 126 have a smaller ⊥_P hnf
 component (e.g. SSS(SS)SS → S(S(SS)S)S(S(SS)(S(S(SS)S)S)), 7 → 13 leaves). Conjecture C7 (a ⊥ at depth ≤ |t| − 3) therefore
 needs a measure other than node size.
+
+## E115 — BEKW Question 7 (colour change puzzle): bounded searches, 2026-10-27 (main agent)
+BEKW ask whether an infinite refinement chain M_0 ◁ M_1 ◁ … (each step replaces one S by a term) can change colour
+(green = terminating, red = not) infinitely often. Every pumping family E[P^j[S]] is a refinement chain (replace the
+innermost S by P[S]), and so is any chain that alternates two pump sites. Theorem P2's family S S^j (SSS)(SS) does NOT
+answer it: its even members have finite Böhm trees that contain ⊥, so they are red from j = 2 on. code/q7_search.py
+(one site, E ≤ 6 leaves, P ≤ 4, j ≤ 10; green certified by computing the normal form, red by an M35-⊥ node, Theorem A):
+the most changes are 3, all transient (e.g. E = □ (SS) S S, P = □ S: GGRGRRRRRRR). code/q7_search2.py (two sites
+refined alternately, E ≤ 4, P, Q ≤ 3, k ≤ 12): no chain with 4 or more changes. EXPERIMENTALLY SUPPORTED reading:
+along such chains colours stabilise to red; a proof would need the terminating-terms automaton (BEKW Fig. 11) and a
+general argument for arbitrary chains. Open.

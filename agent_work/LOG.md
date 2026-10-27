@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 03:55 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:05 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -23,15 +23,15 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
        machine-checked [agent_work/lean/MSLS.lean (strict + generous), lean/MSL.lean, lean/AB.lean].
        (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN in general
        (computationally certified: exhaustive <= 11 leaves, 115k + 367k + 298k targeted data, 70k random).
-       DONE (machine-checked): THEOREM PA [lean/PA.lean]: a single-wrapper handler glued in pattern alpha never
-       leads to a proper transfer in the next phase, given that phase 2's continuation from the glue step reaches
-       its transfer under the replay guards (hypotheses certified for all 680 such real handlers <= 11 leaves; the
-       creation lemma shows the innermost wrapper is always glued in pattern alpha or beta).  Supporting
+       DONE (machine-checked): THEOREMS PA and PB [lean/PA.lean]: a single-wrapper handler glued in pattern alpha
+       (or in pattern beta with c0 = S.a1) never leads to a proper transfer in the next phase, given that phase 2's
+       continuation from the glue step reaches its transfer under the replay guards (hypotheses certified for
+       680 + 40 real handlers <= 11 leaves; with FH, 830 of the 836 real single-wrapper handlers <= 11 are settled).  Supporting
        machine-checked lemmas: YD [lean/YD.lean], FH1/FHL [lean/FH1.lean, lean/FHL.lean] (a wrapper whose
        leftmost path reaches p blocks the next phase), AB-c [lean/ABC.lean], REPLAY [lean/REPLAY.lean] (general
        replay maps, replay_glue / replay_beta / replay_cycle), CANON/FH (single-wrapper => at most one more
        transfer phase).  Hand: creation lemma, Theorem FS, Lemmas Sigma2 / Gamma / CB.  REFUTED: (B1).
-       OPEN: pattern beta (46 single-wrapper cases <= 11, partly replay_beta/FHL), live multi-wrapper handlers not
+       OPEN: pattern beta with c0 != S.a1 (6 single-wrapper cases <= 11), live multi-wrapper handlers not
        covered by FHL/YD (18 cases <= 11), and a proof of the phase-2 guards in general (they are certified per case).
    D3. 'Re-execution of a frozen value is call-like' => R''_PUP ...................... OPEN (conjectural target)
 E. Class 4, other evaluation orders (parallel, innermost, multiway paths) .............. OPEN in general; Prop. CF
@@ -771,3 +771,16 @@ are handler-headed (certified <= 10 leaves).  SL/canonical_innermost assume the 
   creation lemma describes how the TERM w.y is first formed; a handler element can also be a released copy —
   a case PA's hypotheses exclude and which remains open (4 / 3,000 in this family, 0 / 680 in the exhaustive
   <= 11 range).
+* MACHINE-CHECKED (agent_work/lean/PA.lean, now 1,078 lines; no sorry; axioms propext, Classical.choice,
+  Quot.sound): **THEOREM PB (`pb_main`)** — pattern beta with c0 = S.a1: if the single wrapper is w = b0.(S.a1),
+  glued onto y by [a1, w, y] (a1 the element released just above w), and phase 2's continuation from that glue
+  (top part args a1 ++ [y, w.y]) reaches a p-headed front after k guarded steps, the next phase never makes a
+  proper transfer.  New reusable pieces: `post_replay` (whatever two elements e1, e2 follow args(g[p:=c]), a run
+  from there replays phase 2's continuation args g ++ [y, w.y] and stops at a c-headed front, never at a
+  p'-headed one) and `pa_core` (barrier phase + any such post-x1 safety => no proper transfer).  pa_main is
+  unchanged; pb_main = pa_core + one opening step + post_replay with g = a1.
+  COMPUTATIONALLY CERTIFIED (pb_check.py 11 / t 7 4 9): PB's hypotheses hold for all 40 / 130 real pattern-beta
+  handlers with c0 = S.a1; 6 / 158 pattern-beta handlers have c0 != S.a1 (not covered; phase 3 non-proper in all).
+  SINGLE-WRAPPER SCORE (<= 11 leaves, 836 real handlers): FH 110 + PA 680 + PB 40 = 830 settled by machine-checked
+  theorems with per-case-certified phase-2 hypotheses; 6 open.  Targeted family (3,686 real single-wrapper
+  handlers with K <= 7): FH 398 + PA 2,996 + PB 130 = 3,524 settled; 162 open (4 PA-guard failures, 158 beta-other).
