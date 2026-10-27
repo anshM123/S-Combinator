@@ -14,9 +14,10 @@ the exact Lean statements of the headline theorems: `lean/STATEMENTS.md`.
   (a term with a normal form terminates in every order), the head normalisation theorem and the invariance of Böhm trees
   hold. Every infinite evolution, in any order, visits terms of unbounded size, so it never settles into finitely many
   forms.
-* **Why constructions fail (about 20 machine-checked barrier theorems):** code cannot write into two live data, rotate
-  data cleanly, create 'fuel', hold two data except as a comb, or let a counter grow beside an unread counter beyond a
-  fixed potential. It must read what it uses, at a cost. So every known route to a universal emulation is blocked.
+* **Why constructions fail (more than 30 machine-checked barrier theorems):** code cannot write into two live data,
+  rotate data cleanly, create 'fuel', hold two data except as a comb, or let a counter grow beside an unread counter
+  beyond a fixed potential, and it must read what it uses, at a cost. Every construction route tried so far is blocked
+  by one of these or failed in bounded searches; this is evidence, not a proof, that none exists.
 * **What a full disproof still needs:** decidability of Böhm-tree properties (open even for productivity, BEKW Question 5,
   and leftmost-path finiteness), regularity of all head runs (R″_PUP), and a definitional argument about Wolfram's
   "non-universal decoder" (see "Open" below).

@@ -1,4 +1,4 @@
-# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:15 EDT
+# PROOF STATUS (non-universality agent) — maintained at the top; last update 2026-10-27 04:10 EDT
 Target: a complete proof that S is not universal in Wolfram's sense (every evaluation order, every non-universal
 encoder/detector/decoder).  Map follows the main agent's split (PRIZE_ASSESSMENT.md 'Map of the remaining gap').
 Labels: DONE = proved (hand) or machine-checked; OPEN = not proved.  [file pointers in brackets]
@@ -21,7 +21,10 @@ D. Class 3, bounded-window syntax under leftmost-outermost: needs effective R''_
    D2. Multi-level data.  (a) Theorem MSL in STRICT form (P-elements glued onto Y are prefixed by one of the
        datum's own levels or have only such P-arguments) and Lemma AB (|P| >= 3 is absorbing) ... DONE,
        machine-checked [agent_work/lean/MSLS.lean (strict + generous), lean/MSL.lean, lean/AB.lean].
-       (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN in general
+       (b) Phase 3 is never a proper transfer (for data built from phase-2 outputs) ... OPEN in general, i.e.
+       without per-case hypotheses; CHAIN BOUND 'every Church chain makes at most 2 proper transfers (1 from an
+       ordered start)': machine-checked up to per-case hypotheses (steps (1)-(3) in the LOG entry of 04:05;
+       INNER.lean + PA.lean + FH/FHL/YD); census: no chain of length >= 3 among all 227,239 data <= 11 leaves.
        (computationally certified: exhaustive <= 11 leaves, 115k + 367k + 298k targeted data, 70k random).
        DONE (machine-checked): THEOREMS PA, PB, PAM [lean/PA.lean] — the REPLAY THEOREMS: for a handler whose
        innermost wrapper vn = b0.c0 was glued onto y in pattern alpha (PA: single wrapper; PAM: any number of
@@ -40,10 +43,16 @@ F. Decoders reading unbounded parts of terms (not windows) .....................
 Bottom line: NOT SOLVED.  No step above that is OPEN is close to a complete proof; D1 narrows the possible
 universal mechanisms (they must re-execute frozen values), it does not exclude them.
 
-# INTERIM 04:00 (non-universality agent; written 02:30, refreshed 2026-10-27 04:00 EDT)
+# INTERIM 04:00 (non-universality agent; written 02:30, refreshed 2026-10-27 04:10 EDT)
 Bottom line: NOT SOLVED.  No complete proof of non-universality exists; nothing below claims one.
 New since the coordinator's 'go for the money' message (all in agent_work/; every MACHINE-CHECKED file compiles
 with Lean 4.35 core, no sorry, standard axioms only):
+0. HEADLINE (generic phase model): every Church chain of proper transfers has length <= 2, and <= 1 if it starts
+   from an ordered datum.  Machine-checked chain: later data are ordered (immediate) -> transfers from ordered data
+   are innermost-dirty (INNER.lean `ordered_innermost`) -> after such a transfer the next phase cannot transfer
+   (PA.lean / FH / FHL / YD), the last step with per-case hypotheses that hold for 99.5-99.8% of all tested
+   transfers; census: no chain of length >= 3 among all 227,239 data <= 11 leaves.  It does NOT prove R''_PUP or
+   non-universality: re-execution (D3) is exactly what remains.
 1. MACHINE-CHECKED  Lemma AB [lean/AB.lean] (>= 3 live-atom elements is absorbing) and its c-view Corollary AB-c
    [lean/ABC.lean] (>= 3 frozen-material elements above the inputs => the phase can only end by re-execution).
 2. MACHINE-CHECKED  Theorem MSL, generous and STRICT forms [lean/MSL.lean, lean/MSLS.lean]: in every phase-2 run of
@@ -69,7 +78,7 @@ with Lean 4.35 core, no sorry, standard axioms only):
 Still OPEN for item D of the map: D2(b) in general (a replay theorem without per-case hypotheses; 5 open cases
 <= 11 leaves, 235 in the targeted family); D3 're-execution is call-like'; items A, C, E, F (not addressed by this
 agent).
-Files: lean/{AB,ABC,MSL,MSLS,YD,REPLAY,PA,FH1,FHL}.lean (new today; PA.lean holds PA, PB, PAM) + OC, OT, OTD, SL, CANON (earlier);
+Files: lean/{AB,ABC,MSL,MSLS,YD,REPLAY,PA,FH1,FHL,INNER}.lean (new today; PA.lean holds PA, PB, PAM) + OC, OT, OTD, SL, CANON (earlier);
 scripts msl_inv.py, target3.py, inner_forms.py, outer_forms.py, live_census.py, fh1_cover.py, fhl_cover.py,
 wcreate.py, prefix_replay.py, replay_cover.py, replay_b.py, replay_b2.py, unified_alpha.py, bufq.py, b0_cases.py,
 cycle_real.py, pb_check.py, pam_check.py, coverage_all.py (results in the LOG entries of 2026-10-27 01:35-04:00).
