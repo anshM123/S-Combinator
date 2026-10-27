@@ -401,7 +401,9 @@ them, and can receive two only in the trivial/nest cases. Every S-computation is
 to data at every step. Sanity: 20,000 random K (2–22 leaves): 10,863 runs stuck on x, 2,598 on y, 6,539 diverge,
 0 reach an hnf (E17).
 
-## Lemma 8 (data conservation) — PROVED (elementary; gives H1, H2-necessity, H3 without any finite model)
+## Lemma 8 (data conservation) — PROVED (elementary; gives H1, H2-necessity, H3 without any finite model) and MACHINE-CHECKED (lean/BarrierJ.lean, 2026-10-27)
+*Lean:* `dcount_step` (a step never lowers the number of data elements), `no_hnf_of_three_data` (Corollary (i): from >= 3
+data elements no list of length <= 2 is reachable; an atom-headed front is stuck). Axioms: propext, Quot.sound.
 Fix a set of opaque variables. Call a stack element *data* if it contains one. In any head step
 `[a,b,c]++R ⇒ ch(a)++[c, b·c]++R` in which a is not variable-headed, the number of data elements does not
 decrease. *Proof.* If a is closed, ch(a) is closed and the change is [b·c data] − [b data] ≥ 0 (c survives
@@ -469,7 +471,7 @@ preserve the order of several data, or rotate with duplication — never write i
 
 ---------------------------------------------------------------------------------------------------
 ## H2-loophole hunt (bounded attempts, 2026-10-25) — results
-### Theorem J (global writes) — PROVED
+### Theorem J (global writes) — PROVED and MACHINE-CHECKED (lean/BarrierJ.lean, 2026-10-27: `theoremJ` (ii), `theoremJ_unique` (iii), `theoremJ_global` (i): at a write every other element is atom-free; standard axioms)
 In a terminating head run that never opens a variable-headed element, call a step a *write* if b is variable-free
 and c contains a variable. Then (i) every write's c contains every variable present in the run; (ii) the data
 count is 1 immediately before a write and 2 after; (iii) there is at most one write per run.

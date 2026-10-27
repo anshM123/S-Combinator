@@ -13,6 +13,7 @@ Details and proofs: `PROOF.md`; results table: `STATUS.md`; how the pieces fit: 
 | **Theorem P2** | `P2_Parity.lean` | the Böhm tree of S·S^j·(SSS)·(SS) is finite iff j is even or j = 1: S-terms can count modulo 2 |
 | Proposition Q | `PropQ.lean` | every term whose class in the 39-element productivity model is in F_P is productive (no ⊥ anywhere in its Böhm tree): one half of Conjecture C6, the conjectured answer to BEKW Question 5 |
 | Proposition Q″ | `PathModels.lean` | the "infinite" verdicts of the leftmost-path (36 classes) and rightmost-path (19 classes) models are correct |
+| Lemma 8, Theorem J | `BarrierJ.lean` | data conservation; a write of closed material onto data happens at most once per Böhm-tree step and wraps all the data at once (the barrier behind "no registers, no tag appends") |
 | Lemma P, Theorem LP1 | `LP1.lean` | if S·t·A·B has a head normal form, t's leftmost Böhm-tree path ends at S; hence every term whose M35 class is in F outside the five two-argument-dead classes D2 has a finite leftmost path ending at S |
 | Theorems UR-R, UR-C | `URCore.lean` | runs whose head redex stays the only redex are eventually linear counters (type A or II); very likely overlaps Waldmann's "Nimm Zwei" (1997) |
 | Obstruction theorems OT, RC, OC, OTD, FH, SL, `canonical_innermost` | `Agent*.lean` | code can only write right combs from a generic datum; such data cannot drive Church-style transfers; from phase 2 on transfers are dirty; single-level data force re-execution after at most two transfer phases |
